@@ -1,6 +1,51 @@
 # Session Handoff
 
-Last updated: 2026-09-24 (Phase 3 approved, option A; Phase 4 in planning)
+Last updated: 2026-09-24 ~23:40 (STOP checkpoint mid-Phase 4, step 3)
+
+## STOP checkpoint — Phase 4 in progress (read this first)
+
+- Branch `phase/one-endpoint` (off `main` @ `658c423`; `main` was fast-forwarded to
+  the approved Phase 3 commit with user approval via the Phase 4 plan).
+- The approved Phase 4 plan is at `C:\Users\ivgi-pc\.claude\plans\piped-meandering-stallman.md`
+  (outside the repo). It covers steps 1–7, the user decisions (U-01/03/05/06/07/09/11) and the gate.
+- User decisions for Phase 4 (not yet written to DECISIONS.md/unresolved.md; that is plan step 6):
+  - endpoint `reqtype=INFO&info=EXTENSIONS`
+  - host `https://pbx6webserver.1com.co.il/pbx/proxyapi.php`, fixed (note `/pbx/` vs vendor `/mirtapbx/`)
+  - tenant key (read-only is sufficient)
+  - `legacy` badge + OpenAPI note
+  - English prose + untranslated banner
+  - extend the neutral model
+  - keep the Sample API; Proxy becomes the default API
+  - response example = a user-supplied sanitized real sample (`evidence: observed-sanitized`, never replayed by Demo)
+- Done:
+  - step 1 (git)
+  - step 2 (content model, on Opus): `src/content/types.ts` gains `Requirement`
+    tri-state, `fixedQuery`, `methodBasis`, `Authentication.location/parameter/scope`,
+    `ResponseSpec.format/evidence`, `errors: ErrorSpec[] | "undocumented"`, `notes`
+  - `docs/API_CONTENT_MODEL.md` rewritten to match
+  - minimal consumer fixes: `use-playground.ts` validates `required === true` only;
+    `endpoint-view.tsx` guards `Array.isArray(errors)`
+  - `npm run check` passed (tsc, lint, 27 unit tests) after step 2
+  - committed as the checkpoint below
+- Not started: steps 3–7. Step 3 was about to begin; only files were read. Specifics:
+  - `src/content/proxy-api.ts` (new) and registering it first in `src/content/index.ts`
+  - adapt `code-samples.ts`: query auth via env `PROXY_API_KEY`, `fixedQuery`
+  - adapt `endpoint-view`, `request-panel`, `param-list`, `param-field`: tri-state required,
+    fixedQuery path line, notes, legacy callout, method-inferred note, evidence label,
+    empty/undocumented responses & errors
+  - `reference/[api]/page.tsx`: the quickstart hardcodes Bearer + `/v1/call-records`
+  - `playground/page.tsx`: derive the API from the `?endpoint=` param; it currently uses `apis[0]`
+  - Demo: replay only when `api.synthetic`
+  - i18n en/he keys
+  - docs (step 6)
+  - tests (step 7)
+- Blocking input still outstanding: the user's sanitized real response for INFO EXTENSIONS
+  (requested; must have SIP secrets/passwords redacted). Everything except the response
+  section can be built without it.
+- Model: Sonnet 5 for steps 3–7 (the user already switched). Opus for the final review if required.
+- A `next dev` server started by Claude may still be running on port 3000 (background task);
+  on Windows also check for an orphaned `start-server.js` child before starting another.
+- Next session's first action: read the plan file, then start step 3 (`src/content/proxy-api.ts`).
 
 ## State
 

@@ -161,13 +161,14 @@ export function usePlayground(endpoint: Endpoint) {
       const key = fieldKey("path", p.name);
       if (!fieldValues[key]?.trim()) next[key] = p.name;
     }
+    // Only a documented `required: true` blocks sending; "undocumented" must not.
     for (const p of endpoint.queryParameters) {
-      if (!p.required) continue;
+      if (p.required !== true) continue;
       const key = fieldKey("query", p.name);
       if (!fieldValues[key]?.trim()) next[key] = p.name;
     }
     for (const p of endpoint.requestBody ?? []) {
-      if (!p.required) continue;
+      if (p.required !== true) continue;
       const key = fieldKey("body", p.name);
       if (!fieldValues[key]?.trim()) next[key] = p.name;
     }

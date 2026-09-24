@@ -187,7 +187,7 @@ export function EndpointView({
             )}
           </Section>
 
-          {endpoint.errors.length > 0 && (
+          {Array.isArray(endpoint.errors) && endpoint.errors.length > 0 && (
             <Section id="errors" title={t("errors")}>
               <table className="w-full border-collapse text-sm max-sm:block">
                 <thead className="bg-surface-2 text-start max-sm:sr-only">

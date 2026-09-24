@@ -1,10 +1,13 @@
 # Current Status
 
 Current phase:
-**Phase 3 — Proxy API Audit: COMPLETE AND APPROVED** (approved 2026-09-24, gate option A)
+**Phase 4 — One Real Proxy API Endpoint: IN PROGRESS** (plan approved 2026-09-24; steps 1–2 of 7 done; stopped at a checkpoint — see SESSION_HANDOFF.md)
 
 Current branch:
-`phase/proxy-api-audit` (from `main` @ `1980a72`)
+`phase/one-endpoint` (from `main` @ `658c423`, which now includes the approved Phase 3)
+
+Previous phase:
+**Phase 3 — Proxy API Audit: COMPLETE AND APPROVED** (approved 2026-09-24, gate option A; committed `658c423`)
 
 Previous phases:
 - Phase 1: approved, tagged `v0.1-design-approved`, merged.

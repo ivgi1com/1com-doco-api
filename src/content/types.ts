@@ -1,7 +1,8 @@
 /**
  * Normalized, API-neutral content model (docs/API_CONTENT_MODEL.md).
- * Phase 2 draft: shape is exercised by the prototype only. It is finalized
- * against real Proxy API evidence in Phases 3–4.
+ * Covers REST APIs and reqtype-style APIs (one path, operation selected by
+ * fixed query parameters). "undocumented" states exist so the portal never
+ * has to guess what the source does not say.
  */
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -9,6 +10,18 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export type Lifecycle = "stable" | "experimental" | "deprecated" | "legacy";
 
 export type ParameterLocation = "path" | "query" | "header" | "body";
+
+/** `"undocumented"`: the source does not say whether the parameter is required. */
+export type Requirement = boolean | "undocumented";
+
+export type ResponseFormat = "json" | "xml" | "csv" | "plain" | "binary";
+
+/**
+ * Where a response example comes from. Only `synthetic` examples may be
+ * replayed by Demo mode; `observed-sanitized` is real traffic with identifying
+ * values replaced, published as evidence only.
+ */
+export type Evidence = "vendor" | "observed-sanitized" | "synthetic";
 
 export interface Verification {
   documented: boolean;
@@ -21,7 +34,7 @@ export interface Parameter {
   name: string;
   location: ParameterLocation;
   type: string;
-  required: boolean;
+  required: Requirement;
   description: string;
   default?: string;
   enum?: string[];
@@ -38,9 +51,22 @@ export interface ResponseSpec {
   description: string;
   schema?: Parameter[];
   example?: unknown;
+  format?: ResponseFormat;
+  evidence?: Evidence;
   headers?: Parameter[];
   source?: string;
   verified: boolean;
+}
+
+export interface Authentication {
+  type: string;
+  description: string;
+  /** Where the credential travels. Code samples follow this; defaults to header. */
+  location?: "header" | "query";
+  /** Header or query-parameter name carrying the credential, e.g. "key". */
+  parameter?: string;
+  /** Key scope needed for this endpoint, e.g. "Tenant key (read-only is sufficient)". */
+  scope?: string;
 }
 
 export interface ErrorSpec {
@@ -64,12 +90,19 @@ export interface Endpoint {
   status: Lifecycle;
   deprecation?: Deprecation;
   method: HttpMethod;
+  /** `inferred`: the source never states the method; it is read from its examples. */
+  methodBasis?: "documented" | "inferred";
   path: string;
+  /**
+   * Query parameters with fixed values that select the operation on a shared
+   * path (e.g. `{ reqtype: "INFO", info: "EXTENSIONS" }`). Always sent; not editable.
+   */
+  fixedQuery?: Record<string, string>;
   title: string;
   summary: string;
   sourceUrl?: string;
   verification: Verification;
-  authentication: { type: string; description: string };
+  authentication: Authentication;
   headers: Parameter[];
   pathParameters: Parameter[];
   queryParameters: Parameter[];
@@ -77,7 +110,10 @@ export interface Endpoint {
   /** Example request body used by code samples and the Playground. */
   requestExample?: Record<string, unknown>;
   responses: ResponseSpec[];
-  errors: ErrorSpec[];
+  /** `"undocumented"`: the source documents no errors; shown as such, never invented. */
+  errors: ErrorSpec[] | "undocumented";
+  /** Source caveats and interpretation notes shown in a Notes section. */
+  notes?: string[];
   related: string[];
 }
 
