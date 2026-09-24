@@ -1,14 +1,18 @@
 # Session Handoff
 
-Last updated: 2026-09-24
+Last updated: 2026-09-24 (final checkpoint)
 
 ## State
 
 - Branch: `phase/design-prototype` (off `main` @ `dc5f5bc`). No remote, nothing pushed.
 - Phase 1 is approved, tagged `v0.1-design-approved`, and merged to `main`.
-- **Phase 2 (Design Prototype) implementation is complete.** typecheck / lint /
-  unit tests / build / Playwright (58 tests, Chromium + WebKit) all pass.
-  Not yet approved — waiting at the Phase 2 gate for explicit user sign-off.
+- **Phase 2 (Design Prototype) is COMPLETE AND APPROVED by the user (2026-09-24).**
+  typecheck / lint / unit tests (27) / build / Playwright (58 tests, Chromium +
+  WebKit) all pass. See `docs/DECISIONS.md` "Phase 2 approval" and
+  `docs/CURRENT_STATUS.md`.
+- **Phase 3 (Proxy API Audit) has NOT started.** No Phase 3 planning, research,
+  or implementation has begun. It requires a separate, explicit user approval
+  before any work starts — do not infer it from the Phase 2 approval.
 
 ## Done (do not repeat)
 
@@ -130,15 +134,37 @@ Neither silently resolved; both flagged in `docs/CURRENT_STATUS.md` too.
   mid-session — accepted as a low-probability edge case, consistent with the
   existing precedent.
 
-## Next step
+## Git state as of this checkpoint
 
-1. Report the Phase 2 gate summary (this handoff + `CURRENT_STATUS.md`) to
-   the user and wait for explicit approval before Phase 3.
-2. If approved: tag the milestone (`v0.2-shell-approved` per the suggested
-   tags in `CLAUDE.md`), then re-evaluate the model for Phase 3 (Proxy API
-   audit) before starting it.
-3. If changes are requested: address them, re-run `npm run check` +
-   `npm run build` + `npm run test:e2e`, and return to this gate.
+- Branch: `phase/design-prototype`, working tree clean except the user's own
+  manual edit to `CLAUDE.md` (a new "Mandatory Phase Completion and Approval
+  Gate" section) — deliberately not touched by Claude; the user said they'd
+  edit it manually.
+- All Phase 2 implementation work is committed. Latest commits (newest first):
+  `3291607` (code-review fixes + gate-status docs), `1bf9dab` (mode-bar
+  contrast fix), `32b1d10` (not-found fix + Playwright smoke suite), `a043162`
+  (remaining routes/JSON viewer/Playground), `e9087f1` (test infra),
+  `4903f96`/`012aba9` (doc reconciliation). Full history: `git log --oneline`.
+  This checkpoint added one more commit on top for the status/handoff/
+  decisions updates — check `git log -1` for its hash.
+- No remote configured; nothing pushed. `main` is untouched (still at
+  `dc5f5bc`, tag `v0.1-design-approved`). No merge, rebase, or branch switch
+  happened this session or this checkpoint.
+
+## Exact next action for a new session
+
+1. Read this file and `docs/CURRENT_STATUS.md` first.
+2. **Do not start or plan Phase 3 without a fresh, explicit user instruction
+   to do so.** Phase 2's approval does not carry forward as Phase 3 approval.
+3. If/when the user approves Phase 3: read `docs/phases/03-proxy-api-audit.md`,
+   re-run the mandatory model-transition check (`CLAUDE.md` "Model Routing and
+   Transition Rules" — API-content-model/architecture-adjacent work may need
+   Opus 5.5; routine extraction/classification stays Sonnet 5, Haiku 4.5 only
+   for the low-risk repetitive classification the phase doc allows), then
+   create a new branch off `main` for Phase 3 per the Git workflow rules.
+4. Optional, not yet done: tag this approved milestone (`v0.2-shell-approved`
+   per `CLAUDE.md`'s suggested tags) — left for the user or a future session
+   to decide when, since tagging wasn't part of this checkpoint's scope.
 
 ## Open items (carried)
 

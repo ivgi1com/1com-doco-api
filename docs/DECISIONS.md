@@ -150,3 +150,31 @@ Decision:
 
 Status:
 Approved by user (2026-09-24), except the implementation details noted as reversible.
+
+---
+
+## 2026-09-24 — Phase 2 approval
+
+Decision:
+Phase 2 (Design Prototype) is complete and approved. All routes/components
+listed in `docs/CURRENT_STATUS.md` are built; `npm run check`, `npm run build`
+and `npm run test:e2e` (58 Playwright tests, Chromium + WebKit) pass; a
+`code-review` pass and a manual UI audit against `design-system/MASTER.md`
+were completed and their findings fixed (see `docs/SESSION_HANDOFF.md`).
+
+Scope:
+Approval covers the Phase 2 prototype only (visual/interaction shell over
+synthetic content). It does not authorize Phase 3 (Proxy API audit) or any
+later phase — those need their own separate, explicit approval per
+`CLAUDE.md`'s approval-gate rule.
+
+Consequences:
+- `phase/design-prototype` remains unmerged into `main` as of this decision;
+  merging still needs separate explicit approval per the Git workflow rules.
+- Known issues/limitations recorded at approval time (SVG logo unavailable,
+  Console link destination undecided, Hebrew content scope deferred, two
+  design-system documentation tensions, one acknowledged non-bug code-quality
+  duplication) are accepted as-is for this phase, not blockers.
+
+Status:
+Approved by user (2026-09-24).
