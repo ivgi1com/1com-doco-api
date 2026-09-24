@@ -46,7 +46,7 @@ export function ModeBar({
       <button
         type="button"
         onClick={() => onRequestSwitch(mode === "live" ? "demo" : "live")}
-        className="h-8 shrink-0 rounded-md border border-current px-3 text-xs font-semibold text-ink transition-colors duration-150 hover:bg-bg/60"
+        className={`h-8 shrink-0 rounded-md border border-current px-3 text-xs font-semibold transition-colors duration-150 hover:bg-bg/60 ${ink}`}
       >
         {t(switchLabel)}
       </button>
