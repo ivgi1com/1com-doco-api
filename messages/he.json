@@ -85,7 +85,7 @@
     "thanks": "תודה על המשוב.",
     "reportIssue": "דיווח על בעיה",
     "deprecatedBanner": "נקודת קצה זו הוצאה משימוש ותוסר ב-{date}.",
-    "useInstead": "יש להשתמש ב-{name} במקומה.",
+    "useInstead": "יש להשתמש ב-<link>{name}</link> במקומה.",
     "verification": "אימות מול API",
     "notVerified": "לא אומת מול API חי"
   },

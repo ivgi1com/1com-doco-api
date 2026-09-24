@@ -85,7 +85,7 @@
     "thanks": "Thanks for the feedback.",
     "reportIssue": "Report an issue",
     "deprecatedBanner": "This endpoint is deprecated and will be removed on {date}.",
-    "useInstead": "Use {name} instead.",
+    "useInstead": "Use <link>{name}</link> instead.",
     "verification": "Verification",
     "notVerified": "Not verified against a live API"
   },

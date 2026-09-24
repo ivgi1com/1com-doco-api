@@ -97,7 +97,10 @@ export function EndpointView({
                   {replacement && (
                     <>
                       {t.rich("useInstead", {
-                        name: <Link href={`/reference/${api.id}/${replacement.id}`}>{replacement.title}</Link>,
+                        name: replacement.title,
+                        link: (chunks) => (
+                          <Link href={`/reference/${api.id}/${replacement.id}`}>{chunks}</Link>
+                        ),
                       })}
                     </>
                   )}
