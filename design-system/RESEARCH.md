@@ -1,6 +1,6 @@
 # Design Research — Developer Portal
 
-Status: **Proposed. Awaiting user approval (Phase 1 gate).**
+Status: **Approved (2026-09-24).** Resolved decisions recorded in `design-system/MASTER.md`.
 Research date: 2026-09-24. Reference sites drift; re-verify before quoting specifics.
 
 ## Method
@@ -137,7 +137,7 @@ Research date: 2026-09-24. Reference sites drift; re-verify before quoting speci
 - Shopify GraphiQL documents a **read-only public demo** alongside an authenticated mode. DOCUMENTED. This is the closest analogue to Live/Demo.
 - Stripe signals test vs live only through the key prefix (`sk_test_` / `sk_live_`) and its syntax colour. VERIFIED. That is too weak for our "never confuse Live and Demo" rule.
 
-### 1com brand (all UNCONFIRMED)
+### 1com brand (colours + font confirmed official 2026-09-24)
 Source: https://www.1com.co.il/ HTML + bundled CSS.
 - Primary `#3731ee` (oklch 0.478 0.265 271.6): button fill, active menu item.
 - Accent `#781df0` (oklch 0.517 0.271 293.1): button hover, bordered buttons, emphasized heading spans. Buttons shift blue to violet on hover.
@@ -280,9 +280,9 @@ A physical scene to anchor the design: an integration developer at a CRM or ISV 
 
 Full token proposal: `design-system/MASTER.md`.
 
-## 8. Open items for the gate
+## 8. Open items (non-blocking for visual approval; deferred)
 
-- Brand values are UNCONFIRMED and scraped from CSS. Needed from 1com: official colours, an SVG logo, and confirmation that Assistant is the brand font.
+- RESOLVED: brand colours and Assistant confirmed official. Still open: SVG logo availability.
 - Hebrew scope: chrome only, guides, or guides + reference descriptions? Whether reference prose is translated drives the content model (Phase 3/4). This is not needed to approve the visual direction.
 - The Sign-in / Console link destination (is there a customer console?) is unknown.
 - Whether screenshots should be committed as evidence (currently not, to avoid storing third-party imagery in the repo).

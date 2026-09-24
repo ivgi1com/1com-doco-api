@@ -97,16 +97,23 @@ Approved by user (plan approval, 2026-09-24).
 
 ## 2026-09-24 — Design direction (Phase 1 output)
 
-Decision (proposed):
-- Restrained color strategy on brand-hue-tinted neutrals; brand indigo `#3731ee` as accent, violet `#781df0` as hover; lightened tint for dark mode.
+Decision:
+- Restrained color strategy on brand-hue-tinted neutrals; brand indigo (official) `#3731ee` as accent, violet `#781df0` as hover; lightened tint for dark mode.
 - Light + dark, default follows OS; code/JSON surfaces dark in both.
-- Assistant (UI, Hebrew+Latin) + JetBrains Mono (code).
+- Assistant (official brand font; UI, Hebrew+Latin) + JetBrains Mono (code).
+- Radii 4/6/10px.
 - Three-column endpoint layout with sticky request panel; nothing hidden on mobile.
 - Dedicated Playground route with persistent Live/Demo mode bar (amber Live, teal Demo) and per-response source stamp.
 - Four lifecycle states shown as page banner + inline badge.
 
 Status:
-PROPOSED — awaiting user approval at Phase 1 gate. See `design-system/RESEARCH.md`, `design-system/MASTER.md`.
+Approved by user at Phase 1 gate (2026-09-24). See `design-system/MASTER.md` "Resolved decisions".
+
+Deferred (non-blocking):
+- SVG logo availability (only raster PNG known).
+- Hebrew content scope (chrome / guides / reference prose) — decide before Phase 3/4 content model.
+- Sign-in / Console link destination — decide before Phase 2 nav is finalized.
+- Whether to commit reference screenshots (currently no).
 
 ---
 

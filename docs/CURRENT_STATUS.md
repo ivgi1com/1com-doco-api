@@ -1,44 +1,33 @@
 # Current Status
 
 Current phase:
-**Phase 1 — Design Research** (gate reached, awaiting approval)
+**Phase 1 — Design Research: APPROVED** (2026-09-24, tag `v0.1-design-approved`)
+Next phase: Phase 2 — Design Prototype (not started; requires explicit user go-ahead)
 
 Current branch:
-`phase/design-research` (from `main` baseline commit `d12cc39`)
+`phase/design-research` (from `main` baseline `d12cc39`). Not merged to `main`.
 
 Completed:
-- High-level developer portal direction agreed
-- Proxy API selected as pilot
-- One-endpoint prototype strategy agreed
-- Live Playground concept agreed
-- Demo mode concept agreed
-- No-guessing protocol agreed
-- Approval gates agreed
-- Git branch/tag strategy agreed
-- Model routing agreed
-- VS Code + Claude Code operating rules agreed
+- High-level direction, pilot choice (Proxy API), one-endpoint strategy, Live/Demo concepts, no-guessing protocol, approval gates, Git strategy, model routing, operating rules
 - Git repository initialized (`main` + phase branch)
-- Design research executed: `design-system/RESEARCH.md`
-- Design-system proposal drafted: `design-system/MASTER.md` (status: proposed)
+- Design research: `design-system/RESEARCH.md` (Approved)
+- Design system: `design-system/MASTER.md` (Approved)
+- Phase 1 decisions resolved: official brand `#3731ee`/`#781df0` + Assistant; radii 4/6/10px; amber Live / teal Demo; dedicated Playground route
 
 In progress:
-- None (Phase 1 deliverables complete; not yet reviewed by user)
+- None
 
-Unfinished:
-- User review/approval of RESEARCH.md + MASTER.md
-- 4 open decisions in MASTER.md "Open decisions" (brand values/logo, radii, Live/Demo hues, Playground route vs embedded)
-- 4 open items in RESEARCH.md §8 (Hebrew content scope, Sign-in/Console destination, commit screenshots?)
-- Tag `v0.1-design-approved` (only after approval)
-
-Resume: see `docs/SESSION_HANDOFF.md`.
+Open (non-blocking, deferred):
+- SVG logo availability (only raster PNG known)
+- Sign-in / Console link destination (needed before Phase 2 nav is finalized)
+- Hebrew content scope (needed before Phase 3/4 content model)
+- Commit reference screenshots? (currently no)
 
 Blocked:
-- Phase 2 is blocked on Phase 1 approval
-- Brand confirmation pending: official colors, SVG logo, Assistant font (values scraped from 1com.co.il, UNCONFIRMED)
+- Merge of `phase/design-research` into `main`: awaiting explicit user approval
+- Phase 2: awaiting explicit user go-ahead
 
 Next action:
-User reviews `design-system/RESEARCH.md` and `design-system/MASTER.md`, resolves the "Open decisions" in MASTER.md, and approves or requests changes.
+User decides on merging to `main` and starting Phase 2 (`docs/phases/02-design-prototype.md`).
 
-Next approval gate:
-User approves the research findings and proposed design direction before implementation proceeds.
-On approval: tag `v0.1-design-approved`; merge to `main` only with explicit approval.
+Resume: see `docs/SESSION_HANDOFF.md`.

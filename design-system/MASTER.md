@@ -1,7 +1,7 @@
 # Design System — MASTER
 
-Status: **Proposed. Not yet approved.** Evidence: `design-system/RESEARCH.md`.
-Brand-derived values are marked **(UNCONFIRMED)** until 1com confirms them.
+Status: **Approved (2026-09-24).** Evidence: `design-system/RESEARCH.md`.
+Brand colours and font confirmed official by the user (2026-09-24). SVG logo availability still open.
 
 ## Target direction
 
@@ -24,7 +24,7 @@ Brand-derived values are marked **(UNCONFIRMED)** until 1com confirms them.
 - Strategy: **Restrained**. Neutrals are tinted toward the brand hue 275 (chroma ≤ 0.02). The accent is used only for primary actions, links, selection, focus and current state.
 - All pairs below were computed for WCAG 2.x contrast.
 
-Brand (UNCONFIRMED, extracted from 1com.co.il CSS):
+Brand (confirmed official, 2026-09-24):
 - `brand-indigo` oklch(0.478 0.265 271.6) `#3731ee`. White on it: 7.41:1.
 - `brand-violet` oklch(0.517 0.271 293.1) `#781df0`. White on it: 6.49:1.
 
@@ -69,9 +69,8 @@ Mode colors (reserved, never used for anything else):
 ## Typography
 
 Families (maximum 2):
-- UI and prose: **Assistant** (UNCONFIRMED as brand font; already in use on 1com.co.il). Variable 200–800, native Hebrew + Latin, OFL. One family carries headings, body, labels and data.
+- UI and prose: **Assistant** (confirmed brand font). Variable 200–800, native Hebrew + Latin, OFL. One family carries headings, body, labels and data.
   - Fallback: `"Assistant", "Noto Sans Hebrew", system-ui, -apple-system, "Segoe UI", Arial, sans-serif`.
-  - Alternative if rejected: Heebo (also variable, with Hebrew).
 - Mono: **JetBrains Mono** (OFL, Latin only). Used for code, paths, method pills, parameter names and telemetry.
   - Fallback: `"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`.
   - Hebrew never renders in mono. Code containers are `dir="ltr"`.
@@ -108,7 +107,7 @@ Rules:
 - `radius-md` 6px: inputs, buttons, code blocks, callouts.
 - `radius-lg` 10px: panels, dialogs, menus.
 - `radius-full`: toggles, the status dot, avatars.
-- Nothing larger. This is a deliberate step down from the marketing site's 1–1.5rem cards (see Open decisions).
+- Nothing larger. This is a deliberate step down from the marketing site's 1–1.5rem cards (approved 2026-09-24).
 
 ## Borders
 
@@ -257,9 +256,13 @@ Rules:
 - Directional icons mirror (chevrons, arrows). Object icons do not.
 - Hebrew typography: no letter-spacing changes, and line-height on the high end of the scale.
 
-## Open decisions (require user input before Phase 2 locks them)
+## Resolved decisions (2026-09-24)
 
-1. Brand values: are `#3731ee` / `#781df0` / Assistant official? Is an SVG logo available?
-2. Radii: the proposed 4/6/10px is tighter than the marketing site's pill buttons and 1–1.5rem cards. Keep the developer-tool restraint, or align closer to marketing?
-3. Mode hues: amber for Live and teal for Demo.
-4. The Playground as a dedicated route (proposed) vs. embedded in endpoint pages.
+1. Brand values: `#3731ee` / `#781df0` / Assistant are official.
+2. Radii: 4/6/10px (developer-tool restraint) retained.
+3. Mode hues: amber for Live, teal for Demo.
+4. Playground: dedicated route; endpoint pages link into it.
+
+## Still open
+
+- SVG logo: availability not yet confirmed. Only a raster PNG is known. Do not invent or trace a logo.
