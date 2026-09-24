@@ -1,0 +1,12 @@
+{
+  "status": "not_started",
+  "api": "proxy",
+  "source_root": "TBD",
+  "pages_discovered": 0,
+  "pages_processed": 0,
+  "endpoints_discovered": 0,
+  "endpoints_documented": 0,
+  "endpoints_tested": 0,
+  "endpoints_verified": 0,
+  "items": []
+}
