@@ -1,0 +1,37 @@
+reqtype: CDR
+purpose: Get or update fields on a CDR row.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: [get, update]
+operations:
+  - id: cdr.get
+    title: Get the userfield
+    sourceAnchor: bkmrk-cdr-%2F-get-the-userfi
+    method: { value: GET, basis: example_url }
+    discriminator: { action: GET }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: field, example: userfield, allowedValues: "not_documented (only userfield shown)" }
+      - { name: uniqueid, example: srv02-1701011773.4670 }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&tenant=TENANTCODE&reqtype=CDR&action=GET&field=userfield&uniqueid=srv02-1701011773.4670
+  - id: cdr.update
+    title: Update the userfield
+    sourceAnchor: bkmrk-cdr-%2F-update-the-use
+    method: { value: GET, basis: example_url }
+    discriminator: { action: UPDATE }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: field, example: userfield }
+      - { name: uniqueid, example: srv02-1701011773.4670 }
+      - { name: value, example: "", meaning: "example passes an empty value; whether that clears the field is not_documented" }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&tenant=TENANTCODE&reqtype=CDR&action=UPDATE&field=userfield&uniqueid=srv02-1701011773.4670&value=
+issues: [A-02, A-05, A-06, A-22]

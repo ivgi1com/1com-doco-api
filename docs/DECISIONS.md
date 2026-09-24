@@ -178,3 +178,57 @@ Consequences:
 
 Status:
 Approved by user (2026-09-24).
+
+---
+
+## 2026-09-24 — Phase 3 setup (Proxy API audit)
+
+Decision (user, via plan-mode questions and plan approval):
+- Source of the existing Proxy API docs: the public vendor page
+  https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples
+  (MiRTA PBX `proxyapi.php`). 1com runs MiRTA PBX.
+- Proxy API stays first, even though the vendor calls it legacy and recommends
+  OpenAPI for new integrations. How the portal labels it is not decided (U-03).
+- Every documented reqtype is exposed to 1com customers. How this squares with
+  admin-key-only operations is open (U-09).
+- Scope: full audit of the Proxy page only. The 38 OpenAPI pages are indexed
+  in `source-docs/inventory.json` as out of scope (Phase 8).
+- Docs only: no live API calls in Phase 3. Everything stays DOCUMENTED.
+- Hebrew content scope: deferred to Phase 4.
+- Git: `phase/design-prototype` fast-forwarded into `main` (`1980a72`).
+  Phase 3 branch `phase/proxy-api-audit` created off `main`. The tag
+  `v0.2-shell-approved` already existed (user-created, annotated, on
+  `20597af`), so it was left unchanged.
+- Model: Opus 5.5 for the whole phase (interpretation, content-model fit,
+  security findings). `CLAUDE.md` routing is canonical over the phase doc's
+  "Sonnet 5" line.
+
+Process notes (reversible, Claude's choice):
+- Vendor pages are kept as local evidence snapshots with hashes. The
+  session CSRF token is redacted before commit.
+- Normalized data is split one YAML file per reqtype, with operations
+  nested inside.
+
+Status:
+Applied. The Phase 3 audit is complete and awaiting approval at the gate.
+
+---
+
+## 2026-09-24 — Phase 3 approval
+
+Decision:
+Phase 3 (Proxy API Audit) is complete and approved (gate option A). Outputs:
+`source-docs/{raw/,proxy-api/,inventory.json,DOCS_AUDIT.md,unresolved.md}`.
+
+Scope:
+Approval covers the audit only. The 11 items in `source-docs/unresolved.md`
+stay open and are not decided by this approval. Option A authorizes Phase 4
+*planning* only; implementation needs separate approval of the Phase 4 plan.
+
+Consequences:
+- `phase/proxy-api-audit` is not merged into `main`; merging needs explicit
+  approval.
+- No milestone tag was created (the suggested tag list has no audit-phase tag).
+
+Status:
+Approved by user (2026-09-24).

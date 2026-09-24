@@ -1,0 +1,40 @@
+reqtype: AGENT
+purpose: Pause, unpause, list, add, or remove queue agents.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: [pause, unpause, list, add, remove]
+operations:
+  - id: agent.pause
+    title: Pause agent from queue
+    sourceAnchor: bkmrk-agent-%2F-pause-agent-
+    method: { value: GET, basis: example_url }
+    discriminator: { action: PAUSE }
+    observedParameters:
+      - { name: queue, example: "281", meaning: "queue number or id — not_documented" }
+      - { name: extension, example: 104-TENANTCODE }
+      - { name: tenant, example: TENANTCODE }
+      - { name: pausereason, example: Breakfast }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=AGENT&action=PAUSE&queue=281&extension=104-TENANTCODE&tenant=TENANTCODE&pausereason=Breakfast
+  - id: agent.listqueues
+    title: Get info for agent in all the queues
+    sourceAnchor: bkmrk-agent-%2F-get-info-for
+    method: { value: GET, basis: example_url }
+    discriminator: { action: LISTQUEUES }
+    observedParameters:
+      - { name: extension, example: 104-TENANTCODE }
+      - { name: tenant, example: TENANTCODE }
+      - { name: format, example: json }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=AGENT&action=LISTQUEUES&extension=104-TENANTCODE&tenant=TENANTCODE&format=json
+    notes:
+      - "LISTQUEUES is not among the table's actions (pause, unpause, list, add, remove); whether it equals 'list' is not documented. A-38"
+uncoveredTableActions: [unpause, list, add, remove]
+issues: [A-02, A-03, A-05, A-06, A-08, A-38]

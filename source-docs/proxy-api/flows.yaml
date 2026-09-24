@@ -1,0 +1,15 @@
+reqtype: FLOWS
+purpose: "Read flow state."
+documentation: table_only
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+sourceAnchor: bkmrk-request-types
+operations: not_documented # no parameters, actions, examples, or responses on the page
+method: not_documented
+parameters: not_documented
+requestBody: not_documented
+responses: not_documented
+errors: not_documented
+notes:
+  - "Overlaps INFO info=FLOW ('Get the state of a flow'); relationship not_documented."
+issues: [A-02, A-04, U-10]

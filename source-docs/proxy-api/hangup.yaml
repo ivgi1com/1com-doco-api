@@ -1,0 +1,24 @@
+reqtype: HANGUP
+purpose: Hang up a channel or extension.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: []
+operations:
+  - id: hangup.by-extension
+    title: Hangup a call by extension
+    sourceAnchor: bkmrk-hangup-%2F-hangup-a-ca
+    method: { value: GET, basis: example_url }
+    discriminator: {}
+    observedParameters:
+      - { name: extension, example: 103-TENANTCODE, meaning: "extension in EXT-TENANTCODE form (from example only)" }
+      - { name: tenant, example: TENANTCODE }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=HANGUP&extension=103-TENANTCODE&tenant=TENANTCODE
+    notes:
+      - "Table says 'channel or extension'; hanging up by channel has no parameter or example. A-04"
+      - "Disrupts a live call. A-31"
+issues: [A-02, A-04, A-05, A-06, A-31]

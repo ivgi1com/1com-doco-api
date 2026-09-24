@@ -1,0 +1,35 @@
+reqtype: SETTING
+purpose: Get or set tenant settings.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: [get, set]
+operations:
+  - id: setting.get
+    title: Get a tenant setting
+    sourceAnchor: bkmrk-get-a-tenant-setting
+    method: { value: GET, basis: example_url }
+    discriminator: { action: GET }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: code, example: VMAUTORECOVER, allowedValues: "not_documented (no list of setting codes)" }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&key=APIKEY&reqtype=SETTING&action=GET&code=VMAUTORECOVER
+  - id: setting.set
+    title: Set a tenant setting
+    sourceAnchor: bkmrk-set-a-tenant-setting
+    method: { value: GET, basis: example_url }
+    discriminator: { action: SET }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: code, example: VMAUTORECOVER }
+      - { name: value, example: "no" }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&key=APIKEY&reqtype=SETTING&action=SET&code=VMAUTORECOVER&value=no
+issues: [A-02, A-05, A-06, A-08]

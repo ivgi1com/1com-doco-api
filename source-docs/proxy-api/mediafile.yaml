@@ -1,0 +1,27 @@
+reqtype: MEDIAFILE
+purpose: Download media-file audio.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: []
+operations:
+  - id: mediafile.getaudio
+    title: Retrieve a media file by its ID
+    sourceAnchor: bkmrk-mediafile-%2F-retrieve
+    method: { value: GET, basis: example_url }
+    discriminator: { action: GETAUDIO }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: id, example: "19", meaning: not_documented }
+      - { name: objectid, example: "3619", meaning: not_documented }
+    requestBody: null
+    responses:
+      format: "binary audio (implied by purpose); content type / codec not_documented"
+      example: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=MEDIAFILE&tenant=TENANTCODE&id=19&action=GETAUDIO&objectid=3619
+    notes:
+      - "Heading says 'by its ID' but two IDs are passed. id=19 matches the RESPONSEPATH example id and 3619 matches its <VoiceFile>, suggesting a response-path context — not stated. A-26"
+      - "Overlaps with MANAGEDB object=MEDIAFILE action=getbinary; relationship not documented."
+issues: [A-02, A-26, A-37]

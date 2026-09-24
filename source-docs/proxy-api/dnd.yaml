@@ -1,0 +1,37 @@
+reqtype: DND
+purpose: Get or set do-not-disturb for an extension.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: [get, set]
+operations:
+  - id: dnd.get
+    title: Get the DND for an extension
+    sourceAnchor: bkmrk-dnd-%2F-get-the-dnd-fo
+    method: { value: GET, basis: example_url }
+    discriminator: { action: get }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: number, example: "100", meaning: not_documented }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&tenant=TENANTCODE&reqtype=DND&action=get&number=100
+  - id: dnd.set
+    title: Set the DND for an extension
+    sourceAnchor: bkmrk-dnd-%2Fset-the-dnd-for
+    method: { value: GET, basis: example_url }
+    discriminator: { action: set }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: number, example: "100" }
+      - { name: value, example: "on", allowedValues: not_documented }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&tenant=TENANTCODE&reqtype=DND&action=set&number=100&value=on
+    notes:
+      - State-changing operation expressed as a URL example (GET reading). A-06
+issues: [A-02, A-03, A-05, A-06, A-35]

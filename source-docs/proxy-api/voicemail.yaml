@@ -1,0 +1,80 @@
+reqtype: VOICEMAIL
+purpose: List mailboxes, list messages, download messages, mark read/unread, or delete messages.
+documentation: examples
+category: not_documented
+verification: { documented: true, implemented: false, tested: false, verified: false }
+tableActions: [list, messages, message, markread, markunread, delete]
+operations:
+  - id: voicemail.list
+    title: Get all voicemails for a tenant
+    sourceAnchor: bkmrk-get-all-voicemails-f
+    method: { value: GET, basis: example_url }
+    discriminator: { action: list }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=VOICEMAIL&tenant=TENANTCODE&action=list
+  - id: voicemail.messages
+    title: Get info about voicemails in a mailbox
+    sourceAnchor: bkmrk-get-info-about-voice
+    method: { value: GET, basis: example_url }
+    discriminator: { action: messages }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: mailbox, example: "102" }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=VOICEMAIL&tenant=TENANTCODE&mailbox=102&action=messages
+  - id: voicemail.message
+    title: Get the binary audio for a message
+    sourceAnchor: bkmrk-get-the-binary-audio
+    method: { value: GET, basis: example_url }
+    discriminator: { action: message }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: mailbox, example: "102" }
+      - { name: msgid, example: 1475685709-00000004 }
+    requestBody: null
+    responses:
+      format: "binary audio; content type / codec not_documented"
+      example: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=VOICEMAIL&tenant=TENANTCODE&mailbox=102&action=message&msgid=1475685709-00000004
+  - id: voicemail.markread
+    title: Mark a message as read
+    sourceAnchor: bkmrk-mark-a-message-as-re
+    method: { value: GET, basis: example_url }
+    discriminator: { action: markread }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: mailbox, example: "1000" }
+      - { name: msgid, example: 1543267778-00000007 }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=VOICEMAIL&tenant=TENANTCODE&mailbox=1000&action=markread&msgid=1543267778-00000007
+  - id: voicemail.markunread
+    title: Mark a message as not read
+    sourceAnchor: bkmrk-mark-a-message-as-no
+    method: { value: GET, basis: example_url }
+    discriminator: { action: markunread }
+    observedParameters:
+      - { name: tenant, example: TENANTCODE }
+      - { name: mailbox, example: "1000" }
+      - { name: msgid, example: 1543267778-00000007 }
+    requestBody: null
+    responses: not_documented
+    errors: not_documented
+    examples:
+      - https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&reqtype=VOICEMAIL&tenant=TENANTCODE&action=markunread&mailbox=1000&msgid=1543267778-00000007
+uncoveredTableActions: [delete]
+notes:
+  - "Mailbox folder selection (e.g. INBOX vs Old) is not documented for this reqtype; MANAGEDB VOICEMAIL LISTMESSAGES uses mailbox=INBOX with mailboxuser, a different parameter meaning. A-05"
+issues: [A-02, A-03, A-05, A-06, A-37, A-38]

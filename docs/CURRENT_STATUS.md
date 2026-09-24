@@ -1,51 +1,72 @@
 # Current Status
 
 Current phase:
-**Phase 2 — Design Prototype: COMPLETE AND APPROVED** (approved 2026-09-24)
+**Phase 3 — Proxy API Audit: COMPLETE AND APPROVED** (approved 2026-09-24, gate option A)
 
 Current branch:
-`phase/design-prototype` (from `main` @ `dc5f5bc`, tag `v0.1-design-approved`)
+`phase/proxy-api-audit` (from `main` @ `1980a72`)
 
-Completed:
-- Phase 1 approved, tagged, and merged to `main` (fast-forward, with user approval)
-- Phase 2 decisions (see DECISIONS.md, 2026-09-24 "Phase 2 setup" and "Phase 2 approval")
-- App bootstrapped: Next 16.3.6, React 19.2.8, TS, Tailwind 4.3.3, next-intl 4.14.7, shiki 4, lucide-react, vitest, @playwright/test 1.63.0 (exact versions recorded in `docs/ENVIRONMENT.md`)
-- Design tokens in `src/app/globals.css` (from MASTER.md), theme init script, en/he routing via `src/proxy.ts`
-- Message catalogs `messages/en.json` + `messages/he.json` (Hebrew is a DRAFT; keys are in sync between locales)
-- Content model `src/content/types.ts` + synthetic Sample API (`src/content/sample-api.ts`) + guide registry
-- Shell: header, mobile drawer, search palette (`Ctrl K` / `/`), theme toggle, locale switch, sidebar, inert Console
-- Reference: endpoint view, param list, request panel, response examples, code tabs/block/copy
-- JSON viewer (`src/components/json/`): collapsible tree, per-node copy value/path, long-string truncation, array pagination, search, Raw/Tree toggle
-- Playground (`src/components/playground/` + `[locale]/playground/`): mode bar with confirm-gated Live/Demo switching, endpoint picker, request builder (validation, code preview), response viewer (telemetry, Body/Headers, loading/empty/error states); desktop 2/3-pane layout, mobile 3-step flow
-- Routes: `[locale]/{layout,page}` (home), `reference/{layout,page,[api]/page,[api]/[endpoint]/page}`, `guides/{layout,page,[slug]/page}` (with TOC rail), `playground/page`, `changelog/page`, `not-found`, `[...rest]` (catch-all so the locale-aware not-found page actually renders)
-- `package.json` scripts: `typecheck`, `test`, `test:e2e`, `check`; `vitest.config.mts`, `playwright.config.ts` (Chromium + WebKit)
+Previous phases:
+- Phase 1: approved, tagged `v0.1-design-approved`, merged.
+- Phase 2: approved 2026-09-24, tagged `v0.2-shell-approved` (`20597af`),
+  fast-forwarded into `main` at Phase 3 start (see DECISIONS.md "Phase 3 setup").
 
-Tests / validation completed (all passing at approval):
-- Unit tests: `tests/unit/{json-path,code-samples,search-index}.test.ts` — 27 tests
-- `npm run check` (typecheck + lint + unit tests), `npm run build`, `npm run test:e2e` all green
-- Playwright: `tests/e2e/smoke.spec.ts` — 58 tests (desktop/tablet/mobile × en/he × console-error-free load, plus named interactions from `docs/TESTING.md`), passing on both Chromium and WebKit
-- Manual Playwright visual pass (desktop 1440/1024/768/390, en+he, light+dark, zero console errors) — caught and fixed the not-found routing bug below; not committed as screenshots
-- `code-review` skill (medium, `--target=main`) run as final review; findings fixed (race condition in Playground send/mode-switch, malformed curl samples, Python-literal string corruption, single-occurrence path substitution, redundant search-index rebuild) — see `docs/SESSION_HANDOFF.md` for detail
-- App launched (`npm run dev`) and opened in a local browser for direct human review
+Phase 3 work done (committed on `phase/proxy-api-audit` at approval):
+- Evidence snapshots `source-docs/raw/`: the vendor page (HTML + Markdown
+  export) and the OpenAPI chapter index, with hashes in `raw/SOURCES.md`.
+  CSRF token redacted.
+- Normalized data `source-docs/proxy-api/`: `_common.yaml` plus one YAML
+  per reqtype (39), with conventions in `README.md`.
+- `source-docs/inventory.json`, generated from the YAML:
+  - 39 reqtypes: 16 with examples, 23 table-only
+  - 103 documented operations
+  - 38 OpenAPI pages indexed as out of scope
+  - implemented/tested/verified = 0
+- `source-docs/DOCS_AUDIT.md`: 39 findings (A-01…A-39), completeness
+  matrix, content-model fit analysis, Phase 4 candidate ranking.
+- `source-docs/unresolved.md`: 11 open decisions (U-01…U-11), 6 of them
+  blocking Phase 4.
+- Nothing under `src/` changed. The portal still shows only the synthetic
+  Sample API.
 
-Known issues / limitations (flagged, not silently resolved):
-- `impeccable` automated UI audit could not run: it requires `PRODUCT.md`, and DECISIONS.md already recorded skipping that setup as outside Phase 1's approved scope. A manual audit was done instead against `design-system/MASTER.md`'s own checklists.
-- `.claude/skills/README.md` still routes work to unstarted skills (UI/UX Pro Max, Vercel `react-best-practices`/`web-design-guidelines`/`writing-guidelines`); `code-review` was used as the fallback for the React-best-practice review.
-- Home page's 3-card grid (Reference/Guides/Playground) is close to the "identical card grid" pattern MASTER.md's own Avoid list flags — kept as a deliberate, defensible choice (3 genuinely different destinations, no eyebrow/hero-metric anti-patterns).
-- MASTER.md has an internal tension between "controls 36px tall (32px in dense Playground mode)" and the general "touch targets ≥ 40px" responsive rule; Playground's dense controls (filter input, param fields, mode-switch button) are 32px, reading the dense-mode exception as controlling.
-- SVG logo still not available (raster PNG only, per MASTER.md "Still open").
-- Console link destination still undecided (button stays inert).
-- Hebrew content scope (guide/reference prose) still deferred to Phase 3/4.
-- Reference screenshots from Phase 1 research: still not committed (per existing decision).
-- Minor acknowledged-not-fixed code-quality note: `use-playground.ts`'s sessionStorage-backed API-key sync duplicates the localStorage-sync pattern already in `shell/theme.ts` (different pub/sub mechanism). Not a bug; not addressed to avoid touching `theme.ts` for a non-bug.
-- During browser verification, a stale `next dev` process from an earlier session left a corrupted internal worker pool (`Jest worker encountered 2 child process exceptions`) on port 3000; killed and restarted cleanly. Not an application defect — a leftover local dev-server process, resolved.
+Validation:
+- Scripted cross-checks:
+  - YAML parses
+  - 169 anchors resolve
+  - file set = reqtype table
+  - 124/124 example URLs present verbatim
+  - 23/23 `jsondata` payloads exact
+  - no verification flag beyond documented
+- Manual 5-reqtype spot-check: no discrepancies.
+- Secrets scan: placeholders only.
+- `npm run check` (typecheck + lint + 27 unit tests) and `npm run build`
+  pass. No UI change, so no Playwright run.
+
+Key audit conclusions:
+- The source documents request shapes only. No error model; one real
+  response sample (its XML variant is malformed); no parameter contracts;
+  HTTP method never stated.
+- Vendor marks `proxyapi.php` legacy.
+- Security inputs for Phase 5: API key in the query string; JSONP
+  `callback`; SQL-shaped `filter`; a list of high-impact reqtypes (A-29…A-31,
+  A-39).
+- The Phase 2 REST-shaped `Endpoint` type does not fit reqtype-discriminated
+  operations. Decision needed (U-07; recommendation: extend the API-neutral
+  model).
+
+Known issues / limitations:
+- `.next/dev/types/routes.d.ts` was found stale (zero routes), which broke
+  `tsc`. It was regenerated by briefly running `next dev`. The trigger was
+  most likely a file watcher firing during the `git checkout main` step;
+  not proven. See SESSION_HANDOFF.md.
+- All Phase 2 carry-over items remain open (SVG logo, Console link, Hebrew
+  scope → Phase 4, screenshots, design-doc tensions).
 
 Blocked:
-- None
+- Phase 4 cannot start truthfully until U-01, U-04 (or accept "not
+  documented"), U-06, U-07, U-09 and U-11 are decided.
 
 Next phase:
-**Phase 3 — Proxy API Audit** (`docs/phases/03-proxy-api-audit.md`)
-
-Status: **Phase 3 has NOT started and must NOT begin without explicit user approval.** This is a separate approval from the Phase 2 approval recorded above.
+**Phase 4 — One Real Proxy API Endpoint** (`docs/phases/04-one-endpoint.md`). Planning only (user chose gate option A); implementation requires separate approval of the Phase 4 plan.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

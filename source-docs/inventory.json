@@ -1,12 +1,1428 @@
 {
-  "status": "not_started",
+  "status": "audited",
   "api": "proxy",
-  "source_root": "TBD",
-  "pages_discovered": 0,
-  "pages_processed": 0,
-  "endpoints_discovered": 0,
-  "endpoints_documented": 0,
+  "auditedAt": "2026-09-24",
+  "source_root": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+  "source_snapshot": "source-docs/raw/SOURCES.md",
+  "source_revision": "BookStack revision #6, updated 2026-06-03 10:21:49 UTC",
+  "counting_unit": "endpoint = reqtype (39 in the vendor table); operation = documented reqtype+discriminator combination",
+  "pages_discovered": 39,
+  "pages_in_scope": 1,
+  "pages_processed": 1,
+  "endpoints_discovered": 39,
+  "endpoints_documented": 39,
+  "endpoints_with_examples": 16,
+  "endpoints_table_only": 23,
+  "operations_documented": 103,
+  "endpoints_implemented": 0,
   "endpoints_tested": 0,
   "endpoints_verified": 0,
-  "items": []
+  "items": [
+    {
+      "id": "proxy.countpeers",
+      "kind": "reqtype",
+      "reqtype": "COUNTPEERS",
+      "title": "Count peers by node and optionally by tenant.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/countpeers.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.countchannels",
+      "kind": "reqtype",
+      "reqtype": "COUNTCHANNELS",
+      "title": "Count active channels globally, by node, or by tenant.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/countchannels.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.chansippeers",
+      "kind": "reqtype",
+      "reqtype": "CHANSIPPEERS",
+      "title": "Return registered chan_sip peers across the cluster.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/chansippeers.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.blfs",
+      "kind": "reqtype",
+      "reqtype": "BLFS",
+      "title": "Return BLF status for peers and flows.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/blfs.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.dnd",
+      "kind": "reqtype",
+      "reqtype": "DND",
+      "title": "Get or set do-not-disturb for an extension.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/dnd.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "dnd.get",
+        "dnd.set"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-06",
+        "A-35"
+      ]
+    },
+    {
+      "id": "proxy.flows",
+      "kind": "reqtype",
+      "reqtype": "FLOWS",
+      "title": "Read flow state.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/flows.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.channel",
+      "kind": "reqtype",
+      "reqtype": "CHANNEL",
+      "title": "Read details for one channel.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/channel.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.channels",
+      "kind": "reqtype",
+      "reqtype": "CHANNELS",
+      "title": "List active channels.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/channels.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.getcurrentcalls",
+      "kind": "reqtype",
+      "reqtype": "GETCURRENTCALLS",
+      "title": "Show current calls for a phone or tenant.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/getcurrentcalls.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.phonebooks",
+      "kind": "reqtype",
+      "reqtype": "PHONEBOOKS",
+      "title": "List available phonebooks.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/phonebooks.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.phonebook",
+      "kind": "reqtype",
+      "reqtype": "PHONEBOOK",
+      "title": "Query, add, delete, clean, or dump phonebook records.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/phonebook.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "phonebook.query",
+        "phonebook.add"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-07",
+        "A-08",
+        "A-10",
+        "A-38"
+      ]
+    },
+    {
+      "id": "proxy.info",
+      "kind": "reqtype",
+      "reqtype": "INFO",
+      "title": "Read status, CDRs, recordings, DIDs, queues, agents, variables, flows, and other reporting data.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/info.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 11,
+      "operations": [
+        "info.simplecdrs",
+        "info.cdrs",
+        "info.dids",
+        "info.flow",
+        "info.extstate",
+        "info.extensions",
+        "info.ivrlogs",
+        "info.variable",
+        "info.recording",
+        "info.transcript",
+        "info.queuelogs"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-08",
+        "A-10",
+        "A-11",
+        "A-23",
+        "A-24",
+        "A-25",
+        "A-37",
+        "A-38"
+      ]
+    },
+    {
+      "id": "proxy.agent",
+      "kind": "reqtype",
+      "reqtype": "AGENT",
+      "title": "Pause, unpause, list, add, or remove queue agents.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/agent.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "agent.pause",
+        "agent.listqueues"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-06",
+        "A-08",
+        "A-38"
+      ]
+    },
+    {
+      "id": "proxy.atxtransfer",
+      "kind": "reqtype",
+      "reqtype": "ATXTRANSFER",
+      "title": "Perform attended transfer for a channel.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/atxtransfer.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.campaign",
+      "kind": "reqtype",
+      "reqtype": "CAMPAIGN",
+      "title": "Start, stop, pause, resume, or maintain campaign numbers.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/campaign.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.dial",
+      "kind": "reqtype",
+      "reqtype": "DIAL",
+      "title": "Originate a call from a source and connect it to a destination.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/dial.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "dial.originate"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-05",
+        "A-06",
+        "A-28",
+        "A-31"
+      ]
+    },
+    {
+      "id": "proxy.fax",
+      "kind": "reqtype",
+      "reqtype": "FAX",
+      "title": "Send, list, or download faxes.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/fax.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 3,
+      "operations": [
+        "fax.send",
+        "fax.list",
+        "fax.download"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-16",
+        "A-17",
+        "A-31",
+        "A-37"
+      ]
+    },
+    {
+      "id": "proxy.hangup",
+      "kind": "reqtype",
+      "reqtype": "HANGUP",
+      "title": "Hang up a channel or extension.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/hangup.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "hangup.by-extension"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-05",
+        "A-06",
+        "A-31"
+      ]
+    },
+    {
+      "id": "proxy.mediafile",
+      "kind": "reqtype",
+      "reqtype": "MEDIAFILE",
+      "title": "Download media-file audio.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/mediafile.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "mediafile.getaudio"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-26",
+        "A-37"
+      ]
+    },
+    {
+      "id": "proxy.queue",
+      "kind": "reqtype",
+      "reqtype": "QUEUE",
+      "title": "List, add, remove, clean, or log queue members.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/queue.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "queue.list",
+        "queue.add"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-06",
+        "A-38"
+      ]
+    },
+    {
+      "id": "proxy.queuereset",
+      "kind": "reqtype",
+      "reqtype": "QUEUERESET",
+      "title": "Reset queue statistics.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/queuereset.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.reboot",
+      "kind": "reqtype",
+      "reqtype": "REBOOT",
+      "title": "Reboot one or more peers.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/reboot.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.responsepath",
+      "kind": "reqtype",
+      "reqtype": "RESPONSEPATH",
+      "title": "Read response-path results.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/responsepath.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "responsepath.getlast"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-12",
+        "A-13"
+      ]
+    },
+    {
+      "id": "proxy.setflow",
+      "kind": "reqtype",
+      "reqtype": "SETFLOW",
+      "title": "Set a flow state or variable value.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/setflow.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.sms",
+      "kind": "reqtype",
+      "reqtype": "SMS",
+      "title": "Send an SMS.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/sms.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.transfer",
+      "kind": "reqtype",
+      "reqtype": "TRANSFER",
+      "title": "Transfer a channel.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/transfer.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.unregister",
+      "kind": "reqtype",
+      "reqtype": "UNREGISTER",
+      "title": "Unregister one or more peers.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/unregister.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.usergroup",
+      "kind": "reqtype",
+      "reqtype": "USERGROUP",
+      "title": "Manage tenants and users assigned to user groups.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/usergroup.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.virtualext",
+      "kind": "reqtype",
+      "reqtype": "VIRTUALEXT",
+      "title": "Manage members of a virtual extension.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/virtualext.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.voicemail",
+      "kind": "reqtype",
+      "reqtype": "VOICEMAIL",
+      "title": "List mailboxes, list messages, download messages, mark read/unread, or delete messages.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/voicemail.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 5,
+      "operations": [
+        "voicemail.list",
+        "voicemail.messages",
+        "voicemail.message",
+        "voicemail.markread",
+        "voicemail.markunread"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-06",
+        "A-37",
+        "A-38"
+      ]
+    },
+    {
+      "id": "proxy.setting",
+      "kind": "reqtype",
+      "reqtype": "SETTING",
+      "title": "Get or set tenant settings.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/setting.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "setting.get",
+        "setting.set"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-05",
+        "A-06",
+        "A-08"
+      ]
+    },
+    {
+      "id": "proxy.countcalls",
+      "kind": "reqtype",
+      "reqtype": "COUNTCALLS",
+      "title": "Count running calls.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/countcalls.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "countcalls.system"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "U-09"
+      ]
+    },
+    {
+      "id": "proxy.licensedays",
+      "kind": "reqtype",
+      "reqtype": "LICENSEDAYS",
+      "title": "Return days before license expiration.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/licensedays.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.balance",
+      "kind": "reqtype",
+      "reqtype": "BALANCE",
+      "title": "Add or subtract tenant balance.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/balance.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.cdr",
+      "kind": "reqtype",
+      "reqtype": "CDR",
+      "title": "Get or update fields on a CDR row.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/cdr.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 2,
+      "operations": [
+        "cdr.get",
+        "cdr.update"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-05",
+        "A-06",
+        "A-22"
+      ]
+    },
+    {
+      "id": "proxy.managedb",
+      "kind": "reqtype",
+      "reqtype": "MANAGEDB",
+      "title": "Read or change supported PBX database objects through object/action parameters.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/managedb.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 66,
+      "operations": [
+        "managedb.customtypes.list",
+        "managedb.custom.list",
+        "managedb.custom.get",
+        "managedb.custom.add",
+        "managedb.custom.update",
+        "managedb.tenant.list",
+        "managedb.tenant.get",
+        "managedb.tenant.add",
+        "managedb.tenant.update",
+        "managedb.phone.list",
+        "managedb.phone.get",
+        "managedb.phone.add",
+        "managedb.phone.update",
+        "managedb.mediafile.list",
+        "managedb.mediafile.get",
+        "managedb.mediafile.getbinary",
+        "managedb.mediafile.update",
+        "managedb.mediafile.updatebinary",
+        "managedb.huntlist.get",
+        "managedb.huntlist.getextensions",
+        "managedb.huntlist.setextensions",
+        "managedb.extension.list",
+        "managedb.extension.get",
+        "managedb.extension.delete",
+        "managedb.extension.update",
+        "managedb.extension.add",
+        "managedb.user.list",
+        "managedb.user.get",
+        "managedb.user.add",
+        "managedb.conference.add",
+        "managedb.provider.list",
+        "managedb.provider.get",
+        "managedb.provider.update",
+        "managedb.provider.add",
+        "managedb.routingprofile.list",
+        "managedb.routingprofile.get",
+        "managedb.routingprofile.listroutes",
+        "managedb.routingprofile.add",
+        "managedb.routingprofile.update",
+        "managedb.route.list",
+        "managedb.route.get",
+        "managedb.route.add",
+        "managedb.route.update",
+        "managedb.did.list",
+        "managedb.did.get",
+        "managedb.did.update",
+        "managedb.destination.list",
+        "managedb.destination.replace",
+        "managedb.ivr.list",
+        "managedb.ivr.get",
+        "managedb.ivr.getdestinations",
+        "managedb.condition.list",
+        "managedb.condition.getdestinations",
+        "managedb.condition.get",
+        "managedb.condition.getextendedinfos",
+        "managedb.condition.replaceextendedinfos",
+        "managedb.voicemail.list",
+        "managedb.voicemail.listmessages",
+        "managedb.voicemail.getmessagerecording",
+        "managedb.voicemail.add",
+        "managedb.voicemail.delete",
+        "managedb.phonephonebook.list",
+        "managedb.phonephonebook.get",
+        "managedb.queue.list",
+        "managedb.queue.add",
+        "managedb.queue.delete"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-03",
+        "A-05",
+        "A-06",
+        "A-08",
+        "A-09",
+        "A-14",
+        "A-15",
+        "A-16",
+        "A-18",
+        "A-19",
+        "A-20",
+        "A-21",
+        "A-31",
+        "A-32",
+        "A-33",
+        "A-35",
+        "A-37",
+        "A-39",
+        "U-09"
+      ]
+    },
+    {
+      "id": "proxy.checkauth",
+      "kind": "reqtype",
+      "reqtype": "CHECKAUTH",
+      "title": "Validate a username and password and return privilege information.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/checkauth.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "proxy.authtoken",
+      "kind": "reqtype",
+      "reqtype": "AUTHTOKEN",
+      "title": "Generate or reset one-time or expiring authentication tokens.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "normalizedFile": "source-docs/proxy-api/authtoken.yaml",
+      "documentation": "examples",
+      "operationsDocumented": 1,
+      "operations": [
+        "authtoken.generate"
+      ],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-27",
+        "A-29",
+        "A-31"
+      ]
+    },
+    {
+      "id": "proxy.getwebrtcauth",
+      "kind": "reqtype",
+      "reqtype": "GETWEBRTCAUTH",
+      "title": "Authenticate an extension user and return WebRTC details.",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples",
+      "sourceAnchor": "bkmrk-request-types",
+      "normalizedFile": "source-docs/proxy-api/getwebrtcauth.yaml",
+      "documentation": "table_only",
+      "operationsDocumented": 0,
+      "operations": [],
+      "status": "documented",
+      "verification": {
+        "documented": true,
+        "implemented": false,
+        "tested": false,
+        "verified": false
+      },
+      "issues": [
+        "A-02",
+        "A-04",
+        "A-31",
+        "U-10"
+      ]
+    },
+    {
+      "id": "openapi.overview-and-examples",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/overview-and-examples",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.extension-state",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/extension-state",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.auth-token",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/auth-token",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.dial",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/dial",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.cdr",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/cdr",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.simple-cdr",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/simple-cdr",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.extension",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/extension",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.tenant",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/tenant",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.user",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/user",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.user-profile",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/user-profile",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.routing-profile",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/routing-profile",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.provider",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/provider",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.voicemail",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/voicemail",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.ivr",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/ivr",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.custom-destination",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/custom-destination",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.condition",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/condition",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.hunt-list",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/hunt-list",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.did",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/did",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.queue",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/queue",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.setting",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/setting",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.media-file",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/media-file",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.music-on-hold",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/music-on-hold",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.paging-group",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/paging-group",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.conference-room",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/conference-room",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.flow",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/flow",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.tenant-variable",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/tenant-variable",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.disa",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/disa",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.caller-id-blacklist",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/caller-id-blacklist",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.campaign",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/campaign",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.campaign-number",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/campaign-number",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.cron-job",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/cron-job",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.feature-code",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/feature-code",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.short-number",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/short-number",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.phone-book",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/phone-book",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.phone-book-entry",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/phone-book-entry",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.provisioning-phone",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/provisioning-phone",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.ai-analysis",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/ai-analysis",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    },
+    {
+      "id": "openapi.ai-logs",
+      "kind": "page",
+      "api": "open",
+      "sourceUrl": "https://manual.mirtapbx.com/books/api/page/ai-logs",
+      "status": "out_of_scope",
+      "note": "Indexed only (Phase 3 scope decision); audit in Phase 8."
+    }
+  ]
 }

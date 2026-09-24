@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="en-GB"
+      dir="ltr"
+      class="">
+<head>
+    <title>Old ProxyAPI Legacy pr... | MiRTA PBX</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="token" content="REDACTED-SESSION-CSRF-TOKEN">
+    <meta name="base-url" content="https://manual.mirtapbx.com">
+    <meta name="theme-color" content="#206ea7"/>
+
+    <!-- Social Cards Meta -->
+    <meta property="og:title" content="Old ProxyAPI Legacy pr... | MiRTA PBX">
+    <meta property="og:url" content="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples">
+        <meta property="og:description" content="Overview and Examples
+proxyapi.php is the legacy MiRTA PBX HTTP API. It is still useful for integrat...">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://manual.mirtapbx.com/dist/styles.css?version=v26.05">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="256x256" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/mirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/nmDmirtapbxfavicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/nmDmirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/Hu6mirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/myHmirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/Wutmirtapbxfavicon.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="https://manual.mirtapbx.com/manifest.json" crossorigin="use-credentials">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- OpenSearch -->
+    <link rel="search" type="application/opensearchdescription+xml" title="MiRTA PBX" href="https://manual.mirtapbx.com/opensearch.xml">
+
+    <!-- Custom Styles & Head Content -->
+    <style>
+    :root {
+        --color-primary: #206ea7;
+        --color-primary-light: rgba(32,110,167,0.15);
+        --color-link: #206ea7;
+        --color-bookshelf: #a94747;
+        --color-book: #077b70;
+        --color-chapter: #af4d0d;
+        --color-page: #206ea7;
+        --color-page-draft: #7e50b1;
+    }
+    :root.dark-mode {
+        --color-primary: #195785;
+        --color-primary-light: rgba(32,110,167,0.15);
+        --color-link: #429fe3;
+        --color-bookshelf: #ff5454;
+        --color-book: #389f60;
+        --color-chapter: #ee7a2d;
+        --color-page: #429fe3;
+        --color-page-draft: #a66ce8;
+    }
+</style>
+    <!-- Start: custom user content -->
+
+
+<!-- End: custom user content -->
+
+    
+    <!-- Translations for JS -->
+    </head>
+<body
+          class=" tri-layout ">
+
+        <a class="px-m py-s skip-to-content-link print-hidden" href="#main-content">Skip to main content</a>    <div component="notification"
+     option:notification:type="success"
+     option:notification:auto-hide="true"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification pos"
+     role="alert">
+    <svg class="svg-icon" data-icon="check-circle" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>
+
+<div component="notification"
+     option:notification:type="warning"
+     option:notification:auto-hide="false"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification warning"
+     role="alert">
+    <svg class="svg-icon" data-icon="info" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 17h2v-6h-2zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8M11 9h2V7h-2z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>
+
+<div component="notification"
+     option:notification:type="error"
+     option:notification:auto-hide="false"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification neg"
+     role="alert">
+    <svg class="svg-icon" data-icon="danger" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27zM12 17.3c-.72 0-1.3-.58-1.3-1.3s.58-1.3 1.3-1.3 1.3.58 1.3 1.3-.58 1.3-1.3 1.3m1-4.3h-2V7h2z"/><path fill="none" d="M0 0h24v24H0z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>    <header id="header" component="header-mobile-toggle" class="primary-background px-xl grid print-hidden">
+    <div class="flex-container-row justify-space-between gap-s items-center">
+        <a href="https://manual.mirtapbx.com" data-shortcut="home_view" class="logo">
+            <img class="logo-image" src="https://manual.mirtapbx.com/uploads/images/system/2026-06/smalllogo.png" alt="Logo">
+                <span class="logo-text">MiRTA PBX</span>
+    </a>        <div class="hide-over-l py-s">
+            <button type="button"
+                    refs="header-mobile-toggle@toggle"
+                    title="Expand Header Menu"
+                    aria-expanded="false"
+                    class="mobile-menu-toggle"><svg class="svg-icon" data-icon="more" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"/></svg></button>
+        </div>
+    </div>
+
+    <div class="flex-container-column items-center justify-center hide-under-l">
+            <form component="global-search" action="https://manual.mirtapbx.com/search" method="GET" class="search-box" role="search" tabindex="0">
+    <button id="header-search-box-button"
+            refs="global-search@button"
+            type="submit"
+            aria-label="Search"
+            tabindex="-1"><svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg></button>
+    <input id="header-search-box-input"
+           refs="global-search@input"
+           type="text"
+           name="term"
+           data-shortcut="global_search"
+           autocomplete="off"
+           aria-label="Search" placeholder="Search"
+           value="">
+    <div refs="global-search@suggestions" class="global-search-suggestions card">
+        <div refs="global-search@loading" class="text-center px-m global-search-loading"><div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div></div>
+        <div refs="global-search@suggestion-results" class="px-m"></div>
+        <button class="text-button card-footer-link" type="submit">View All</button>
+    </div>
+</form>        </div>
+
+    <nav refs="header-mobile-toggle@menu" class="header-links">
+        <div class="links text-center">
+            <a class="hide-over-l" href="https://manual.mirtapbx.com/search"><svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>Search</a>
+            <a href="https://manual.mirtapbx.com/shelves"
+           data-shortcut="shelves_view"><svg class="svg-icon" data-icon="bookshelf" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path fill="none" d="M1.088 2.566h17.42v17.42H1.088z"/><path d="M4 20.058h15.892V22H4z"/><path fill="none" d="M2.902 1.477h17.42v17.42H2.903z"/><path d="M6.658 3.643V18h-2.38V3.643zm4.668 0V18H8.947V3.643zm3.396.213 5.613 13.214-2.19.93-5.613-13.214z"/></svg>Shelves</a>
+        <a href="https://manual.mirtapbx.com/books" data-shortcut="books_view"><svg class="svg-icon" data-icon="books" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19.252 1.708H8.663a1.77 1.77 0 0 0-1.765 1.764v14.12c0 .97.794 1.764 1.765 1.764h10.59a1.77 1.77 0 0 0 1.764-1.765V3.472a1.77 1.77 0 0 0-1.765-1.764M8.663 3.472h4.412v7.06L10.87 9.208l-2.206 1.324z"/><path fill="none" d="M30.61 3.203h24v24h-24z"/><path d="M2.966 6.61v14c0 1.1.9 2 2 2h14v-2h-14v-14z"/></svg>Books</a>
+        
+        <a href="https://manual.mirtapbx.com/login"><svg class="svg-icon" data-icon="login" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M21 3.01H3c-1.1 0-2 .9-2 2V9h2V4.99h18v14.03H3V15H1v4.01c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98v-14a2 2 0 0 0-2-2M11 16l4-4-4-4v3H1v2h10z"/></svg>Log in</a>
+        </div>
+            </nav>
+</header>
+
+    <div id="content" components="tri-layout" class="block">
+        
+    <div class="tri-layout-mobile-tabs print-hidden">
+        <div class="grid half no-break no-gap">
+            <button type="button"
+                    refs="tri-layout@tab"
+                    data-tab="info"
+                    aria-label="Tab: Show Secondary Information"
+                    class="tri-layout-mobile-tab px-m py-m text-link">
+                Info
+            </button>
+            <button type="button"
+                    refs="tri-layout@tab"
+                    data-tab="content"
+                    aria-label="Tab: Show Primary Content"
+                    aria-selected="true"
+                    class="tri-layout-mobile-tab px-m py-m text-link active">
+                Content
+            </button>
+        </div>
+    </div>
+
+    <div refs="tri-layout@container" class="tri-layout-container"  >
+
+        <div class="tri-layout-sides print-hidden">
+            <div refs="tri-layout@sidebar-scroll-container" class="tri-layout-sides-content">
+                <div class="tri-layout-right print-hidden">
+                    <aside refs="tri-layout@sidebar-scroll-container" class="tri-layout-right-contents">
+                            <div id="page-details" class="entity-details mb-xl">
+    <h5>Details</h5>
+    <div class="blended-links">
+        <div class="entity-meta">
+    
+            <a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/revisions" class="entity-meta-item">
+            <svg class="svg-icon" data-icon="history" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8z"/></svg>Revision #6
+        </a>
+    
+    
+            <div class="entity-meta-item">
+            <svg class="svg-icon" data-icon="star" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <div>
+                Created <span title="2026-06-02 21:58:35 UTC">3 months ago</span> by <a href='https://manual.mirtapbx.com/user/admin'>Admin</a>
+            </div>
+        </div>
+    
+            <div class="entity-meta-item">
+            <svg class="svg-icon" data-icon="edit" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <div>
+                Updated <span title="2026-06-03 10:21:49 UTC">3 months ago</span> by <a href='https://manual.mirtapbx.com/user/admin'>Admin</a>
+            </div>
+        </div>
+    
+    
+    </div>
+        
+        
+        
+            </div>
+</div>    <div id="actions" class="actions mb-xl">
+    <h5>Actions</h5>
+
+    <div class="icon-list text-link">
+
+        
+                                            <a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/revisions" data-shortcut="revisions" class="icon-list-item">
+                <span><svg class="svg-icon" data-icon="history" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8z"/></svg></span>
+                <span>Revisions</span>
+            </a>
+                        
+        <hr class="primary-background"/>
+
+                                    <div component="dropdown"
+     class="dropdown-container"
+     id="export-menu">
+
+    <button refs="dropdown@toggle"
+         class="icon-list-item text-link"
+         aria-haspopup="true"
+         aria-expanded="false"
+         aria-label="Export"
+         data-shortcut="export">
+        <span><svg class="svg-icon" data-icon="export" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3z"/></svg></span>
+        <span>Export</span>
+    </button>
+
+    <ul refs="dropdown@menu" class="wide dropdown-menu" role="menu">
+        <li><a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/export/html" target="_blank" role="menuitem" class="label-item"><span>Contained Web File</span><span>.html</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/export/pdf" target="_blank" role="menuitem" class="label-item"><span>PDF File</span><span>.pdf</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/export/plaintext" target="_blank" role="menuitem" class="label-item"><span>Plain Text File</span><span>.txt</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/export/markdown" target="_blank" role="menuitem" class="label-item"><span>Markdown File</span><span>.md</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples/export/zip" target="_blank" role="menuitem" class="label-item"><span>Portable ZIP</span><span>.zip</span></a></li>
+    </ul>
+
+</div>
+            </div>
+
+</div>                    </aside>
+                </div>
+
+                <div class="tri-layout-left print-hidden" id="sidebar">
+                    <aside refs="tri-layout@sidebar-scroll-container" class="tri-layout-left-contents">
+                                    <nav id="page-navigation" class="mb-xl" aria-label="Page Navigation">
+        <h5>Page Navigation</h5>
+        <div class="body">
+            <ul class="sidebar-page-nav menu">
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-overview" class="text-limit-lines-1 block">Overview and Examples</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-common-parameters" class="text-limit-lines-1 block">Common Parameters</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-request-types" class="text-limit-lines-1 block">Request Types</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-using-post-jsondata" class="text-limit-lines-1 block">Using POST jsondata</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-examples" class="text-limit-lines-1 block">Examples</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---simplecdrs-%2F-" class="text-limit-lines-1 block">INFO - SIMPLECDRS / Get the list of calls</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---cdrs-%2F-get-th" class="text-limit-lines-1 block">INFO - CDRS / Get the list of calls</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---dids-%2F-get-th" class="text-limit-lines-1 block">INFO - DIDS / Get the list of DIDs for one tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---dids-%2F-get-th-1" class="text-limit-lines-1 block">INFO - DIDS / Get the list of DIDs for all tenants</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---flow-%2F-get-th" class="text-limit-lines-1 block">INFO - Flow / Get the state of a flow</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---extension-%2F-g" class="text-limit-lines-1 block">INFO - Extension / Get the state of a extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---extensions-%2F-" class="text-limit-lines-1 block">INFO - Extensions / Get the list of extensions</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---extensions-%2F--1" class="text-limit-lines-1 block">INFO - Extensions / Get an extension by id</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---extensions-%2F--2" class="text-limit-lines-1 block">INFO - Extensions / Get an extension by number</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---ivr-logs-%2F-ge" class="text-limit-lines-1 block">INFO - IVR Logs / Get the IVR logs</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info---variable-%2F-ge" class="text-limit-lines-1 block">INFO - Variable / Get the value of a variable</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-dnd-%2F-get-the-dnd-fo" class="text-limit-lines-1 block">DND / Get the DND for an extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-dnd-%2Fset-the-dnd-for" class="text-limit-lines-1 block">DND /Set the DND for an extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-dial-%2F-call-an-exten" class="text-limit-lines-1 block">DIAL / Call an extension and then dial a number</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-hangup-%2F-hangup-a-ca" class="text-limit-lines-1 block">HANGUP / Hangup a call by extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-agent-%2F-pause-agent-" class="text-limit-lines-1 block">AGENT / Pause agent from queue</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-agent-%2F-get-info-for" class="text-limit-lines-1 block">AGENT / Get info for agent in all the queues</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-mediafile-%2F-retrieve" class="text-limit-lines-1 block">MEDIAFILE / Retrieve a media file by its ID</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-queue-%2F-get-the-list" class="text-limit-lines-1 block">QUEUE / Get the list of agents</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-queue-%2F-add-an-agent" class="text-limit-lines-1 block">QUEUE / Add an agent to a queue</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-setting" class="text-limit-lines-1 block">SETTING</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-a-tenant-setting" class="text-limit-lines-1 block">Get a tenant setting</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-set-a-tenant-setting" class="text-limit-lines-1 block">Set a tenant setting</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-voicemail" class="text-limit-lines-1 block">VOICEMAIL</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-all-voicemails-f" class="text-limit-lines-1 block">Get all voicemails for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-info-about-voice" class="text-limit-lines-1 block">Get info about voicemails in a mailbox</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-the-binary-audio" class="text-limit-lines-1 block">Get the binary audio for a message</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-mark-a-message-as-re" class="text-limit-lines-1 block">Mark a message as read</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-mark-a-message-as-no" class="text-limit-lines-1 block">Mark a message as not read</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-countcalls-%2F-count-t" class="text-limit-lines-1 block">COUNTCALLS / Count the calls on a system</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-recordings-%2F-get-or-" class="text-limit-lines-1 block">RECORDINGS / Get or play a recording</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-transcript-%2F-get-the" class="text-limit-lines-1 block">TRANSCRIPT / Get the transcript for a recording</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-phonebooks" class="text-limit-lines-1 block">PHONEBOOKS</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-search-for-an-entry" class="text-limit-lines-1 block">Search for an entry</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-add-an-entry" class="text-limit-lines-1 block">Add an entry</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-fax" class="text-limit-lines-1 block">FAX</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-send-a-fax" class="text-limit-lines-1 block">Send a fax</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-list-faxes" class="text-limit-lines-1 block">List faxes</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-a-fax-binary" class="text-limit-lines-1 block">Get a fax binary</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-info" class="text-limit-lines-1 block">INFO</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-the-cdr-for-a-te" class="text-limit-lines-1 block">Get the cdr for a tenant in CSV format</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-the-cdr-for-all-" class="text-limit-lines-1 block">Get the cdr for all tenants in CSV format</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-the-queue-log-fo" class="text-limit-lines-1 block">Get the queue log for a tenant in CSV format</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-getting-response-pat" class="text-limit-lines-1 block">Getting response paths results</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-latest-o" class="text-limit-lines-1 block">Getting the latest one for a given Response Path</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-latest-o-1" class="text-limit-lines-1 block">Getting the latest one for a given Response Path for agent 104-TENANTCODE</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-latest-o-2" class="text-limit-lines-1 block">Getting the latest one for a given Response Path for agent 104-TENANTCODE in xml format</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-custom-de" class="text-limit-lines-1 block">ManageDB / Custom Destination Types</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-custom-d" class="text-limit-lines-1 block">Getting the custom destination type list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-custom-de-1" class="text-limit-lines-1 block">ManageDB / Custom Destinations</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-custom-d-1" class="text-limit-lines-1 block">Getting the custom destination list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-info-for-a-c" class="text-limit-lines-1 block">Getting info for a custom destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-creating-a-custom-de" class="text-limit-lines-1 block">Creating a custom destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-a-custom-de" class="text-limit-lines-1 block">Updating a custom destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-cdr-%2F-get-the-userfi" class="text-limit-lines-1 block">CDR / Get the userfield</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-cdr-%2F-update-the-use" class="text-limit-lines-1 block">CDR / Update the userfield</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-tenants" class="text-limit-lines-1 block">ManageDB / Tenants</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-tenant-l" class="text-limit-lines-1 block">Getting the tenant list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-info-for-a-t" class="text-limit-lines-1 block">Getting info for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-creating-a-tenant" class="text-limit-lines-1 block">Creating a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-a-tenant" class="text-limit-lines-1 block">Updating a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-phones" class="text-limit-lines-1 block">ManageDB / Phones</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-phones-l" class="text-limit-lines-1 block">Getting the phones list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-info-for-a-p" class="text-limit-lines-1 block">Getting info for a phone</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-creating-a-phone" class="text-limit-lines-1 block">Creating a phone</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-a-phone" class="text-limit-lines-1 block">Updating a phone</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-manage-db-%2F-media-fi" class="text-limit-lines-1 block">Manage DB / media files</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-media-fi" class="text-limit-lines-1 block">Getting the media file list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-info-for-a-m" class="text-limit-lines-1 block">Getting info for a media file</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-binary-p" class="text-limit-lines-1 block">Getting the binary part of a media file</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-a-media-fil" class="text-limit-lines-1 block">Updating a media file</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-the-binary-" class="text-limit-lines-1 block">Updating the binary part of a media file</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-hunt-list" class="text-limit-lines-1 block">ManageDB / Hunt Lists</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-hunt-lis" class="text-limit-lines-1 block">Getting the hunt lists list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-hunt-lis-1" class="text-limit-lines-1 block">Getting the hunt lists extension list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-setting-the-hunt-lis" class="text-limit-lines-1 block">Setting the hunt lists extension list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-extension" class="text-limit-lines-1 block">ManageDB / Extensions</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-extensio" class="text-limit-lines-1 block">Getting the extension list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-details-" class="text-limit-lines-1 block">Getting the details for an extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-deleting-an-extensio" class="text-limit-lines-1 block">Deleting an extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-the-securit" class="text-limit-lines-1 block">Updating the security for an extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-adding-a-sip-extensi" class="text-limit-lines-1 block">Adding a SIP extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-adding-a-pjsip-exten" class="text-limit-lines-1 block">Adding a PJSIP extension</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-users" class="text-limit-lines-1 block">ManageDB / Users</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-user-lis" class="text-limit-lines-1 block">Getting the user list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-details--1" class="text-limit-lines-1 block">Getting the details for an user</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-creating-an-user" class="text-limit-lines-1 block">Creating an user</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-conferenc" class="text-limit-lines-1 block">ManageDB / Conferences</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-creating-a-conferenc" class="text-limit-lines-1 block">Creating a conference</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-providers" class="text-limit-lines-1 block">ManageDB / Providers</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-provider" class="text-limit-lines-1 block">Getting the provider list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-details--2" class="text-limit-lines-1 block">Getting the details for a provider (SIP)</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-update-a-provider" class="text-limit-lines-1 block">Update a provider</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-insert-a-provider" class="text-limit-lines-1 block">Insert a provider</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-routing-p" class="text-limit-lines-1 block">ManageDB / Routing Profiles</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-routing-" class="text-limit-lines-1 block">Getting the routing profiles list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-details--3" class="text-limit-lines-1 block">Getting the details for a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-list-of-" class="text-limit-lines-1 block">Getting the list of routes for a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-adding-a-routing-pro" class="text-limit-lines-1 block">Adding a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-update-a-routing-pro" class="text-limit-lines-1 block">Update a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-routes" class="text-limit-lines-1 block">ManageDB / Routes</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-route-li" class="text-limit-lines-1 block">Getting the route list</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-route-li-1" class="text-limit-lines-1 block">Getting the route list for a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-details--4" class="text-limit-lines-1 block">Getting the details for a route</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-adding-a-route-to-a-" class="text-limit-lines-1 block">Adding a route to a routing profile</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-update-a-route" class="text-limit-lines-1 block">Update a route</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-dids" class="text-limit-lines-1 block">ManageDB / DIDs</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-dids-for" class="text-limit-lines-1 block">Listing the DIDs for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-more-info-fo" class="text-limit-lines-1 block">Getting more info for a DID</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-updating-a-did" class="text-limit-lines-1 block">Updating a DID</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-destinati" class="text-limit-lines-1 block">ManageDB / Destinations</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-destinat" class="text-limit-lines-1 block">Getting the destinations for a DID</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-destinat-1" class="text-limit-lines-1 block">Getting the destinations for a Condition (true)</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-destinat-2" class="text-limit-lines-1 block">Getting the destinations for a Condition (false)</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-replace-the-destinat" class="text-limit-lines-1 block">Replace the destinations for a DID</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-destination-tags" class="text-limit-lines-1 block">Destination Tags</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-ivrs" class="text-limit-lines-1 block">ManageDB / IVRs</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-ivrs-for" class="text-limit-lines-1 block">Listing the IVRs for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-more-info-fo-1" class="text-limit-lines-1 block">Getting more info for a IVR</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-the-destinat-3" class="text-limit-lines-1 block">Getting the destinations for the IVR, including the media files</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-condition" class="text-limit-lines-1 block">ManageDB / Conditions</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-conditio" class="text-limit-lines-1 block">Listing the Conditions for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-destinat" class="text-limit-lines-1 block">Listing the destinations for a Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-getting-info-and-mor" class="text-limit-lines-1 block">Getting info and more info for a Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-replacing-extended-i" class="text-limit-lines-1 block">Replacing extended info for a Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-voicemail" class="text-limit-lines-1 block">ManageDB / Voicemails</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-voicemai" class="text-limit-lines-1 block">Listing the Voicemails for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-voicemai-1" class="text-limit-lines-1 block">Listing the Voicemails message for a voicemail</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-a-message-record" class="text-limit-lines-1 block">Get a message recording for a voicemail id</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-add-a-voicemail-box" class="text-limit-lines-1 block">Add a voicemail box</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-delete-a-voicemail-b" class="text-limit-lines-1 block">Delete a voicemail box</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-phone-pho" class="text-limit-lines-1 block">ManageDB / Phone phonebooks</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-phone-ph" class="text-limit-lines-1 block">Listing the Phone phonebooks for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-the-detail-of-a-" class="text-limit-lines-1 block">Get the detail of a phone phone book</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-managedb-%2F-queues" class="text-limit-lines-1 block">ManageDB / Queues</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-listing-the-queues-f" class="text-limit-lines-1 block">Listing the Queues for a tenant</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-add-a-queue" class="text-limit-lines-1 block">Add a Queue</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-delete-a-queue" class="text-limit-lines-1 block">Delete a queue</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-token-authentication" class="text-limit-lines-1 block">Token Authentication</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-security-notes" class="text-limit-lines-1 block">Security Notes</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                            </ul>
+        </div>
+    </nav>
+    <nav id="book-tree"
+     class="book-tree mb-xl"
+     aria-label="Book Navigation">
+
+    <h5>Book Navigation</h5>
+
+    <ul class="sidebar-page-list mt-xs menu entity-list">
+                    <li class="list-item-book book">
+                <a href="https://manual.mirtapbx.com/books/api"
+   class="book   entity-list-item"
+   data-entity-type="book"
+   data-entity-id="801">
+    <span role="presentation" class="icon text-book"><svg class="svg-icon" data-icon="book" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2M6 4h5v8l-2.5-1.5L6 12z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">API</h4>
+            
+    </div>
+</a>            </li>
+        
+                    <li class="list-item-chapter chapter ">
+                <a href="https://manual.mirtapbx.com/books/api/chapter/openapi"
+   class="chapter   entity-list-item"
+   data-entity-type="chapter"
+   data-entity-id="1641">
+    <span role="presentation" class="icon text-chapter"><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">OpenAPI</h4>
+            
+    </div>
+</a>
+                                    <div class="entity-list-item no-hover">
+                        <span role="presentation" class="icon text-chapter"></span>
+                        <div class="content">
+                            <div component="chapter-contents" class="chapter-child-menu">
+    <button type="button"
+            refs="chapter-contents@toggle"
+            aria-expanded="false"
+            class="text-muted chapter-contents-toggle ">
+        <svg class="svg-icon" data-icon="caret-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 17.5l5-5-5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> <svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg> <span>38 Pages</span>
+    </button>
+    <ul refs="chapter-contents@list"
+        class="chapter-contents-list sub-menu inset-list "         role="menu">
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/overview-and-examples"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1245">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Overview and Examples</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/extension-state"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1985">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Extension State</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/auth-token"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1913">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Auth Token</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/dial"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1989">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Dial</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/cdr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1757">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">CDR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/simple-cdr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1761">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Simple CDR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/extension"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1649">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Extension</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/tenant"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1653">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Tenant</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/user"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1657">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">User</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/user-profile"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1661">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">User Profile</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/routing-profile"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1665">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Routing Profile</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/provider"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1909">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Provider</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/voicemail"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1669">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Voicemail</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ivr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1673">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">IVR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/custom-destination"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1677">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Custom Destination</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/condition"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1681">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Condition</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/hunt-list"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1685">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Hunt List</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/did"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1689">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">DID</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/queue"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1693">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Queue</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/setting"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1697">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Setting</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/media-file"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1701">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Media File</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/music-on-hold"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1705">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Music On Hold</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/paging-group"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1709">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Paging Group</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/conference-room"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1713">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Conference Room</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/flow"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1717">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Flow</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/tenant-variable"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1721">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Tenant Variable</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/disa"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1725">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">DISA</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/caller-id-blacklist"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1729">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Caller ID Blacklist</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/campaign"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1733">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Campaign</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/campaign-number"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1737">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Campaign Number</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/cron-job"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1741">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Cron Job</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/feature-code"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1745">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Feature Code</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/short-number"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1749">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Short Number</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/phone-book"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1977">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Phone Book</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/phone-book-entry"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1981">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Phone Book Entry</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/provisioning-phone"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1753">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Provisioning Phone</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ai-analysis"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1969">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">AI Analysis</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ai-logs"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="2013">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">AI Logs</h4>
+            
+    </div>
+</a>            </li>
+            </ul>
+</div>                        </div>
+                    </div>
+
+                
+            </li>
+                    <li class="list-item-chapter chapter ">
+                <a href="https://manual.mirtapbx.com/books/api/chapter/proxyapi-old"
+   class="chapter   entity-list-item"
+   data-entity-type="chapter"
+   data-entity-id="1645">
+    <span role="presentation" class="icon text-chapter"><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">ProxyAPI (old)</h4>
+            
+    </div>
+</a>
+                                    <div class="entity-list-item no-hover">
+                        <span role="presentation" class="icon text-chapter"></span>
+                        <div class="content">
+                            <div component="chapter-contents" class="chapter-child-menu">
+    <button type="button"
+            refs="chapter-contents@toggle"
+            aria-expanded="true"
+            class="text-muted chapter-contents-toggle  open ">
+        <svg class="svg-icon" data-icon="caret-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 17.5l5-5-5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> <svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg> <span>1 Page</span>
+    </button>
+    <ul refs="chapter-contents@list"
+        class="chapter-contents-list sub-menu inset-list  open "         style="display: block;"         role="menu">
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples"
+   class="page  selected entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1237">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Old ProxyAPI Legacy proxy API reference and examples.</h4>
+            
+    </div>
+</a>            </li>
+            </ul>
+</div>                        </div>
+                    </div>
+
+                
+            </li>
+            </ul>
+</nav>                    </aside>
+                </div>
+            </div>
+        </div>
+
+        <div class=" tri-layout-middle">
+            <div id="main-content" class="tri-layout-middle-contents">
+                
+    <div class="mb-m print-hidden">
+        <nav class="breadcrumbs text-center" aria-label="Breadcrumb">
+    
+    
+            <a href="https://manual.mirtapbx.com/books" class="text-book icon-list-item outline-hover">
+            <span><svg class="svg-icon" data-icon="books" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19.252 1.708H8.663a1.77 1.77 0 0 0-1.765 1.764v14.12c0 .97.794 1.764 1.765 1.764h10.59a1.77 1.77 0 0 0 1.764-1.765V3.472a1.77 1.77 0 0 0-1.765-1.764M8.663 3.472h4.412v7.06L10.87 9.208l-2.206 1.324z"/><path fill="none" d="M30.61 3.203h24v24h-24z"/><path d="M2.966 6.61v14c0 1.1.9 2 2 2h14v-2h-14v-14z"/></svg></span>
+            <span>Books</span>
+        </a>
+            
+    
+    
+            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=book&entity_id=801"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for book">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api" class="text-book icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="book" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2M6 4h5v8l-2.5-1.5L6 12z"/></svg></span>
+                <span>
+                    API
+                </span>
+            </a>
+                            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=chapter&entity_id=1645"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for chapter">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api/chapter/proxyapi-old" class="text-chapter icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+                <span>
+                    ProxyAPI (old)
+                </span>
+            </a>
+                            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=page&entity_id=1237"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for page">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples" class="text-page icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+                <span>
+                    Old ProxyAPI Legacy pr...
+                </span>
+            </a>
+                    </nav>    </div>
+
+    <main class="content-wrap card">
+        <div component="page-display"
+             option:page-display:page-id="1237"
+             class="page-content clearfix">
+            <div dir="auto">
+
+    <h1 class="break-text" id="bkmrk-page-title">Old ProxyAPI Legacy proxy API reference and examples.</h1>
+
+    <div style="clear:left;"></div>
+
+            <h2 id="bkmrk-overview">Overview and Examples</h2>
+<p id="bkmrk-proxyapi.php-is-the-"><code>proxyapi.php</code> is the legacy MiRTA PBX HTTP API. It is still useful for integrations that already depend on query-string based requests, plain text responses, CDR exports, queue operations, voicemail actions, phonebook operations, fax handling, and the older <code>MANAGEDB</code> object/action interface.</p>
+<p id="bkmrk-the-api-is-controlle">The API is controlled with the <code>reqtype</code> parameter. Most calls also require <code>key</code>; tenant-scoped calls normally require <code>tenant</code>. Several read operations accept <code>format=json</code>, <code>format=xml</code>, or <code>format=csv</code>. Write operations that update PBX records commonly send JSON in a POST field named <code>jsondata</code>.</p>
+<h2 id="bkmrk-common-parameters">Common Parameters</h2>
+<table id="bkmrk-parameterdescription">
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reqtype</code></td>
+<td>Main request family, such as INFO, DND, QUEUE, VOICEMAIL, FAX, CDR, or MANAGEDB.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>Tenant or admin API key. Use read-only keys when the integration does not need to change data.</td>
+</tr>
+<tr>
+<td><code>tenant</code></td>
+<td>Tenant code. Optional only for operations that allow an administrator key to act globally.</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td>Optional output format. Common values are plain, json, xml, and csv, depending on the request.</td>
+</tr>
+<tr>
+<td><code>callback</code></td>
+<td>Optional JSONP callback name for cross-domain script integrations using JSON.</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>Optional language used by requests that support translated data.</td>
+</tr>
+<tr>
+<td><code>cache</code></td>
+<td>Set to no to bypass SQL or AMI cache for supported requests.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bkmrk-request-types">Request Types</h2>
+<table id="bkmrk-reqtypepurposecountp">
+<thead>
+<tr>
+<th>reqtype</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTPEERS</code></td>
+<td>Count peers by node and optionally by tenant.</td>
+</tr>
+<tr>
+<td><code>COUNTCHANNELS</code></td>
+<td>Count active channels globally, by node, or by tenant.</td>
+</tr>
+<tr>
+<td><code>CHANSIPPEERS</code></td>
+<td>Return registered chan_sip peers across the cluster.</td>
+</tr>
+<tr>
+<td><code>BLFS</code></td>
+<td>Return BLF status for peers and flows.</td>
+</tr>
+<tr>
+<td><code>DND</code></td>
+<td>Get or set do-not-disturb for an extension.</td>
+</tr>
+<tr>
+<td><code>FLOWS</code></td>
+<td>Read flow state.</td>
+</tr>
+<tr>
+<td><code>CHANNEL</code></td>
+<td>Read details for one channel.</td>
+</tr>
+<tr>
+<td><code>CHANNELS</code></td>
+<td>List active channels.</td>
+</tr>
+<tr>
+<td><code>GETCURRENTCALLS</code></td>
+<td>Show current calls for a phone or tenant.</td>
+</tr>
+<tr>
+<td><code>PHONEBOOKS</code></td>
+<td>List available phonebooks.</td>
+</tr>
+<tr>
+<td><code>PHONEBOOK</code></td>
+<td>Query, add, delete, clean, or dump phonebook records.</td>
+</tr>
+<tr>
+<td><code>INFO</code></td>
+<td>Read status, CDRs, recordings, DIDs, queues, agents, variables, flows, and other reporting data.</td>
+</tr>
+<tr>
+<td><code>AGENT</code></td>
+<td>Pause, unpause, list, add, or remove queue agents.</td>
+</tr>
+<tr>
+<td><code>ATXTRANSFER</code></td>
+<td>Perform attended transfer for a channel.</td>
+</tr>
+<tr>
+<td><code>CAMPAIGN</code></td>
+<td>Start, stop, pause, resume, or maintain campaign numbers.</td>
+</tr>
+<tr>
+<td><code>DIAL</code></td>
+<td>Originate a call from a source and connect it to a destination.</td>
+</tr>
+<tr>
+<td><code>FAX</code></td>
+<td>Send, list, or download faxes.</td>
+</tr>
+<tr>
+<td><code>HANGUP</code></td>
+<td>Hang up a channel or extension.</td>
+</tr>
+<tr>
+<td><code>MEDIAFILE</code></td>
+<td>Download media-file audio.</td>
+</tr>
+<tr>
+<td><code>QUEUE</code></td>
+<td>List, add, remove, clean, or log queue members.</td>
+</tr>
+<tr>
+<td><code>QUEUERESET</code></td>
+<td>Reset queue statistics.</td>
+</tr>
+<tr>
+<td><code>REBOOT</code></td>
+<td>Reboot one or more peers.</td>
+</tr>
+<tr>
+<td><code>RESPONSEPATH</code></td>
+<td>Read response-path results.</td>
+</tr>
+<tr>
+<td><code>SETFLOW</code></td>
+<td>Set a flow state or variable value.</td>
+</tr>
+<tr>
+<td><code>SMS</code></td>
+<td>Send an SMS.</td>
+</tr>
+<tr>
+<td><code>TRANSFER</code></td>
+<td>Transfer a channel.</td>
+</tr>
+<tr>
+<td><code>UNREGISTER</code></td>
+<td>Unregister one or more peers.</td>
+</tr>
+<tr>
+<td><code>USERGROUP</code></td>
+<td>Manage tenants and users assigned to user groups.</td>
+</tr>
+<tr>
+<td><code>VIRTUALEXT</code></td>
+<td>Manage members of a virtual extension.</td>
+</tr>
+<tr>
+<td><code>VOICEMAIL</code></td>
+<td>List mailboxes, list messages, download messages, mark read/unread, or delete messages.</td>
+</tr>
+<tr>
+<td><code>SETTING</code></td>
+<td>Get or set tenant settings.</td>
+</tr>
+<tr>
+<td><code>COUNTCALLS</code></td>
+<td>Count running calls.</td>
+</tr>
+<tr>
+<td><code>LICENSEDAYS</code></td>
+<td>Return days before license expiration.</td>
+</tr>
+<tr>
+<td><code>BALANCE</code></td>
+<td>Add or subtract tenant balance.</td>
+</tr>
+<tr>
+<td><code>CDR</code></td>
+<td>Get or update fields on a CDR row.</td>
+</tr>
+<tr>
+<td><code>MANAGEDB</code></td>
+<td>Read or change supported PBX database objects through object/action parameters.</td>
+</tr>
+<tr>
+<td><code>CHECKAUTH</code></td>
+<td>Validate a username and password and return privilege information.</td>
+</tr>
+<tr>
+<td><code>AUTHTOKEN</code></td>
+<td>Generate or reset one-time or expiring authentication tokens.</td>
+</tr>
+<tr>
+<td><code>GETWEBRTCAUTH</code></td>
+<td>Authenticate an extension user and return WebRTC details.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bkmrk-using-post-jsondata">Using POST jsondata</h2>
+<p id="bkmrk-for-managedb%2C-phoneb">For <code>MANAGEDB</code>, phonebook, destination, and similar write requests, send the object fields as JSON in the POST field <code>jsondata</code>. The examples below show the URL and the JSON payload separately instead of wrapping every case in a PHP cURL script.</p>
+<pre id="bkmrk-curl--x-post-%5C---dat"><code>curl -X POST \
+  --data-urlencode 'jsondata={"field":"value"}' \
+  "https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=MANAGEDB&amp;object=OBJECT&amp;action=add"</code></pre>
+<h2 id="bkmrk-examples">Examples</h2>
+<h2 id="bkmrk-info---simplecdrs-%2F-">INFO - SIMPLECDRS / Get the list of calls</h2>
+<p id="bkmrk-get-the-list-of-call">Get the list of calls.</p>
+<p id="bkmrk-use-the-date-range-a">Use the date range and phone filters to narrow the returned call history. The phone filter searches the relevant caller, dialed, and answered number fields.</p>
+<p id="bkmrk-this-uses-the-simpli">This uses the simplified call-history source and supports filters such as caller ID number and date range.</p>
+<p id="bkmrk-request-example%3A">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example."><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=SIMPLECDRS&amp;tenant=TENANTCODE&amp;calleridnum=103,104&amp;start=2020-01-01&amp;end=2020-12-31</code></pre>
+<h2 id="bkmrk-info---cdrs-%2F-get-th">INFO - CDRS / Get the list of calls</h2>
+<p id="bkmrk-get-the-list-of-call-1">Get the list of calls.</p>
+<p id="bkmrk-use-the-date-range-a-1">Use the date range and phone filters to narrow the returned call history. The phone filter searches the relevant caller, dialed, and answered number fields.</p>
+<p id="bkmrk-request-example%3A-1">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-1"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=CDRS&amp;tenant=TENANTCODE&amp;phone=103,104&amp;start=2019-12-01&amp;end=2022-12-31</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-2"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=CDRS&amp;tenant=TENANTCODE&amp;phone=103,104&amp;start=2019-12-01&amp;end=2022-12-31&amp;format=xml&amp;template=Test_CSV</code></pre>
+<p id="bkmrk-sample-output-or-tem">Sample output or template:</p>
+<pre id="bkmrk-%7Brow_loop%7D%7B%24uniqueid"><code>{row_loop}{$uniqueid},{$ID},{$te_id},{$realsrc},{$lastdst},{$start},{$duration},{$answer},{$direction},{$direction},{$disposition}
+{/row_loop}</code></pre>
+<h2 id="bkmrk-info---dids-%2F-get-th">INFO - DIDS / Get the list of DIDs for one tenant</h2>
+<p id="bkmrk-get-the-list-of-dids">Get the list of DIDs for one tenant.</p>
+<p id="bkmrk-request-example%3A-2">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-3"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=DIDS&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-info---dids-%2F-get-th-1">INFO - DIDS / Get the list of DIDs for all tenants</h2>
+<p id="bkmrk-get-the-list-of-dids-1">Get the list of DIDs for all tenants.</p>
+<p id="bkmrk-request-example%3A-3">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-4"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=DIDS</code></pre>
+<h2 id="bkmrk-info---flow-%2F-get-th">INFO - Flow / Get the state of a flow</h2>
+<p id="bkmrk-get-the-state-of-a-f">Get the state of a flow.</p>
+<p id="bkmrk-request-example%3A-4">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-5"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=FLOW&amp;id=61&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-info---extension-%2F-g">INFO - Extension / Get the state of a extension</h2>
+<p id="bkmrk-get-the-state-of-a-e">Get the state of a extension.</p>
+<p id="bkmrk-request-example%3A-5">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-6"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=EXTSTATE&amp;ext=500&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-info---extensions-%2F-">INFO - Extensions / Get the list of extensions</h2>
+<p id="bkmrk-get-the-list-of-exte">Get the list of extensions.</p>
+<p id="bkmrk-request-example%3A-6">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-7"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=EXTENSIONS&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-info---extensions-%2F--1">INFO - Extensions / Get an extension by id</h2>
+<p id="bkmrk-get-an-extension-by-">Get an extension by id.</p>
+<p id="bkmrk-request-example%3A-7">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-8"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=EXTENSIONS&amp;tenant=TENANTCODE&amp;id=36979</code></pre>
+<h2 id="bkmrk-info---extensions-%2F--2">INFO - Extensions / Get an extension by number</h2>
+<p id="bkmrk-get-an-extension-by--1">Get an extension by number.</p>
+<p id="bkmrk-request-example%3A-8">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-9"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=EXTENSIONS&amp;tenant=TENANTCODE&amp;number=100</code></pre>
+<h2 id="bkmrk-info---ivr-logs-%2F-ge">INFO - IVR Logs / Get the IVR logs</h2>
+<p id="bkmrk-get-the-ivr-logs.">Get the IVR logs.</p>
+<p id="bkmrk-request-example%3A-9">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-10"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=INFO&amp;info=IVRLOGS&amp;format=json&amp;start=2023-01-01&amp;end=2024-12-31</code></pre>
+<h2 id="bkmrk-info---variable-%2F-ge">INFO - Variable / Get the value of a variable</h2>
+<p id="bkmrk-get-the-value-of-a-v">Get the value of a variable.</p>
+<p id="bkmrk-request-example%3A-10">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-11"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=variable&amp;id=61&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-dnd-%2F-get-the-dnd-fo">DND / Get the DND for an extension</h2>
+<p id="bkmrk-get-the-dnd-for-an-e">Get the DND for an extension.</p>
+<p id="bkmrk-request-example%3A-11">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-12"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=DND&amp;action=get&amp;number=100</code></pre>
+<h2 id="bkmrk-dnd-%2Fset-the-dnd-for">DND /Set the DND for an extension</h2>
+<p id="bkmrk-request-example%3A-12">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-13"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=DND&amp;action=set&amp;number=100&amp;value=on</code></pre>
+<h2 id="bkmrk-dial-%2F-call-an-exten">DIAL / Call an extension and then dial a number</h2>
+<p id="bkmrk-call-an-extension-an">Call an extension and then dial a number.</p>
+<p id="bkmrk-the-originate-respon">The originate response includes an ID that can later be used to query call status or retrieve the recording. Extra variables can be passed with the var parameter.</p>
+<p id="bkmrk-request-example%3A-13">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-14"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=DIAL&amp;source=402&amp;dest=9922323232&amp;tenant=TENANTCODE&amp;account=402-TENANTCODE</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-15"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=recording&amp;id=15a4cfe6429054</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-16"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=DIAL&amp;source=402&amp;dest=9922323232&amp;tenant=TENANTCODE&amp;account=402-TENANTCODE&amp;var=callid=453131</code></pre>
+<h2 id="bkmrk-hangup-%2F-hangup-a-ca">HANGUP / Hangup a call by extension</h2>
+<p id="bkmrk-hangup-a-call-by-ext">Hangup a call by extension.</p>
+<p id="bkmrk-request-example%3A-14">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-17"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=HANGUP&amp;extension=103-TENANTCODE&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-agent-%2F-pause-agent-">AGENT / Pause agent from queue</h2>
+<p id="bkmrk-pause-agent-from-que">Pause agent from queue.</p>
+<p id="bkmrk-request-example%3A-15">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-18"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=AGENT&amp;action=PAUSE&amp;queue=281&amp;extension=104-TENANTCODE&amp;tenant=TENANTCODE&amp;pausereason=Breakfast</code></pre>
+<h2 id="bkmrk-agent-%2F-get-info-for">AGENT / Get info for agent in all the queues</h2>
+<p id="bkmrk-get-info-for-agent-i">Get info for agent in all the queues.</p>
+<p id="bkmrk-request-example%3A-16">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-19"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=AGENT&amp;action=LISTQUEUES&amp;extension=104-TENANTCODE&amp;tenant=TENANTCODE&amp;format=json</code></pre>
+<h2 id="bkmrk-mediafile-%2F-retrieve">MEDIAFILE / Retrieve a media file by its ID</h2>
+<p id="bkmrk-retrieve-a-media-fil">Retrieve a media file by its ID.</p>
+<p id="bkmrk-request-example%3A-17">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-20"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MEDIAFILE&amp;tenant=TENANTCODE&amp;id=19&amp;action=GETAUDIO&amp;objectid=3619</code></pre>
+<h2 id="bkmrk-queue-%2F-get-the-list">QUEUE / Get the list of agents</h2>
+<p id="bkmrk-get-the-list-of-agen">Get the list of agents.</p>
+<p id="bkmrk-request-example%3A-18">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-21"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=QUEUE&amp;tenant=TENANTCODE&amp;action=list&amp;number=9200</code></pre>
+<h2 id="bkmrk-queue-%2F-add-an-agent">QUEUE / Add an agent to a queue</h2>
+<p id="bkmrk-add-an-agent-to-a-qu">Add an agent to a queue.</p>
+<p id="bkmrk-request-example%3A-19">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-22"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=QUEUE&amp;tenant=TENANTCODE&amp;action=add&amp;number=9200&amp;extension=103</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-23"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=QUEUE&amp;tenant=TENANTCODE&amp;action=add&amp;number=781&amp;extension=107&amp;paused=1&amp;penalty=4</code></pre>
+<h2 id="bkmrk-setting">SETTING</h2>
+<h3 id="bkmrk-get-a-tenant-setting">Get a tenant setting</h3>
+<p id="bkmrk-request-example%3A-20">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-24"><code>https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&amp;key=APIKEY&amp;reqtype=SETTING&amp;action=GET&amp;code=VMAUTORECOVER</code></pre>
+<h3 id="bkmrk-set-a-tenant-setting">Set a tenant setting</h3>
+<p id="bkmrk-request-example%3A-21">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-25"><code>https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&amp;key=APIKEY&amp;reqtype=SETTING&amp;action=SET&amp;code=VMAUTORECOVER&amp;value=no</code></pre>
+<h2 id="bkmrk-voicemail">VOICEMAIL</h2>
+<h3 id="bkmrk-get-all-voicemails-f">Get all voicemails for a tenant</h3>
+<p id="bkmrk-request-example%3A-22">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-26"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=VOICEMAIL&amp;tenant=TENANTCODE&amp;action=list</code></pre>
+<h3 id="bkmrk-get-info-about-voice">Get info about voicemails in a mailbox</h3>
+<p id="bkmrk-request-example%3A-23">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-27"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=VOICEMAIL&amp;tenant=TENANTCODE&amp;mailbox=102&amp;action=messages</code></pre>
+<h3 id="bkmrk-get-the-binary-audio">Get the binary audio for a message</h3>
+<p id="bkmrk-request-example%3A-24">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-28"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=VOICEMAIL&amp;tenant=TENANTCODE&amp;mailbox=102&amp;action=message&amp;msgid=1475685709-00000004</code></pre>
+<h3 id="bkmrk-mark-a-message-as-re">Mark a message as read</h3>
+<p id="bkmrk-request-example%3A-25">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-29"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=VOICEMAIL&amp;tenant=TENANTCODE&amp;mailbox=1000&amp;action=markread&amp;msgid=1543267778-00000007</code></pre>
+<h3 id="bkmrk-mark-a-message-as-no">Mark a message as not read</h3>
+<p id="bkmrk-request-example%3A-26">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-30"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=VOICEMAIL&amp;tenant=TENANTCODE&amp;action=markunread&amp;mailbox=1000&amp;msgid=1543267778-00000007</code></pre>
+<h2 id="bkmrk-countcalls-%2F-count-t">COUNTCALLS / Count the calls on a system</h2>
+<p id="bkmrk-count-the-calls-on-a">Count the calls on a system.</p>
+<p id="bkmrk-request-example%3A-27">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-31"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=COUNTCALLS</code></pre>
+<h2 id="bkmrk-recordings-%2F-get-or-">RECORDINGS / Get or play a recording</h2>
+<p id="bkmrk-get-or-play-a-record">Get or play a recording.</p>
+<p id="bkmrk-use-info%3Drecording-t">Use info=recording to download the file, or info=playrecording when the browser should play it inline.</p>
+<p id="bkmrk-request-example%3A-28">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-32"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=recording&amp;id=srv02-1531779475.48&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-transcript-%2F-get-the">TRANSCRIPT / Get the transcript for a recording</h2>
+<p id="bkmrk-get-the-transcript-f">Get the transcript for a recording.</p>
+<p id="bkmrk-use-info%3Dtranscript-">Use info=transcript with the recording unique ID to retrieve the generated transcript when transcription is enabled.</p>
+<p id="bkmrk-request-example%3A-29">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-33"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=transcript&amp;id=srv02-1695552000.1043&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-phonebooks">PHONEBOOKS</h2>
+<h3 id="bkmrk-search-for-an-entry">Search for an entry</h3>
+<p id="bkmrk-request-example%3A-30">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-34"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=PHONEBOOK&amp;subreqtype=query&amp;tenant=TENANTCODE&amp;phonebook=Default&amp;field=name&amp;value=Ben</code></pre>
+<h3 id="bkmrk-add-an-entry">Add an entry</h3>
+<p id="bkmrk-request-example%3A-31">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-35"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=PHONEBOOK&amp;subreqtype=add&amp;phonebook=Default&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22name%22%3A-%22ross%22%2C-%22p"><code>{
+  "NAME": "Ross",
+  "PHONE1": "3564732920"
+}</code></pre>
+<h2 id="bkmrk-fax">FAX</h2>
+<h3 id="bkmrk-send-a-fax">Send a fax</h3>
+<p id="bkmrk-request-example%3A-32">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-36"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=FAX&amp;action=send&amp;number=99397654321&amp;source_number=123412345&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-multipart-upload-exa">Multipart upload example:</p>
+<pre id="bkmrk-curl--f-%22filename%3D%40%2F"><code>curl -F "filename=@/path/to/fax.pdf" "https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=FAX&amp;action=send&amp;tenant=TENANTCODE&amp;source_number=15551230000&amp;dest_number=15551239999"</code></pre>
+<h3 id="bkmrk-list-faxes">List faxes</h3>
+<p id="bkmrk-request-example%3A-33">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-37"><code>https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&amp;key=APIKEY&amp;reqtype=FAX&amp;action=list</code></pre>
+<h3 id="bkmrk-get-a-fax-binary">Get a fax binary</h3>
+<p id="bkmrk-request-example%3A-34">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-38"><code>https://pbx.example.com/mirtapbx/proxyapi.php?tenant=TENANTCODE&amp;key=APIKEY&amp;reqtype=FAX&amp;action=download&amp;id=63095</code></pre>
+<h2 id="bkmrk-info">INFO</h2>
+<h3 id="bkmrk-get-the-cdr-for-a-te">Get the cdr for a tenant in CSV format</h3>
+<p id="bkmrk-request-example%3A-35">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-39"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=CDRS&amp;format=csv&amp;tenant=TENANTCODE&amp;start=2017-01-01&amp;end=2017-02-01</code></pre>
+<h3 id="bkmrk-get-the-cdr-for-all-">Get the cdr for all tenants in CSV format</h3>
+<p id="bkmrk-for-one-tenant%2C-the-">For one tenant, the tenant CSV template is used. With tenant=% across tenants, the admin CSV format is used.</p>
+<p id="bkmrk-request-example%3A-36">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-40"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=CDRS&amp;format=csv&amp;tenant=%&amp;start=2017-01-01&amp;end=2017-02-01</code></pre>
+<h3 id="bkmrk-get-the-queue-log-fo">Get the queue log for a tenant in CSV format</h3>
+<p id="bkmrk-request-example%3A-37">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-41"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=INFO&amp;info=QUEUELOGS&amp;format=csv&amp;tenant=TENANTCODE&amp;start=2017-10-01&amp;end=2017-12-01</code></pre>
+<h2 id="bkmrk-getting-response-pat">Getting response paths results</h2>
+<p id="bkmrk-response-path-result">Response Path results can be filtered by queue, answering extension, or unique ID and can be returned as plain text or XML.</p>
+<h3 id="bkmrk-getting-the-latest-o">Getting the latest one for a given Response Path</h3>
+<p id="bkmrk-response-path-result-1">Response Path results can be filtered by queue, answering extension, or unique ID and can be returned as plain text or XML.</p>
+<p id="bkmrk-request-example%3A-38">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-42"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=RESPONSEPATH&amp;tenant=TENANTCODE&amp;id=19&amp;action=GETLAST</code></pre>
+<p id="bkmrk-sample-output-or-tem-1">Sample output or template:</p>
+<pre id="bkmrk-uniqueid%7Ctype%7Ctype-i"><code>UniqueID|Type|Type ID|Value|Type Name|Value Name
+srv02-1509806457.625|START|0|2017-11-04 15:41:01||
+srv02-1509806457.625|CALLERID|0|Susan &lt;1132555678&gt;||
+srv02-1509806457.625|VARIABLE|85|36985||
+srv02-1509806457.625|VARIABLE|144|56896||
+srv02-1509806457.625|QUEUE|281|||
+srv02-1509806457.625|ANSWER|0|105-TENANTCODE||
+srv02-1509806457.625|HANGUP|0|||</code></pre>
+<h3 id="bkmrk-getting-the-latest-o-1">Getting the latest one for a given Response Path for agent 104-TENANTCODE</h3>
+<p id="bkmrk-response-path-result-2">Response Path results can be filtered by queue, answering extension, or unique ID and can be returned as plain text or XML.</p>
+<p id="bkmrk-request-example%3A-39">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-43"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=RESPONSEPATH&amp;tenant=TENANTCODE&amp;id=19&amp;action=GETLAST&amp;filter=ANSWER&amp;filterdata=104-TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-latest-o-2">Getting the latest one for a given Response Path for agent 104-TENANTCODE in xml format</h3>
+<p id="bkmrk-response-path-result-3">Response Path results can be filtered by queue, answering extension, or unique ID and can be returned as plain text or XML.</p>
+<p id="bkmrk-request-example%3A-40">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-44"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=RESPONSEPATH&amp;tenant=TENANTCODE&amp;id=19&amp;action=GETLAST&amp;filter=ANSWER&amp;filterdata=105-TENANTCODE&amp;format=xml</code></pre>
+<p id="bkmrk-sample-output-or-tem-2">Sample output or template:</p>
+<pre id="bkmrk-%3C%3Fxml-version%3D%221.0%22%3E"><code>&lt;?xml version="1.0"&gt;
+&lt;Result&gt;
+&lt;Agent&gt;105-TENANTCODE&lt;/Agent&gt;
+&lt;Status&gt;NOT ACTIVE&lt;/Status&gt;
+&lt;Queue&gt;supportQ&lt;/Queue&gt;
+&lt;ClientID&gt;1234&lt;/MemberNumber&gt;
+&lt;OrderNumber&gt;11223344&lt;/MemberNumber&gt;
+&lt;Caller&gt;Manuel &lt;7171345678&gt;&lt;/Caller&gt;
+&lt;VoiceFile&gt;3619&lt;/VoiceFile&gt;
+&lt;/Result&gt;</code></pre>
+<h2 id="bkmrk-managedb-%2F-custom-de">ManageDB / Custom Destination Types</h2>
+<p id="bkmrk-custom-destination-t">Custom Destination Types.</p>
+<h3 id="bkmrk-getting-the-custom-d">Getting the custom destination type list</h3>
+<p id="bkmrk-request-example%3A-41">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-45"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CUSTOMTYPES&amp;tenant=TENANTCODE&amp;action=list</code></pre>
+<h2 id="bkmrk-managedb-%2F-custom-de-1">ManageDB / Custom Destinations</h2>
+<p id="bkmrk-custom-destinations.">Custom Destinations.</p>
+<h3 id="bkmrk-getting-the-custom-d-1">Getting the custom destination list</h3>
+<p id="bkmrk-request-example%3A-42">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-46"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CUSTOM&amp;tenant=TENANTCODE&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-info-for-a-c">Getting info for a custom destination</h3>
+<p id="bkmrk-request-example%3A-43">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-47"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CUSTOM&amp;tenant=TENANTCODE&amp;action=get&amp;objectid=67</code></pre>
+<h3 id="bkmrk-creating-a-custom-de">Creating a custom destination</h3>
+<p id="bkmrk-request-example%3A-44">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-48"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=custom&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-1">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22cu_name%22%3A-%22boss-p"><code>{
+  "cu_name": "Boss phone",
+  "cu_ct_id": 1,
+  "cu_param1": "3564732920",
+  "cu_param2": "INCOMINGDID",
+  "cu_param3": "30"
+}</code></pre>
+<h3 id="bkmrk-updating-a-custom-de">Updating a custom destination</h3>
+<p id="bkmrk-request-example%3A-45">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-49"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=custom&amp;tenant=TENANTCODE&amp;objectid=286</code></pre>
+<p id="bkmrk-payload-sent-as-json-2">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22cu_name%22%3A-%22boss-p-1"><code>{
+  "cu_name": "Boss private phone",
+  "cu_id": 286,
+  "cu_param1": "0636287454"
+}</code></pre>
+<h2 id="bkmrk-cdr-%2F-get-the-userfi">CDR / Get the userfield</h2>
+<p id="bkmrk-get-the-userfield.">Get the userfield.</p>
+<p id="bkmrk-request-example%3A-46">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-50"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=CDR&amp;action=GET&amp;field=userfield&amp;uniqueid=srv02-1701011773.4670</code></pre>
+<h2 id="bkmrk-cdr-%2F-update-the-use">CDR / Update the userfield</h2>
+<p id="bkmrk-update-the-userfield">Update the userfield.</p>
+<p id="bkmrk-request-example%3A-47">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-51"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=CDR&amp;action=UPDATE&amp;field=userfield&amp;uniqueid=srv02-1701011773.4670&amp;value=</code></pre>
+<h2 id="bkmrk-managedb-%2F-tenants">ManageDB / Tenants</h2>
+<p id="bkmrk-tenants.">Tenants.</p>
+<h3 id="bkmrk-getting-the-tenant-l">Getting the tenant list</h3>
+<p id="bkmrk-request-example%3A-48">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-52"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=TENANT&amp;action=list</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-53"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=TENANT&amp;action=list&amp;filter=te_disabled='on'</code></pre>
+<h3 id="bkmrk-getting-info-for-a-t">Getting info for a tenant</h3>
+<p id="bkmrk-request-example%3A-49">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-54"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=TENANT&amp;action=get&amp;objectid=1</code></pre>
+<h3 id="bkmrk-creating-a-tenant">Creating a tenant</h3>
+<p id="bkmrk-request-example%3A-50">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-55"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=tenant</code></pre>
+<p id="bkmrk-payload-sent-as-json-3">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22te_code%22%3A-%22relax%22"><code>{
+  "te_code": "RELAX",
+  "te_name": "Relax &amp; entertainment",
+  "pk_start": 800,
+  "pk_end": 810
+}</code></pre>
+<h3 id="bkmrk-updating-a-tenant">Updating a tenant</h3>
+<p id="bkmrk-request-example%3A-51">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-56"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=tenant&amp;objectid=460</code></pre>
+<p id="bkmrk-payload-sent-as-json-4">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22te_name%22%3A-%22relax-"><code>{
+  "te_name": "Relax and entertainment",
+  "pk_end": 820
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-phones">ManageDB / Phones</h2>
+<p id="bkmrk-phones.">Phones.</p>
+<h3 id="bkmrk-getting-the-phones-l">Getting the phones list</h3>
+<p id="bkmrk-request-example%3A-52">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-57"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=PHONE&amp;action=list&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-info-for-a-p">Getting info for a phone</h3>
+<p id="bkmrk-request-example%3A-53">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-58"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=PHONE&amp;action=get&amp;objectid=182&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-creating-a-phone">Creating a phone</h3>
+<p id="bkmrk-request-example%3A-54">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-59"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=phones&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-5">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22ph_name%22%3A-%22george"><code>{
+  "ph_name": "George Basement",
+  "ph_mac": "AA:BB:CC:DD:EE:FF:00:11",
+  "ph_pm_id": 5
+}</code></pre>
+<h3 id="bkmrk-updating-a-phone">Updating a phone</h3>
+<p id="bkmrk-request-example%3A-55">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-60"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=phone&amp;objectid=207&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-6">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22ph_name%22%3A-%22george-1"><code>{
+  "ph_name": "George Lower Basement"
+}</code></pre>
+<h2 id="bkmrk-manage-db-%2F-media-fi">Manage DB / media files</h2>
+<p id="bkmrk-media-files.">media files.</p>
+<p id="bkmrk-managedb-requests-re">ManageDB requests require an administrator API key. Most write operations send the record fields as a jsondata POST value.</p>
+<h3 id="bkmrk-getting-the-media-fi">Getting the media file list</h3>
+<p id="bkmrk-request-example%3A-56">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-61"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=MEDIAFILE&amp;action=list&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-info-for-a-m">Getting info for a media file</h3>
+<p id="bkmrk-request-example%3A-57">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-62"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=MEDIAFILE&amp;action=get&amp;objectid=1063&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-binary-p">Getting the binary part of a media file</h3>
+<p id="bkmrk-request-example%3A-58">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-63"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=MEDIAFILE&amp;action=getbinary&amp;objectid=1063&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-updating-a-media-fil">Updating a media file</h3>
+<p id="bkmrk-request-example%3A-59">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-64"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=mediafile&amp;objectid=10&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-7">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22me_name%22%3A-%22beep%22-"><code>{
+  "me_name": "Beep"
+}</code></pre>
+<h3 id="bkmrk-updating-the-binary-">Updating the binary part of a media file</h3>
+<p id="bkmrk-request-example%3A-60">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-65"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=MEDIAFILE&amp;action=updatebinary&amp;objectid=247&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-managedb-%2F-hunt-list">ManageDB / Hunt Lists</h2>
+<p id="bkmrk-hunt-lists.">Hunt Lists.</p>
+<h3 id="bkmrk-getting-the-hunt-lis">Getting the hunt lists list</h3>
+<p id="bkmrk-request-example%3A-61">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-66"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=HUNTLIST&amp;action=get&amp;objectid=323&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-hunt-lis-1">Getting the hunt lists extension list</h3>
+<p id="bkmrk-request-example%3A-62">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-67"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=HUNTLIST&amp;action=getextensions&amp;objectid=323&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-setting-the-hunt-lis">Setting the hunt lists extension list</h3>
+<p id="bkmrk-request-example%3A-63">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-68"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=setextensions&amp;object=huntlist&amp;objectid=26&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-managedb-%2F-extension">ManageDB / Extensions</h2>
+<p id="bkmrk-extensions.">Extensions.</p>
+<h3 id="bkmrk-getting-the-extensio">Getting the extension list</h3>
+<p id="bkmrk-request-example%3A-64">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-69"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=list&amp;object=extension&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-details-">Getting the details for an extension</h3>
+<p id="bkmrk-request-example%3A-65">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-70"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=get&amp;object=extension&amp;objectid=1701&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-deleting-an-extensio">Deleting an extension</h3>
+<p id="bkmrk-request-example%3A-66">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-71"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=delete&amp;object=extension&amp;objectid=6016&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-updating-the-securit">Updating the security for an extension</h3>
+<p id="bkmrk-request-example%3A-67">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-72"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=extension&amp;objectid=1695&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-8">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22ex_callallowed%22%3A-"><code>{
+  "ex_callallowed": "all"
+}</code></pre>
+<h3 id="bkmrk-adding-a-sip-extensi">Adding a SIP extension</h3>
+<p id="bkmrk-request-example%3A-68">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-73"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=extension&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-9">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22ex_number%22%3A-%221100"><code>{
+  "ex_number": "1100",
+  "ex_name": "Test extension",
+  "ex_tech": "SIP",
+  "secret": "hackmeifyoucan",
+  "ex_pickupgroup": "1,5,6",
+  "ex_callgroup": "1,7,9"
+}</code></pre>
+<h3 id="bkmrk-adding-a-pjsip-exten">Adding a PJSIP extension</h3>
+<p id="bkmrk-request-example%3A-69">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-74"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=extension&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-10">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22ex_number%22%3A-%221100-1"><code>{
+  "ex_number": "1100",
+  "ex_name": "Test PJSIP extension",
+  "password": "hackmeifyoucan",
+  "ex_tech": "PJSIP"
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-users">ManageDB / Users</h2>
+<p id="bkmrk-users.">Users.</p>
+<h3 id="bkmrk-getting-the-user-lis">Getting the user list</h3>
+<p id="bkmrk-request-example%3A-70">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-75"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=user&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-the-details--1">Getting the details for an user</h3>
+<p id="bkmrk-request-example%3A-71">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-76"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=user&amp;action=get&amp;objectid=3635</code></pre>
+<h3 id="bkmrk-creating-an-user">Creating an user</h3>
+<p id="bkmrk-request-example%3A-72">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-77"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=user</code></pre>
+<p id="bkmrk-payload-sent-as-json-11">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22us_username%22%3A-%22le"><code>{
+  "us_username": "Leandro71",
+  "us_password": "sha256(change-me)",
+  "us_up_id": 1
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-conferenc">ManageDB / Conferences</h2>
+<p id="bkmrk-conferences.">Conferences.</p>
+<h3 id="bkmrk-creating-a-conferenc">Creating a conference</h3>
+<p id="bkmrk-request-example%3A-73">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-78"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=conference&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-12">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22cr_number%22%3A-%22887%22"><code>{
+  "cr_number": "887",
+  "cr_name": "Test conference",
+  "pin": "5678"
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-providers">ManageDB / Providers</h2>
+<p id="bkmrk-providers.">Providers.</p>
+<h3 id="bkmrk-getting-the-provider">Getting the provider list</h3>
+<p id="bkmrk-request-example%3A-74">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-79"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=provider&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-the-details--2">Getting the details for a provider (SIP)</h3>
+<p id="bkmrk-request-example%3A-75">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-80"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=provider&amp;action=get&amp;objectid=1027</code></pre>
+<h3 id="bkmrk-update-a-provider">Update a provider</h3>
+<p id="bkmrk-request-example%3A-76">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-81"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=provider&amp;objectid=1027</code></pre>
+<p id="bkmrk-payload-sent-as-json-13">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22pr_peername%22%3A-%22te"><code>{
+  "pr_peername": "test_extradevel",
+  "pr_name": "Test extradevel"
+}</code></pre>
+<h3 id="bkmrk-insert-a-provider">Insert a provider</h3>
+<p id="bkmrk-request-example%3A-77">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-82"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=provider</code></pre>
+<p id="bkmrk-payload-sent-as-json-14">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22pr_peername%22%3A-%22ne"><code>{
+  "pr_peername": "new_provider",
+  "pr_name": "New Provider",
+  "pr_tech": "SIP",
+  "pr_userealtime": "on",
+  "allow": "'alaw:20",
+  "host": "172.16.1.100"
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-routing-p">ManageDB / Routing Profiles</h2>
+<p id="bkmrk-routing-profiles.">Routing Profiles.</p>
+<h3 id="bkmrk-getting-the-routing-">Getting the routing profiles list</h3>
+<p id="bkmrk-request-example%3A-78">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-83"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=routingprofile&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-the-details--3">Getting the details for a routing profile</h3>
+<p id="bkmrk-request-example%3A-79">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-84"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=routingprofile&amp;action=get&amp;objectid=99</code></pre>
+<h3 id="bkmrk-getting-the-list-of-">Getting the list of routes for a routing profile</h3>
+<p id="bkmrk-request-example%3A-80">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-85"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=routingprofile&amp;action=listroutes&amp;objectid=99</code></pre>
+<h3 id="bkmrk-adding-a-routing-pro">Adding a routing profile</h3>
+<p id="bkmrk-request-example%3A-81">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-86"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=routingprofile</code></pre>
+<p id="bkmrk-payload-sent-as-json-15">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22rp_name%22%3A-%22only-n"><code>{
+  "rp_name": "Only National",
+  "rp_type": "VOICE"
+}</code></pre>
+<h3 id="bkmrk-update-a-routing-pro">Update a routing profile</h3>
+<p id="bkmrk-request-example%3A-82">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-87"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=routingprofile&amp;objectid=275</code></pre>
+<h2 id="bkmrk-managedb-%2F-routes">ManageDB / Routes</h2>
+<p id="bkmrk-routes.">Routes.</p>
+<h3 id="bkmrk-getting-the-route-li">Getting the route list</h3>
+<p id="bkmrk-request-example%3A-83">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-88"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=route&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-the-route-li-1">Getting the route list for a routing profile</h3>
+<p id="bkmrk-request-example%3A-84">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-89"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=route&amp;routingprofileid=1&amp;action=list</code></pre>
+<h3 id="bkmrk-getting-the-details--4">Getting the details for a route</h3>
+<p id="bkmrk-request-example%3A-85">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-90"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=route&amp;action=get&amp;objectid=69</code></pre>
+<h3 id="bkmrk-adding-a-route-to-a-">Adding a route to a routing profile</h3>
+<p id="bkmrk-request-example%3A-86">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-91"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;object=route</code></pre>
+<p id="bkmrk-payload-sent-as-json-16">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22dl_rp_id%22%3A-%221%22%2C-%22"><code>{
+  "dl_rp_id": "1",
+  "dl_name": "Free Numbers",
+  "dl_regex": "^800.*",
+  "dl_pr_id": "89"
+}</code></pre>
+<h3 id="bkmrk-update-a-route">Update a route</h3>
+<p id="bkmrk-request-example%3A-87">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-92"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=route&amp;objectid=69</code></pre>
+<p id="bkmrk-payload-sent-as-json-17">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22dl_emergencyroute"><code>{
+  "dl_emergencyroute": "",
+  "dl_usepin": "on"
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-dids">ManageDB / DIDs</h2>
+<p id="bkmrk-dids.">DIDs.</p>
+<h3 id="bkmrk-listing-the-dids-for">Listing the DIDs for a tenant</h3>
+<p id="bkmrk-request-example%3A-88">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-93"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DID&amp;action=LIST&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-more-info-fo">Getting more info for a DID</h3>
+<p id="bkmrk-request-example%3A-89">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-94"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DID&amp;action=GET&amp;objectid=27699&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-updating-a-did">Updating a DID</h3>
+<p id="bkmrk-request-example%3A-90">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-95"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=update&amp;object=did&amp;objectid=27699</code></pre>
+<p id="bkmrk-payload-sent-as-json-18">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22di_comment%22%3A-%22tes"><code>{
+  "di_comment": "Test DID",
+  "di_recording": "yes"
+}</code></pre>
+<h2 id="bkmrk-managedb-%2F-destinati">ManageDB / Destinations</h2>
+<p id="bkmrk-destinations.">Destinations.</p>
+<h3 id="bkmrk-getting-the-destinat">Getting the destinations for a DID</h3>
+<p id="bkmrk-request-example%3A-91">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-96"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=LIST&amp;typesrc=DID&amp;typeidsrc=27699&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-destinat-1">Getting the destinations for a Condition (true)</h3>
+<p id="bkmrk-request-example%3A-92">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-97"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=LIST&amp;typesrc=CONDITION&amp;typeidsrc=20&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-the-destinat-2">Getting the destinations for a Condition (false)</h3>
+<p id="bkmrk-request-example%3A-93">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-98"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=LIST&amp;typesrc=NOTCONDITION&amp;typeidsrc=20&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-replace-the-destinat">Replace the destinations for a DID</h3>
+<p id="bkmrk-request-example%3A-94">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-99"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=replace&amp;typesrc=CONDITION&amp;typeidsrc=20&amp;tenant=TENANTCODE</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-100"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=replace&amp;typesrc=NOTCONDITION&amp;typeidsrc=20&amp;tenant=TENANTCODE</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-101"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=replace&amp;typesrc=IVR_1&amp;typeidsrc=3634&amp;tenant=TENANTCODE</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-102"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=DESTINATION&amp;action=replace&amp;typesrc=DID&amp;typeidsrc=27699&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-19">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%5B-%22playback-60%22%2C-%22ex"><code>[
+  "PLAYBACK-60",
+  "EXT-29379"
+]</code></pre>
+<h3 id="bkmrk-destination-tags">Destination Tags</h3>
+<p id="bkmrk-destination-replacem">Destination replacement uses values in <code>TYPE-ID</code> form. The following tags are supported by the legacy destination examples and the current destination lookup code.</p>
+<table id="bkmrk-tagdestinationextdia">
+<thead>
+<tr>
+<th>Tag</th>
+<th>Destination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXT</code></td>
+<td>Dial an extension</td>
+</tr>
+<tr>
+<td><code>SMS</code></td>
+<td>Send a SMS to an extension</td>
+</tr>
+<tr>
+<td><code>PLAYBACK</code></td>
+<td>Play a media file</td>
+</tr>
+<tr>
+<td><code>RERECORD</code></td>
+<td>Rerecord a media file</td>
+</tr>
+<tr>
+<td><code>CLEARRECORDING</code></td>
+<td>Clear the media from a media file</td>
+</tr>
+<tr>
+<td><code>RERECORDSILENT</code></td>
+<td>Rerecord a media file without playing an intro</td>
+</tr>
+<tr>
+<td><code>CONDITION</code></td>
+<td>Follow to a condition</td>
+</tr>
+<tr>
+<td><code>VOICEMAIL</code></td>
+<td>Call a voicemail</td>
+</tr>
+<tr>
+<td><code>IVR</code></td>
+<td>Call an IVR</td>
+</tr>
+<tr>
+<td><code>DISA</code></td>
+<td>Call a DISA</td>
+</tr>
+<tr>
+<td><code>PAGING</code></td>
+<td>Call a Paging group</td>
+</tr>
+<tr>
+<td><code>HUNTLIST</code></td>
+<td>Call a Huntlist</td>
+</tr>
+<tr>
+<td><code>FLOW</code></td>
+<td>Call a Flow</td>
+</tr>
+<tr>
+<td><code>PARK</code></td>
+<td>Park the call</td>
+</tr>
+<tr>
+<td><code>SPECIAL</code></td>
+<td>Execute a special destination (check the sp_specials table for the id)</td>
+</tr>
+<tr>
+<td><code>MEETME</code></td>
+<td>Join a conference</td>
+</tr>
+<tr>
+<td><code>QUEUE</code></td>
+<td>Dial a Queue</td>
+</tr>
+<tr>
+<td><code>RESETQUEUESTATS</code></td>
+<td>Reset the stats for a Queue</td>
+</tr>
+<tr>
+<td><code>STARTCAMPAIGN</code></td>
+<td>Start a campaign</td>
+</tr>
+<tr>
+<td><code>REDIALNOTANSWEREDCAMPAIGN</code></td>
+<td>Redial the calls not answered for a campaign</td>
+</tr>
+<tr>
+<td><code>STOPCAMPAIGN</code></td>
+<td>Stop a campaign</td>
+</tr>
+<tr>
+<td><code>PAUSECAMPAIGN</code></td>
+<td>Pause a campaign</td>
+</tr>
+<tr>
+<td><code>UNPAUSECAMPAIGN</code></td>
+<td>Unpause a campaign</td>
+</tr>
+<tr>
+<td><code>REMOVEFROMCAMPAIGN</code></td>
+<td>Remove called number from campaign</td>
+</tr>
+<tr>
+<td><code>REMOVECALLERFROMCAMPAIGN</code></td>
+<td>Remove caller number from campaign</td>
+</tr>
+<tr>
+<td><code>ADDLATESTDIALEDOUTTOCAMPAIGN</code></td>
+<td>Add latest dialed out number to campaign</td>
+</tr>
+<tr>
+<td><code>ADDLATESTDIALEDINTOCAMPAIGN</code></td>
+<td>Add latest dialed in number to campaign</td>
+</tr>
+<tr>
+<td><code>ADDTODNCLIST</code></td>
+<td>Add called number to Do Not Call list</td>
+</tr>
+<tr>
+<td><code>LOGINQUEUE</code></td>
+<td>Login caller to Queue</td>
+</tr>
+<tr>
+<td><code>TOGGLELOGINQUEUE</code></td>
+<td>Toggle Login/Logout caller to Queue</td>
+</tr>
+<tr>
+<td><code>LOGINADQUEUE</code></td>
+<td>Login caller to Queue</td>
+</tr>
+<tr>
+<td><code>TOGGLELOGINADQUEUE</code></td>
+<td>Toggle Login/Logout caller to Queue</td>
+</tr>
+<tr>
+<td><code>TOGGLEPAUSEQUEUE</code></td>
+<td>Toggle Pause/Unpause caller to Queue</td>
+</tr>
+<tr>
+<td><code>LOGOUTALLAGENTSFROMQUEUE</code></td>
+<td>Logout all agents from Queue</td>
+</tr>
+<tr>
+<td><code>LOGOUTQUEUE</code></td>
+<td>Logout caller from Queue</td>
+</tr>
+<tr>
+<td><code>PAUSEQUEUE</code></td>
+<td>Pause caller from Queue</td>
+</tr>
+<tr>
+<td><code>UNPAUSEQUEUE</code></td>
+<td>Unpause caller from Queue</td>
+</tr>
+<tr>
+<td><code>PAUSEALLAGENTSINQUEUE</code></td>
+<td>Pause all agents in Queue</td>
+</tr>
+<tr>
+<td><code>UNPAUSEALLAGENTSINQUEUE</code></td>
+<td>Unpause all agents in Queue</td>
+</tr>
+<tr>
+<td><code>CUSTOM</code></td>
+<td>Use a custom destination</td>
+</tr>
+<tr>
+<td><code>PHONEBOOK</code></td>
+<td>Route by Phone Book using regex</td>
+</tr>
+<tr>
+<td><code>EXACTPHONEBOOK</code></td>
+<td>Route by Phone Book not using regex</td>
+</tr>
+<tr>
+<td><code>SETUNCONDITIONALDID</code></td>
+<td>Set unconditional forwarding for a DID</td>
+</tr>
+<tr>
+<td><code>ENABLEUNCONDITIONALDID</code></td>
+<td>Enable the unconditional forwarding for a DID</td>
+</tr>
+<tr>
+<td><code>DISABLEUNCONDITIONALDID</code></td>
+<td>Disable the unconditional forwarding for a DID</td>
+</tr>
+<tr>
+<td><code>TOGGLEUNCONDITIONALDID</code></td>
+<td>Toggle the unconditional forwarding for a DID</td>
+</tr>
+<tr>
+<td><code>CLIDNAMEBYPHONEBOOK</code></td>
+<td>Set Caller ID Name by Phone Book</td>
+</tr>
+<tr>
+<td><code>CALLERIDMOD</code></td>
+<td>Alter Caller ID based on rule</td>
+</tr>
+<tr>
+<td><code>MUSICONHOLD</code></td>
+<td>Set Music On Hold to</td>
+</tr>
+<tr>
+<td><code>RINGMUSICONHOLD</code></td>
+<td>Ring extension using Music On Hold</td>
+</tr>
+<tr>
+<td><code>RESPONSEPATH</code></td>
+<td>Start Response Path</td>
+</tr>
+<tr>
+<td><code>SAMENUMBERVM</code></td>
+<td>Voicemail same number</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bkmrk-managedb-%2F-ivrs">ManageDB / IVRs</h2>
+<p id="bkmrk-ivrs.">IVRs.</p>
+<h3 id="bkmrk-listing-the-ivrs-for">Listing the IVRs for a tenant</h3>
+<p id="bkmrk-request-example%3A-95">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-103"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=IVR&amp;action=LIST&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-getting-more-info-fo-1">Getting more info for a IVR</h3>
+<p id="bkmrk-the-ivr-media-file-r">The IVR media-file references are stored as destinations; use the destination examples to change them.</p>
+<p id="bkmrk-request-example%3A-96">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-104"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=IVR&amp;action=GET&amp;tenant=TENANTCODE&amp;objectid=322</code></pre>
+<h3 id="bkmrk-getting-the-destinat-3">Getting the destinations for the IVR, including the media files</h3>
+<p id="bkmrk-request-example%3A-97">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-105"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=IVR&amp;action=GETDESTINATIONS&amp;tenant=TENANTCODE&amp;objectid=3634</code></pre>
+<h2 id="bkmrk-managedb-%2F-condition">ManageDB / Conditions</h2>
+<p id="bkmrk-conditions.">Conditions.</p>
+<h3 id="bkmrk-listing-the-conditio">Listing the Conditions for a tenant</h3>
+<p id="bkmrk-request-example%3A-98">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-106"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CONDITION&amp;action=LIST&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-listing-the-destinat">Listing the destinations for a Condition</h3>
+<p id="bkmrk-request-example%3A-99">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-107"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CONDITION&amp;action=GETDESTINATIONS&amp;tenant=TENANTCODE&amp;objectid=20&amp;format=json</code></pre>
+<h3 id="bkmrk-getting-info-and-mor">Getting info and more info for a Condition</h3>
+<p id="bkmrk-request-example%3A-100">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-108"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CONDITION&amp;action=GET&amp;tenant=TENANTCODE&amp;objectid=20&amp;format=json</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-109"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CONDITION&amp;action=GETEXTENDEDINFOS&amp;tenant=TENANTCODE&amp;objectid=20&amp;format=json</code></pre>
+<h3 id="bkmrk-replacing-extended-i">Replacing extended info for a Condition</h3>
+<p id="bkmrk-weektime-and-calenda">Weektime and calendar conditions use extended-info rows; replace the extended-info list when changing their schedules.</p>
+<p id="bkmrk-request-example%3A-101">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-110"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=CONDITION&amp;action=replaceextendedinfos&amp;objectid=20&amp;tenant=TENANTCODE</code></pre>
+<p id="bkmrk-payload-sent-as-json-20">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%5B-%7B-%22param1%22%3A-%221%22%2C-%22"><code>[
+  {
+    "param1": "1",
+    "param2": "8:00",
+    "param3": "13:00"
+  },
+  {
+    "param1": "1",
+    "param2": "15:00",
+    "param3": "19:00"
+  },
+  {
+    "param1": "2",
+    "param2": "8:00",
+    "param3": "13:00"
+  },
+  {
+    "param1": "2",
+    "param2": "15:00",
+    "param3": "19:00"
+  }
+]</code></pre>
+<h2 id="bkmrk-managedb-%2F-voicemail">ManageDB / Voicemails</h2>
+<p id="bkmrk-voicemails.">Voicemails.</p>
+<h3 id="bkmrk-listing-the-voicemai">Listing the Voicemails for a tenant</h3>
+<p id="bkmrk-request-example%3A-102">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-111"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=VOICEMAIL&amp;action=LIST&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-listing-the-voicemai-1">Listing the Voicemails message for a voicemail</h3>
+<p id="bkmrk-request-example%3A-103">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-112"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=VOICEMAIL&amp;action=LISTMESSAGES&amp;tenant=TENANTCODE&amp;mailboxuser=001&amp;mailbox=INBOX</code></pre>
+<h3 id="bkmrk-get-a-message-record">Get a message recording for a voicemail id</h3>
+<p id="bkmrk-request-example%3A-104">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-113"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=VOICEMAIL&amp;action=GETMESSAGERECORDING&amp;id=4963&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-add-a-voicemail-box">Add a voicemail box</h3>
+<p id="bkmrk-request-example%3A-105">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-114"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;tenant=TENANTCODE&amp;object=voicemail</code></pre>
+<p id="bkmrk-payload-sent-as-json-21">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22mailbox%22%3A-%229000%22%2C"><code>{
+  "mailbox": "9000",
+  "password": "1234567",
+  "fullname": "This is a test",
+  "email": "test@mirtapbx.com"
+}</code></pre>
+<h3 id="bkmrk-delete-a-voicemail-b">Delete a voicemail box</h3>
+<p id="bkmrk-request-example%3A-106">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-115"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=VOICEMAIL&amp;action=DELETE&amp;objectid=32259&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-managedb-%2F-phone-pho">ManageDB / Phone phonebooks</h2>
+<p id="bkmrk-phone-phonebooks.">Phone phonebooks.</p>
+<h3 id="bkmrk-listing-the-phone-ph">Listing the Phone phonebooks for a tenant</h3>
+<p id="bkmrk-request-example%3A-107">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-116"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=MANAGEDB&amp;object=PHONEPHONEBOOK&amp;action=LIST</code></pre>
+<h3 id="bkmrk-get-the-detail-of-a-">Get the detail of a phone phone book</h3>
+<p id="bkmrk-request-example%3A-108">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-117"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;tenant=TENANTCODE&amp;reqtype=MANAGEDB&amp;object=PHONEPHONEBOOK&amp;action=GET&amp;objectid=1332</code></pre>
+<h2 id="bkmrk-managedb-%2F-queues">ManageDB / Queues</h2>
+<p id="bkmrk-queues.">Queues.</p>
+<h3 id="bkmrk-listing-the-queues-f">Listing the Queues for a tenant</h3>
+<p id="bkmrk-request-example%3A-109">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-118"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=QUEUE&amp;action=LIST&amp;tenant=TENANTCODE</code></pre>
+<h3 id="bkmrk-add-a-queue">Add a Queue</h3>
+<p id="bkmrk-request-example%3A-110">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-119"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;action=add&amp;tenant=TENANTCODE&amp;object=queue</code></pre>
+<p id="bkmrk-payload-sent-as-json-22">Payload sent as <code>jsondata</code>:</p>
+<pre id="bkmrk-%7B-%22qu_name%22%3A-%22suppor"><code>{
+  "qu_name": "Support Line",
+  "strategy": "RINGALL",
+  "timeout": "30"
+}</code></pre>
+<h3 id="bkmrk-delete-a-queue">Delete a queue</h3>
+<p id="bkmrk-request-example%3A-111">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-120"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=MANAGEDB&amp;object=QUEUE&amp;action=DELETE&amp;objectid=7027&amp;tenant=TENANTCODE</code></pre>
+<h2 id="bkmrk-token-authentication">Token Authentication</h2>
+<p id="bkmrk-use-reqtype%3Dauthtoke">Use <code>reqtype=AUTHTOKEN</code> to generate a one-time or expiring login token for a user. The returned token can be used as the password in the normal web login URL.</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-121"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=AUTHTOKEN&amp;action=generate&amp;validity=ONCE&amp;user=adrian</code></pre>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-122"><code>https://pbx.example.com/mirtapbx/login.php?username=adrian&amp;password=AUTH_TOKEN</code></pre>
+<p id="bkmrk-request-example%3A-112">Request example:</p>
+<pre id="bkmrk-https%3A%2F%2Fpbx.example.-123"><code>https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&amp;reqtype=AUTHTOKEN&amp;action=generate&amp;validity=ONCE&amp;user=adrian</code></pre>
+<h2 id="bkmrk-security-notes">Security Notes</h2>
+<ul id="bkmrk-use-tenant-read-only">
+<li>Use tenant read-only keys for reporting integrations whenever possible.</li>
+<li>Use administrator keys only for global reporting or <code>MANAGEDB</code> actions that require them.</li>
+<li>Do not store production keys in browser-side scripts.</li>
+<li>Prefer the OpenAPI endpoint for new integrations unless an existing integration requires the legacy ProxyAPI format.</li>
+</ul>
+    </div>        </div>
+        <div component="pointer"
+      option:pointer:page-id="1237">
+    <div id="pointer"
+         refs="pointer@pointer"
+         tabindex="-1"
+         aria-label="Page Section Options"
+         class="pointer-container">
+        <div class="pointer flex-container-row items-center justify-space-between gap-xs p-xs anim" >
+            <div refs="pointer@mode-section" class="flex flex-container-row items-center gap-xs">
+                <button refs="pointer@mode-toggle"
+                        title="Permalink mode, Press to show include tag"
+                        class="text-button icon px-xs"><svg class="svg-icon" data-icon="link" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5"/></svg></button>
+                <div class="input-group flex flex-container-row items-center">
+                    <input refs="pointer@link-input" aria-label="Page Section Permalink" readonly="readonly" type="text" id="pointer-url" placeholder="url">
+                    <button refs="pointer@link-button" class="button outline icon px-xs" type="button" title="Copy Link"><svg class="svg-icon" data-icon="copy" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></button>
+                </div>
+            </div>
+            <div refs="pointer@mode-section" hidden class="flex flex-container-row items-center gap-xs">
+                <button refs="pointer@mode-toggle"
+                        title="Include tag mode, Press to show permalink"
+                        class="text-button icon px-xs"><svg class="svg-icon" data-icon="include" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 .5h24v24H0z"/><path d="m12 16.5 4-4h-3v-9h-2v9H8zm9-13h-6v1.99h6v14.03H3V5.49h6V3.5H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-14c0-1.1-.9-2-2-2"/></svg></button>
+                <div class="input-group flex flex-container-row items-center">
+                    <input refs="pointer@include-input" aria-label="Page Section Include Tag" readonly="readonly" type="text" id="pointer-include" placeholder="include">
+                    <button refs="pointer@include-button" class="button outline icon px-xs" type="button" title="Copy Link"><svg class="svg-icon" data-icon="copy" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></button>
+                </div>
+            </div>
+            <div>
+                                            </div>
+        </div>
+    </div>
+
+    <button refs="pointer@section-mode-button" class="screen-reader-only">Enter section select mode</button>
+</div>
+    </main>
+
+    <div id="sibling-navigation" class="grid half collapse-xs items-center mb-m px-m no-row-gap fade-in-when-active print-hidden">
+    <div>
+                    <a href="https://manual.mirtapbx.com/books/api/chapter/proxyapi-old" data-shortcut="previous" class="outline-hover no-link-style block rounded">
+                <div class="px-m pt-xs text-muted">Previous</div>
+                <div class="inline-block">
+                    <div class="icon-list-item no-hover">
+                        <span class="text-chapter "><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+                        <span>ProxyAPI (old)</span>
+                    </div>
+                </div>
+            </a>
+            </div>
+    <div>
+            </div>
+</div>
+            <div class="comments-container mb-l print-hidden">
+            <section components="page-comments tabs"
+         option:page-comments:page-id="1237"
+         option:page-comments:created-text="Comment added"
+         option:page-comments:count-text=":count Comment Thread|:count Comment Threads"
+         option:page-comments:archived-count-text=":count Archived"
+         option:page-comments:wysiwyg-text-direction="ltr"
+         class="comments-list tab-container"
+         aria-label="Comments">
+
+    <div refs="page-comments@comment-count-bar" class="flex-container-row items-center">
+        <div role="tablist" class="flex">
+            <button type="button"
+                    role="tab"
+                    id="comment-tab-active"
+                    aria-controls="comment-tab-panel-active"
+                    refs="page-comments@active-tab"
+                    aria-selected="true">0 Comment Threads</button>
+            <button type="button"
+                    role="tab"
+                    id="comment-tab-archived"
+                    aria-controls="comment-tab-panel-archived"
+                    refs="page-comments@archived-tab"
+                    aria-selected="false">0 Archived</button>
+        </div>
+            </div>
+
+    <div id="comment-tab-panel-active"
+         refs="page-comments@active-container"
+         tabindex="0"
+         role="tabpanel"
+         aria-labelledby="comment-tab-active"
+         class="comment-container no-outline">
+        <div refs="page-comments@comment-container">
+                    </div>
+
+        <p class="text-center text-muted italic empty-state">No comments to display</p>
+
+            </div>
+
+    <div refs="page-comments@archive-container"
+         id="comment-tab-panel-archived"
+         tabindex="0"
+         role="tabpanel"
+         aria-labelledby="comment-tab-archived"
+         hidden="hidden"
+         class="comment-container no-outline">
+                    <p class="text-center text-muted italic empty-state">No comments to display</p>
+    </div>
+
+    
+</section>            <div class="clearfix"></div>
+        </div>
+                </div>
+        </div>
+    </div>
+
+    </div>
+
+    
+    <div component="back-to-top" class="back-to-top print-hidden">
+        <div class="inner">
+            <svg class="svg-icon" data-icon="chevron-up" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/><path fill="none" d="M0 0h24v24H0z"/></svg> <span>Back to top</span>
+        </div>
+    </div>
+
+            <script src="https://manual.mirtapbx.com/dist/app.js?version=v26.05" type="module" nonce="avHABT17VpyFn9CEvBOxYfpQ"></script>
+        
+    </body>
+</html>

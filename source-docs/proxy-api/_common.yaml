@@ -1,0 +1,168 @@
+api: proxy
+vendor: MiRTA PBX
+sourceUrl: https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples
+sourceRevision: "BookStack revision #6, updated 2026-06-03 10:21:49 UTC"
+
+lifecycle:
+  vendorStatus: legacy
+  sourceAnchor: bkmrk-overview
+  quote: "proxyapi.php is the legacy MiRTA PBX HTTP API."
+  vendorRecommendation:
+    sourceAnchor: bkmrk-security-notes
+    quote: "Prefer the OpenAPI endpoint for new integrations unless an existing integration requires the legacy ProxyAPI format."
+  portalLabel: not_decided # U-03
+  issues: [A-01, U-03]
+
+baseUrl:
+  example: https://pbx.example.com/mirtapbx/proxyapi.php
+  basis: every example uses this placeholder host
+  oneComProductionHost: not_documented # U-01
+  issues: [A-34, U-01]
+
+style:
+  summary: >-
+    Single endpoint. The operation is selected by the reqtype query
+    parameter plus a reqtype-specific discriminator (info, action,
+    subreqtype, or object+action). Not REST.
+  sourceAnchor: bkmrk-overview
+  issues: [A-06, A-07, U-07]
+
+authentication:
+  type: api_key
+  location: query
+  parameter: key
+  description: Tenant or admin API key (vendor wording). Read-only keys are recommended where no writes are needed.
+  scopes:
+    documented: [tenant read-only key, tenant key, administrator key]
+    perOperationRequirement: not_documented
+    note: >-
+      The page states "Most calls also require key"; which calls do not is
+      not documented. Admin-key requirement for MANAGEDB is stated
+      inconsistently (A-18).
+  headerAlternative: not_documented
+  sourceAnchor: bkmrk-common-parameters
+  issues: [A-18, A-29, U-09]
+
+commonParameters:
+  sourceAnchor: bkmrk-common-parameters
+  items:
+    - name: reqtype
+      location: query
+      description: Main request family (see reqtype files).
+      required: not_documented
+      allowedValues: 39 values listed in bkmrk-request-types
+    - name: key
+      location: query
+      description: Tenant or admin API key.
+      required: "stated as 'most calls' (bkmrk-overview); per-call not_documented"
+    - name: tenant
+      location: query
+      description: Tenant code. Optional only where an administrator key may act globally.
+      required: "stated as 'normally' for tenant-scoped calls; per-call not_documented"
+      notes:
+        - "Two all-tenant mechanisms appear in examples: omitting tenant (INFO DIDS) and tenant=% (INFO CDRS CSV). A-23"
+    - name: format
+      location: query
+      description: Output format.
+      allowedValues: "plain, json, xml, csv — 'depending on the request'; per-operation support not_documented"
+      default: not_documented
+      issues: [A-03]
+    - name: callback
+      location: query
+      description: JSONP callback name for cross-domain script use with JSON output.
+      issues: [A-30]
+    - name: language
+      location: query
+      description: Language for requests that support translated data.
+      supportedBy: not_documented
+      issues: [A-36]
+    - name: cache
+      location: query
+      description: "Set to 'no' to bypass SQL or AMI cache for supported requests."
+      supportedBy: not_documented
+      issues: [A-36]
+
+jsondata:
+  sourceAnchor: bkmrk-using-post-jsondata
+  summary: >-
+    MANAGEDB, phonebook, destination and similar writes send the record
+    fields as JSON inside a POST form field named jsondata
+    (application/x-www-form-urlencoded per the curl example). Query
+    parameters (including key) stay in the URL.
+  example: |-
+    curl -X POST \
+    --data-urlencode 'jsondata={"field":"value"}' \
+    "https://pbx.example.com/mirtapbx/proxyapi.php?key=APIKEY&tenant=TENANTCODE&reqtype=MANAGEDB&object=OBJECT&action=add"
+  payloadShapes: [object, array] # arrays: DESTINATION replace, CONDITION replaceextendedinfos
+  whichOperationsRequireIt: "only by example; 'similar write requests' is not enumerated"
+  issues: [A-06, A-16]
+
+errors: not_documented # A-02, U-04
+
+destinationTags:
+  sourceAnchor: bkmrk-destination-tags
+  format: "TYPE-ID (e.g. PLAYBACK-60, EXT-29379)"
+  idSemantics: not_documented # A-33
+  tags:
+    EXT: Dial an extension
+    SMS: Send a SMS to an extension
+    PLAYBACK: Play a media file
+    RERECORD: Rerecord a media file
+    CLEARRECORDING: Clear the media from a media file
+    RERECORDSILENT: Rerecord a media file without playing an intro
+    CONDITION: Follow to a condition
+    VOICEMAIL: Call a voicemail
+    IVR: Call an IVR
+    DISA: Call a DISA
+    PAGING: Call a Paging group
+    HUNTLIST: Call a Huntlist
+    FLOW: Call a Flow
+    PARK: Park the call
+    SPECIAL: Execute a special destination (id from the sp_specials table)
+    MEETME: Join a conference
+    QUEUE: Dial a Queue
+    RESETQUEUESTATS: Reset the stats for a Queue
+    STARTCAMPAIGN: Start a campaign
+    REDIALNOTANSWEREDCAMPAIGN: Redial the calls not answered for a campaign
+    STOPCAMPAIGN: Stop a campaign
+    PAUSECAMPAIGN: Pause a campaign
+    UNPAUSECAMPAIGN: Unpause a campaign
+    REMOVEFROMCAMPAIGN: Remove called number from campaign
+    REMOVECALLERFROMCAMPAIGN: Remove caller number from campaign
+    ADDLATESTDIALEDOUTTOCAMPAIGN: Add latest dialed out number to campaign
+    ADDLATESTDIALEDINTOCAMPAIGN: Add latest dialed in number to campaign
+    ADDTODNCLIST: Add called number to Do Not Call list
+    LOGINQUEUE: Login caller to Queue
+    TOGGLELOGINQUEUE: Toggle Login/Logout caller to Queue
+    LOGINADQUEUE: Login caller to Queue
+    TOGGLELOGINADQUEUE: Toggle Login/Logout caller to Queue
+    TOGGLEPAUSEQUEUE: Toggle Pause/Unpause caller to Queue
+    LOGOUTALLAGENTSFROMQUEUE: Logout all agents from Queue
+    LOGOUTQUEUE: Logout caller from Queue
+    PAUSEQUEUE: Pause caller from Queue
+    UNPAUSEQUEUE: Unpause caller from Queue
+    PAUSEALLAGENTSINQUEUE: Pause all agents in Queue
+    UNPAUSEALLAGENTSINQUEUE: Unpause all agents in Queue
+    CUSTOM: Use a custom destination
+    PHONEBOOK: Route by Phone Book using regex
+    EXACTPHONEBOOK: Route by Phone Book not using regex
+    SETUNCONDITIONALDID: Set unconditional forwarding for a DID
+    ENABLEUNCONDITIONALDID: Enable the unconditional forwarding for a DID
+    DISABLEUNCONDITIONALDID: Disable the unconditional forwarding for a DID
+    TOGGLEUNCONDITIONALDID: Toggle the unconditional forwarding for a DID
+    CLIDNAMEBYPHONEBOOK: Set Caller ID Name by Phone Book
+    CALLERIDMOD: Alter Caller ID based on rule
+    MUSICONHOLD: Set Music On Hold to
+    RINGMUSICONHOLD: Ring extension using Music On Hold
+    RESPONSEPATH: Start Response Path
+    SAMENUMBERVM: Voicemail same number
+  notes:
+    - "LOGINQUEUE and LOGINADQUEUE (and their TOGGLE variants) have identical descriptions; the difference is not documented. A-33"
+
+vendorSecurityNotes:
+  sourceAnchor: bkmrk-security-notes
+  items:
+    - Use tenant read-only keys for reporting integrations whenever possible.
+    - Use administrator keys only for global reporting or MANAGEDB actions that require them.
+    - Do not store production keys in browser-side scripts.
+    - Prefer the OpenAPI endpoint for new integrations unless an existing integration requires the legacy format.
