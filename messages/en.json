@@ -62,6 +62,7 @@
     "queryParams": "Query parameters",
     "headers": "Headers",
     "body": "Request body",
+    "responseBody": "Response body",
     "responses": "Responses",
     "errors": "Errors",
     "related": "Related endpoints",

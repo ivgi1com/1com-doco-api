@@ -62,6 +62,7 @@
     "queryParams": "פרמטרי שאילתה",
     "headers": "כותרות",
     "body": "גוף הבקשה",
+    "responseBody": "גוף התגובה",
     "responses": "תגובות",
     "errors": "שגיאות",
     "related": "נקודות קצה קשורות",

@@ -1,4 +1,4 @@
-import type { ApiDefinition, Authentication, Endpoint, Parameter } from "./types";
+import type { ApiDefinition, Authentication, Endpoint, Parameter, ResponseSpec } from "./types";
 
 /**
  * PHASE 4 VERTICAL SLICE — real content, hand-authored from the Phase 3
@@ -54,6 +54,56 @@ const numberParam: Parameter = {
   source: `${SOURCE_PAGE}#bkmrk-info---extensions-%2F--2`,
 };
 
+const extensionEntrySchema: Parameter[] = [
+  {
+    name: "ex_id",
+    location: "body",
+    type: "string",
+    required: true,
+    description: "Internal extension identifier. Matches the object key this entry is stored under.",
+  },
+  {
+    name: "ex_name",
+    location: "body",
+    type: "string",
+    required: true,
+    description: "Extension display name.",
+  },
+  {
+    name: "ex_number",
+    location: "body",
+    type: "string",
+    required: true,
+    description: "Extension number, dialable within the tenant.",
+  },
+];
+
+const infoExtensionsResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "An object keyed by each extension's internal id (ex_id), one entry per extension. Not a JSON array.",
+  format: "json",
+  evidence: "observed-sanitized",
+  verified: true,
+  source: "source-docs/observed/info-extensions.json",
+  schema: [
+    {
+      name: "<ex_id>",
+      location: "body",
+      type: "object",
+      required: true,
+      description:
+        "One entry per matching extension. The key is the extension's own ex_id, repeated inside the value.",
+      children: extensionEntrySchema,
+    },
+  ],
+  example: {
+    "3272": { ex_id: "3272", ex_name: "REDACTED_NAME_1", ex_number: "201" },
+    "155450": { ex_id: "155450", ex_name: "REDACTED_NAME_2", ex_number: "300" },
+    "169430": { ex_id: "169430", ex_name: "REDACTED_NAME_3", ex_number: "301" },
+  },
+};
+
 const infoExtensions: Endpoint = {
   id: "info-extensions",
   api: "proxy",
@@ -78,14 +128,18 @@ const infoExtensions: Endpoint = {
   pathParameters: [],
   queryParameters: [tenantParam, idParam, numberParam],
   requestBody: null,
-  // Pending: a user-supplied sanitized real response (Phase 4 plan, U-11).
-  // Never replayed by Demo mode once added — see types.ts `Evidence`.
-  responses: [],
+  // Response derived from a user-supplied sanitized real capture
+  // (source-docs/observed/info-extensions.json, U-11). Names were replaced
+  // with placeholders before this file was written. `evidence:
+  // "observed-sanitized"` means Demo must never replay it — see types.ts
+  // `Evidence` and use-playground.ts's `unavailable` variant.
+  responses: [infoExtensionsResponse],
   errors: "undocumented",
   notes: [
     "One operation of the legacy proxyapi.php reqtype catalogue (reqtype=INFO, info=EXTENSIONS). Full audit: source-docs/proxy-api/info.yaml.",
     "1com's production path is /pbx/proxyapi.php. The vendor's own documentation examples use /mirtapbx/proxyapi.php; only the 1com path is used in this portal.",
     "The source shows three usage patterns only by example: list every extension (tenant only), filter by id, or filter by number. Whether id and number can be combined, and how the list is paginated, is not documented.",
+    "The response is a JSON object keyed by each extension's ex_id, not an array. This shape is observed (source-docs/observed/info-extensions.json), not stated by the vendor documentation.",
   ],
   related: [],
 };

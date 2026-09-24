@@ -153,13 +153,29 @@ test.describe("interactions", () => {
       // both mounted at once) repeats the same path in two more places.
       await expect(page.getByText("/pbx/proxyapi.php?reqtype=INFO&info=EXTENSIONS").first()).toBeVisible();
       await expect(page.getByRole("heading", { name: "Fixed parameters" })).toBeVisible();
-      // Responses and Errors are genuinely undocumented by the source; the
-      // page must say so rather than showing an empty or fabricated section.
-      // Scoped by section (not just matching text) because the sticky
-      // request panel repeats the same "not documented" fallback text.
+      // The response is a real, user-supplied sanitized capture (U-11): the
+      // "Responses" section lists it truthfully (status + description, no
+      // "Not documented" fallback), and the request panel's response
+      // example carries the evidence badge rather than being presented as
+      // vendor-documented. The panel is mounted twice (mobile + desktop, CSS
+      // toggled), hence `.first()`. Errors remain genuinely undocumented by
+      // the source, so that section must still say so.
       await expect(
-        page.locator('section[aria-labelledby="responses"]').getByText("Not documented by the source."),
+        page.locator('section[aria-labelledby="responses"]').getByText("An object keyed by each extension's internal id"),
       ).toBeVisible();
+      // The evidence badge lives inside the request panel, which is mounted
+      // twice: a desktop `<aside>` (always open) and a mobile `<details>`
+      // disclosure (closed by default, and CSS-hidden at desktop widths).
+      // Assert against whichever copy applies to this viewport.
+      const evidenceBadgeText = "Observed, sanitized — not vendor-documented";
+      if ((page.viewportSize()?.width ?? 0) < 768) {
+        // Substring text matching also hits the unrelated method-inferred
+        // note ("...its request examples."), so target the <summary> itself.
+        await page.locator("summary", { hasText: "Request example" }).click();
+        await expect(page.locator("details").getByText(evidenceBadgeText).first()).toBeVisible();
+      } else {
+        await expect(page.locator("aside").getByText(evidenceBadgeText).first()).toBeVisible();
+      }
       await expect(
         page.locator('section[aria-labelledby="errors"]').getByText("Not documented by the source."),
       ).toBeVisible();

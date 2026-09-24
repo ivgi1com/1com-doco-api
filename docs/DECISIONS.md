@@ -250,11 +250,15 @@ Decision (user, via plan-mode questions and plan approval, 2026-09-24/25):
   Proxy as synthetic REST or as a separate model (U-07).
 - Sample API: kept, clearly labelled prototype. Proxy API is now `apis[0]`
   (the default API across home, the API-reference redirect, and Playground).
-- Response: the user was asked to supply one sanitized real response; not
-  received as of this checkpoint. The endpoint ships with `responses: []`
-  and the page truthfully shows "Not documented by the source" rather than
-  a fabricated example. This is recorded as the one item still blocking the
-  Phase 4 completion gate (`source-docs/unresolved.md` U-11).
+- Response (U-11): the user supplied one sanitized real response to
+  `reqtype=INFO&info=EXTENSIONS` (2026-09-25), captured on a tenant
+  described as "demo". Extension names in the raw capture were real
+  individuals' names; the user chose to have them replaced with placeholders
+  (`REDACTED_NAME_n`) before anything was written to disk. Saved as evidence
+  at `source-docs/observed/info-extensions.json`; the schema and example in
+  `proxy-api.ts` are derived from it only, `evidence: "observed-sanitized"`.
+  The response is a JSON object keyed by each extension's `ex_id`, not an
+  array — itself an observed fact, not vendor-documented.
 - Errors and the vendor-text-reuse question (U-02, U-04) were left at their
   audit-recommended defaults (undocumented / original prose), not decided
   by the user; both are reversible.
@@ -291,9 +295,50 @@ Implementation notes (Claude's engineering choices, reversible):
   `networkidle` for this reason.
 
 Status:
-Applied. Steps 1-5 and 7 of the approved plan are complete and verified
+Applied. All 7 steps of the approved plan are complete and verified
 (`npm run check`, `npm run build`, 80/80 Playwright tests on Chromium +
-WebKit, manual visual pass at 1440/1024/768/390 desktop/tablet/mobile,
-en+he, zero console errors). Step 6 (this entry) is complete except that
-the response/schema content itself remains blocked on U-11. Phase 4 is not
-yet approved — awaiting the sanitized response and the gate decision.
+WebKit, manual visual pass at 1440/900 desktop and 390/844 mobile, zero
+console errors). U-11 is resolved. A pre-existing mislabeling bug was found
+and fixed while reviewing the rendered response section: the "Response
+body" schema heading reused the `endpoint.body` string ("Request body"),
+which is meant for actual request bodies — added a separate
+`endpoint.responseBody` key (en/he) and pointed the response heading at it.
+
+---
+
+## 2026-09-25 — Phase 4 approval
+
+Decision:
+Phase 4 (One Real Proxy API Endpoint) is complete and approved (gate option
+B). All 7 steps of the approved plan are done, including U-11 (the sole
+blocker): a user-supplied sanitized real response is now the endpoint's
+documented response, evidence-labelled `observed-sanitized` and never
+replayed by Demo. `npm run check`, `npm run build`, and 80/80 Playwright
+tests (Chromium + WebKit) pass; manual visual pass at desktop and mobile
+widths shows zero console errors.
+
+Scope:
+Approval covers the Phase 4 vertical slice only (one endpoint, real content,
+Live/Demo behavior for it). It does not authorize merging
+`phase/one-endpoint` into `main`, scaling to the remaining Proxy API
+reqtypes (Phase 7), or starting Phase 5 (Live Playground) — each needs its
+own separate, explicit approval per `CLAUDE.md`'s approval-gate rule.
+
+Consequences:
+- `phase/one-endpoint` remains unmerged into `main`; merging needs separate
+  explicit approval.
+- Tagged `v0.3-proxy-prototype-approved` on the phase-completion commit, per
+  `CLAUDE.md`'s suggested milestone tags.
+- Known limitations recorded at approval time (SVG logo, Console link
+  destination, Hebrew UI strings DRAFT, two Phase-2 design-doc tensions,
+  U-02/U-04 applied at audit defaults not user-decided, U-08 Live-allowlist
+  scope open, U-10 the 23 table-only reqtypes open) are accepted as-is for
+  this phase, not blockers. U-08 must be decided before Phase 5.
+- Per Phase 5's own model note (`docs/phases/05-live-playground.md`), Opus
+  5.5 is required for its security-sensitive proxy-boundary architecture
+  before implementation begins; Sonnet 5 remains correct for the current
+  stopped state.
+
+Status:
+Approved by user (2026-09-25). Next phase (Phase 5 — Live Playground) has
+not started and is waiting for user approval to begin planning.

@@ -1,8 +1,50 @@
 # Session Handoff
 
-Last updated: 2026-09-25 ~01:30 (STOP checkpoint, Phase 4 steps 1-5+7 done, step 6 nearly done)
+Last updated: 2026-09-25 ~02:10 (Phase 4 approved, gate option B — stopped here; read this first)
 
-## STOP checkpoint — Phase 4 substantially complete, blocked on one input (read this first)
+## STOP checkpoint — Phase 4 approved and complete; next phase not started
+
+- Phase 4 (One Real Proxy API Endpoint) is **approved** (2026-09-25, gate
+  option B). All 7 steps of the plan are done, including U-11: the user
+  supplied a sanitized real response to `reqtype=INFO&info=EXTENSIONS`
+  (tenant described as "demo"). Extension names in the raw capture were
+  real individuals' names; redacted to placeholders (`REDACTED_NAME_n`)
+  before anything was written to disk. Saved as evidence at
+  `source-docs/observed/info-extensions.json`; `proxy-api.ts`'s response
+  schema/example are derived from it only (`evidence: "observed-sanitized"`,
+  never replayed by Demo). Discovered fact, recorded as such: the response
+  is a JSON object keyed by each extension's `ex_id`, not an array.
+- Also found and fixed a third real pre-existing bug (see the two from the
+  prior checkpoint below): the response-schema heading read "Request body"
+  (reused the wrong i18n key, `endpoint.body`) — added a dedicated
+  `endpoint.responseBody` key (en/he) and repointed it.
+- A genuine race was found and fixed in the new Playwright assertion itself
+  while writing it: `page.getByText("Request example")` (to open the mobile
+  disclosure) matched 2 elements — the disclosure's `<summary>` and an
+  unrelated note ("...its request examples.") via case-insensitive
+  substring matching. It "passed" once by timing luck before being caught
+  and fixed to `page.locator("summary", { hasText: "Request example" })`.
+  Verified deterministic (3 repeat runs) before trusting it.
+- `docs/DECISIONS.md`, `docs/CURRENT_STATUS.md`, `source-docs/unresolved.md`
+  (U-11 closed), `source-docs/DOCS_AUDIT.md` (A-03 resolved note) all
+  updated at this checkpoint.
+- Verified again after these changes: `npm run check`, `npm run build`,
+  **80/80 Playwright tests** (Chromium + WebKit, fresh `build && start`),
+  manual screenshots at 1440×900 and 390×844 via a live `next dev` server,
+  zero console errors.
+- Tagged `v0.3-proxy-prototype-approved` on the phase-completion commit
+  (this checkpoint), per `CLAUDE.md`'s suggested milestone tags.
+- **Not done, per option B (approve, save, and stop)**: `phase/one-endpoint`
+  is not merged into `main`; Phase 5 (Live Playground,
+  `docs/phases/05-live-playground.md`) has not started — no planning, no
+  research, no implementation. Its own model note requires **Opus 5.5** for
+  the security-sensitive proxy-boundary architecture before implementation;
+  do not begin that work on Sonnet.
+- Next session's first action: wait for the user to say to begin Phase 5
+  (or to merge `phase/one-endpoint` into `main`, which also needs separate
+  explicit approval). Do not infer either from this file alone.
+
+## Prior checkpoint — Phase 4 substantially complete, blocked on one input (superseded by the approval above; kept for history)
 
 - Branch `phase/one-endpoint` (off `main` @ `658c423`; `main` was fast-forwarded to
   the approved Phase 3 commit with user approval via the Phase 4 plan).

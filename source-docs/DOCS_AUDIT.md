@@ -117,7 +117,15 @@ minor inconsistency.
 - **A-03 (High) Responses essentially undocumented.** One operation has a
   real output sample. `format` is described as "plain, json, xml, and csv,
   depending on the request", but per-operation support and the default are
-  not stated. There is no JSON response sample anywhere → U-11.
+  not stated. There is no JSON response sample anywhere → U-11. **Resolved
+  2026-09-25 (Phase 4), for INFO EXTENSIONS only:** the user supplied a
+  sanitized real response (`source-docs/observed/info-extensions.json`,
+  extension names replaced with placeholders before commit). It shows the
+  response is a JSON object keyed by `ex_id`, not an array — a fact observed
+  from this capture, not stated by the vendor page. `evidence:
+  "observed-sanitized"` in `proxy-api.ts`; this remains OBSERVED, not
+  DOCUMENTED, and Demo mode never replays it. The other 38 reqtypes still
+  have no response sample.
 - **A-04 (High) 23 of 39 reqtypes are table-only.** No parameters, actions,
   examples, or responses (list in §3) → U-10. Related: FLOWS overlaps INFO
   `info=FLOW`, and HANGUP's by-channel form is mentioned but absent.

@@ -229,7 +229,7 @@ export function EndpointView({
                       <span dir="ltr" className="font-mono">
                         {successSchema.status}
                       </span>{" "}
-                      · {t("body")}
+                      · {t("responseBody")}
                     </h3>
                     <ParamList params={successSchema.schema} anchorPrefix={`response-${successSchema.status}`} />
                   </div>

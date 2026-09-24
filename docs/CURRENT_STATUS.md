@@ -1,7 +1,7 @@
 # Current Status
 
 Current phase:
-**Phase 4 — One Real Proxy API Endpoint: SUBSTANTIALLY COMPLETE, BLOCKED ON U-11** (implementation steps 1-5 and 7 of the approved plan done; step 6 nearly done; gate not yet presented — see SESSION_HANDOFF.md)
+**Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)
 
 Current branch:
 `phase/one-endpoint` (from `main` @ `658c423`, which includes the approved Phase 3)
@@ -12,6 +12,8 @@ Previous phase:
 Previous phases:
 - Phase 1: approved, tagged `v0.1-design-approved`, merged.
 - Phase 2: approved 2026-09-24, tagged `v0.2-shell-approved` (`20597af`).
+- Phase 3: approved 2026-09-24, no milestone tag (audit-only phase).
+- Phase 4: approved 2026-09-25, tagged `v0.3-proxy-prototype-approved`.
 
 ## Phase 4 work done
 
@@ -41,13 +43,26 @@ Previous phases:
   "Demo data not available yet" instead), the API overview page's
   quickstart (now generated from the API's own auth/endpoint via
   `buildSample`, not hardcoded).
-- **Two real, pre-existing bugs found and fixed** (invisible before
-  because Sample API was always the only/default API): the reference
-  sidebar's API/version switcher was hardcoded to the Sample API with a
-  non-functional `<select>` (now reads the current API from the URL and
-  actually navigates on change); the Playground page always used the
-  first API regardless of the requested endpoint's own API. Also removed
-  "Proxy API" from two remaining "coming later" lists (home page, sidebar).
+- **Three real, pre-existing bugs found and fixed** (invisible before
+  because Sample API was always the only/default API, or because no real
+  response existed yet to render): the reference sidebar's API/version
+  switcher was hardcoded to the Sample API with a non-functional `<select>`
+  (now reads the current API from the URL and actually navigates on
+  change); the Playground page always used the first API regardless of the
+  requested endpoint's own API; the response-schema heading read "Request
+  body" (reused the wrong i18n key) — a dedicated `endpoint.responseBody`
+  key now reads "Response body". Also removed "Proxy API" from two
+  remaining "coming later" lists (home page, sidebar).
+- **U-11 resolved**: the user supplied a sanitized real response to
+  `reqtype=INFO&info=EXTENSIONS` (captured on a tenant described as
+  "demo"). Extension names in the raw capture were real individuals'
+  names; redacted to placeholders (`REDACTED_NAME_n`) before anything was
+  written to disk. Saved as evidence at
+  `source-docs/observed/info-extensions.json`; `proxy-api.ts`'s response
+  schema/example are derived from it only, `evidence: "observed-sanitized"`
+  (never replayed by Demo). Discovered fact: the response is a JSON object
+  keyed by each extension's `ex_id`, not an array — observed, not
+  vendor-documented.
 - **Performance fix**: `buildPlaygroundSamples` is now cached per API id
   (matching the existing `getSearchIndex()` pattern) instead of
   recomputing shiki syntax highlighting on every request.
@@ -71,24 +86,13 @@ Previous phases:
   clean production server does not).
 - Manual visual pass (screenshots): desktop 1440, tablet 1024/768, mobile
   390; en and he (RTL); the Proxy endpoint page, its overview page, home,
-  the getting-started guide, and the Playground in both Demo states.
-  Zero console errors observed.
+  the getting-started guide, and the Playground in both Demo states. Also
+  re-checked desktop 1440/900 and mobile 390/844 after the response/U-11
+  content landed. Zero console errors observed throughout.
 - Secrets scan: no real keys, tenant codes, or credentials introduced;
-  code samples reference an env var, never an inline value.
-
-## Blocked
-
-**U-11 (response example) is still open.** The user was asked for one
-sanitized real response to `reqtype=INFO&info=EXTENSIONS` (key, tenant
-code, names, numbers, emails, IPs, MACs and any passwords/SIP secrets
-redacted). Not received yet. `proxy-api.ts` ships with `responses: []`;
-the page correctly shows "Not documented by the source" rather than a
-fabricated example or schema. `docs/phases/04-one-endpoint.md` requires a
-response example in its "Required page content" list, so **the Phase 4
-completion gate has not been presented** — do not present a Phase
-Completion Report or the A/B/C/D question until this is resolved (either
-the response arrives, or the user explicitly agrees to reach the gate
-without it).
+  code samples reference an env var, never an inline value. The raw
+  response capture's key/tenant were already redacted by the user before
+  being shared; names were redacted before anything was written to disk.
 
 ## Known issues / limitations
 
@@ -104,6 +108,8 @@ without it).
 
 Next phase:
 **Phase 5 — Live Playground** (`docs/phases/05-live-playground.md`). Not
-started; requires the Phase 4 gate to be resolved and approved first.
+started; Phase 4 is approved (gate option B — stopped here, not
+auto-continued). Per that phase's own model note, Opus 5.5 is required
+before its security-sensitive proxy-boundary architecture is designed.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

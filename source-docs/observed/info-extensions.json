@@ -1,0 +1,27 @@
+{
+  "_provenance": {
+    "reqtype": "INFO",
+    "info": "EXTENSIONS",
+    "capturedBy": "user, 2026-09-25",
+    "tenant": "demo tenant (per user)",
+    "redacted": ["key", "ex_name (replaced with placeholders; original values were real individuals' names)"],
+    "note": "Resolves source-docs/unresolved.md U-11. Response body keyed by internal extension id (ex_id) rather than a JSON array."
+  },
+  "response": {
+    "3272": {
+      "ex_id": "3272",
+      "ex_name": "REDACTED_NAME_1",
+      "ex_number": "201"
+    },
+    "155450": {
+      "ex_id": "155450",
+      "ex_name": "REDACTED_NAME_2",
+      "ex_number": "300"
+    },
+    "169430": {
+      "ex_id": "169430",
+      "ex_name": "REDACTED_NAME_3",
+      "ex_number": "301"
+    }
+  }
+}

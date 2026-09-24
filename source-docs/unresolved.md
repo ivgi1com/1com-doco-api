@@ -1,9 +1,9 @@
 # Unresolved Documentation Questions — Proxy API
 
-Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07 and
-U-09 were decided in Phase 4 (2026-09-25); U-02 and U-04 were applied by
-default (not decided, reversible). U-05 was deferred in Phase 3. U-08, U-10
-and U-11 remain open. Nothing below has been silently resolved: every
+Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07,
+U-09 and U-11 were decided in Phase 4 (2026-09-25); U-02 and U-04 were
+applied by default (not decided, reversible). U-05 was deferred in Phase 3.
+U-08 and U-10 remain open. Nothing below has been silently resolved: every
 normalized file and the `proxy-api.ts` content keep `not_documented` /
 `"undocumented"` where these apply. Finding IDs (`A-nn`) refer to
 `DOCS_AUDIT.md`.
@@ -213,12 +213,15 @@ one-endpoint vertical slice can be built truthfully.
   3. publish the request side only until verified
 - Recommendation: (1) for the single Phase 4 endpoint, sanitized by the
   user before sharing.
-- User decision: pending. The user was asked (2026-09-24/25) for a sanitized
-  real response to `reqtype=INFO&info=EXTENSIONS`, redacting the key, tenant
-  code, names, numbers, emails, IPs, MACs and any passwords/SIP secrets. Not
-  received yet. `proxy-api.ts` ships with `responses: []`; the reference page
-  correctly shows "Not documented by the source" rather than a fabricated
-  schema or example. **This is the one item still blocking Phase 4's
-  completion gate** (`docs/phases/04-one-endpoint.md` requires a response
-  example).
-- Final status: open — blocking
+- User decision: **(1), user supplied a sanitized real response (2026-09-25).**
+  Captured on a tenant the user described as "demo"; extension names were
+  real individuals' names in the raw capture and were replaced with
+  placeholders (`REDACTED_NAME_n`) before anything was written to disk —
+  the key and tenant were already redacted by the user. Saved as evidence at
+  `source-docs/observed/info-extensions.json`. The response shape is a JSON
+  object keyed by each extension's `ex_id` (not an array) — itself an
+  observed fact, not documented anywhere in the vendor source. Schema and
+  example in `proxy-api.ts`'s `infoExtensionsResponse` are derived from this
+  capture only; `evidence: "observed-sanitized"` ensures Demo mode never
+  replays it.
+- Final status: **decided**
