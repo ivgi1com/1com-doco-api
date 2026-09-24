@@ -28,9 +28,11 @@ const config: Record<
 
 export function ModeBar({
   mode,
+  sending,
   onRequestSwitch,
 }: {
   mode: PlaygroundMode;
+  sending: boolean;
   onRequestSwitch: (target: PlaygroundMode) => void;
 }) {
   const t = useTranslations("playground");
@@ -45,8 +47,9 @@ export function ModeBar({
       <p className={`min-w-0 flex-1 text-sm ${ink}`}>{t(text)}</p>
       <button
         type="button"
+        disabled={sending}
         onClick={() => onRequestSwitch(mode === "live" ? "demo" : "live")}
-        className={`h-8 shrink-0 rounded-md border border-current px-3 text-xs font-semibold transition-colors duration-150 hover:bg-bg/60 ${ink}`}
+        className={`h-8 shrink-0 rounded-md border border-current px-3 text-xs font-semibold transition-colors duration-150 hover:bg-bg/60 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${ink}`}
       >
         {t(switchLabel)}
       </button>

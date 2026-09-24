@@ -14,7 +14,7 @@ import { fieldKey, type PlaygroundState } from "./use-playground";
 function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
   return endpoint.pathParameters.reduce((path, p) => {
     const v = values[fieldKey("path", p.name)];
-    return path.replace(`{${p.name}}`, v ? v : `{${p.name}}`);
+    return v ? path.replaceAll(`{${p.name}}`, v) : path;
   }, endpoint.path);
 }
 

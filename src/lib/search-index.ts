@@ -10,6 +10,7 @@ export interface SearchItem {
   method?: HttpMethod;
 }
 
+/** Pure builder — recomputes every call. Use `getSearchIndex()` to reuse a cached result. */
 export function buildSearchIndex(): SearchItem[] {
   const endpoints: SearchItem[] = apis.flatMap((api) =>
     listEndpoints(api).map((e) => ({
@@ -27,6 +28,19 @@ export function buildSearchIndex(): SearchItem[] {
     href: `/guides/${g.slug}`,
   }));
   return [...endpoints, ...guideItems];
+}
+
+let cached: SearchItem[] | undefined;
+
+/**
+ * `apis`/`guides` are static module data, so the index never changes within
+ * a running process. `SiteHeader` renders on every navigation; computing
+ * this once and reusing it avoids redoing the same flatMap/map work every
+ * time.
+ */
+export function getSearchIndex(): SearchItem[] {
+  cached ??= buildSearchIndex();
+  return cached;
 }
 
 /** Case-insensitive match on title and detail; title hits rank first. */

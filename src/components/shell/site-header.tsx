@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
-import { buildSearchIndex } from "@/lib/search-index";
+import { getSearchIndex } from "@/lib/search-index";
 import { ConsoleButton } from "./console-button";
 import { LocaleSwitch } from "./locale-switch";
 import { MobileNav } from "./mobile-nav";
@@ -13,7 +13,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 export function SiteHeader() {
   const t = useTranslations("nav");
-  const index = buildSearchIndex();
+  const index = getSearchIndex();
 
   return (
     <header className="sticky top-0 z-30 bg-bg">

@@ -15,7 +15,7 @@ export const API_KEY_ENV = "SAMPLE_API_KEY";
 export function resolvePath(endpoint: Endpoint): string {
   return endpoint.pathParameters.reduce(
     (path, param) =>
-      path.replace(`{${param.name}}`, String(param.example ?? `<${param.name}>`)),
+      path.replaceAll(`{${param.name}}`, String(param.example ?? `<${param.name}>`)),
     endpoint.path,
   );
 }
@@ -47,7 +47,7 @@ export function buildSample(
         lines.push(`  -H "Content-Type: application/json"`);
         lines.push(`  -d '${JSON.stringify(endpoint.requestExample)}'`);
       }
-      return lines.join(" \\n");
+      return lines.join(" \\\n");
     }
     case "javascript": {
       const opts = [
@@ -80,11 +80,17 @@ export function buildSample(
   }
 }
 
+/**
+ * Serializes a plain JSON-ish value as a Python literal. A regex over
+ * `JSON.stringify` output would also rewrite `true`/`false`/`null` found
+ * inside string values; walking the structure keeps string content intact.
+ */
 function pythonLiteral(value: unknown): string {
-  return JSON.stringify(value)
-    .replace(/\btrue\b/g, "True")
-    .replace(/\bfalse\b/g, "False")
-    .replace(/\bnull\b/g, "None")
-    .replace(/,"/g, ', "')
-    .replace(/":/g, '": ');
+  if (value === null || value === undefined) return "None";
+  if (typeof value === "boolean") return value ? "True" : "False";
+  if (typeof value === "number") return String(value);
+  if (typeof value === "string") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(pythonLiteral).join(", ")}]`;
+  const entries = Object.entries(value as Record<string, unknown>);
+  return `{${entries.map(([k, v]) => `${JSON.stringify(k)}: ${pythonLiteral(v)}`).join(", ")}}`;
 }

@@ -81,19 +81,38 @@ export function usePlayground(endpoint: Endpoint) {
   const [response, setResponse] = useState<PlaygroundResponse | null>(null);
   const [mobileStep, setMobileStep] = useState<0 | 1 | 2>(1);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const sendTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const endpointRef = useRef(endpoint);
+  // Bumped whenever an in-flight send should be abandoned (endpoint change,
+  // mode switch, unmount), so its setTimeout callback can no-op instead of
+  // applying a stale response for the wrong endpoint/mode.
+  const requestTokenRef = useRef(0);
+
+  const abandonInFlightSend = useCallback(() => {
+    requestTokenRef.current += 1;
+    clearTimeout(sendTimeoutRef.current);
+    clearInterval(timerRef.current);
+    setSending(false);
+  }, []);
 
   // Reset per-request state when the selected endpoint changes.
   useEffect(() => {
     if (endpointRef.current.id === endpoint.id && endpointRef.current.api === endpoint.api) return;
     endpointRef.current = endpoint;
+    abandonInFlightSend();
     setFieldValues(defaultFieldValues(endpoint));
     setErrors({});
     setResponse(null);
     setSimulateError(false);
-  }, [endpoint]);
+  }, [endpoint, abandonInFlightSend]);
 
-  useEffect(() => () => clearInterval(timerRef.current), []);
+  useEffect(
+    () => () => {
+      clearInterval(timerRef.current);
+      clearTimeout(sendTimeoutRef.current);
+    },
+    [],
+  );
 
   const setField = useCallback((key: string, value: string) => {
     setFieldValues((prev) => ({ ...prev, [key]: value }));
@@ -121,6 +140,7 @@ export function usePlayground(endpoint: Endpoint) {
 
   const confirmModeSwitch = useCallback(() => {
     if (!pendingMode) return;
+    abandonInFlightSend();
     if (pendingMode === "live") {
       setFieldValues(defaultFieldValues(endpointRef.current));
       setErrors({});
@@ -133,7 +153,7 @@ export function usePlayground(endpoint: Endpoint) {
     }
     setMode(pendingMode);
     setPendingMode(null);
-  }, [pendingMode, setApiKey]);
+  }, [pendingMode, setApiKey, abandonInFlightSend]);
 
   const validate = useCallback((): Record<string, string> => {
     const next: Record<string, string> = {};
@@ -166,8 +186,14 @@ export function usePlayground(endpoint: Endpoint) {
     setElapsedMs(0);
     const start = performance.now();
     timerRef.current = setInterval(() => setElapsedMs(performance.now() - start), 60);
+    const token = ++requestTokenRef.current;
 
     const finish = () => {
+      // The endpoint or mode changed (or the component unmounted) while this
+      // request was in flight; abandonInFlightSend already bumped the token
+      // and reset `sending`/timers. Applying this response now would silently
+      // repopulate the response pane with data for the wrong endpoint/mode.
+      if (token !== requestTokenRef.current) return;
       clearInterval(timerRef.current);
       setSending(false);
       if (mode === "live") {
@@ -189,7 +215,7 @@ export function usePlayground(endpoint: Endpoint) {
     };
 
     const delay = mode === "live" ? 500 : 400 + Math.random() * 500;
-    setTimeout(finish, delay);
+    sendTimeoutRef.current = setTimeout(finish, delay);
   }, [endpoint, mode, simulateError, validate]);
 
   return {

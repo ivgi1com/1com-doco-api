@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { sampleApi } from "@/content/sample-api";
 import { getEndpoint } from "@/content";
+import type { Endpoint } from "@/content/types";
 import {
   API_KEY_ENV,
   buildSample,
@@ -20,6 +21,14 @@ describe("resolvePath", () => {
 
   it("leaves paths untouched when there are no path parameters", () => {
     expect(resolvePath(listCalls)).toBe("/v1/call-records");
+  });
+
+  it("substitutes every occurrence of a path parameter that appears more than once", () => {
+    const endpoint: Endpoint = {
+      ...getCall,
+      path: "/v1/{call_id}/related/{call_id}",
+    };
+    expect(resolvePath(endpoint)).toBe("/v1/call_0001/related/call_0001");
   });
 });
 
@@ -69,5 +78,21 @@ describe("buildSample", () => {
     const sample = buildSample(createContact, baseUrl, "python");
     expect(sample).toContain('json={"name"');
     expect(sample).not.toMatch(/\btrue\b|\bfalse\b|\bnull\b/);
+  });
+
+  it("joins curl request lines with a real line break, not a literal backslash-n", () => {
+    const sample = buildSample(createContact, baseUrl, "curl");
+    expect(sample).not.toContain("\\n"); // the literal two-character sequence
+    expect(sample.split("\n").length).toBeGreaterThan(1);
+  });
+
+  it("does not turn a string body value equal to true/false/null into a Python literal (python)", () => {
+    const endpoint: Endpoint = {
+      ...createContact,
+      requestExample: { name: "Dana Levi", flag: "true" },
+    };
+    const sample = buildSample(endpoint, baseUrl, "python");
+    expect(sample).toContain('"flag": "true"');
+    expect(sample).not.toContain('"flag": True');
   });
 });

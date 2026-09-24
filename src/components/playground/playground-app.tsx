@@ -40,7 +40,7 @@ export function PlaygroundApp({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <ModeBar mode={state.mode} onRequestSwitch={state.requestModeSwitch} />
+      <ModeBar mode={state.mode} sending={state.sending} onRequestSwitch={state.requestModeSwitch} />
       <ModeConfirmDialog target={state.pendingMode} onCancel={state.cancelModeSwitch} onConfirm={state.confirmModeSwitch} />
 
       <MobileSteps state={state} endpointPane={endpointPane} requestPane={requestPane} responsePane={responsePane} />
