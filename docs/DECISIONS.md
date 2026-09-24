@@ -232,3 +232,68 @@ Consequences:
 
 Status:
 Approved by user (2026-09-24).
+
+---
+
+## 2026-09-25 — Phase 4 implementation (One Real Proxy API Endpoint)
+
+Decision (user, via plan-mode questions and plan approval, 2026-09-24/25):
+- Endpoint: `reqtype=INFO&info=EXTENSIONS` (list / by id / by number).
+- Host: `https://pbx6webserver.1com.co.il/pbx/proxyapi.php`, fixed, never
+  changes for proxyapi. Differs from the vendor's own `/mirtapbx/` path.
+- Auth: a tenant key, including a read-only one, is sufficient.
+- Lifecycle: `legacy` badge plus a note that the vendor recommends OpenAPI
+  for new integrations.
+- Hebrew: English endpoint prose plus the existing "not translated yet"
+  banner, unchanged from Phase 2. Content model stays single-locale.
+- Content model: extend the existing API-neutral model rather than modeling
+  Proxy as synthetic REST or as a separate model (U-07).
+- Sample API: kept, clearly labelled prototype. Proxy API is now `apis[0]`
+  (the default API across home, the API-reference redirect, and Playground).
+- Response: the user was asked to supply one sanitized real response; not
+  received as of this checkpoint. The endpoint ships with `responses: []`
+  and the page truthfully shows "Not documented by the source" rather than
+  a fabricated example. This is recorded as the one item still blocking the
+  Phase 4 completion gate (`source-docs/unresolved.md` U-11).
+- Errors and the vendor-text-reuse question (U-02, U-04) were left at their
+  audit-recommended defaults (undocumented / original prose), not decided
+  by the user; both are reversible.
+
+Implementation notes (Claude's engineering choices, reversible):
+- `src/content/proxy-api.ts` is hand-authored from the Phase 3 YAML
+  evidence, not generated. A YAML→content generator is a Phase 7 concern.
+- Query-parameter authentication (the Proxy API's `key`) is a new code-path
+  in `src/lib/code-samples.ts`, additive alongside the existing header-auth
+  path; the Sample API's samples are pinned unchanged by a regression test.
+- Fixed two real, pre-existing bugs surfaced by having a second real API
+  (previously masked because Sample API was always `apis[0]`):
+  1. `ReferenceNav`'s API/version switcher was hardcoded to `apiId="sample"`
+     and its `<select>` had no `onChange` — it always showed Sample API's
+     sidebar regardless of the page being viewed, and picking an option did
+     nothing. Fixed by making it a client component that reads the current
+     API from the path (`usePathname`) and wired the switcher to navigate.
+  2. `playground/page.tsx` always used `apis[0]` regardless of the
+     requested endpoint's own API, and the home page's/API-overview page's
+     "planned APIs" list still listed "Proxy API" as not-yet-documented.
+     Both fixed.
+- Playground's Demo mode never replays a response for a non-synthetic API
+  (`PlaygroundResponse` gained an `unavailable` variant); it shows "Demo
+  data not available yet" instead. This upholds the Evidence rule even once
+  a real (`observed-sanitized`) response is eventually added — Demo must
+  still never replay it.
+- `buildPlaygroundSamples` is now cached per API id (like the existing
+  `getSearchIndex()`), fixing a genuine performance issue: it recomputed
+  shiki highlighting for every endpoint/language on every request/prefetch.
+  Also fixed `tests/e2e/smoke.spec.ts`'s console-error check to use
+  `waitForLoadState("load")` instead of `"networkidle"` — Next's Link
+  prefetching keeps the network busy in the background, which is normal,
+  not a defect, and Playwright's own docs discourage relying on
+  `networkidle` for this reason.
+
+Status:
+Applied. Steps 1-5 and 7 of the approved plan are complete and verified
+(`npm run check`, `npm run build`, 80/80 Playwright tests on Chromium +
+WebKit, manual visual pass at 1440/1024/768/390 desktop/tablet/mobile,
+en+he, zero console errors). Step 6 (this entry) is complete except that
+the response/schema content itself remains blocked on U-11. Phase 4 is not
+yet approved — awaiting the sanitized response and the gate decision.

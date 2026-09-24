@@ -22,11 +22,19 @@ export function RequestPanel({
   data: RequestPanelData;
 }) {
   const t = useTranslations("endpoint");
+  const fixedQueryString = endpoint.fixedQuery
+    ? `?${Object.entries(endpoint.fixedQuery)
+        .map(([k, v]) => `${k}=${v}`)
+        .join("&")}`
+    : "";
   return (
     <div className="space-y-3">
       <div dir="ltr" className="flex items-center gap-2 rounded-md border border-border bg-surface-2 px-3 py-2">
         <MethodBadge method={endpoint.method} />
-        <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{endpoint.path}</code>
+        <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">
+          {endpoint.path}
+          {fixedQueryString}
+        </code>
       </div>
       <CodeTabs samples={data.samples} />
       <Link
@@ -36,7 +44,11 @@ export function RequestPanel({
         {t("tryIt")}
         <ArrowRight className="icon-directional size-4" aria-hidden />
       </Link>
-      <ResponseExamples responses={data.responses} />
+      {data.responses.length > 0 ? (
+        <ResponseExamples responses={data.responses} />
+      ) : (
+        <p className="text-xs text-ink-muted">{t("notDocumented")}</p>
+      )}
     </div>
   );
 }

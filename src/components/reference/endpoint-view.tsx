@@ -58,6 +58,11 @@ export function EndpointView({
     ? getEndpoint(api.id, endpoint.deprecation.replacement)
     : undefined;
   const successSchema = endpoint.responses.find((r) => r.status < 300 && r.schema);
+  const fixedQueryString = endpoint.fixedQuery
+    ? `?${Object.entries(endpoint.fixedQuery)
+        .map(([k, v]) => `${k}=${v}`)
+        .join("&")}`
+    : "";
 
   return (
     <div className="mx-auto w-full max-w-[84rem] px-4 pb-16 pt-6 sm:px-6 lg:px-10">
@@ -107,6 +112,11 @@ export function EndpointView({
                 </ContentText>
               </Callout>
             )}
+            {endpoint.status === "legacy" && endpoint.deprecation && (
+              <Callout kind="note" title={t("legacyBanner")}>
+                <ContentText>{endpoint.deprecation.note}</ContentText>
+              </Callout>
+            )}
             <div className="flex flex-wrap items-center gap-3">
               <h1 lang="en" className="text-2xl font-bold text-ink">
                 {endpoint.title}
@@ -115,8 +125,14 @@ export function EndpointView({
             </div>
             <p dir="ltr" className="flex items-center gap-2 text-start">
               <MethodBadge method={endpoint.method} />
-              <code className="break-all font-mono text-[0.95rem] text-ink">{endpoint.path}</code>
+              <code className="break-all font-mono text-[0.95rem] text-ink">
+                {endpoint.path}
+                {fixedQueryString}
+              </code>
             </p>
+            {endpoint.methodBasis === "inferred" && (
+              <p className="text-xs text-ink-muted">{t("methodInferredNote")}</p>
+            )}
             <ContentText className="max-w-[70ch] text-md text-ink-muted">{endpoint.summary}</ContentText>
           </header>
 
@@ -139,8 +155,37 @@ export function EndpointView({
               <ContentText className="mt-1 text-ink-muted">
                 <InlineMarkup text={endpoint.authentication.description} />
               </ContentText>
+              {endpoint.authentication.scope && (
+                <p className="mt-2 text-xs text-ink-muted">
+                  <span className="font-semibold text-ink">{t("keyScope")}:</span>{" "}
+                  {endpoint.authentication.scope}
+                </p>
+              )}
+              {endpoint.authentication.location === "query" && endpoint.authentication.parameter && (
+                <p className="mt-2 text-xs text-ink-muted">
+                  {t("authInQuery", { parameter: endpoint.authentication.parameter })}
+                </p>
+              )}
             </div>
           </Section>
+
+          {endpoint.fixedQuery && Object.keys(endpoint.fixedQuery).length > 0 && (
+            <Section id="fixed-parameters" title={t("fixedParams")}>
+              <ContentText className="mb-2 text-ink-muted">{t("fixedParamsHelp")}</ContentText>
+              <dl className="divide-y divide-border border-y border-border text-sm">
+                {Object.entries(endpoint.fixedQuery).map(([name, value]) => (
+                  <div key={name} className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-2.5">
+                    <dt dir="ltr" className="font-mono font-semibold text-ink">
+                      {name}
+                    </dt>
+                    <dd dir="ltr" className="font-mono text-ink-muted">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Section>
+          )}
 
           {endpoint.pathParameters.length > 0 && (
             <Section id="path-parameters" title={t("pathParams")}>
@@ -164,31 +209,39 @@ export function EndpointView({
           )}
 
           <Section id="responses" title={t("responses")}>
-            <ul className="divide-y divide-border border-y border-border">
-              {endpoint.responses.map((r) => (
-                <li key={r.status} className="flex gap-4 py-2.5 text-sm">
-                  <span dir="ltr" className={`w-10 shrink-0 font-mono font-semibold tabular ${statusInk(r.status)}`}>
-                    {r.status}
-                  </span>
-                  <ContentText className="text-ink">{r.description}</ContentText>
-                </li>
-              ))}
-            </ul>
-            {successSchema?.schema && (
-              <div className="mt-5">
-                <h3 className="mb-2 text-sm font-semibold text-ink-muted">
-                  <span dir="ltr" className="font-mono">
-                    {successSchema.status}
-                  </span>{" "}
-                  · {t("body")}
-                </h3>
-                <ParamList params={successSchema.schema} anchorPrefix={`response-${successSchema.status}`} />
-              </div>
+            {endpoint.responses.length === 0 ? (
+              <ContentText className="text-ink-muted">{t("notDocumented")}</ContentText>
+            ) : (
+              <>
+                <ul className="divide-y divide-border border-y border-border">
+                  {endpoint.responses.map((r) => (
+                    <li key={r.status} className="flex gap-4 py-2.5 text-sm">
+                      <span dir="ltr" className={`w-10 shrink-0 font-mono font-semibold tabular ${statusInk(r.status)}`}>
+                        {r.status}
+                      </span>
+                      <ContentText className="text-ink">{r.description}</ContentText>
+                    </li>
+                  ))}
+                </ul>
+                {successSchema?.schema && (
+                  <div className="mt-5">
+                    <h3 className="mb-2 text-sm font-semibold text-ink-muted">
+                      <span dir="ltr" className="font-mono">
+                        {successSchema.status}
+                      </span>{" "}
+                      · {t("body")}
+                    </h3>
+                    <ParamList params={successSchema.schema} anchorPrefix={`response-${successSchema.status}`} />
+                  </div>
+                )}
+              </>
             )}
           </Section>
 
-          {Array.isArray(endpoint.errors) && endpoint.errors.length > 0 && (
-            <Section id="errors" title={t("errors")}>
+          <Section id="errors" title={t("errors")}>
+            {!Array.isArray(endpoint.errors) || endpoint.errors.length === 0 ? (
+              <ContentText className="text-ink-muted">{t("notDocumented")}</ContentText>
+            ) : (
               <table className="w-full border-collapse text-sm max-sm:block">
                 <thead className="bg-surface-2 text-start max-sm:sr-only">
                   <tr className="text-xs text-ink-muted">
@@ -213,6 +266,18 @@ export function EndpointView({
                   ))}
                 </tbody>
               </table>
+            )}
+          </Section>
+
+          {endpoint.notes && endpoint.notes.length > 0 && (
+            <Section id="notes" title={t("notes")}>
+              <ul className="list-disc space-y-1.5 ps-5 text-sm text-ink-muted">
+                {endpoint.notes.map((note, i) => (
+                  <li key={i}>
+                    <ContentText className="inline">{note}</ContentText>
+                  </li>
+                ))}
+              </ul>
             </Section>
           )}
 

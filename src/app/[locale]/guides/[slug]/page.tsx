@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CodeBlock } from "@/components/code/code-block";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
-import { apis } from "@/content";
+import { getApi } from "@/content";
 import { getGuide, guides } from "@/content/guides";
 import { routing } from "@/i18n/routing";
 import { API_KEY_ENV } from "@/lib/code-samples";
@@ -36,7 +36,10 @@ export default async function GuidePage({ params }: PageProps<"/[locale]/guides/
   if (!guide) notFound();
 
   const t = await getTranslations("guide");
-  const api = apis[0];
+  // This guide's steps (bearer auth, /v1/call-records, its error shape) are
+  // written for the Sample API specifically, not "whichever API is first" —
+  // pin it by id rather than reading apis[0].
+  const api = getApi("sample")!;
   const base = api.baseUrl;
 
   return (

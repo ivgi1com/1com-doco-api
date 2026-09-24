@@ -36,10 +36,12 @@ export function ParamList({
               <span dir="ltr" className="rounded-sm bg-surface-2 px-1.5 font-mono text-xs text-ink-muted">
                 {param.type}
               </span>
-              {param.required ? (
+              {param.required === true ? (
                 <span className="text-xs font-semibold text-danger-ink">{t("required")}</span>
-              ) : (
+              ) : param.required === false ? (
                 <span className="text-xs text-ink-muted">{t("optional")}</span>
+              ) : (
+                <span className="text-xs text-ink-muted">{t("requiredUndocumented")}</span>
               )}
             </dt>
             <dd className="mt-1 space-y-1.5 text-sm text-ink">

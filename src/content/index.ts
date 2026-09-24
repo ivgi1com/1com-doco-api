@@ -1,7 +1,9 @@
+import { proxyApi } from "./proxy-api";
 import { sampleApi } from "./sample-api";
 import type { ApiDefinition, Endpoint } from "./types";
 
-export const apis: ApiDefinition[] = [sampleApi];
+/** Proxy API first (real content, Phase 4); Sample API stays as prototype/design reference. */
+export const apis: ApiDefinition[] = [proxyApi, sampleApi];
 
 export function getApi(apiId: string): ApiDefinition | undefined {
   return apis.find((api) => api.id === apiId);

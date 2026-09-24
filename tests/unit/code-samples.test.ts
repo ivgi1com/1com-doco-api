@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { proxyApi } from "@/content/proxy-api";
 import { sampleApi } from "@/content/sample-api";
 import { getEndpoint } from "@/content";
 import type { Endpoint } from "@/content/types";
@@ -13,6 +14,7 @@ const listCalls = getEndpoint("sample", "list-call-records")!;
 const getCall = getEndpoint("sample", "get-call-record")!;
 const createContact = getEndpoint("sample", "create-contact")!;
 const deleteContact = getEndpoint("sample", "delete-contact")!;
+const infoExtensions = getEndpoint("proxy", "info-extensions")!;
 
 describe("resolvePath", () => {
   it("substitutes path parameters with their example values", () => {
@@ -94,5 +96,49 @@ describe("buildSample", () => {
     const sample = buildSample(endpoint, baseUrl, "python");
     expect(sample).toContain('"flag": "true"');
     expect(sample).not.toContain('"flag": True');
+  });
+});
+
+describe("buildSample: query-parameter auth (Proxy API)", () => {
+  const baseUrl = proxyApi.baseUrl;
+
+  it("never inlines a literal key value, only the env var name (curl)", () => {
+    const sample = buildSample(infoExtensions, baseUrl, "curl");
+    expect(sample).toContain("PROXY_API_KEY");
+    expect(sample).not.toMatch(/key=(?!\$PROXY_API_KEY)\S/);
+  });
+
+  it("sends the key and fixed query as -G/--data-urlencode pairs, not an Authorization header (curl)", () => {
+    const sample = buildSample(infoExtensions, baseUrl, "curl");
+    expect(sample).toContain(`curl -G "${baseUrl}${infoExtensions.path}"`);
+    expect(sample).toContain('--data-urlencode "key=$PROXY_API_KEY"');
+    expect(sample).toContain('--data-urlencode "reqtype=INFO"');
+    expect(sample).toContain('--data-urlencode "info=EXTENSIONS"');
+    expect(sample).toContain('--data-urlencode "tenant=TENANTCODE"');
+    expect(sample).not.toContain("Authorization");
+  });
+
+  it("builds a URLSearchParams object from process.env, not a literal secret (javascript)", () => {
+    const sample = buildSample(infoExtensions, baseUrl, "javascript");
+    expect(sample).toContain("new URLSearchParams({");
+    expect(sample).toContain("process.env.PROXY_API_KEY");
+    expect(sample).toContain('"reqtype": "INFO"');
+    expect(sample).toContain('"info": "EXTENSIONS"');
+  });
+
+  it("passes params to requests.get and reads the key from os.environ (python)", () => {
+    const sample = buildSample(infoExtensions, baseUrl, "python");
+    expect(sample).toContain("requests.get(");
+    expect(sample).toContain('os.environ["PROXY_API_KEY"]');
+    expect(sample).toContain('"reqtype": "INFO"');
+    expect(sample).toContain('"info": "EXTENSIONS"');
+  });
+
+  it("still emits the original header-based samples unchanged for a header-auth endpoint", () => {
+    // Regression guard: adding the query-auth branch must not change the
+    // Sample API's Authorization-header output.
+    const sample = buildSample(listCalls, sampleApi.baseUrl, "curl");
+    expect(sample).toContain('-H "Authorization: Bearer $SAMPLE_API_KEY"');
+    expect(sample).not.toContain("-G");
   });
 });

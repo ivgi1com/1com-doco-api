@@ -86,6 +86,16 @@
     "reportIssue": "Report an issue",
     "deprecatedBanner": "This endpoint is deprecated and will be removed on {date}.",
     "useInstead": "Use <link>{name}</link> instead.",
+    "legacyBanner": "Legacy endpoint",
+    "methodInferredNote": "The source never states the HTTP method for this operation; it is inferred from its request examples.",
+    "keyScope": "Key scope",
+    "authInQuery": "Sent as the `{parameter}` query parameter. Because it travels in the URL, keep it out of logs, browser history and client-side code.",
+    "fixedParams": "Fixed parameters",
+    "fixedParamsHelp": "These query parameters select this operation. They are always sent with this fixed value.",
+    "notDocumented": "Not documented by the source.",
+    "requiredUndocumented": "Not documented",
+    "evidenceObservedSanitized": "Observed, sanitized — not vendor-documented",
+    "notes": "Notes",
     "verification": "Verification",
     "notVerified": "Not verified against a live API"
   },
@@ -143,7 +153,10 @@
     "stepRequest": "Request",
     "stepResponse": "Response",
     "simulateError": "Simulate error response",
-    "prototypeNote": "Demo responses in this prototype come from the synthetic sample content."
+    "prototypeNote": "Demo responses in this prototype come from the synthetic sample content.",
+    "demoUnavailableNote": "Demo data for this endpoint isn't available yet (planned for a later phase).",
+    "demoUnavailableTitle": "Demo data not available yet",
+    "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page."
   },
   "json": {
     "expandAll": "Expand all",

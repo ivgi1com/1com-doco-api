@@ -4,7 +4,7 @@ import { apis } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
 
-const plannedApis = ["Proxy API", "Open API"];
+const plannedApis = ["Open API"];
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;

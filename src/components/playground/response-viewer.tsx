@@ -50,6 +50,16 @@ export function ResponseViewer({ state }: { state: PlaygroundState }) {
     );
   }
 
+  if (response.unavailable) {
+    return (
+      <div className="p-4">
+        <Callout kind="note" title={t("demoUnavailableTitle")}>
+          <p>{t("demoUnavailableBody")}</p>
+        </Callout>
+      </div>
+    );
+  }
+
   const headerEntries: [string, string][] = [
     ["x-request-id", response.requestId],
     ["x-response-source", response.source],

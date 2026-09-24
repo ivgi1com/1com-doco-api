@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PlaygroundApp } from "@/components/playground/playground-app";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
-import { apis, getEndpoint, listEndpoints } from "@/content";
+import { apis, getApi, getEndpoint, listEndpoints } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,9 +18,14 @@ export default async function PlaygroundPage({
   const { endpoint: endpointParam } = await searchParams;
   setRequestLocale(locale);
 
-  const api = apis[0];
   const requested = typeof endpointParam === "string" ? endpointParam.split("/") : [];
-  const requestedEndpoint = requested.length === 2 ? getEndpoint(requested[0], requested[1]) : undefined;
+  const requestedApi = requested.length === 2 ? getApi(requested[0]) : undefined;
+  const requestedEndpoint =
+    requested.length === 2 ? getEndpoint(requested[0], requested[1]) : undefined;
+  // The requested endpoint's own API, not always apis[0] — otherwise a
+  // Try It link from a non-default API would render with the wrong API's
+  // samples and base URL.
+  const api = requestedApi ?? apis[0];
   const endpoint = requestedEndpoint ?? listEndpoints(api)[0];
 
   const samplesByEndpoint = await buildPlaygroundSamples(api);

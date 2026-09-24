@@ -26,9 +26,9 @@ export async function buildPanelData(api: ApiDefinition, endpoint: Endpoint): Pr
   const samples = await buildSamples(api, endpoint);
   const responses = await Promise.all(
     endpoint.responses.map(async (r) => {
-      if (r.example === undefined) return { status: r.status, code: null, html: null };
+      if (r.example === undefined) return { status: r.status, code: null, html: null, evidence: r.evidence };
       const code = JSON.stringify(r.example, null, 2);
-      return { status: r.status, code, html: await highlight(code, "json") };
+      return { status: r.status, code, html: await highlight(code, "json"), evidence: r.evidence };
     }),
   );
   return { samples, responses };

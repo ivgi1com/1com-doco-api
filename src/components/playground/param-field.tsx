@@ -25,7 +25,7 @@ export function ParamField({
     <div>
       <label htmlFor={id} className="mb-1 flex flex-wrap items-baseline gap-x-2 text-xs font-semibold text-ink">
         <span dir="ltr">{param.name}</span>
-        {param.required && <span className="font-normal text-danger-ink">*</span>}
+        {param.required === true && <span className="font-normal text-danger-ink">*</span>}
       </label>
       {param.enum ? (
         <select

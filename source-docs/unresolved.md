@@ -1,8 +1,11 @@
 # Unresolved Documentation Questions — Proxy API
 
-Status: 11 open items recorded in Phase 3 (2026-09-24). None have been
-decided. Nothing below has been silently resolved: every normalized file
-keeps `not_documented` where these apply. Finding IDs (`A-nn`) refer to
+Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07 and
+U-09 were decided in Phase 4 (2026-09-25); U-02 and U-04 were applied by
+default (not decided, reversible). U-05 was deferred in Phase 3. U-08, U-10
+and U-11 remain open. Nothing below has been silently resolved: every
+normalized file and the `proxy-api.ts` content keep `not_documented` /
+`"undocumented"` where these apply. Finding IDs (`A-nn`) refer to
 `DOCS_AUDIT.md`.
 
 Items marked **Blocks Phase 4** need a decision or input before the
@@ -22,8 +25,11 @@ one-endpoint vertical slice can be built truthfully.
   2. there is a per-customer host, documented as `{your-pbx-host}`
   3. both (a default plus an override)
 - Recommendation: none. This is a 1com deployment fact.
-- User decision: pending
-- Final status: open
+- User decision: **`https://pbx6webserver.1com.co.il/pbx/proxyapi.php` — fixed,
+  never changes for proxyapi (2026-09-25).** Note: this differs from the
+  vendor's own path (`/mirtapbx/proxyapi.php`); only the 1com path is used in
+  the portal. Recorded in `proxy-api.ts` and `DOCS_AUDIT.md`.
+- Final status: **decided**
 
 ## U-02 — Rights to reuse MiRTA's documentation text — Blocks publication
 
@@ -38,8 +44,10 @@ one-endpoint vertical slice can be built truthfully.
   3. link to the vendor page instead of documenting
 - Recommendation: (2) unless (1) is confirmed in writing. Facts such as
   parameter names aren't the issue; copied prose is.
-- User decision: pending
-- Final status: open
+- User decision: pending. Applied by default in Phase 4: `proxy-api.ts`
+  prose is written from scratch; the vendor page is cited only as evidence
+  (`source-docs/raw/`). Reversible if the user confirms otherwise.
+- Final status: open (default applied)
 
 ## U-03 — How to label the legacy status in the portal
 
@@ -57,8 +65,11 @@ one-endpoint vertical slice can be built truthfully.
   3. `stable` + a neutral note that a newer API exists
 - Recommendation: (1), because it matches the source. Omitting a vendor
   statement would be a silent reinterpretation.
-- User decision: pending
-- Final status: open
+- User decision: **(1), legacy badge + note (2026-09-25).** The endpoint page
+  shows the `legacy` lifecycle badge plus a callout stating the vendor
+  recommends OpenAPI for new integrations. Implemented in `proxy-api.ts`
+  (`status: "legacy"`, `deprecation.note`) and `endpoint-view.tsx`.
+- Final status: **decided**
 
 ## U-04 — Error model — Blocks Phase 4 (error docs), Phase 5
 
@@ -74,8 +85,10 @@ one-endpoint vertical slice can be built truthfully.
   2. ask MiRTA
   3. publish "Errors: not documented" until verified
 - Recommendation: (3) now, (1) when a sandbox route exists.
-- User decision: pending
-- Final status: open
+- User decision: pending. Applied by default in Phase 4: `proxy-api.ts` sets
+  `errors: "undocumented"`; the reference page shows "Not documented by the
+  source" rather than an invented error list. Revisit at Phase 5.
+- Final status: open (default applied)
 
 ## U-05 — Hebrew content scope
 
@@ -101,8 +114,9 @@ one-endpoint vertical slice can be built truthfully.
 - Recommendation: INFO `info=EXTENSIONS`. It is read-only and
   tenant-scoped, and its 3 documented variants exercise the discriminator
   and optional parameters.
-- User decision: pending
-- Final status: open
+- User decision: **INFO `info=EXTENSIONS` (2026-09-25).** Implemented as
+  `proxy-api.ts`'s `info-extensions` endpoint.
+- Final status: **decided**
 
 ## U-07 — Content-model shape for reqtype-discriminated operations — Blocks Phase 4
 
@@ -118,8 +132,14 @@ one-endpoint vertical slice can be built truthfully.
   2. synthetic REST-like paths
   3. a separate Proxy model
 - Recommendation: (1).
-- User decision: pending
-- Final status: open
+- User decision: **(1), extend the API-neutral model (2026-09-25).**
+  Implemented in `src/content/types.ts`: `fixedQuery`, `methodBasis`,
+  `Authentication.location/parameter/scope`, tri-state `Requirement`,
+  `ResponseSpec.format/evidence`, `errors: ErrorSpec[] | "undocumented"`,
+  `notes`. Documented in `docs/API_CONTENT_MODEL.md`. The Sample API
+  (REST-shaped) required no changes to its content, confirming the model
+  stays API-neutral.
+- Final status: **decided**
 
 ## U-08 — Live Playground allowlist scope — decide before Phase 5
 
@@ -155,8 +175,13 @@ one-endpoint vertical slice can be built truthfully.
   3. unknown until tested
 - Recommendation: needs a 1com answer. Until then, mark per-operation key
   scope `not_documented`.
-- User decision: pending
-- Final status: open
+- User decision: **for INFO EXTENSIONS specifically: a tenant key, including
+  a read-only one, is sufficient (2026-09-25).** This does not resolve the
+  reqtype catalogue's admin-key contradiction (A-18) in general — only this
+  one endpoint's requirement. Recorded in `proxy-api.ts`
+  (`authentication.scope`).
+- Final status: **decided for this endpoint; open for the rest of the
+  catalogue**
 
 ## U-10 — How to document the 23 table-only reqtypes
 
@@ -188,5 +213,12 @@ one-endpoint vertical slice can be built truthfully.
   3. publish the request side only until verified
 - Recommendation: (1) for the single Phase 4 endpoint, sanitized by the
   user before sharing.
-- User decision: pending
-- Final status: open
+- User decision: pending. The user was asked (2026-09-24/25) for a sanitized
+  real response to `reqtype=INFO&info=EXTENSIONS`, redacting the key, tenant
+  code, names, numbers, emails, IPs, MACs and any passwords/SIP secrets. Not
+  received yet. `proxy-api.ts` ships with `responses: []`; the reference page
+  correctly shows "Not documented by the source" rather than a fabricated
+  schema or example. **This is the one item still blocking Phase 4's
+  completion gate** (`docs/phases/04-one-endpoint.md` requires a response
+  example).
+- Final status: open — blocking

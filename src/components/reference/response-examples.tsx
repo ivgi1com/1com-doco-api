@@ -3,11 +3,13 @@
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { CopyButton } from "@/components/code/copy-button";
+import type { Evidence } from "@/content/types";
 
 export interface RenderedResponse {
   status: number;
   code: string | null;
   html: string | null;
+  evidence?: Evidence;
 }
 
 function statusTone(status: number) {
@@ -30,7 +32,12 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
         <label htmlFor={selectId} className="text-xs font-semibold text-code-muted">
           {t("responseExample")}
         </label>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          {current.evidence === "observed-sanitized" && (
+            <span className="rounded-sm bg-warning-tint px-1.5 py-0.5 text-[11px] font-semibold text-warning-ink">
+              {t("evidenceObservedSanitized")}
+            </span>
+          )}
           <span className="relative inline-flex items-center">
             <span aria-hidden className={`pointer-events-none absolute start-2 size-1.5 rounded-full ${statusTone(current.status)}`} />
             <select

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import type { Endpoint } from "@/content/types";
+import type { ApiDefinition, Endpoint } from "@/content/types";
 import { byteSize } from "@/lib/json-path";
 
 export type PlaygroundMode = "live" | "demo";
@@ -9,12 +9,16 @@ export type PlaygroundMode = "live" | "demo";
 export type PlaygroundResponse =
   | {
       source: "DEMO";
+      unavailable?: false;
       status: number;
       latencyMs: number;
       sizeBytes: number;
       requestId: string;
       body: unknown;
     }
+  // Non-synthetic APIs have no Demo fixtures yet (Phase 6) and must never
+  // replay a real observed response (Evidence rule, API_CONTENT_MODEL.md).
+  | { source: "DEMO"; unavailable: true }
   | {
       source: "LIVE";
       error: true;
@@ -68,7 +72,7 @@ function subscribeApiKey(cb: () => void) {
   return () => window.removeEventListener(API_KEY_EVENT, cb);
 }
 
-export function usePlayground(endpoint: Endpoint) {
+export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
   const [mode, setMode] = useState<PlaygroundMode>("demo");
   const [pendingMode, setPendingMode] = useState<PlaygroundMode | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => defaultFieldValues(endpoint));
@@ -201,6 +205,10 @@ export function usePlayground(endpoint: Endpoint) {
         setResponse({ source: "LIVE", error: true });
         return;
       }
+      if (!api.synthetic) {
+        setResponse({ source: "DEMO", unavailable: true });
+        return;
+      }
       const success = endpoint.responses.find((r) => r.status < 300);
       const failure = endpoint.responses.find((r) => r.status >= 400);
       const chosen = (simulateError && failure) || success || endpoint.responses[0];
@@ -217,7 +225,7 @@ export function usePlayground(endpoint: Endpoint) {
 
     const delay = mode === "live" ? 500 : 400 + Math.random() * 500;
     sendTimeoutRef.current = setTimeout(finish, delay);
-  }, [endpoint, mode, simulateError, validate]);
+  }, [api, endpoint, mode, simulateError, validate]);
 
   return {
     mode,

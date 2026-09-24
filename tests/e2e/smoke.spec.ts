@@ -12,12 +12,14 @@ import { expect, test, type Page } from "@playwright/test";
 
 const routes = [
   "/en",
+  "/en/reference/proxy/info-extensions",
   "/en/reference/sample/list-call-records",
   "/en/guides/getting-started",
   "/en/playground",
   "/en/changelog",
   "/en/no-such-page",
   "/he",
+  "/he/reference/proxy/info-extensions",
 ];
 
 const viewports = [
@@ -43,7 +45,15 @@ for (const viewport of viewports) {
       test(`loads without console errors: ${route}`, async ({ page }) => {
         const errors = trackConsoleErrors(page);
         await page.goto(route);
-        await page.waitForLoadState("networkidle");
+        await page.waitForLoadState("load");
+        // Not `networkidle`: Next.js prefetches every visible Link's RSC
+        // payload in the background (more of them once a page has both a
+        // full sidebar and other on-page links, e.g. the Proxy endpoint
+        // page), and Chromium's prefetch fan-out can keep the network
+        // "busy" well past this test's timeout despite the page itself
+        // having loaded correctly. A brief settle window is enough for any
+        // real startup console error to surface.
+        await page.waitForTimeout(500);
         // /en/no-such-page correctly returns HTTP 404; Chromium/WebKit log
         // that as a "failed to load resource" entry for the navigation
         // itself. That is the intended status code, not a JS error.
@@ -129,5 +139,63 @@ test.describe("interactions", () => {
     await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
     await desktopPane(page).getByPlaceholder("Search JSON").fill("outbound");
     await expect(desktopPane(page).getByText("No matches")).toHaveCount(0);
+  });
+
+  // Phase 4: the Proxy API vertical slice (one real endpoint, docs/phases/04-one-endpoint.md).
+  test.describe("Proxy API endpoint (Phase 4)", () => {
+    test("reference page shows the legacy badge, fixed query params, and undocumented states truthfully", async ({
+      page,
+    }) => {
+      await page.goto("/en/reference/proxy/info-extensions");
+      await expect(page.getByRole("heading", { name: "List extensions" })).toBeVisible();
+      await expect(page.getByText("Legacy endpoint")).toBeVisible();
+      // The header's own path line; the request panel (desktop + mobile,
+      // both mounted at once) repeats the same path in two more places.
+      await expect(page.getByText("/pbx/proxyapi.php?reqtype=INFO&info=EXTENSIONS").first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Fixed parameters" })).toBeVisible();
+      // Responses and Errors are genuinely undocumented by the source; the
+      // page must say so rather than showing an empty or fabricated section.
+      // Scoped by section (not just matching text) because the sticky
+      // request panel repeats the same "not documented" fallback text.
+      await expect(
+        page.locator('section[aria-labelledby="responses"]').getByText("Not documented by the source."),
+      ).toBeVisible();
+      await expect(
+        page.locator('section[aria-labelledby="errors"]').getByText("Not documented by the source."),
+      ).toBeVisible();
+    });
+
+    test("API reference redirects to the Proxy API (the default API) and the sidebar matches it", async ({
+      page,
+    }) => {
+      await page.goto("/en/reference");
+      await expect(page).toHaveURL(/\/reference\/proxy$/);
+      await expect(page.getByRole("combobox").first()).toHaveValue("proxy");
+    });
+
+    test("Try in Playground opens the Playground on this endpoint with the Proxy API's own samples", async ({
+      page,
+    }) => {
+      await page.goto("/en/reference/proxy/info-extensions");
+      await page.getByRole("link", { name: "Try in Playground" }).click();
+      await expect(page).toHaveURL(/\/playground\?endpoint=proxy\/info-extensions$/);
+      await desktopPane(page).getByText("Code preview").click();
+      await expect(desktopPane(page).getByText("PROXY_API_KEY")).toBeVisible();
+    });
+
+    test("Demo mode never fabricates or replays data for this endpoint", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
+    });
+
+    test("undocumented-required query parameters never block Send", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await desktopPane(page).getByLabel("tenant").fill("");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toHaveCount(0);
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+    });
   });
 });

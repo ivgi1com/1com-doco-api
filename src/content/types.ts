@@ -130,5 +130,7 @@ export interface ApiDefinition {
   baseUrl: string;
   /** True for fabricated prototype content that must be labelled as such. */
   synthetic: boolean;
+  /** Shown on the API overview page. */
+  summary: string;
   categories: Category[];
 }

@@ -23,7 +23,7 @@ export function PlaygroundApp({
 }) {
   const router = useRouter();
   const [endpoint, setEndpoint] = useState(initialEndpoint);
-  const state = usePlayground(endpoint);
+  const state = usePlayground(api, endpoint);
   const samples = samplesByEndpoint[endpoint.id] ?? [];
 
   const selectEndpoint = useCallback(
@@ -35,7 +35,9 @@ export function PlaygroundApp({
   );
 
   const endpointPane = <EndpointPicker api={api} selected={endpoint} onSelect={selectEndpoint} />;
-  const requestPane = <RequestBuilder endpoint={endpoint} samples={samples} state={state} />;
+  const requestPane = (
+    <RequestBuilder endpoint={endpoint} samples={samples} state={state} synthetic={api.synthetic} />
+  );
   const responsePane = <ResponseViewer state={state} />;
 
   return (

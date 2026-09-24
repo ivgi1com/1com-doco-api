@@ -1,21 +1,29 @@
+"use client";
+
 import { ChevronDown, BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { apis, getApi } from "@/content";
 import { guides } from "@/content/guides";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { NavLink } from "./nav-link";
 
 const itemClass =
   "flex min-h-8 items-center gap-2 rounded-md px-2 py-1 text-sm text-ink-muted transition-colors duration-150 hover:bg-surface-2 hover:text-ink aria-[current]:bg-accent-tint aria-[current]:font-semibold aria-[current]:text-accent";
 
-const plannedApis = ["Proxy API", "Open API"];
+const plannedApis = ["Open API"];
 
-export function ReferenceNav({ apiId = "sample", idPrefix = "side" }: { apiId?: string; idPrefix?: string }) {
+/** Reads the api id from the current path (`/reference/<api>/...`) so the
+ * sidebar and mobile drawer always show the API being viewed, not always
+ * the first one. Falls back to the first API when not under `/reference`. */
+export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
   const t = useTranslations("nav");
   const th = useTranslations("home");
-  const api = getApi(apiId);
-  if (!api) return null;
+  const pathname = usePathname();
+  const router = useRouter();
+  const detectedId = /^\/reference\/([^/]+)/.exec(pathname)?.[1];
+  const api = (detectedId && getApi(detectedId)) || apis[0];
 
   return (
     <div className="space-y-5">
@@ -25,7 +33,8 @@ export function ReferenceNav({ apiId = "sample", idPrefix = "side" }: { apiId?: 
         </label>
         <select
           id={`${idPrefix}-api-${api.id}`}
-          defaultValue={api.id}
+          value={api.id}
+          onChange={(e) => router.push(`/reference/${e.target.value}`)}
           className="h-8 min-w-0 rounded-md border border-border-control bg-bg px-2 text-sm font-semibold text-ink"
         >
           {apis.map((a) => (

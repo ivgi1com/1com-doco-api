@@ -12,20 +12,27 @@ import { ParamField } from "./param-field";
 import { fieldKey, type PlaygroundState } from "./use-playground";
 
 function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
-  return endpoint.pathParameters.reduce((path, p) => {
+  const path = endpoint.pathParameters.reduce((path, p) => {
     const v = values[fieldKey("path", p.name)];
     return v ? path.replaceAll(`{${p.name}}`, v) : path;
   }, endpoint.path);
+  if (!endpoint.fixedQuery) return path;
+  const fixed = Object.entries(endpoint.fixedQuery)
+    .map(([k, v]) => `${k}=${v}`)
+    .join("&");
+  return `${path}?${fixed}`;
 }
 
 export function RequestBuilder({
   endpoint,
   samples,
   state,
+  synthetic,
 }: {
   endpoint: Endpoint;
   samples: RenderedSample[];
   state: PlaygroundState;
+  synthetic: boolean;
 }) {
   const t = useTranslations("playground");
   const te = useTranslations("endpoint");
@@ -167,7 +174,9 @@ export function RequestBuilder({
         >
           {sending ? t("sending") : t("send")}
         </button>
-        {mode === "demo" && <p className="text-xs text-ink-muted">{t("prototypeNote")}</p>}
+        {mode === "demo" && (
+          <p className="text-xs text-ink-muted">{synthetic ? t("prototypeNote") : t("demoUnavailableNote")}</p>
+        )}
       </div>
     </div>
   );

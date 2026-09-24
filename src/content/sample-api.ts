@@ -330,6 +330,7 @@ export const sampleApi: ApiDefinition = {
   version: "v1",
   baseUrl: "https://api.example.com",
   synthetic: true,
+  summary: "A fictional telephony API used to evaluate the portal design: call records and a tenant address book.",
   categories: [
     { id: "call-records", title: "Call records", endpoints: [listCalls, getCall] },
     { id: "contacts", title: "Contacts", endpoints: [createContact, updateContact, deleteContact] },

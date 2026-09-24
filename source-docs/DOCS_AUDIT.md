@@ -104,7 +104,11 @@ minor inconsistency.
   first (2026-09-24); how the portal labels it is open → U-03.
 - **A-34 (High) Production host unknown.** Every example uses
   `pbx.example.com/mirtapbx/proxyapi.php`. 1com's real host/path is not in
-  the source → U-01.
+  the source → U-01. **Resolved 2026-09-25 (Phase 4):** the user gave the
+  fixed 1com production host, `https://pbx6webserver.1com.co.il/pbx/proxyapi.php`.
+  Note the path differs from the vendor's own `/mirtapbx/proxyapi.php` — this
+  is a 1com deployment detail, not a documentation error in the vendor page.
+  Only the 1com path is used anywhere in the portal (`src/content/proxy-api.ts`).
 
 ### Missing documentation
 

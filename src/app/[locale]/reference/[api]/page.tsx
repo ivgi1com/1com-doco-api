@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CodeBlock } from "@/components/code/code-block";
+import { InlineMarkup } from "@/components/reference/inline-markup";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
-import { apis, getApi } from "@/content";
+import { apis, getApi, listEndpoints } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { API_KEY_ENV } from "@/lib/code-samples";
+import { buildSample } from "@/lib/code-samples";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => apis.map((api) => ({ locale, api: api.id })));
@@ -29,6 +30,10 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
   if (!api) notFound();
   const t = await getTranslations("endpoint");
   const tn = await getTranslations("nav");
+  const quickstartEndpoint = listEndpoints(api)[0];
+  const quickstartSample = quickstartEndpoint
+    ? buildSample(quickstartEndpoint, api.baseUrl, "curl")
+    : null;
 
   return (
     <div className="mx-auto w-full max-w-[56rem] space-y-10 px-4 pb-16 pt-8 sm:px-6 lg:px-10">
@@ -45,7 +50,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
           </span>
         </h1>
         <p lang="en" dir="auto" className="max-w-[70ch] text-md text-ink-muted">
-          A fictional telephony API used to evaluate the portal design: call records and a tenant address book.
+          {api.summary}
         </p>
       </header>
 
@@ -56,20 +61,17 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
         <CodeBlock code={api.baseUrl} lang="bash" title="base url" />
       </section>
 
-      <section aria-labelledby="auth" className="space-y-3">
-        <h2 id="auth" className="text-xl font-semibold text-ink">
-          {t("security")}
-        </h2>
-        <p lang="en" dir="auto" className="max-w-[70ch] text-ink">
-          Every request sends a tenant API key as a bearer token. Store the key in an environment variable and never
-          commit it.
-        </p>
-        <CodeBlock
-          code={`export ${API_KEY_ENV}="<YOUR_API_KEY>"\ncurl ${api.baseUrl}/v1/call-records \\\n  -H "Authorization: Bearer $${API_KEY_ENV}"`}
-          lang="bash"
-          title="shell"
-        />
-      </section>
+      {quickstartEndpoint && quickstartSample && (
+        <section aria-labelledby="auth" className="space-y-3">
+          <h2 id="auth" className="text-xl font-semibold text-ink">
+            {t("security")}
+          </h2>
+          <p lang="en" dir="auto" className="max-w-[70ch] text-ink">
+            <InlineMarkup text={quickstartEndpoint.authentication.description} />
+          </p>
+          <CodeBlock code={quickstartSample} lang="bash" title="shell" />
+        </section>
+      )}
 
       {api.categories.map((category) => (
         <section key={category.id} aria-labelledby={`cat-${category.id}`} className="space-y-3">

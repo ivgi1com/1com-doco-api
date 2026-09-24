@@ -86,6 +86,16 @@
     "reportIssue": "דיווח על בעיה",
     "deprecatedBanner": "נקודת קצה זו הוצאה משימוש ותוסר ב-{date}.",
     "useInstead": "יש להשתמש ב-<link>{name}</link> במקומה.",
+    "legacyBanner": "נקודת קצה מדור קודם (Legacy)",
+    "methodInferredNote": "המקור אינו מציין את שיטת ה-HTTP עבור פעולה זו; היא נגזרת מדוגמאות הבקשה שלו.",
+    "keyScope": "היקף המפתח",
+    "authInQuery": "נשלח כפרמטר השאילתה `{parameter}`. מכיוון שהוא עובר בכתובת ה-URL, יש להקפיד שלא יופיע ביומני מערכת, בהיסטוריית הדפדפן או בקוד צד לקוח.",
+    "fixedParams": "פרמטרים קבועים",
+    "fixedParamsHelp": "פרמטרי שאילתה אלו בוחרים את הפעולה הזו. הם נשלחים תמיד עם הערך הקבוע הזה.",
+    "notDocumented": "לא מתועד במקור.",
+    "requiredUndocumented": "לא מתועד",
+    "evidenceObservedSanitized": "נצפה, מוסנן — אינו מתועד על ידי הספק",
+    "notes": "הערות",
     "verification": "אימות מול API",
     "notVerified": "לא אומת מול API חי"
   },
@@ -143,7 +153,10 @@
     "stepRequest": "בקשה",
     "stepResponse": "תגובה",
     "simulateError": "הדמיית תגובת שגיאה",
-    "prototypeNote": "תגובות Demo באב-טיפוס זה מגיעות מתוכן הדוגמה הסינתטי."
+    "prototypeNote": "תגובות Demo באב-טיפוס זה מגיעות מתוכן הדוגמה הסינתטי.",
+    "demoUnavailableNote": "נתוני Demo עבור נקודת קצה זו עדיין אינם זמינים (מתוכננים לשלב מאוחר יותר).",
+    "demoUnavailableTitle": "נתוני Demo עדיין אינם זמינים",
+    "demoUnavailableBody": "מצב Demo עבור נקודת קצה זו ייבנה בשלב מאוחר יותר. הוא לעולם לא ישחזר תגובות אמיתיות שנצפו ומוצגות במקום אחר בעמוד זה."
   },
   "json": {
     "expandAll": "הרחבת הכול",
