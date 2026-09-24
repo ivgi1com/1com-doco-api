@@ -79,3 +79,42 @@ Decision:
 
 Status:
 Approved in planning discussion.
+
+---
+
+## 2026-09-24 — Phase 1 setup choices
+
+Decision:
+- Git initialized locally: `main` baseline + `phase/design-research`. No remote.
+- Research tooling: WebSearch/WebFetch + Playwright screenshots (scratchpad, not committed) + `impeccable` rules in place of UI/UX Pro Max (not installed).
+- Brand cues derived from public 1com.co.il, marked UNCONFIRMED.
+- Locales: English + Hebrew (RTL) from the start.
+
+Status:
+Approved by user (plan approval, 2026-09-24).
+
+---
+
+## 2026-09-24 — Design direction (Phase 1 output)
+
+Decision (proposed):
+- Restrained color strategy on brand-hue-tinted neutrals; brand indigo `#3731ee` as accent, violet `#781df0` as hover; lightened tint for dark mode.
+- Light + dark, default follows OS; code/JSON surfaces dark in both.
+- Assistant (UI, Hebrew+Latin) + JetBrains Mono (code).
+- Three-column endpoint layout with sticky request panel; nothing hidden on mobile.
+- Dedicated Playground route with persistent Live/Demo mode bar (amber Live, teal Demo) and per-response source stamp.
+- Four lifecycle states shown as page banner + inline badge.
+
+Status:
+PROPOSED — awaiting user approval at Phase 1 gate. See `design-system/RESEARCH.md`, `design-system/MASTER.md`.
+
+---
+
+## 2026-09-24 — Process notes
+
+Decision:
+- `impeccable` init (PRODUCT.md creation) skipped: outside approved Phase 1 file scope.
+- Reference-portal screenshots not committed (third-party imagery); regenerable.
+
+Status:
+Applied; revisit at gate if user prefers otherwise.
