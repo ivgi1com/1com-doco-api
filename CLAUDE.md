@@ -308,3 +308,93 @@ A final critical code/security review should be performed with Opus when the pha
 - significant architectural changes
 
 After the review is complete, return to Sonnet for ordinary remediation unless the fixes themselves remain high risk.
+
+## Mandatory Phase Completion and Approval Gate
+
+When the current phase appears complete, STOP before beginning the next phase.
+
+Do not automatically continue to the next phase.
+
+Before asking for approval:
+
+1. Verify the current phase against its acceptance criteria.
+2. Run the required tests and validation for this phase.
+3. Review the relevant Git diff and working-tree state.
+4. Identify:
+   - completed work
+   - failed or incomplete requirements
+   - known limitations
+   - regressions or unresolved issues
+   - tests performed and results
+5. Do not hide, minimize, or silently fix issues just to reach the approval gate.
+6. Do not start planning or implementing the next phase yet.
+
+Then present a concise Phase Completion Report containing:
+
+- Phase number and name
+- Completion status
+- Acceptance criteria status
+- Tests/validation performed and results
+- Important files/components changed
+- Known issues or limitations
+- Current Git branch
+- Current working-tree state
+- Recommended model for the next phase, if model-routing rules require a change
+
+Then explicitly ask the user to choose ONE of these actions:
+
+**A — Approve, save, and continue**
+The current phase is approved.
+Create the final phase checkpoint, update all required status/handoff/decision documentation, commit the completed phase safely, then enter PLAN MODE for the next phase.
+Do not implement the next phase until its plan is reviewed and separately approved.
+
+**B — Approve, save, and stop**
+The current phase is approved.
+Create the final phase checkpoint, update all required status/handoff/decision documentation, commit the completed phase safely, then STOP.
+Record that the next phase has not started and is waiting for user approval.
+
+**C — Do not approve yet**
+Do not mark the phase complete.
+Do not create a final phase-completion checkpoint.
+Wait for the user's requested fixes, questions, or changes.
+
+**D — Review only**
+Do not save the phase as complete and do not continue.
+Remain at the approval gate so the user can inspect the results.
+
+Never interpret silence as approval.
+Never start the next phase automatically.
+Never change phase status from active to completed without explicit user approval.
+
+### After the user selects A or B
+
+Before creating the checkpoint:
+
+- update the current phase document if required
+- update `docs/CURRENT_STATUS.md` if present
+- update `docs/SESSION_HANDOFF.md` if present
+- update `docs/DECISIONS.md` only for material new decisions
+- update architecture/security/testing/project-structure documentation only when genuinely affected
+- inspect the final Git diff
+- exclude secrets, temporary files, generated junk, dependency directories, and unrelated changes
+- create a descriptive phase-completion commit when safe
+- verify `git status` afterward
+
+For option A:
+After saving the completed phase, enter PLAN MODE for the next phase and stop at its planning approval gate.
+
+For option B:
+After saving the completed phase, stop completely. Do not inspect, research, plan, or implement the next phase.
+
+### Required approval-gate question
+
+At the end of every completed phase, ask:
+
+`Phase <N> appears complete and has passed its required validation. What would you like me to do?`
+
+`A — Approve, save, and continue to planning the next phase`
+`B — Approve, save, and stop here`
+`C — Do not approve yet; I want changes`
+`D — Keep it at the review gate without saving completion`
+
+Wait for the user's choice before proceeding.
