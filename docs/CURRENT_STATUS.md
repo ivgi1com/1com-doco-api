@@ -1,33 +1,34 @@
 # Current Status
 
 Current phase:
-**Phase 1 — Design Research: APPROVED** (2026-09-24, tag `v0.1-design-approved`)
-Next phase: Phase 2 — Design Prototype (not started; requires explicit user go-ahead)
+**Phase 2 — Design Prototype** (IN PROGRESS, checkpoint; never built or run yet)
 
 Current branch:
-`phase/design-research` (from `main` baseline `d12cc39`). Not merged to `main`.
+`phase/design-prototype` (from `main` @ `dc5f5bc`, tag `v0.1-design-approved`)
 
 Completed:
-- High-level direction, pilot choice (Proxy API), one-endpoint strategy, Live/Demo concepts, no-guessing protocol, approval gates, Git strategy, model routing, operating rules
-- Git repository initialized (`main` + phase branch)
-- Design research: `design-system/RESEARCH.md` (Approved)
-- Design system: `design-system/MASTER.md` (Approved)
-- Phase 1 decisions resolved: official brand `#3731ee`/`#781df0` + Assistant; radii 4/6/10px; amber Live / teal Demo; dedicated Playground route
+- Phase 1 approved, tagged, and merged to `main` (fast-forward, with user approval)
+- Phase 2 decisions (see DECISIONS.md, 2026-09-24 "Phase 2 setup")
+- App bootstrapped: Next 16.3.6, React 19.2.8, TS, Tailwind 4.3.3, next-intl 4.14.7, shiki 4, lucide-react, vitest, @playwright/test 1.63.0
+- Design tokens in `src/app/globals.css` (from MASTER.md), theme init script, en/he routing via `src/proxy.ts`
+- Message catalogs `messages/en.json` + `messages/he.json` (Hebrew is a DRAFT)
+- Content model `src/content/types.ts` + synthetic Sample API (`src/content/sample-api.ts`) + guide registry
+- Components: shell (header, mobile drawer, search palette, theme toggle, locale switch, sidebar, inert Console), badges, callout, banners, code tabs/block/copy, param list, response examples, request panel, endpoint view, feedback
+- Routes written: `[locale]/layout`, `reference/{layout,page,[api]/page,[api]/[endpoint]/page}`, `guides/{layout,page}`
 
-In progress:
-- None
-
-Open (non-blocking, deferred):
-- SVG logo availability (only raster PNG known)
-- Sign-in / Console link destination (needed before Phase 2 nav is finalized)
-- Hebrew content scope (needed before Phase 3/4 content model)
-- Commit reference screenshots? (currently no)
+Unfinished:
+- Routes: `[locale]/page.tsx` (home), `guides/[slug]/page.tsx` (+ TOC rail), `changelog/page.tsx` (empty state), `playground/page.tsx`, `[locale]/not-found.tsx`
+- Components: JSON viewer (`src/components/json/`), Playground (`src/components/playground/`: mode bar, confirm dialog, request builder, response viewer, mobile step flow)
+- `package.json` scripts: `typecheck`, `test`, `test:e2e`, `check`; vitest + playwright configs; unit tests (code-samples, json-path, search-index); e2e tests
+- First `npm run build` / `lint` / `typecheck`. Expect compile errors: nothing has been compiled yet.
+- Playwright visual validation (desktop/tablet/mobile, en/he, light/dark, console errors)
+- UI audit (impeccable `audit`/`critique`) + React best-practice review
+- Record the exact versions in `docs/ENVIRONMENT.md`
 
 Blocked:
-- Merge of `phase/design-research` into `main`: awaiting explicit user approval
-- Phase 2: awaiting explicit user go-ahead
+- None
 
 Next action:
-User decides on merging to `main` and starting Phase 2 (`docs/phases/02-design-prototype.md`).
+Write the remaining routes and components listed above, then run typecheck, lint and build, then do Playwright validation. Stop at the Phase 2 gate.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

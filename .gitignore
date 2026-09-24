@@ -21,3 +21,10 @@ coverage/
 # OS/editor noise
 .DS_Store
 Thumbs.db
+
+# next.js / typescript
+next-env.d.ts
+*.tsbuildinfo
+.env*
+!.env.example
+*.pem

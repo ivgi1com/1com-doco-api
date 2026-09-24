@@ -1,0 +1,104 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CodeBlock } from "@/components/code/code-block";
+import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
+import { MethodBadge } from "@/components/ui/method-badge";
+import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { apis, getApi } from "@/content";
+import { Link } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
+import { API_KEY_ENV } from "@/lib/code-samples";
+
+export function generateStaticParams() {
+  return routing.locales.flatMap((locale) => apis.map((api) => ({ locale, api: api.id })));
+}
+
+export const dynamicParams = false;
+
+export async function generateMetadata({ params }: PageProps<"/[locale]/reference/[api]">): Promise<Metadata> {
+  const { api } = await params;
+  const a = getApi(api);
+  return a ? { title: a.name } : {};
+}
+
+export default async function ApiOverview({ params }: PageProps<"/[locale]/reference/[api]">) {
+  const { locale, api: apiId } = await params;
+  setRequestLocale(locale);
+  const api = getApi(apiId);
+  if (!api) notFound();
+  const t = await getTranslations("endpoint");
+  const tn = await getTranslations("nav");
+
+  return (
+    <div className="mx-auto w-full max-w-[56rem] space-y-10 px-4 pb-16 pt-8 sm:px-6 lg:px-10">
+      <header className="space-y-4">
+        <div className="space-y-2">
+          {api.synthetic && <PrototypeBanner />}
+          {locale !== "en" && <UntranslatedBanner />}
+        </div>
+        <p className="text-sm font-semibold text-ink-muted">{tn("overview")}</p>
+        <h1 className="text-2xl font-bold text-ink">
+          {api.name}{" "}
+          <span dir="ltr" className="font-mono text-lg font-normal text-ink-muted">
+            {api.version}
+          </span>
+        </h1>
+        <p lang="en" dir="auto" className="max-w-[70ch] text-md text-ink-muted">
+          A fictional telephony API used to evaluate the portal design: call records and a tenant address book.
+        </p>
+      </header>
+
+      <section aria-labelledby="base-url" className="space-y-3">
+        <h2 id="base-url" className="text-xl font-semibold text-ink">
+          Base URL
+        </h2>
+        <CodeBlock code={api.baseUrl} lang="bash" title="base url" />
+      </section>
+
+      <section aria-labelledby="auth" className="space-y-3">
+        <h2 id="auth" className="text-xl font-semibold text-ink">
+          {t("security")}
+        </h2>
+        <p lang="en" dir="auto" className="max-w-[70ch] text-ink">
+          Every request sends a tenant API key as a bearer token. Store the key in an environment variable and never
+          commit it.
+        </p>
+        <CodeBlock
+          code={`export ${API_KEY_ENV}="<YOUR_API_KEY>"\ncurl ${api.baseUrl}/v1/call-records \\\n  -H "Authorization: Bearer $${API_KEY_ENV}"`}
+          lang="bash"
+          title="shell"
+        />
+      </section>
+
+      {api.categories.map((category) => (
+        <section key={category.id} aria-labelledby={`cat-${category.id}`} className="space-y-3">
+          <h2 id={`cat-${category.id}`} lang="en" className="text-xl font-semibold text-ink">
+            {category.title}
+          </h2>
+          <ul className="divide-y divide-border border-y border-border">
+            {category.endpoints.map((e) => (
+              <li key={e.id}>
+                <Link
+                  href={`/reference/${api.id}/${e.id}`}
+                  className="group grid gap-x-4 gap-y-1 py-3 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-center"
+                >
+                  <span className="flex items-center gap-2">
+                    <span lang="en" className="font-semibold text-ink group-hover:text-accent">
+                      {e.title}
+                    </span>
+                    <LifecycleBadge status={e.status} />
+                  </span>
+                  <span dir="ltr" className="flex min-w-0 items-center gap-2 justify-self-start">
+                    <MethodBadge method={e.method} size="sm" />
+                    <code className="truncate font-mono text-sm text-ink-muted">{e.path}</code>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}

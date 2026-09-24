@@ -1,0 +1,42 @@
+import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { CodeTabs, type RenderedSample } from "@/components/code/code-tabs";
+import { MethodBadge } from "@/components/ui/method-badge";
+import type { Endpoint } from "@/content/types";
+import { Link } from "@/i18n/navigation";
+import { type RenderedResponse, ResponseExamples } from "./response-examples";
+
+export interface RequestPanelData {
+  samples: RenderedSample[];
+  responses: RenderedResponse[];
+}
+
+/** The sticky right column: method/path, request samples, Try link, response example. */
+export function RequestPanel({
+  apiId,
+  endpoint,
+  data,
+}: {
+  apiId: string;
+  endpoint: Endpoint;
+  data: RequestPanelData;
+}) {
+  const t = useTranslations("endpoint");
+  return (
+    <div className="space-y-3">
+      <div dir="ltr" className="flex items-center gap-2 rounded-md border border-border bg-surface-2 px-3 py-2">
+        <MethodBadge method={endpoint.method} />
+        <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{endpoint.path}</code>
+      </div>
+      <CodeTabs samples={data.samples} />
+      <Link
+        href={`/playground?endpoint=${apiId}/${endpoint.id}`}
+        className="flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
+      >
+        {t("tryIt")}
+        <ArrowRight className="icon-directional size-4" aria-hidden />
+      </Link>
+      <ResponseExamples responses={data.responses} />
+    </div>
+  );
+}

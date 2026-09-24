@@ -1,0 +1,361 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens: design-system/MASTER.md (approved 2026-09-24).
+ * Theme is resolved before paint by an inline script that sets
+ * html[data-theme="light"|"dark"] from the stored preference or the OS.
+ */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+
+  --bg: oklch(0.992 0.002 275);
+  --surface-2: oklch(0.972 0.005 275);
+  --raised: oklch(0.992 0.002 275);
+  --border: oklch(0.905 0.008 275);
+  --border-control: oklch(0.6 0.016 275);
+  --ink: oklch(0.235 0.02 275);
+  --ink-muted: oklch(0.47 0.02 275);
+  --accent: oklch(0.478 0.265 271.6);
+  --accent-hover: oklch(0.517 0.271 293.1);
+  --accent-ink: oklch(1 0 0);
+  --accent-tint: oklch(0.478 0.265 271.6 / 0.09);
+  --code-bg: oklch(0.2 0.018 275);
+  --code-surface: oklch(0.25 0.02 275);
+  --code-border: oklch(0.32 0.02 275);
+  --code-ink: oklch(0.93 0.008 275);
+  --code-muted: oklch(0.72 0.02 275);
+
+  --info-tint: oklch(0.96 0.025 275);
+  --info-ink: oklch(0.45 0.16 275);
+  --success-tint: oklch(0.965 0.03 155);
+  --success-ink: oklch(0.44 0.11 155);
+  --warning-tint: oklch(0.97 0.045 85);
+  --warning-ink: oklch(0.46 0.1 70);
+  --danger-tint: oklch(0.965 0.025 25);
+  --danger-ink: oklch(0.5 0.18 25);
+
+  --mode-live-solid: oklch(0.55 0.17 40);
+  --mode-live-tint: oklch(0.965 0.03 40);
+  --mode-live-ink: oklch(0.47 0.15 40);
+  --mode-demo-solid: oklch(0.5 0.1 195);
+  --mode-demo-tint: oklch(0.965 0.025 195);
+  --mode-demo-ink: oklch(0.43 0.08 195);
+
+  --method-get: oklch(0.52 0.16 245);
+  --method-post: oklch(0.52 0.14 155);
+  --method-put: oklch(0.56 0.13 70);
+  --method-patch: oklch(0.5 0.2 300);
+  --method-delete: oklch(0.52 0.19 25);
+  --method-ink: oklch(1 0 0);
+
+  --shadow-overlay: 0 8px 24px oklch(0.2 0.02 275 / 0.12);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: oklch(0.165 0.012 275);
+  --surface-2: oklch(0.145 0.012 275);
+  --raised: oklch(0.2 0.014 275);
+  --border: oklch(0.29 0.016 275);
+  --border-control: oklch(0.52 0.018 275);
+  --ink: oklch(0.945 0.005 275);
+  --ink-muted: oklch(0.73 0.016 275);
+  --accent: oklch(0.73 0.14 276);
+  --accent-hover: oklch(0.8 0.11 290);
+  --accent-ink: oklch(0.165 0.012 275);
+  --accent-tint: oklch(0.73 0.14 276 / 0.13);
+  --code-bg: oklch(0.13 0.012 275);
+  --code-surface: oklch(0.18 0.014 275);
+  --code-border: oklch(0.27 0.016 275);
+
+  --info-tint: oklch(0.23 0.04 275);
+  --info-ink: oklch(0.82 0.09 275);
+  --success-tint: oklch(0.23 0.04 155);
+  --success-ink: oklch(0.82 0.11 155);
+  --warning-tint: oklch(0.24 0.04 80);
+  --warning-ink: oklch(0.85 0.11 85);
+  --danger-tint: oklch(0.24 0.05 25);
+  --danger-ink: oklch(0.8 0.11 25);
+
+  --mode-live-solid: oklch(0.78 0.14 55);
+  --mode-live-tint: oklch(0.24 0.05 45);
+  --mode-live-ink: oklch(0.78 0.14 55);
+  --mode-demo-solid: oklch(0.8 0.1 195);
+  --mode-demo-tint: oklch(0.23 0.035 195);
+  --mode-demo-ink: oklch(0.8 0.1 195);
+
+  --method-get: oklch(0.78 0.11 245);
+  --method-post: oklch(0.8 0.13 155);
+  --method-put: oklch(0.83 0.12 80);
+  --method-patch: oklch(0.78 0.13 300);
+  --method-delete: oklch(0.76 0.13 25);
+  --method-ink: oklch(0.165 0.012 275);
+
+  --shadow-overlay: none;
+}
+
+@theme inline {
+  --font-sans: var(--font-assistant), "Noto Sans Hebrew", system-ui, -apple-system,
+    "Segoe UI", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface-2: var(--surface-2);
+  --color-raised: var(--raised);
+  --color-border: var(--border);
+  --color-border-control: var(--border-control);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-tint: var(--accent-tint);
+  --color-code-bg: var(--code-bg);
+  --color-code-surface: var(--code-surface);
+  --color-code-border: var(--code-border);
+  --color-code-ink: var(--code-ink);
+  --color-code-muted: var(--code-muted);
+  --color-info-tint: var(--info-tint);
+  --color-info-ink: var(--info-ink);
+  --color-success-tint: var(--success-tint);
+  --color-success-ink: var(--success-ink);
+  --color-warning-tint: var(--warning-tint);
+  --color-warning-ink: var(--warning-ink);
+  --color-danger-tint: var(--danger-tint);
+  --color-danger-ink: var(--danger-ink);
+  --color-live-solid: var(--mode-live-solid);
+  --color-live-tint: var(--mode-live-tint);
+  --color-live-ink: var(--mode-live-ink);
+  --color-demo-solid: var(--mode-demo-solid);
+  --color-demo-tint: var(--mode-demo-tint);
+  --color-demo-ink: var(--mode-demo-ink);
+  --color-method-ink: var(--method-ink);
+
+  --shadow-overlay: var(--shadow-overlay);
+
+  /* Fixed rem type scale, ratio ~1.2 (MASTER.md "Typography"). */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.625rem;
+  --text-md: 1.125rem;
+  --text-md--line-height: 1.75rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.875rem;
+  --text-2xl--line-height: 2.375rem;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 2.75rem;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    background: var(--bg);
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  :where(html[lang="he"]) {
+    line-height: 1.7;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--accent-tint);
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  /* Inline code within prose: mono at 0.9em of surrounding text. */
+  .prose-code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    unicode-bidi: isolate;
+    direction: ltr;
+  }
+
+  /* The only gradient in the system: the 1px header signal hairline. */
+  .signal-hairline {
+    background: linear-gradient(
+      to right,
+      oklch(0.478 0.265 271.6),
+      oklch(0.517 0.271 293.1)
+    );
+  }
+
+  :where([dir="rtl"]) .signal-hairline {
+    background: linear-gradient(
+      to left,
+      oklch(0.478 0.265 271.6),
+      oklch(0.517 0.271 293.1)
+    );
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklch, var(--ink) 14%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 20px 20px;
+  }
+
+  /* Directional icons mirror in RTL; object icons never do. */
+  :where([dir="rtl"]) .icon-directional {
+    transform: scaleX(-1);
+  }
+
+  /* Monochrome logo rendered as a mask so it inherits theme ink. */
+  .brand-mark {
+    background-color: currentColor;
+    -webkit-mask: url("/brand/1com-logo.png") center / contain no-repeat;
+    mask: url("/brand/1com-logo.png") center / contain no-repeat;
+  }
+}
+
+/* Highlighted code (Shiki output). 14px mono, horizontal scroll inside the block. */
+.code-body {
+  overflow-x: auto;
+  outline-offset: -2px;
+}
+.code-body pre {
+  margin: 0;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  background: transparent !important;
+  width: max-content;
+  min-width: 100%;
+}
+.code-body.with-lines pre code {
+  counter-reset: line;
+}
+.code-body.with-lines pre code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2ch;
+  margin-inline-end: 1.25rem;
+  text-align: end;
+  color: var(--code-muted);
+  opacity: 0.7;
+  user-select: none;
+}
+
+/* Drawer: slides in from the inline-start edge (MASTER.md motion: <=250ms). */
+dialog.drawer[open] {
+  animation: drawer-in 220ms var(--ease-out-quart);
+}
+dialog.drawer[open]::backdrop {
+  animation: fade-in 220ms var(--ease-out-quart);
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+:where([dir="rtl"]) dialog.drawer[open] {
+  animation-name: drawer-in-rtl;
+}
+@keyframes drawer-in-rtl {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes signal-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+.signal-dot {
+  animation: signal-pulse 1.1s var(--ease-out-quart) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .signal-dot {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .method-pill,
+  .badge {
+    border: 1px solid CanvasText;
+  }
+}

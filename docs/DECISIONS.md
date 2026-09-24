@@ -125,3 +125,28 @@ Decision:
 
 Status:
 Applied; revisit at gate if user prefers otherwise.
+
+---
+
+## 2026-09-24 — Phase 1 merge
+
+Decision:
+`phase/design-research` fast-forward merged into `main` (`dc5f5bc`).
+
+Status:
+Approved by user.
+
+---
+
+## 2026-09-24 — Phase 2 setup
+
+Decision:
+- Toolchain: Node 24.15.0 (LTS), npm 12.0.2. Next.js 16.3.6 (App Router, `src/`), React 19.2.8, TypeScript 5.9, Tailwind CSS 4.3.3, next-intl 4.14.7 (`/en`, `/he` prefixes via `src/proxy.ts`), shiki 4 (server-side highlighting), lucide-react (icons), vitest 5, @playwright/test 1.63.
+- Prototype content: synthetic, clearly labelled "Sample API" (fictional endpoints, example.com host, 555-01xx numbers). No Proxy API claims before the Phase 3 audit.
+- Header branding: official raster PNG logo from 1com.co.il, rendered as a CSS mask in theme ink colour. Swap for the SVG logo when it is provided.
+- Console button: present but inert ("not available yet") until the destination is decided.
+- Hebrew: UI chrome strings drafted by Claude, marked DRAFT for native review. API content prose stays English with a "not translated yet" banner until the Hebrew scope is decided.
+- `AGENTS.md` added so `next dev` writes its agent rules there rather than into `CLAUDE.md`.
+
+Status:
+Approved by user (2026-09-24), except the implementation details noted as reversible.
