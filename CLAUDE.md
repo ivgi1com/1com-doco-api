@@ -229,3 +229,98 @@ Before an approval gate, run the project's configured equivalents of:
 - required Playwright checks
 
 Do not invent missing commands. If the project is not bootstrapped yet, create or propose them during the appropriate setup phase.
+
+
+## Model Routing and Transition Rules
+
+The project uses different Claude models according to task complexity and risk.
+
+### Default model assignments
+
+**Sonnet 5 — default implementation model**
+Use for:
+- normal frontend implementation
+- normal backend implementation
+- API integration
+- routine debugging
+- tests
+- Playwright work
+- documentation
+- ordinary refactoring
+- UI fixes
+- repetitive development work that still requires coding judgment
+
+**Opus 5 — specialist / high-consequence model**
+Use for:
+- system architecture
+- major architectural changes
+- security-sensitive implementation
+- authentication or authorization design
+- credential or secret handling
+- major database/schema decisions
+- complex debugging where the cause is unclear
+- high-risk migrations
+- final architecture review
+- final security review
+- difficult code review where mistakes could have significant consequences
+
+**Haiku 4.5 — low-risk mechanical work only**
+Use only for:
+- simple repetitive transformations
+- basic file classification
+- straightforward formatting
+- low-risk documentation cleanup
+- other clearly mechanical tasks
+
+Haiku must not be used for architecture, security, important implementation decisions, debugging with uncertain causes, or final reviews.
+
+### Mandatory model transition check
+
+Before beginning every materially different task, sub-task, phase, or review:
+
+1. Determine which model is appropriate for the upcoming work.
+2. Compare that requirement with the currently selected model.
+3. If the current model is appropriate, continue.
+4. If the current model is not appropriate, STOP before beginning the work.
+5. Tell the user:
+   - which model should be selected
+   - why that model is appropriate
+   - what task will be performed after the switch
+6. Wait for the user to change the model before proceeding.
+
+Do not silently continue using the wrong model.
+
+### Cost and usage protection
+
+Do not remain on Opus for routine implementation merely because the session was originally started with Opus.
+
+When an Opus-specific architecture, security, debugging, or review task is complete, explicitly tell the user when the remaining work can safely return to Sonnet.
+
+Example:
+
+> Architecture review is complete. The next work is routine implementation, so switch to Sonnet before continuing.
+
+Likewise, if Sonnet reaches work requiring Opus-level reasoning:
+
+> The next task affects authentication architecture and security boundaries. Switch to Opus before I continue.
+
+### Phase boundaries
+
+At every project approval gate and before starting a new phase:
+
+- re-evaluate the required model
+- tell the user if a model change is recommended
+- do not begin the next phase using an inappropriate model
+
+### Final review
+
+A final critical code/security review should be performed with Opus when the phase includes:
+- authentication
+- authorization
+- credentials
+- externally exposed APIs
+- production infrastructure
+- security boundaries
+- significant architectural changes
+
+After the review is complete, return to Sonnet for ordinary remediation unless the fixes themselves remain high risk.
