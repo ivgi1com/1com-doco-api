@@ -8,11 +8,13 @@ Use this as the first instruction after opening Claude Code in the repository ro
 >
 > 1. Read `CLAUDE.md`.
 > 2. Read `docs/CURRENT_STATUS.md`.
-> 3. Read `docs/ENVIRONMENT.md`.
-> 4. Read `docs/PROJECT_PLAN.md`.
-> 5. Read the document for the current active phase.
-> 6. Read only the additional architecture, security, design, testing, or API documents required for that phase.
-> 7. Inspect the existing repository and Git status before making changes.
+> 3. Read `docs/SESSION_HANDOFF.md`, if present.
+> 4. Read `docs/DECISIONS.md`.
+> 5. Read `docs/ENVIRONMENT.md`.
+> 6. Read `docs/PROJECT_PLAN.md`.
+> 7. Read the document for the current active phase.
+> 8. Read only the additional architecture, security, design, testing, or API documents required for that phase.
+> 9. Inspect the existing repository and Git status before making changes.
 >
 > Follow all approval gates, model-routing rules, Git rules, security rules, and the no-guessing protocol defined in the project documentation.
 >

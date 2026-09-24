@@ -14,6 +14,7 @@ Claude must read this document before making significant structural changes.
 project-root/
 │
 ├── CLAUDE.md
+├── AGENTS.md
 ├── BOOTSTRAP_PROMPT.md
 ├── README.md
 ├── package.json
@@ -21,6 +22,7 @@ project-root/
 ├── docs/
 ├── design-system/
 ├── source-docs/
+├── messages/
 ├── src/
 ├── tests/
 ├── scripts/
@@ -85,6 +87,22 @@ Contains:
 - useful links
 
 Detailed AI-agent instructions belong in `CLAUDE.md`, not `README.md`.
+
+---
+
+## `AGENTS.md`
+
+Exists only so that `next dev` has a file to write its generated Next.js
+agent-rules block into. Without it, that block would be appended to the
+project `CLAUDE.md` instead. Do not put permanent operating rules here.
+
+---
+
+## `messages/`
+
+next-intl message catalogs, one file per locale (`en.json`, `he.json`).
+UI chrome strings only; API/reference prose lives in the content model
+under `src/content/`, not here.
 
 ---
 
@@ -317,10 +335,12 @@ Approved UI/UX system.
 
 ```text
 design-system/
+├── RESEARCH.md
 └── MASTER.md
 ```
 
-`MASTER.md` becomes the source of truth for:
+`RESEARCH.md` is the Phase 1 research record (patterns studied, adopted,
+and rejected). `MASTER.md` becomes the source of truth for:
 
 - spacing
 - typography

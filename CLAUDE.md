@@ -145,34 +145,9 @@ Demo mode must:
 
 ### 8. Model routing policy
 
-Default:
-- Claude Sonnet 5
-
-Use Opus 5.5 for:
-- architecture decisions
-- security-sensitive decisions
-- API content-model design
-- authentication and credential handling
-- backend proxy boundaries
-- major refactors
-- hard debugging after evidence-based Sonnet investigation
-- final code review
-- final security review
-
-Use Haiku 4.5 only for:
-- bulk classification
-- indexing
-- metadata extraction
-- repetitive formatting
-- low-risk inventory generation
-
-Never use Haiku for:
-- security
-- architecture
-- undocumented API interpretation
-- credentials
-- production behavior
-- major UX decisions
+See "Model Routing and Transition Rules" at the end of this document for model
+assignments and the mandatory transition check. That section is canonical;
+this entry is a pointer only, to avoid two diverging copies of the same rule.
 
 ### 9. Skill/tool routing
 
@@ -250,29 +225,38 @@ Use for:
 - UI fixes
 - repetitive development work that still requires coding judgment
 
-**Opus 5 — specialist / high-consequence model**
+**Opus 5.5 — specialist / high-consequence model**
 Use for:
 - system architecture
 - major architectural changes
 - security-sensitive implementation
+- API content-model design
 - authentication or authorization design
 - credential or secret handling
+- backend proxy boundaries
 - major database/schema decisions
-- complex debugging where the cause is unclear
+- major refactors
+- complex debugging where the cause is unclear (after evidence-based Sonnet investigation)
 - high-risk migrations
 - final architecture review
+- final code review
 - final security review
 - difficult code review where mistakes could have significant consequences
 
 **Haiku 4.5 — low-risk mechanical work only**
 Use only for:
-- simple repetitive transformations
+- bulk/simple repetitive transformations
 - basic file classification
-- straightforward formatting
+- indexing
+- metadata extraction
+- straightforward/repetitive formatting
 - low-risk documentation cleanup
+- low-risk inventory generation
 - other clearly mechanical tasks
 
-Haiku must not be used for architecture, security, important implementation decisions, debugging with uncertain causes, or final reviews.
+Never use Haiku for: security, architecture, undocumented API interpretation,
+credentials, production behavior, major UX decisions, important implementation
+decisions, debugging with uncertain causes, or final reviews.
 
 ### Mandatory model transition check
 

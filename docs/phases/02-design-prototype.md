@@ -27,6 +27,11 @@ Prototype:
 
 Do not implement the complete API.
 
+## Model
+
+Sonnet 5 for implementation, testing and Playwright validation.
+Opus 5.5 only if an architectural question surfaces mid-phase.
+
 ## Validation
 
 Run:
