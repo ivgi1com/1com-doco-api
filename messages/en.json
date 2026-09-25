@@ -99,7 +99,14 @@
     "notes": "Notes",
     "verification": "Verification",
     "notVerified": "Not verified against a live API",
-    "testedNotVerified": "Tested against the live API (one tenant); not fully verified"
+    "testedNotVerified": "Tested against the live API (one tenant); not fully verified",
+    "evidenceVendor": "Vendor sample",
+    "binaryBody": "Binary body (for example audio). Not shown here.",
+    "writeOperationTitle": "Changes state — reference only",
+    "writeOperationBody": "This operation changes something on the PBX: it can place a call, change configuration, or delete data. The Playground never sends it, in Live or Demo mode. Try it from your own environment, against a tenant where the change is safe.",
+    "referenceOnly": "Reference only: this operation changes state, so it isn't available in the Playground.",
+    "bodyFormJsonField": "Sent as an application/x-www-form-urlencoded body with one field, {field}, whose value is the object below encoded as JSON.",
+    "bodyMultipart": "Sent as a multipart/form-data upload, with the file in the {field} field."
   },
   "lifecycle": {
     "stable": "Stable",
@@ -173,6 +180,8 @@
     "simulateError": "Simulate error response",
     "prototypeNote": "Demo responses in this prototype come from the synthetic sample content.",
     "demoUnavailableNote": "Demo data for this endpoint isn't available yet (planned for a later phase).",
+    "writeOnlyTitle": "Reference only",
+    "writeOnlyNote": "This operation changes state on the PBX, so the Playground never sends it, in Live or Demo mode. Use the code preview from your own environment.",
     "demoUnavailableTitle": "Demo data not available yet",
     "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page.",
     "demoFixtureNote": "Demo responses are synthetic data built to match this endpoint's real, observed behavior — never a copy of a real response.",

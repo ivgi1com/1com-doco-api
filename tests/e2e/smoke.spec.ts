@@ -779,4 +779,55 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).locator("pre").filter({ hasText: /^\]$/ })).toBeVisible();
     });
   });
+
+  // Phase 7: write operations, form/multipart bodies, binary responses.
+  test.describe("Proxy rollout (Phase 7)", () => {
+    // The request panel is mounted twice (desktop <aside>, mobile <details>);
+    // open and target whichever copy this viewport shows.
+    const requestPanel = async (page: Page) => {
+      if ((page.viewportSize()?.width ?? 0) < 768) {
+        await page.locator("summary", { hasText: "Request example" }).click();
+        return page.locator("details").first();
+      }
+      return page.locator("aside");
+    };
+
+    test("a write operation is reference-only: warning callout, no Try link, vendor response sample", async ({ page }) => {
+      await page.goto("/en/reference/proxy/dial");
+      await expect(page.getByRole("heading", { name: "Place a call" })).toBeVisible();
+      await expect(page.getByText("Changes state — reference only")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
+      const panel = await requestPanel(page);
+      await expect(panel.getByTestId("reference-only")).toBeVisible();
+      await expect(panel.getByText("Vendor sample")).toBeVisible();
+      await expect(panel.getByText("Success|Originate successfully queued|15a4cfe6429054|")).toBeVisible();
+    });
+
+    test("a write operation never sends from the Playground, in Demo or Live", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/dial");
+      const send = desktopPane(page).getByRole("button", { name: "Send request" });
+      await expect(send).toBeDisabled();
+      await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      await expect(send).toBeDisabled();
+      await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
+    });
+
+    test("a ManageDB write documents its jsondata body, admin key, and a form-encoded POST sample", async ({ page }) => {
+      await page.goto("/en/reference/proxy/managedb-custom-add");
+      await expect(page.getByText(/with one field, jsondata, whose value is the object below encoded as JSON/)).toBeVisible();
+      await expect(page.locator('section[aria-labelledby="authentication"]').getByText("Key scope: Admin key")).toBeVisible();
+      const panel = await requestPanel(page);
+      await expect(panel.getByText(/--url-query "reqtype=MANAGEDB"/)).toBeVisible();
+      await expect(panel.getByText(/--data-urlencode 'jsondata=/)).toBeVisible();
+    });
+
+    test("a binary response says so instead of 'No response body'", async ({ page }) => {
+      await page.goto("/en/reference/proxy/info-recording");
+      const panel = await requestPanel(page);
+      await expect(panel.getByText("Binary body (for example audio). Not shown here.")).toBeVisible();
+      await expect(panel.getByText("--output response.bin")).toBeVisible();
+    });
+  });
 });

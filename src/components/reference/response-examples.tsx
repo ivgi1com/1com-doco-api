@@ -10,6 +10,8 @@ export interface RenderedResponse {
   code: string | null;
   html: string | null;
   evidence?: Evidence;
+  /** The body is binary (e.g. audio); never rendered as text. */
+  binary?: boolean;
 }
 
 function statusTone(status: number) {
@@ -38,6 +40,11 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
               {t("evidenceObservedSanitized")}
             </span>
           )}
+          {current.evidence === "vendor" && (
+            <span className="rounded-sm bg-code-surface px-1.5 py-0.5 text-[11px] font-semibold text-code-muted">
+              {t("evidenceVendor")}
+            </span>
+          )}
           <span className="relative inline-flex items-center">
             <span aria-hidden className={`pointer-events-none absolute start-2 size-1.5 rounded-full ${statusTone(current.status)}`} />
             <select
@@ -59,7 +66,7 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
       {current.html ? (
         <div tabIndex={0} className="code-body max-h-[28rem] overflow-y-auto" dangerouslySetInnerHTML={{ __html: current.html }} />
       ) : (
-        <p className="px-4 py-3 font-mono text-sm text-code-muted">{t("noBody")}</p>
+        <p className="px-4 py-3 font-mono text-sm text-code-muted">{current.binary ? t("binaryBody") : t("noBody")}</p>
       )}
     </div>
   );

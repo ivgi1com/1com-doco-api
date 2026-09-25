@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getEndpoint } from "@/content";
-import { proxyApi } from "@/content/proxy-api";
+import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import {
   curlEquivalent,
@@ -154,6 +154,21 @@ describe("demoProvider", () => {
       new AbortController().signal,
     );
     expect(result).toEqual({ source: "DEMO", unavailable: true });
+  });
+
+  it("never answers a write operation, even one whose API or endpoint would otherwise have Demo data", async () => {
+    // info-extensions has a fixture set and the Sample API is synthetic; flagged
+    // as writes, neither may produce a Demo response.
+    for (const [api, endpoint] of [
+      [proxyApi, { ...infoExtensions, operationClass: "write" as const }],
+      [sampleApi, { ...listCalls, operationClass: "write" as const }],
+    ] as const) {
+      const result = await demoProvider.execute(
+        { api, endpoint, fieldValues: { "query:tenant": "EXAMPLE", "query:format": "json" }, credential: "", simulateError: false },
+        new AbortController().signal,
+      );
+      expect(result).toEqual({ source: "DEMO", unavailable: true });
+    }
   });
 
   it("returns a synthetic success response for the synthetic Sample API", async () => {

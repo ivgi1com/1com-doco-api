@@ -220,6 +220,10 @@ export const demoProvider: ApiExecutor = {
     await delay(400 + Math.random() * 500, signal);
     const request = sanitizedRequest(api, endpoint, fieldValues);
 
+    // Write operations are Reference-only (types.ts OperationClass): no
+    // Demo response exists for them, even if a fixture were added by mistake.
+    if (endpoint.operationClass === "write") return { source: "DEMO", unavailable: true };
+
     const fixtures = getDemoFixtures(api.id, endpoint.id);
     if (fixtures) {
       const resolved = resolveDemoCase(fixtures, liveQueryParams(endpoint, fieldValues));

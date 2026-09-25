@@ -27,7 +27,7 @@ let highlighter: Promise<HighlighterGeneric<string, string>> | undefined;
 function getHighlighter() {
   highlighter ??= createHighlighter({
     themes: [portalTheme],
-    langs: ["bash", "javascript", "python", "json"],
+    langs: ["bash", "javascript", "python", "json", "xml"],
   }) as Promise<HighlighterGeneric<string, string>>;
   return highlighter;
 }

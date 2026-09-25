@@ -59,6 +59,38 @@ related: []
 - There are no Proxy-specific components. The same components render both
   kinds.
 
+### Request body encoding and operation class (Phase 7)
+
+Both fields are optional and additive; the Sample API sets neither.
+
+- `requestBodyEncoding`: how the body travels.
+  - `json` (the default when omitted): a JSON document body.
+  - `form-json-field` + `field`: a form-urlencoded body with one field
+    whose value is `requestExample` encoded as JSON (Proxy ManageDB
+    `jsondata`, PHONEBOOK `values`).
+  - `multipart` + `fileField` + `exampleFile`: a file upload (FAX, ManageDB
+    `updatebinary`).
+- Code samples follow it. Query-auth POSTs keep the credential and
+  selectors in the query string (curl `--url-query`) and put only the
+  body field in the body.
+- `requestExample` may be an array (ManageDB destination-tag lists).
+- `operationClass: "write"` marks an operation that changes state. Such
+  operations are Reference-only:
+  - the reference page shows a warning callout and no "Try in Playground"
+    link;
+  - the Playground disables Send in both modes;
+  - `demoProvider` refuses them even if a fixture exists;
+  - `tests/unit/proxy-coverage.test.ts` asserts that no write operation
+    has fixtures or a Live policy.
+- Response examples: a non-JSON string example (`plain`/`csv`/`xml`) is
+  shown raw, and a `binary` response with no example reads "Binary body".
+  `evidence: "vendor"` gets its own badge.
+- Proxy content lives in `src/content/proxy/`: one module per reqtype,
+  plus `shared.ts` (auth variants, the `proxyOperation()` defaults factory,
+  and the `q()`/`b()` parameter helpers). The operation inventory,
+  `source-docs/proxy-api/operations.json`, is checked against this content
+  by `tests/unit/proxy-coverage.test.ts`.
+
 ## "Undocumented" states (no-guessing rule)
 
 Where the source is silent, the model records that instead of guessing:

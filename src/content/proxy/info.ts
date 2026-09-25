@@ -1,49 +1,11 @@
-import type { ApiDefinition, Authentication, Endpoint, Parameter, ResponseSpec } from "./types";
+import type { Category, Endpoint, Parameter, ResponseSpec } from "../types";
+import { NEW_SOURCE_SITE, SOURCE_PAGE, auth, legacyDeprecation, proxyOperation, q, tenantParam } from "./shared";
 
 /**
- * Real content, hand-authored from source-docs/proxy-api/ — rebuilt
- * 2026-09-25 from 1com's own documentation (see
- * source-docs/proxy-api/README.md for the source and its conventions).
- * Every parameter/response/error state follows the no-guessing rule: what
- * the source does not say is marked `"undocumented"`, never invented.
- *
- * Scope: five read-only operations of the Proxy API `proxyapi.php`:
- * INFO/EXTENSIONS, INFO/AGENTS, CDR/GET (Phase 4/5 — CDR/GET's only
- * documentation is the now-historical MiRTA source; see
- * source-docs/proxy-api/cdr-standalone.md), and INFO/DIDS, INFO/SIMPLECDRS
- * (Phase 6, added below). The remaining reqtypes are audited in
- * source-docs/proxy-api/ but not implemented; see
- * docs/phases/07-proxy-api-rollout.md.
+ * reqtype=INFO — "Get info about system" (source-docs/proxy-api/info.md).
+ * Discriminator: `info`. The first five operations below are the Phase 4–6
+ * endpoints (Live and/or Demo); Phase 7 operations follow.
  */
-
-// The historical MiRTA vendor page (Phase 3/4/5 evidence for the three
-// endpoints below, superseded as the general source — DOCS_AUDIT.md SS10).
-const SOURCE_PAGE =
-  "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples";
-
-// The current source (Phase 6 rebuild) for the two endpoints added below.
-const NEW_SOURCE_SITE = "https://sites.google.com/1com.co.il/1com-api/בית";
-
-const auth: Authentication = {
-  type: "API key",
-  description:
-    "Tenant API key, sent as a query parameter. A tenant read-only key is sufficient for this read-only operation.",
-  location: "query",
-  parameter: "key",
-  scope: "Tenant key (read-only is sufficient)",
-};
-
-const tenantParam: Parameter = {
-  name: "tenant",
-  location: "query",
-  type: "string",
-  required: "undocumented",
-  description:
-    "Tenant code to scope the request to. The source states this is \"normally\" required for tenant-scoped calls, without documenting when it can be omitted.",
-  example: "TENANTCODE",
-  source: `${SOURCE_PAGE}#bkmrk-common-parameters`,
-};
-
 const idParam: Parameter = {
   name: "id",
   location: "query",
@@ -120,10 +82,7 @@ const infoExtensions: Endpoint = {
   version: "legacy",
   category: "info",
   status: "legacy",
-  deprecation: {
-    note:
-      "The vendor documentation for proxyapi.php recommends the OpenAPI endpoint for new integrations. OpenAPI-based Proxy API documentation is not yet available in this portal.",
-  },
+  deprecation: legacyDeprecation,
   method: "GET",
   methodBasis: "inferred",
   path: "/pbx/proxyapi.php",
@@ -232,7 +191,7 @@ const infoAgents: Endpoint = {
   version: "legacy",
   category: "info",
   status: "legacy",
-  deprecation: infoExtensions.deprecation,
+  deprecation: legacyDeprecation,
   method: "GET",
   methodBasis: "inferred",
   path: "/pbx/proxyapi.php",
@@ -253,64 +212,6 @@ const infoAgents: Endpoint = {
     "The info value is case-insensitive in observation (agents and AGENTS returned the same body).",
     "Errors are not signalled by HTTP status: a nonexistent queue returns HTTP 200 with the body null.",
     "Field meanings are not documented. Records use numeric keys; the Live proxy returns only the positions observed so far (0, 1, 2, 4–8, 10, 11).",
-  ],
-  related: [],
-};
-
-// --- CDR / GET (userfield) (Phase 5 adjustment, A-42) ---
-
-const uniqueidParam: Parameter = {
-  name: "uniqueid",
-  location: "query",
-  type: "string",
-  required: "undocumented",
-  description:
-    "Unique identifier of the call record (CDR). Format not documented; examples look like `srv02-1701011773.4670` (server prefix, epoch seconds, sequence).",
-  example: "srv02-1701011773.4670",
-  constraints: "Optional `<server>-` prefix, then `<digits>.<digits>` (enforced by this portal's Live proxy).",
-  source: `${SOURCE_PAGE}#bkmrk-cdr-%2F-get-the-userfi`,
-};
-
-const cdrGetResponse: ResponseSpec = {
-  status: 200,
-  description:
-    "The raw value of the CDR's userfield as text, with no wrapping or header (observed, A-42). The body is the same whatever format is requested; only the content type changes. A nonexistent, malformed or missing uniqueid returns HTTP 200 with an empty body.",
-  format: "plain",
-  evidence: "observed-sanitized",
-  // Structure re-confirmed through the portal's Live proxy (2026-09-25).
-  verified: true,
-  source: "source-docs/DOCS_AUDIT.md#a-42",
-  example: "example-userfield-value",
-};
-
-const cdrGet: Endpoint = {
-  id: "cdr-get",
-  api: "proxy",
-  version: "legacy",
-  category: "cdr",
-  status: "legacy",
-  deprecation: infoExtensions.deprecation,
-  method: "GET",
-  methodBasis: "inferred",
-  path: "/pbx/proxyapi.php",
-  fixedQuery: { reqtype: "CDR", action: "GET", field: "userfield" },
-  title: "Get a call's userfield",
-  summary: "Returns the userfield value of one call record (CDR).",
-  sourceUrl: `${SOURCE_PAGE}#bkmrk-cdr-%2F-get-the-userfi`,
-  verification: { documented: true, implemented: true, tested: true, verified: false },
-  authentication: auth,
-  headers: [],
-  pathParameters: [],
-  queryParameters: [tenantParam, uniqueidParam],
-  requestBody: null,
-  responses: [cdrGetResponse],
-  errors: "undocumented",
-  notes: [
-    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical MiRTA evidence: source-docs/proxy-api/cdr-standalone.md.",
-    "field is fixed to userfield in this portal: it is the only value the source shows, and other CDR columns (such as caller and callee numbers) are personal data.",
-    "The userfield is free-form data written by your own integration. The portal cannot tell what it contains, so Live mode shows it as returned.",
-    "Errors are not signalled by HTTP status: an unknown uniqueid returns HTTP 200 with an empty body (A-42).",
-    "CDR action=UPDATE exists in the same reqtype and is not offered here.",
   ],
   related: [],
 };
@@ -368,7 +269,7 @@ const infoDids: Endpoint = {
   version: "legacy",
   category: "info",
   status: "legacy",
-  deprecation: infoExtensions.deprecation,
+  deprecation: legacyDeprecation,
   method: "GET",
   methodBasis: "inferred",
   path: "/pbx/proxyapi.php",
@@ -489,7 +390,7 @@ const infoSimplecdrs: Endpoint = {
   version: "legacy",
   category: "info",
   status: "legacy",
-  deprecation: infoExtensions.deprecation,
+  deprecation: legacyDeprecation,
   method: "GET",
   methodBasis: "inferred",
   path: "/pbx/proxyapi.php",
@@ -604,7 +505,7 @@ const infoQueuelogs: Endpoint = {
   version: "legacy",
   category: "info",
   status: "legacy",
-  deprecation: infoExtensions.deprecation,
+  deprecation: legacyDeprecation,
   method: "GET",
   methodBasis: "inferred",
   path: "/pbx/proxyapi.php",
@@ -628,17 +529,38 @@ const infoQueuelogs: Endpoint = {
   related: [],
 };
 
-export const proxyApi: ApiDefinition = {
-  id: "proxy",
-  name: "Proxy API",
-  version: "legacy",
-  baseUrl: "https://pbx6webserver.1com.co.il",
-  synthetic: false,
-  summary:
-    "1com's HTTP API for MiRTA PBX (proxyapi.php). Six read-only operations are documented here; the remaining reqtypes are audited in source-docs/proxy-api/ pending a later phase.",
-  categories: [
-    // Grouped by reqtype (user decision, Phase 7 Stage 1): the source defines no categories.
-    { id: "info", title: "INFO", endpoints: [infoExtensions, infoAgents, infoDids, infoSimplecdrs, infoQueuelogs] },
-    { id: "cdr", title: "CDR", endpoints: [cdrGet] },
+// --- Phase 7 operations ---
+
+export const infoRecording = proxyOperation({
+  id: "info-recording",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "recording" },
+  title: "Get a call recording",
+  summary: "Returns the recording of one call, looked up by its unique id or by the call id a DIAL request returned.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The call's unique id, or the originate id returned by DIAL (its third field).", { example: "srv02-1531779475.48" }),
+    tenantParam,
   ],
+  responses: [
+    {
+      status: 200,
+      description: "The recording as a binary audio file. Implied by the source (\"get the recording for the call\"); the content type and audio format are not documented.",
+      format: "binary",
+      evidence: "vendor",
+      verified: false,
+      source: "source-docs/proxy-api/info.md",
+    },
+  ],
+  notes: [
+    "info=playrecording takes the same parameters and asks the browser to play the recording instead of downloading it (Site line 155). info=inforecording returns the recording's metadata instead.",
+    "One Site example omits tenant (a lookup by DIAL call id); the other sends it. Whether tenant is needed is not stated.",
+  ],
+});
+
+export const infoCategory: Category = {
+  id: "info",
+  title: "INFO",
+  endpoints: [infoExtensions, infoAgents, infoDids, infoSimplecdrs, infoQueuelogs, infoRecording],
 };

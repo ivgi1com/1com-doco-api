@@ -15,9 +15,26 @@ Last updated: 2026-09-25 (Phase 7 — Proxy API rollout, Stage 0 done — read t
   `ROLLOUT_COMPLETE`, flip at end of Stage 3), `scripts/rollout-status.ts`
   (`npm run rollout:status` → `source-docs/ROLLOUT_STATUS.md`; `tsx` added
   as devDependency). Portal status is derived from `src/content`, not
-  stored in the inventory (one source of truth). STOP: waiting for the
-  user to review the `unclear` list, classification, page granularity,
-  and category taxonomy. Stage 2 (content split + model additions) is Opus; Stage 3 is
+  stored in the inventory (one source of truth). Stage 1 decisions made by
+  the user (DECISIONS.md "Phase 7 Stage 1 checkpoint"): unclear ops are
+  Reference-only, one page per operation, sidebar grouped by reqtype,
+  `cdr-update` excluded.
+- Stage 2 done (Opus): `src/content/proxy-api.ts` split into
+  `src/content/proxy/` (`shared.ts` with `proxyOperation()`/`q()`/`b()`
+  and auth variants; `info.ts`, `cdr.ts`, `dial.ts`, `managedb.ts`,
+  `index.ts`). Model: `requestBodyEncoding`, `operationClass`, and an
+  array-valued `requestExample` (`docs/API_CONTENT_MODEL.md`). Code samples
+  cover POST form/multipart bodies and format-aware response reading.
+  Write operations are Reference-only in the UI and in the executor. Three
+  pilot operations validate it end to end: `dial`, `managedb-custom-add`,
+  `info-recording` (9/109 documented). Checks: `npm run check` 207/207,
+  build clean, Playwright **142/142** on a fresh production build (the 7
+  Phase 6 "pre-existing" failures do not reproduce there; they were
+  dev-server-only). Visual pass at desktop 1440 and iPhone 14, en and he:
+  no overflow and zero console errors, after fixing two issues it found
+  (write note below the fold; vendor badge wrapping).
+- Next: Stage 3, Reference authoring by reqtype batch — **switch to Sonnet
+  5**. Stage 2 (content split + model additions) is Opus; Stage 3 is
   Sonnet.
 - Stage 4 probe: the user supplies a TEST key in chat when that stage
   starts; never write it anywhere.

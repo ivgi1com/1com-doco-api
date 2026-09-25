@@ -37,13 +37,19 @@ export function RequestPanel({
         </code>
       </div>
       <CodeTabs samples={data.samples} />
-      <Link
-        href={`/playground?endpoint=${apiId}/${endpoint.id}`}
-        className="flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
-      >
-        {t("tryIt")}
-        <ArrowRight className="icon-directional size-4" aria-hidden />
-      </Link>
+      {endpoint.operationClass === "write" ? (
+        <p data-testid="reference-only" className="rounded-md border border-border px-3 py-2 text-xs text-ink-muted">
+          {t("referenceOnly")}
+        </p>
+      ) : (
+        <Link
+          href={`/playground?endpoint=${apiId}/${endpoint.id}`}
+          className="flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
+        >
+          {t("tryIt")}
+          <ArrowRight className="icon-directional size-4" aria-hidden />
+        </Link>
+      )}
       {data.responses.length > 0 ? (
         <ResponseExamples responses={data.responses} />
       ) : (

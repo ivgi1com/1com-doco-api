@@ -75,6 +75,25 @@ export interface ErrorSpec {
   description: string;
 }
 
+/**
+ * How the request body travels. `json` (the default when omitted) is a
+ * JSON document body. `form-json-field` is an
+ * `application/x-www-form-urlencoded` body with one field whose value is
+ * the JSON-encoded `requestExample` (Proxy API ManageDB `jsondata=`,
+ * PHONEBOOK `values=`). `multipart` uploads one file under `fileField`.
+ */
+export type RequestBodyEncoding =
+  | { kind: "json" }
+  | { kind: "form-json-field"; field: string }
+  | { kind: "multipart"; fileField: string; exampleFile: string };
+
+/**
+ * `write`: changes state (places a call, edits configuration, deletes
+ * data). Write operations are Reference-only: the Playground never sends
+ * them, in Live or Demo. Omitted means read.
+ */
+export type OperationClass = "read" | "write";
+
 export interface Deprecation {
   date?: string;
   replacement?: string;
@@ -107,8 +126,10 @@ export interface Endpoint {
   pathParameters: Parameter[];
   queryParameters: Parameter[];
   requestBody: Parameter[] | null;
-  /** Example request body used by code samples and the Playground. */
-  requestExample?: Record<string, unknown>;
+  /** Example request body used by code samples and the Playground. An array for list-shaped bodies (e.g. ManageDB destination tags). */
+  requestExample?: Record<string, unknown> | unknown[];
+  requestBodyEncoding?: RequestBodyEncoding;
+  operationClass?: OperationClass;
   responses: ResponseSpec[];
   /** `"undocumented"`: the source documents no errors; shown as such, never invented. */
   errors: ErrorSpec[] | "undocumented";

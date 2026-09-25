@@ -61,7 +61,8 @@ export function RequestBuilder({
 
   const hasErrors = Object.keys(errors).length > 0;
   const envVar = authEnvVar(endpoint);
-  const liveBlocked = mode === "live" && !liveAvailable;
+  const writeOnly = endpoint.operationClass === "write";
+  const liveBlocked = mode === "live" && !liveAvailable && !writeOnly;
 
   const applyScenario = (preset: Readonly<Record<string, string>>) => {
     for (const [name, value] of Object.entries(preset)) setField(fieldKey("query", name), value);
@@ -73,6 +74,15 @@ export function RequestBuilder({
         <MethodBadge method={endpoint.method} />
         <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{resolveLivePath(endpoint, fieldValues)}</code>
       </div>
+
+      {writeOnly && (
+        <p
+          data-testid="write-only-note"
+          className="rounded-md border border-warning-ink/30 bg-warning-tint px-3 py-2 text-xs text-warning-ink"
+        >
+          {t("writeOnlyNote")}
+        </p>
+      )}
 
       {mode === "live" && (
         <div>
@@ -207,12 +217,12 @@ export function RequestBuilder({
         <button
           type="button"
           onClick={send}
-          disabled={sending || liveBlocked}
+          disabled={sending || liveBlocked || writeOnly}
           className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-accent text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {sending ? t("sending") : t("send")}
         </button>
-        {mode === "demo" && (
+        {mode === "demo" && !writeOnly && (
           <p className="text-xs text-ink-muted">
             {demoFixtures ? t("demoFixtureNote") : synthetic ? t("prototypeNote") : t("demoUnavailableNote")}
           </p>

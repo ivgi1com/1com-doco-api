@@ -99,7 +99,14 @@
     "notes": "הערות",
     "verification": "אימות מול API",
     "notVerified": "לא אומת מול API חי",
-    "testedNotVerified": "נבדק מול ה-API החי (טננט אחד); לא אומת במלואו"
+    "testedNotVerified": "נבדק מול ה-API החי (טננט אחד); לא אומת במלואו",
+    "evidenceVendor": "דוגמת ספק",
+    "binaryBody": "גוף בינארי (למשל שמע). לא מוצג כאן.",
+    "writeOperationTitle": "משנה מצב — לעיון בלבד",
+    "writeOperationBody": "פעולה זו משנה משהו במרכזייה: היא יכולה להוציא שיחה, לשנות הגדרות או למחוק נתונים. ה-Playground לעולם אינו שולח אותה, לא במצב Live ולא במצב Demo. נסו אותה מהסביבה שלכם, מול טננט שבו השינוי בטוח.",
+    "referenceOnly": "לעיון בלבד: פעולה זו משנה מצב, ולכן אינה זמינה ב-Playground.",
+    "bodyFormJsonField": "נשלח כגוף application/x-www-form-urlencoded עם שדה אחד, {field}, שערכו הוא האובייקט שלהלן בקידוד JSON.",
+    "bodyMultipart": "נשלח כהעלאת multipart/form-data, כשהקובץ בשדה {field}."
   },
   "lifecycle": {
     "stable": "יציב",
@@ -173,6 +180,8 @@
     "simulateError": "הדמיית תגובת שגיאה",
     "prototypeNote": "תגובות Demo באב-טיפוס זה מגיעות מתוכן הדוגמה הסינתטי.",
     "demoUnavailableNote": "נתוני Demo עבור נקודת קצה זו עדיין אינם זמינים (מתוכננים לשלב מאוחר יותר).",
+    "writeOnlyTitle": "לעיון בלבד",
+    "writeOnlyNote": "פעולה זו משנה מצב במרכזייה, ולכן ה-Playground לעולם אינו שולח אותה, לא במצב Live ולא במצב Demo. השתמשו בתצוגת הקוד מהסביבה שלכם.",
     "demoUnavailableTitle": "נתוני Demo עדיין אינם זמינים",
     "demoUnavailableBody": "מצב Demo עבור נקודת קצה זו ייבנה בשלב מאוחר יותר. הוא לעולם לא ישחזר תגובות אמיתיות שנצפו ומוצגות במקום אחר בעמוד זה.",
     "demoFixtureNote": "תגובות Demo הן נתונים סינתטיים שנבנו כדי לשקף את ההתנהגות האמיתית שנצפתה בנקודת קצה זו — לעולם לא העתק של תגובה אמיתית.",

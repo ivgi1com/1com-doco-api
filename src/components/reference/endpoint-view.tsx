@@ -58,6 +58,7 @@ export function EndpointView({
     ? getEndpoint(api.id, endpoint.deprecation.replacement)
     : undefined;
   const successSchema = endpoint.responses.find((r) => r.status < 300 && r.schema);
+  const bodyEncoding = endpoint.requestBodyEncoding?.kind === "json" ? undefined : endpoint.requestBodyEncoding;
   const fixedQueryString = endpoint.fixedQuery
     ? `?${Object.entries(endpoint.fixedQuery)
         .map(([k, v]) => `${k}=${v}`)
@@ -134,6 +135,11 @@ export function EndpointView({
               <p className="text-xs text-ink-muted">{t("methodInferredNote")}</p>
             )}
             <ContentText className="max-w-[70ch] text-md text-ink-muted">{endpoint.summary}</ContentText>
+            {endpoint.operationClass === "write" && (
+              <Callout kind="warning" title={t("writeOperationTitle")}>
+                <p>{t("writeOperationBody")}</p>
+              </Callout>
+            )}
           </header>
 
           {/* Mobile: the request panel follows the summary as a disclosure; never removed. */}
@@ -202,9 +208,17 @@ export function EndpointView({
               <ParamList params={endpoint.headers} anchorPrefix="header" />
             </Section>
           )}
-          {endpoint.requestBody && (
+          {(endpoint.requestBody || bodyEncoding) && (
             <Section id="request-body" title={t("body")}>
-              <ParamList params={endpoint.requestBody} anchorPrefix="body" />
+              {bodyEncoding?.kind === "form-json-field" && (
+                <p className="mb-2 text-sm text-ink-muted">{t("bodyFormJsonField", { field: bodyEncoding.field })}</p>
+              )}
+              {bodyEncoding?.kind === "multipart" && (
+                <p className="mb-2 text-sm text-ink-muted">{t("bodyMultipart", { field: bodyEncoding.fileField })}</p>
+              )}
+              {endpoint.requestBody && endpoint.requestBody.length > 0 && (
+                <ParamList params={endpoint.requestBody} anchorPrefix="body" />
+              )}
             </Section>
           )}
 

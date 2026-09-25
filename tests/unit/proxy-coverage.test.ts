@@ -2,6 +2,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { getApi, listEndpoints } from "@/content";
+import { getDemoFixtures } from "@/content/demo";
+import { listLiveTargetIds } from "@/server/playground/allowlist";
 import inventory from "../../source-docs/proxy-api/operations.json";
 
 /**
@@ -73,6 +75,22 @@ describe("content ↔ inventory", () => {
       const { reqtype, ...rest } = e.fixedQuery ?? {};
       expect(operationKey(reqtype ?? "", rest), e.id).toBe(operationKey(row!.reqtype, row!.discriminator));
       expect(e.category, e.id).toBe(row!.category);
+    }
+  });
+
+  it("agrees on read/write class and key scope", () => {
+    for (const e of endpoints) {
+      const row = byId.get(e.id)!;
+      expect(e.operationClass === "write", `${e.id} operationClass`).toBe(row.class === "write");
+      if (row.keyScope === "admin") expect(e.authentication.scope, e.id).toBe("Admin key");
+    }
+  });
+
+  it("gives write and unclear operations no Demo fixtures and no Live policy", () => {
+    const live = new Set(listLiveTargetIds());
+    for (const r of rows.filter((r) => r.class !== "read")) {
+      expect(getDemoFixtures("proxy", r.id), `${r.id} has Demo fixtures`).toBeUndefined();
+      expect(live.has(`proxy/${r.id}`), `${r.id} is Live-allowlisted`).toBe(false);
     }
   });
 

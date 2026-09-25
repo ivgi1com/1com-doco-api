@@ -26,11 +26,13 @@ export async function buildPanelData(api: ApiDefinition, endpoint: Endpoint): Pr
   const samples = await buildSamples(api, endpoint);
   const responses = await Promise.all(
     endpoint.responses.map(async (r) => {
-      if (r.example === undefined) return { status: r.status, code: null, html: null, evidence: r.evidence };
-      // A plain-text response's example is the body itself, not a JSON string literal.
-      const text = r.format === "plain" && typeof r.example === "string";
-      const code = text ? (r.example as string) : JSON.stringify(r.example, null, 2);
-      return { status: r.status, code, html: await highlight(code, text ? "text" : "json"), evidence: r.evidence };
+      const base = { status: r.status, evidence: r.evidence, binary: r.format === "binary" };
+      if (r.example === undefined) return { ...base, code: null, html: null };
+      // A non-JSON response's example (plain, csv, xml) is the body itself, not a JSON string literal.
+      const raw = typeof r.example === "string" && r.format !== undefined && r.format !== "json";
+      const code = raw ? (r.example as string) : JSON.stringify(r.example, null, 2);
+      const lang = raw ? (r.format === "xml" ? "xml" : "text") : "json";
+      return { ...base, code, html: await highlight(code, lang) };
     }),
   );
   return { samples, responses };

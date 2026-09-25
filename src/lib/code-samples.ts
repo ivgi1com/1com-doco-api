@@ -64,56 +64,9 @@ export function buildSample(
     : null;
 
   // Query-auth endpoints (e.g. the Proxy API's `key` query parameter) send no
-  // Authorization header and have no request body in this portal yet, so
-  // they get their own simpler branch per language rather than threading
-  // query-vs-header auth through every line below.
-  if (queryAuth) {
-    const pairs = queryEntries(endpoint);
-    switch (language) {
-      case "curl": {
-        const lines = [
-          `curl -G "${baseUrl}${path}"`,
-          ...pairs.map(
-            ([k, v]) => `  --data-urlencode "${k}=${v === "__AUTH_KEY__" ? `$${envVar}` : v}"`,
-          ),
-        ];
-        return lines.join(" \\\n");
-      }
-      case "javascript": {
-        const paramLines = pairs.map(
-          ([k, v]) =>
-            `  ${JSON.stringify(k)}: ${v === "__AUTH_KEY__" ? `process.env.${envVar}` : JSON.stringify(v)},`,
-        );
-        return [
-          `const params = new URLSearchParams({`,
-          ...paramLines,
-          `});`,
-          `const response = await fetch(\`${baseUrl}${path}?\${params}\`);`,
-          `const data = await response.json();`,
-          `console.log(data);`,
-        ].join("\n");
-      }
-      case "python": {
-        const paramLines = pairs.map(
-          ([k, v]) =>
-            `        ${JSON.stringify(k)}: ${v === "__AUTH_KEY__" ? `os.environ[${JSON.stringify(envVar)}]` : JSON.stringify(v)},`,
-        );
-        return [
-          `import os`,
-          `import requests`,
-          ``,
-          `response = requests.get(`,
-          `    "${baseUrl}${path}",`,
-          `    params={`,
-          ...paramLines,
-          `    },`,
-          `    timeout=10,`,
-          `)`,
-          `print(response.json())`,
-        ].join("\n");
-      }
-    }
-  }
+  // Authorization header, so they get their own branch per language rather
+  // than threading query-vs-header auth through every line below.
+  if (queryAuth) return buildQueryAuthSample(endpoint, `${baseUrl}${path}`, envVar, language);
 
   const url = `${baseUrl}${path}${exampleQuery(endpoint)}`;
 
@@ -156,6 +109,135 @@ export function buildSample(
           ? `print(response.status_code)`
           : `print(response.json())`;
       return `import os\nimport requests\n\nresponse = requests.${endpoint.method.toLowerCase()}(\n${args.join("\n")}\n)\n${tail}`;
+    }
+  }
+}
+
+/**
+ * How a sample reads the response: from the first documented response's
+ * format. With no documented response the body is read as text — the
+ * Proxy API's default output is plain text (DOCS_AUDIT.md A-40, A-43).
+ */
+function responseKind(endpoint: Endpoint): "json" | "binary" | "text" {
+  const format = endpoint.responses[0]?.format;
+  if (format === "json") return "json";
+  if (format === "binary") return "binary";
+  return "text";
+}
+
+/** Shell single-quote escaping for a literal argument. */
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'\\''`)}'`;
+}
+
+/**
+ * Query-parameter auth. The credential and every operation selector travel
+ * in the query string (as the Proxy API source shows them); a POST body,
+ * when the operation has one, carries only the documented body field.
+ */
+function buildQueryAuthSample(
+  endpoint: Endpoint,
+  url: string,
+  envVar: string,
+  language: SampleLanguage,
+): string {
+  const pairs = queryEntries(endpoint);
+  const encoding = endpoint.requestBodyEncoding;
+  const formField = encoding?.kind === "form-json-field" ? encoding.field : null;
+  const multipart = encoding?.kind === "multipart" ? encoding : null;
+  const hasBody = endpoint.method !== "GET" && (formField !== null || multipart !== null);
+  const kind = responseKind(endpoint);
+
+  switch (language) {
+    case "curl": {
+      const value = (v: string) => (v === "__AUTH_KEY__" ? `$${envVar}` : v);
+      if (!hasBody) {
+        const lines = [
+          `curl -G "${url}"`,
+          ...pairs.map(([k, v]) => `  --data-urlencode "${k}=${value(v)}"`),
+        ];
+        if (kind === "binary") lines.push(`  --output response.bin`);
+        return lines.join(" \\\n");
+      }
+      // --url-query (curl 7.87+) adds query parameters without turning the
+      // request into a GET, so the body below still goes out as a POST.
+      const lines = [
+        `curl "${url}"`,
+        ...pairs.map(([k, v]) => `  --url-query "${k}=${value(v)}"`),
+      ];
+      if (formField) {
+        lines.push(`  --data-urlencode ${shellQuote(`${formField}=${JSON.stringify(endpoint.requestExample ?? {})}`)}`);
+      }
+      if (multipart) lines.push(`  -F "${multipart.fileField}=@${multipart.exampleFile}"`);
+      if (kind === "binary") lines.push(`  --output response.bin`);
+      return lines.join(" \\\n");
+    }
+    case "javascript": {
+      const paramLines = pairs.map(
+        ([k, v]) =>
+          `  ${JSON.stringify(k)}: ${v === "__AUTH_KEY__" ? `process.env.${envVar}` : JSON.stringify(v)},`,
+      );
+      const lines: string[] = [];
+      if (multipart) lines.push(`import { openAsBlob } from "node:fs";`, ``);
+      lines.push(`const params = new URLSearchParams({`, ...paramLines, `});`);
+      if (formField) {
+        const json = JSON.stringify(endpoint.requestExample ?? {}, null, 2).replace(/\n/g, "\n  ");
+        lines.push(
+          `const body = new URLSearchParams({`,
+          `  ${JSON.stringify(formField)}: JSON.stringify(${json}),`,
+          `});`,
+        );
+      }
+      if (multipart) {
+        lines.push(
+          `const body = new FormData();`,
+          `body.append(${JSON.stringify(multipart.fileField)}, await openAsBlob(${JSON.stringify(multipart.exampleFile)}), ${JSON.stringify(multipart.exampleFile)});`,
+        );
+      }
+      lines.push(
+        hasBody
+          ? `const response = await fetch(\`${url}?\${params}\`, { method: "POST", body });`
+          : `const response = await fetch(\`${url}?\${params}\`);`,
+      );
+      if (kind === "json") lines.push(`const data = await response.json();`, `console.log(data);`);
+      else if (kind === "binary") lines.push(`const bytes = new Uint8Array(await response.arrayBuffer());`, `console.log(bytes.length);`);
+      else lines.push(`const text = await response.text();`, `console.log(text);`);
+      return lines.join("\n");
+    }
+    case "python": {
+      const indent = multipart ? "    " : "";
+      const paramLines = pairs.map(
+        ([k, v]) =>
+          `${indent}        ${JSON.stringify(k)}: ${v === "__AUTH_KEY__" ? `os.environ[${JSON.stringify(envVar)}]` : JSON.stringify(v)},`,
+      );
+      const call = [
+        `${indent}response = requests.${hasBody ? "post" : "get"}(`,
+        `${indent}    "${url}",`,
+        `${indent}    params={`,
+        ...paramLines,
+        `${indent}    },`,
+        ...(formField
+          ? [`${indent}    data={${JSON.stringify(formField)}: json.dumps(${pythonLiteral(endpoint.requestExample ?? {})})},`]
+          : []),
+        ...(multipart ? [`${indent}    files={${JSON.stringify(multipart.fileField)}: file},`] : []),
+        `${indent}    timeout=10,`,
+        `${indent})`,
+      ];
+      const tail =
+        kind === "json"
+          ? `print(response.json())`
+          : kind === "binary"
+            ? `with open("response.bin", "wb") as out:\n    out.write(response.content)`
+            : `print(response.text)`;
+      return [
+        ...(formField ? [`import json`] : []),
+        `import os`,
+        `import requests`,
+        ``,
+        ...(multipart ? [`with open(${JSON.stringify(multipart.exampleFile)}, "rb") as file:`] : []),
+        ...call,
+        tail,
+      ].join("\n");
     }
   }
 }

@@ -1,4 +1,4 @@
-import { proxyApi } from "./proxy-api";
+import { proxyApi } from "./proxy";
 import { sampleApi } from "./sample-api";
 import type { ApiDefinition, Endpoint } from "./types";
 

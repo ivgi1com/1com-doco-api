@@ -110,8 +110,12 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
     return (
       <div className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 px-6 text-center">
         <Inbox className="size-6 text-ink-muted" aria-hidden />
-        <p className="text-sm font-semibold text-ink">{t("emptyTitle")}</p>
-        <p className="max-w-[28rem] text-sm text-ink-muted">{t("emptyBody")}</p>
+        <p className="text-sm font-semibold text-ink">
+          {endpoint.operationClass === "write" ? t("writeOnlyTitle") : t("emptyTitle")}
+        </p>
+        <p className="max-w-[28rem] text-sm text-ink-muted">
+          {endpoint.operationClass === "write" ? t("writeOnlyNote") : t("emptyBody")}
+        </p>
       </div>
     );
   }

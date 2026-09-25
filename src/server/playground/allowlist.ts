@@ -1,6 +1,6 @@
 import "server-only";
 
-import { proxyApi } from "@/content/proxy-api";
+import { proxyApi } from "@/content/proxy";
 import type { ApiDefinition } from "@/content/types";
 
 /**

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { proxyApi } from "@/content/proxy-api";
+import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import { getEndpoint } from "@/content";
 import type { Endpoint } from "@/content/types";
@@ -132,6 +132,69 @@ describe("buildSample: query-parameter auth (Proxy API)", () => {
     expect(sample).toContain('os.environ["PROXY_API_KEY"]');
     expect(sample).toContain('"reqtype": "INFO"');
     expect(sample).toContain('"info": "EXTENSIONS"');
+  });
+
+  // Phase 7: POST bodies and format-aware response reading.
+  const formPost: Endpoint = {
+    ...infoExtensions,
+    id: "form-post",
+    method: "POST",
+    fixedQuery: { reqtype: "MANAGEDB", object: "custom", action: "add" },
+    queryParameters: [infoExtensions.queryParameters[0]],
+    requestBodyEncoding: { kind: "form-json-field", field: "jsondata" },
+    requestExample: { cu_name: "Demo O'Brien desk", cu_ct_id: 1 },
+    responses: [],
+  };
+  const multipartPost: Endpoint = {
+    ...formPost,
+    id: "multipart-post",
+    requestBodyEncoding: { kind: "multipart", fileField: "filename", exampleFile: "fax.pdf" },
+    requestExample: undefined,
+  };
+  const binaryGet: Endpoint = {
+    ...infoExtensions,
+    responses: [{ status: 200, description: "audio", format: "binary", verified: false }],
+  };
+
+  it("POSTs a form-json-field body with the selectors kept in the query string (curl)", () => {
+    const sample = buildSample(formPost, baseUrl, "curl");
+    expect(sample).not.toContain("-G");
+    expect(sample).toContain('--url-query "key=$PROXY_API_KEY"');
+    expect(sample).toContain('--url-query "reqtype=MANAGEDB"');
+    expect(sample).toContain(`--data-urlencode 'jsondata={"cu_name":"Demo O'\\''Brien desk","cu_ct_id":1}'`);
+  });
+
+  it("POSTs a form-json-field body (javascript, python)", () => {
+    const js = buildSample(formPost, baseUrl, "javascript");
+    expect(js).toContain('"jsondata": JSON.stringify(');
+    expect(js).toContain('{ method: "POST", body }');
+    const py = buildSample(formPost, baseUrl, "python");
+    expect(py).toContain("import json");
+    expect(py).toContain("requests.post(");
+    expect(py).toContain('data={"jsondata": json.dumps({"cu_name": "Demo O\'Brien desk", "cu_ct_id": 1})}');
+  });
+
+  it("uploads a file for multipart operations", () => {
+    expect(buildSample(multipartPost, baseUrl, "curl")).toContain('-F "filename=@fax.pdf"');
+    const js = buildSample(multipartPost, baseUrl, "javascript");
+    expect(js).toContain('import { openAsBlob } from "node:fs";');
+    expect(js).toContain('body.append("filename", await openAsBlob("fax.pdf"), "fax.pdf");');
+    const py = buildSample(multipartPost, baseUrl, "python");
+    expect(py).toContain('with open("fax.pdf", "rb") as file:');
+    expect(py).toContain('files={"filename": file},');
+  });
+
+  it("reads the body as text when the response is not JSON or undocumented", () => {
+    const cdrGet = getEndpoint("proxy", "cdr-get")!;
+    expect(buildSample(cdrGet, baseUrl, "javascript")).toContain("await response.text()");
+    expect(buildSample(formPost, baseUrl, "python")).toContain("print(response.text)");
+    expect(buildSample(infoExtensions, baseUrl, "javascript")).toContain("await response.json()");
+  });
+
+  it("saves binary responses to a file", () => {
+    expect(buildSample(binaryGet, baseUrl, "curl")).toContain("--output response.bin");
+    expect(buildSample(binaryGet, baseUrl, "javascript")).toContain("response.arrayBuffer()");
+    expect(buildSample(binaryGet, baseUrl, "python")).toContain("out.write(response.content)");
   });
 
   it("still emits the original header-based samples unchanged for a header-auth endpoint", () => {
