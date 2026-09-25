@@ -94,6 +94,19 @@ describe("content ↔ inventory", () => {
     }
   });
 
+  it("never documents two responses at the same status code", () => {
+    // The response viewer (ResponseExamples) keys its status selector by
+    // `status` alone: a second entry at the same code is a silent bug — a
+    // duplicate-React-key warning, and the second example becomes
+    // unreachable. Found authoring responsepath-getlast (a plain sample and
+    // an xml sample both at 200); the fix folds the second variant into
+    // `notes` instead of a second ResponseSpec.
+    for (const e of endpoints) {
+      const statuses = e.responses.map((r) => r.status);
+      expect(new Set(statuses).size, `${e.id} has duplicate response statuses: ${statuses.join(", ")}`).toBe(statuses.length);
+    }
+  });
+
   it(ROLLOUT_COMPLETE ? "every non-excluded operation has an endpoint" : "reports operations still without an endpoint", () => {
     const have = new Set(endpoints.map((e) => e.id));
     const missing = rows.filter((r) => !r.excluded && !have.has(r.id)).map((r) => r.id);

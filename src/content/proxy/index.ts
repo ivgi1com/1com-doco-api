@@ -22,12 +22,21 @@ import {
 import { infoCategory } from "./info";
 import { managedbCategory } from "./managedb";
 import {
+  faxCategory,
+  helpCategory,
+  mediafileCategory,
+  phonebookCategory,
+  responsepathCategory,
+  smsCategory,
+} from "./misc";
+import {
   campaignCategory,
   flowsCategory,
   queueCategory,
   queueresetCategory,
   setflowCategory,
 } from "./queues";
+import { voicemailCategory } from "./voicemail";
 import { PROXY_BASE_URL } from "./shared";
 
 /**
@@ -58,16 +67,23 @@ export const proxyApi: ApiDefinition = {
     countchannelsCategory,
     countpeersCategory,
     dialCategory,
+    faxCategory,
     flowsCategory,
     hangupCategory,
+    helpCategory,
     managedbCategory,
+    mediafileCategory,
     peersCategory,
+    phonebookCategory,
     queueCategory,
     queueresetCategory,
     rebootCategory,
+    responsepathCategory,
     setflowCategory,
+    smsCategory,
     transferCategory,
     unregisterCategory,
     virtualextCategory,
+    voicemailCategory,
   ],
 };
