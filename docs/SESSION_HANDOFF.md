@@ -1,6 +1,21 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 6 — Demo Mode, COMPLETE AND APPROVED, gate B — read this first)
+Last updated: 2026-09-25 (Phase 7 — Proxy API rollout, Stage 0 done — read this first)
+
+## Phase 7 in progress — Stage 0 done
+
+- Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
+  (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning";
+  `source-docs/unresolved.md` U-10, U-12, U-13, U-14 now decided.
+- `main` fast-forwarded to `0cbd7ba`, tagged `v0.4-demo-approved`. Work
+  branch `phase/proxy-rollout`. Not pushed.
+- Next: Stage 1 — `source-docs/proxy-api/operations.json`,
+  `tests/unit/proxy-coverage.test.ts`, `scripts/rollout-status.ts`; then
+  STOP for the user to review the `unclear` read/write list and category
+  taxonomy. Stage 2 (content split + model additions) is Opus; Stage 3 is
+  Sonnet.
+- Stage 4 probe: the user supplies a TEST key in chat when that stage
+  starts; never write it anywhere.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

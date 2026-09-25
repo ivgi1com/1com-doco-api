@@ -1,6 +1,15 @@
 # Current Status
 
 Current work:
+**Phase 7 — Proxy API rollout: IN PROGRESS (Stage 0 done).** Plan approved
+2026-09-25 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
+decisions in `docs/DECISIONS.md` "Phase 7 planning"). `main`
+fast-forwarded to `0cbd7ba` and tagged `v0.4-demo-approved` (user
+approved). Branch `phase/proxy-rollout` from `main`. Next: Stage 1
+(operation inventory + classification), then STOP to show the `unclear`
+list and category taxonomy.
+
+Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
 B — approve, save, and stop; next phase **not started**, waiting for
 separate approval before planning begins). Branch `phase/demo-mode`,

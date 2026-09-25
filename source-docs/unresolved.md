@@ -3,10 +3,11 @@
 Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07,
 U-09 and U-11 were decided in Phase 4 (2026-09-25); U-08 was decided in
 Phase 5 planning (2026-09-25); U-02 and U-04 were applied by default (not
-decided, reversible). U-05 was deferred in Phase 3. U-10 remains open.
+decided, reversible). U-05 was deferred in Phase 3.
 U-12–U-16 were added 2026-09-25 during the 1com-source documentation
-rebuild (`DOCS_AUDIT.md` §10); U-12–U-15 are open, U-16 was closed as a
-documentation error of the rebuild itself. Nothing below has been
+rebuild (`DOCS_AUDIT.md` §10); U-16 was closed as a documentation error
+of the rebuild itself. U-10 and U-12–U-14 were decided in Phase 7
+planning (2026-09-25); U-15 remains open. Nothing below has been
 silently resolved: every normalized file and the `proxy-api.ts` content
 keep `not_documented` / `"undocumented"` where these apply. Finding IDs
 (`A-nn`) refer to `DOCS_AUDIT.md`.
@@ -204,8 +205,10 @@ one-endpoint vertical slice can be built truthfully.
   2. publish as "listed, not documented"
   3. omit until documented
 - Recommendation: decide in Phase 7. It doesn't block Phase 4.
-- User decision: pending
-- Final status: open
+- User decision: **2026-09-25 (Phase 7 planning)**: publish every operation
+  with its documented parameters; response/errors shown as "Not documented
+  by the source"; requirement `"undocumented"` where the source is silent.
+- Final status: **decided**
 
 ## U-11 — Source of real response samples — Blocks Phase 4 (responses)
 
@@ -259,8 +262,9 @@ one-endpoint vertical slice can be built truthfully.
 - Recommendation: (2) — Phase 5's already-tested `info-extensions` request
   used `pbx6webserver.1com.co.il/pbx` successfully, which is independent
   evidence favoring that host for production use.
-- User decision: pending
-- Final status: open
+- User decision: **(2), 2026-09-25 (Phase 7 planning).** Canonical host
+  `https://pbx6webserver.1com.co.il/pbx/proxyapi.php` in all samples.
+- Final status: **decided**
 
 ## U-13 — Tenant placeholder — `DEMO` vs `DEVEL`
 
@@ -271,8 +275,9 @@ one-endpoint vertical slice can be built truthfully.
   pick one placeholder as if it were confirmed to be a real, usable demo
   tenant.
 - Options: as U-12.
-- User decision: pending
-- Final status: open
+- User decision: **2026-09-25 (Phase 7 planning)**: neither — samples use
+  the neutral placeholder `TENANTCODE`.
+- Final status: **decided**
 
 ## U-14 — `format` accepted values conflict
 
@@ -290,8 +295,8 @@ one-endpoint vertical slice can be built truthfully.
   (as Phase 5 already partly did for `info-extensions`, A-40).
 - Recommendation: (1), consistent with how the Live-proxy work already
   treats `format` per-endpoint (`LIVE_POLICIES` in `src/server/playground/`).
-- User decision: pending
-- Final status: open
+- User decision: **(1), 2026-09-25 (Phase 7 planning).**
+- Final status: **decided**
 
 ## U-15 — `CDR` (standalone reqtype) has no documentation in the new source
 

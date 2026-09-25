@@ -732,3 +732,32 @@ recovering from an interrupted validation run after an unexpected shutdown.
 
 Status: Phase 6 complete and approved. Full detail:
 `docs/CURRENT_STATUS.md`, `docs/SESSION_HANDOFF.md`.
+
+## Phase 7 planning (2026-09-25, Opus 5.5)
+
+Plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
+(approved). Branch `phase/proxy-rollout`, from `main` after the user
+approved fast-forwarding `main` to `phase/demo-mode` (`0cbd7ba`) and
+tagging it `v0.4-demo-approved`.
+
+User decisions:
+- **Scope**: Reference pages for every documented Proxy operation (reads
+  and writes). Demo fixtures only for read operations whose real response
+  structure is observed. Live allowlist unchanged (3 operations);
+  SEC-REQ-01 still applies.
+- **U-10** (thin operations): publish with documented parameters;
+  responses/errors "Not documented by the source"; requirement
+  `"undocumented"` where the source is silent.
+- **U-12/U-13/U-14**: audit defaults accepted — host
+  `https://pbx6webserver.1com.co.il/pbx/proxyapi.php`; tenant placeholder
+  `TENANTCODE` (never `DEMO`/`DEVEL`/`ophir`); `format` accepted values
+  taken per operation from its own note.
+- **Probing** read operations: the user supplies a TEST key/tenant in
+  chat (Phase 6 Stage A method). Never written to disk, repo, logs or
+  scratchpad; the user rotates it afterwards.
+- **No admin key** available: ManageDB operations get Reference only, no
+  Demo, no probing.
+- **Quality additions** in scope: guides, search coverage. Out of scope:
+  feedback widget, observability, request history.
+- Proposed category taxonomy and the `unclear` read/write list are shown
+  to the user at the Stage 1 checkpoint before content authoring.
