@@ -443,3 +443,37 @@ Consequences:
 - Content-model limitation: responses are keyed by status, so the two
   observed 200 formats are documented as one response plus a description.
   Multi-format responses belong to Phase 7 model work.
+
+---
+
+## 2026-09-25 — Phase 5 approval
+
+Decision:
+Phase 5 (Live Playground) is complete and approved (gate option B). The
+Live proxy for `proxy/info-extensions` works end to end against the real
+1com host with server-side sanitization (A-40 decisions above). Validation:
+`npm run check` (111/111), `npm run build`, 98/98 Playwright (Chromium +
+WebKit, fresh build), Opus security review (no high/medium; three low
+fixed), visual pass desktop/mobile en/he, zero console errors.
+
+Scope:
+Approval covers Phase 5 only. It does not authorize merging
+`phase/live-playground` into `main`, starting Phase 6 (Demo mode), or any
+deployment. Each needs its own explicit approval.
+
+Consequences:
+- Accepted as known limitations: no CSP yet (deployment decision); in-memory,
+  shared-bucket rate limiter until a trusted IP header is configured; the
+  Origin-vs-Host check depends on the reverse proxy; the key may appear in
+  1com's access logs; the redaction module was added after the formal
+  security review (covered by unit tests and a real-host check, but a
+  focused second review is recommended); `verified: false` for
+  info-extensions; single-format-per-status content-model limitation;
+  Phase 2 carry-overs.
+- A production key was pasted into the chat for Step 5; rotation recommended.
+- No milestone tag: `CLAUDE.md`'s suggested tags have none for the Live
+  Playground phase, and none was requested.
+
+Status:
+Approved by user (2026-09-25). Phase 6 (Demo mode) has not started and is
+waiting for user approval to begin planning.

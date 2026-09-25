@@ -1,10 +1,8 @@
 # Current Status
 
 Current phase:
-**Phase 5 — Live Playground: AT APPROVAL GATE, NOT APPROVED** (all plan
-steps done: boundary, execution contract, UI, tests, Opus security review,
-and a real Live call through the proxy; A-40 found and resolved by user
-decisions; awaiting the user's A/B/C/D gate choice)
+**Phase 5 — Live Playground: COMPLETE AND APPROVED** (approved 2026-09-25,
+gate option B; stopped here, Phase 6 not started)
 
 Current branch:
 `phase/live-playground` (from `main` @ `c99ef81`, which includes the
@@ -20,7 +18,7 @@ Previous phases:
 - Phase 3: approved 2026-09-24, no milestone tag (audit-only phase).
 - Phase 4: approved 2026-09-25, tagged `v0.3-proxy-prototype-approved`.
 
-## Phase 5 work done so far (not yet complete)
+## Phase 5 work done
 
 - **Planning decisions** (Opus 5.5, before implementation): U-08 decided —
   only `proxy/info-extensions` allowlisted; anonymous access with
@@ -171,8 +169,10 @@ Previous phases:
 - U-08 (Live allowlist scope) and U-10 (the 23 table-only reqtypes) remain
   open; neither blocks Phase 4.
 
-Remaining in this phase:
-The user's gate decision (A/B/C/D). Nothing is approved; `phase/live-playground`
-is not merged.
+Next phase:
+**Phase 6 — Demo mode** (`docs/phases/06-demo-mode.md`). Not started; waiting
+for explicit user approval to begin planning. `phase/live-playground` is not
+merged into `main` (needs separate approval). Sonnet 5 is appropriate for
+Phase 6.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

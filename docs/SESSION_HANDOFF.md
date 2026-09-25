@@ -1,8 +1,17 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 5 at approval gate, NOT approved — read this first)
+Last updated: 2026-09-25 (Phase 5 approved, gate option B — stopped here; read this first)
 
-## GATE checkpoint — Phase 5 complete pending approval
+## STOP checkpoint — Phase 5 approved and complete; next phase not started
+
+- Phase 5 approved 2026-09-25 (gate option B). Not merged into `main`, not
+  tagged (no suggested tag for this phase). Phase 6 (Demo mode) has not
+  started: no planning, research or implementation. Next session's first
+  action is to wait for the user to say to begin Phase 6 planning, or to
+  approve merging `phase/live-playground` into `main`.
+- Rotate the key pasted into chat on 2026-09-25 if not already done.
+
+### Gate-time details (kept for history)
 
 - All plan steps are done, including the Opus security review and a real
   Live call (Step 5). The real call found A-40 (the documented response was
@@ -10,7 +19,6 @@ Last updated: 2026-09-25 (Phase 5 at approval gate, NOT approved — read this f
   user decisions: `format` plain/json, a server-side JSON field allowlist,
   fail-closed redaction, docs rewritten from observation. See
   `docs/DECISIONS.md` "Phase 5 Step 5".
-- Waiting for the user's A/B/C/D gate choice. No tag, no merge.
 - The user pasted a production key (tenant `demo`) into the chat on
   2026-09-25 and it was used for verification. Recommended: rotate it. It is
   not written to any file in the repo or scratchpad.
