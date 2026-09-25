@@ -21,6 +21,20 @@ const FIXTURE_ENDPOINTS = [
   { apiId: "proxy", endpointId: "info-dids" },
   { apiId: "proxy", endpointId: "info-simplecdrs" },
   { apiId: "proxy", endpointId: "info-queuelogs" },
+  // Phase 7 Stage 5 (source-docs/DOCS_AUDIT.md A-56..A-77):
+  { apiId: "proxy", endpointId: "info-queues" },
+  { apiId: "proxy", endpointId: "info-queue" },
+  { apiId: "proxy", endpointId: "info-agentsconnected" },
+  { apiId: "proxy", endpointId: "info-agentsdelay" },
+  { apiId: "proxy", endpointId: "info-outdialed" },
+  { apiId: "proxy", endpointId: "info-config" },
+  { apiId: "proxy", endpointId: "info-balance" },
+  { apiId: "proxy", endpointId: "info-extstate" },
+  { apiId: "proxy", endpointId: "peers" },
+  { apiId: "proxy", endpointId: "blfs" },
+  { apiId: "proxy", endpointId: "flows" },
+  { apiId: "proxy", endpointId: "countpeers" },
+  { apiId: "proxy", endpointId: "voicemail-list" },
 ] as const;
 
 function fixtureSetFor(endpointId: string): DemoFixtureSet {
@@ -222,6 +236,19 @@ describe("info-queuelogs fixtures (A-50, A-55)", () => {
     expect(json.response.format).toBe("text");
     const csv = set.cases.find((c) => c.id === "no-data-csv")!;
     expect(csv.response.body).toBe("");
+  });
+});
+
+describe("voicemail-list fixtures (A-77, SECURITY)", () => {
+  it("imapuser and imappassword are null in every record, in every case", () => {
+    const set = fixtureSetFor("voicemail-list");
+    for (const demoCase of set.cases) {
+      const body = demoCase.response.body as Array<Record<string, unknown>>;
+      for (const record of body) {
+        expect(record.imapuser, `${demoCase.id}.imapuser`).toBeNull();
+        expect(record.imappassword, `${demoCase.id}.imappassword`).toBeNull();
+      }
+    }
   });
 });
 

@@ -1,7 +1,7 @@
 # Current Status
 
 Current work:
-**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–4 done).** Plan
+**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–5 done).** Plan
 approved 2026-09-25
 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
 decisions in `docs/DECISIONS.md` "Phase 7 planning", "Phase 7 Stage 1
@@ -25,8 +25,17 @@ allowlist change. `npm run check` 209/209, build clean (`rollout:status`:
 pass over 10 newly-filled pages (desktop/mobile) — zero console errors, no
 overflow. The full Playwright suite and an he-locale pass were not re-run
 this stage; do before the Stage 7 gate.
-Next: **Stage 5 — Demo fixtures for the observed reads** (Sonnet 5). Full
-detail: `docs/SESSION_HANDOFF.md`.
+Stage 5 (Demo fixtures for the observed reads, Sonnet) is also complete: 13
+new fixture sets in `src/content/demo/proxy.ts` for the operations with
+genuine multi-field observed data; the other ~19 (error-only/empty/timeout)
+get no fixture by design. `imapuser`/`imappassword` (VOICEMAIL list, A-77)
+fixed at `null` in every fixture, per user decision, matching the QUEUELOGS
+precedent. A real UI bug was found and fixed during manual verification
+(`info-extstate`'s case didn't match the field's own pre-filled example
+value). `npm run check` 223/223, build clean, a Playwright pass driving the
+real Playground confirmed all 13 resolve with zero console errors.
+Next: **Stage 6 — Guides and Search** (Sonnet 5). Full detail:
+`docs/SESSION_HANDOFF.md`.
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate

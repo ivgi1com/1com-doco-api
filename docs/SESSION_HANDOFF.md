@@ -1,8 +1,8 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–4 done, STOP at the Stage 5 gate — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–5 done, STOP at the Stage 6 gate — read this first)
 
-## Phase 7 in progress — Stages 0–4 done, STOP before Stage 5
+## Phase 7 in progress — Stages 0–5 done, STOP before Stage 6
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
   (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
@@ -95,15 +95,54 @@ Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–4 done, STOP
     Full Playwright suite and a locale (he) pass were **not** re-run this
     stage (content-only change to already-tested components); do before the
     Stage 7 gate if not done by then.
-- **Next: Stage 5 — Demo fixtures for the observed reads** (Sonnet 5, per
-  the approved plan). Extend `src/content/demo/proxy.ts`; only observed
-  outcomes are simulated, synthetic values only (tenant `EXAMPLE`, `555-01xx`
-  numbers, "Demo"-prefixed names). Before starting, decide with the user how
-  `imapuser`/`imappassword` (VOICEMAIL list, A-77) should appear in Demo —
-  the QUEUELOGS precedent (A-55) is to keep the fields in the schema, fixed
-  at `null`, never a synthetic-looking password. ManageDB and the two
-  `unclear` operations (`info-voicemail`, `voicemail-message`) get no Demo
-  fixture, per the Stage 1 decision.
+- **Stage 5 — Demo fixtures for the observed reads, COMPLETE** (Sonnet 5).
+  User decision: `imapuser`/`imappassword` (VOICEMAIL list, A-77) stay in
+  the documented schema but are fixed at `null` in every fixture — the same
+  treatment QUEUELOGS gives its joined `ex_*` credential fields (A-55).
+  - **Scope decision** (`src/content/demo/proxy.ts` header comment): only
+    the 13 Stage 4 operations whose probe returned genuine multi-field data
+    got a fixture set. The other ~19 (whose only observed behavior was a
+    missing-parameter error string, a true empty/no-data result, or a
+    timeout — A-59..A-61, A-64, A-67..A-69, A-74..A-76) get **no** fixture;
+    the Playground falls back to "Demo data not available" for them, judged
+    more honest than fixturing an error string as normal behavior. Not
+    separately asked — flagged here as a reversible implementation choice,
+    easy to revisit if more fixtures are wanted later.
+  - New fixture sets (one case each, since none of these endpoints has a
+    selectable `format` query parameter — info-queues is the only
+    exception and gets two): `info-queues`, `info-queue`,
+    `info-agentsconnected`, `info-agentsdelay`, `info-outdialed`,
+    `info-config`, `info-balance`, `info-extstate`, `peers`, `blfs`,
+    `flows`, `countpeers`, `voicemail-list`.
+  - **Bug found and fixed during manual verification**: `info-extstate`'s
+    case initially used `when: { ext: [""], ... }`, but its `ext` query
+    parameter has a documented example value (`"500"`), which
+    `use-playground.ts` pre-fills as the field's default — so the case
+    could never match through the actual UI (only an explicitly cleared
+    field would trigger it). Fixed to `ext: "*"`, matching how every other
+    non-differentiating param here is treated. Found by driving the real
+    Playground with Playwright, not by reading the code — this class of
+    bug (a fixture matching what the probe sent, not what the UI's own
+    defaults send) has no unit-test guard yet.
+  - `tests/unit/demo-fixtures.test.ts`: the 13 new endpoints added to
+    `FIXTURE_ENDPOINTS` (covered automatically by the existing
+    exhaustiveness and synthetic-value guard tests) plus one new dedicated
+    test asserting `imapuser`/`imappassword` are `null` in every
+    `voicemail-list` case.
+  - Validation: `npm run check` 223/223 (+14 tests), `npm run build` clean.
+    A Playwright pass drove the real Playground for all 13 new endpoints
+    (desktop) — each resolves its fixture (`status: 200`, a "Scenario:"
+    line), zero console errors; a second pass on `voicemail-list` at mobile
+    width (390) — zero console errors, no overflow. Full Playwright suite
+    and the `he` locale were **not** re-run this stage; do before the Stage
+    7 gate.
+  - ManageDB and the two `unclear` operations (`info-voicemail`,
+    `voicemail-message`) still have no Demo fixture, per the Stage 1
+    decision — unaffected by this stage.
+- **Next: Stage 6 — Guides and Search** (Sonnet 5, current model is
+  correct). Full detail: the approved plan
+  (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`, "Stage
+  6").
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

@@ -460,10 +460,363 @@ const infoQueuelogsFixtures: DemoFixtureSet = {
   ],
 };
 
+// --- Phase 7 Stage 5: fixtures for the Stage 4 observed reads ---
+// Scope decision: only endpoints whose probe returned genuine multi-field
+// data get a fixture set here. Endpoints whose only observed behavior was a
+// missing-parameter error string, a true empty/no-data result, or a timeout
+// (source-docs/DOCS_AUDIT.md A-59..A-61, A-64, A-67..A-69, A-74..A-76) get
+// no fixture: the Playground falls back to "Demo data not available" for
+// them, which is more honest than fixturing an error message as if it were
+// the operation's normal behavior. None of these endpoints has a `format`
+// query parameter in the content model (info-queues is the one exception),
+// so each fixture set below reproduces the richer format=json shape as its
+// single case — the plain/default text form is documented in Reference but
+// not independently selectable here.
+
+// --- info-queues (A-56) ---
+
+const demoQueues = { "281": "Demo Sales", "282": "Demo Support" };
+const demoQueuesPlainLine = "281:  Demo Sales|282:Demo Support";
+
+const infoQueuesFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-queues",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "list-plain",
+      label: "Queue list (plain)",
+      basis: "A-56: default is one line of pipe-delimited <id>: <label> pairs.",
+      when: { tenant: "*", format: ["", "plain"] },
+      preset: { tenant: TENANT, format: "" },
+      response: { status: 200, format: "text", contentType: "text/html; charset=UTF-8", body: demoQueuesPlainLine },
+    },
+    {
+      id: "list-json",
+      label: "Queue list (JSON)",
+      basis: "A-56: format=json (undocumented) returns an object keyed by queue id.",
+      when: { tenant: "*", format: ["json"] },
+      preset: { tenant: TENANT, format: "json" },
+      response: { status: 200, format: "json", contentType: "application/json", body: demoQueues },
+    },
+  ],
+};
+
+// --- info-queue (A-56) ---
+
+function queueStats(overrides: Partial<Record<string, string>> = {}) {
+  const base = {
+    AGENTSAVAILABLE: "2", AGENTSPAUSED: "0", AGENTSFREE: "2", AGENTSONLINE: "2", CALLSINQUEUE: "0",
+    SERVICELEVEL: "0/0", FIRSTWAITING: "0/0", SECONDWAITING: "0/0", THIRDWAITING: "0/0", CALLSONLINE: "0",
+    TALKTIME: "0:00:00", HOLDTIME: "0:00:00", ANSWEREDCALLS: "0", CALLSRECEIVED: "0", REALANSWEREDCALLS: "0",
+    TRANSFEREDCALLS: "0", ABANDONEDCALLS: "0", TIMEDOUTCALLS: "0", QUEUECAR: "0", EXITWITHKEYCALLS: "0",
+    MAXHOLDTIME: "0:00:00", AVERAGETALKTIME: "0:00:00", AVERAGEHOLDTIME: "0:00:00",
+  };
+  return { ...base, ...overrides };
+}
+
+const infoQueueFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-queue",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "stats-json",
+      label: "Queue stats",
+      basis: "A-56: called without id, still returns a 24-field queue-stats object (whether id filters is unconfirmed).",
+      when: { id: [""], tenant: "*" },
+      preset: { tenant: TENANT, id: "" },
+      response: { status: 200, format: "json", contentType: "application/json", body: queueStats() },
+    },
+  ],
+};
+
+// --- info-agentsconnected / info-agentsdelay (A-57) ---
+
+const AGENT_A = "2015550101";
+const AGENT_B = "2015550102";
+
+const infoAgentsconnectedFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-agentsconnected",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "tenant-wide-json",
+      label: "Connected agents (JSON)",
+      basis: "A-57: keyed by extension, each value an object keyed by queue id mapping to an integer (meaning not documented).",
+      when: { tenant: "*", queue: [""] },
+      preset: { tenant: TENANT, queue: "" },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: { [AGENT_A]: { "1": 1 }, [AGENT_B]: { "1": 0 } },
+      },
+    },
+  ],
+};
+
+const infoAgentsdelayFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-agentsdelay",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "tenant-wide-json",
+      label: "Agent answer delay (JSON)",
+      basis: "A-57: keyed by queue id, each value an object keyed by agent number mapping to an integer (presumed delay-related; not documented).",
+      when: { tenant: "*", queue: [""] },
+      preset: { tenant: TENANT, queue: "" },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: { "281": { [AGENT_A]: 3, [AGENT_B]: 7 } },
+      },
+    },
+  ],
+};
+
+// --- info-outdialed (A-58) ---
+// Keys here are ordinary extension numbers, unlike the probe's own observed
+// key space, which could include free-text device labels (A-58) — Demo
+// never reproduces that, since it isn't a stable/anonymous shape.
+
+const infoOutdialedFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-outdialed",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "tenant-wide-json",
+      label: "Outdialed extensions (JSON)",
+      basis: "A-58: keyed by device/extension identifier, each value { STATE }.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: { "201": { STATE: "NOT_INUSE" }, "300": { STATE: "UNAVAILABLE" } },
+      },
+    },
+  ],
+};
+
+// --- info-config (A-63) ---
+
+const infoConfigFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-config",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "config-json",
+      label: "Tenant configuration (JSON)",
+      basis: "A-63: format=json returns 3 named fields, a strict subset of the default's 7-field positional row.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: { maxchannels: "50", maxextensions: "500", maxdids: "-1" },
+      },
+    },
+  ],
+};
+
+// --- info-balance (A-65) ---
+
+const infoBalanceFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-balance",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "balance",
+      label: "Tenant balance",
+      basis: "A-65: the response is a bare number, not wrapped in an object or array.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: { status: 200, format: "json", contentType: "application/json", body: 123.45 },
+    },
+  ],
+};
+
+// --- info-extstate (A-62) ---
+
+const infoExtstateFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-extstate",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "state-json",
+      label: "Extension state (JSON)",
+      basis: "A-62: { UniqueID: 2-letter code, LinkedID: string } — meaning not documented. The query field defaults to the documented example value (500), so ext is treated as not affecting the shape, matching every other param here.",
+      when: { ext: "*", tenant: "*" },
+      preset: { tenant: TENANT, ext: "500" },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: { UniqueID: "ab", LinkedID: "srv02-1531779475.48" },
+      },
+    },
+  ],
+};
+
+// --- PEERS (A-71) ---
+
+const infoPeersFixtures: DemoFixtureSet = {
+  endpoint: "proxy/peers",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "list-json",
+      label: "Peer list (JSON)",
+      basis: "A-71: format=json returns one object per peer, matching the default table's 11 columns.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: [
+          { node: "srv02", Name: "201/201", Host: "10.0.0.1", Dyn: "D", Forcerport: "Yes", Comedia: "Yes", ACL: "N", Port: "5060", Status: "OK (10 ms)", Description: "", Realtime: "no" },
+          { node: "srv02", Name: "300/300", Host: "10.0.0.2", Dyn: "D", Forcerport: "Yes", Comedia: "Yes", ACL: "N", Port: "5060", Status: "UNREACHABLE", Description: "", Realtime: "no" },
+        ],
+      },
+    },
+  ],
+};
+
+// --- BLFS (A-72) ---
+
+const infoBlfsFixtures: DemoFixtureSet = {
+  endpoint: "proxy/blfs",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "list-json",
+      label: "BLF list (JSON)",
+      basis: "A-72: one bare positional duplicate key plus st_extension/st_state/st_timestamp per entry.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: [
+          { "0": "2026-01-15 09:30:00", st_extension: "201", st_state: "NOT_INUSE", st_timestamp: "2026-01-15 09:30:00" },
+          { "0": "2026-01-15 09:31:00", st_extension: "300", st_state: "INUSE", st_timestamp: "2026-01-15 09:31:00" },
+        ],
+      },
+    },
+  ],
+};
+
+// --- FLOWS (A-73) ---
+
+const infoFlowsFixtures: DemoFixtureSet = {
+  endpoint: "proxy/flows",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "list-json",
+      label: "Flow list (JSON)",
+      basis: "A-73: one object per flow, fl_* fields plus st_extension/st_state/st_timestamp/st_peername.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: {
+        status: 200,
+        format: "json",
+        contentType: "application/json",
+        body: [
+          {
+            "0": "", "1": "12", fl_id: "12", fl_te_id: "500", fl_name: "Demo night mode",
+            fl_comment: "Night mode toggle", fl_number: "500[on]", fl_value: "", fl_value_for_unavailable: "",
+            fl_value_for_inuse: "", fl_value_for_notinuse: "", fl_value_for_ringing: "", fl_variable_name: "",
+            fl_monitor_type: "flow-state", fl_monitor_type_id: "1", fl_monitor_parameter: "[on]",
+            st_extension: "500[on]-flow", st_state: "NOT_INUSE", st_timestamp: "2026-01-15 09:30", st_peername: "srv02",
+          },
+        ],
+      },
+    },
+  ],
+};
+
+// --- COUNTPEERS (A-70) ---
+
+const infoCountpeersFixtures: DemoFixtureSet = {
+  endpoint: "proxy/countpeers",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "count-json",
+      label: "Peer count by node (JSON)",
+      basis: "A-70: an object keyed by node id, integer values. The real operation is slow (~23s observed); Demo returns instantly.",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: { status: 200, format: "json", contentType: "application/json", body: { srv02: 12 } },
+    },
+  ],
+};
+
+// --- VOICEMAIL list (A-77, SECURITY) ---
+// imapuser/imappassword are fixed at null in every case here, per user
+// decision (2026-09-26) — the same treatment QUEUELOGS gives its joined
+// ex_* credential fields (A-55): the field stays in the documented schema,
+// but Demo never shows a populated value for it.
+
+function voicemailListRecord(fields: { uniqueid: string; mailbox: string; fullname: string; email: string }) {
+  return {
+    uniqueid: fields.uniqueid, te_id: "500", context: "default", mailbox: fields.mailbox,
+    fullname: fields.fullname, email: fields.email, pager: "", attach: "yes", attachfmt: null,
+    serveremail: null, language: "", tz: "", tzbytenant: "no", deletevoicemail: "no", saycid: "no",
+    sendvoicemail: null, review: "no", tempgreetwarn: null, operator: "", envelope: "yes",
+    sayduration: null, saydurationm: null, forcename: null, forcegreetings: null, callback: "",
+    dialout: "", exitcontext: "default-exit", maxmsg: "100", volgain: null,
+    imapuser: null, imappassword: null,
+    stamp: "2026-01-15 09:30", welcomeoption: "std", category: "", fromstring: "",
+    minsecs: "1", maxsecs: "60", transcript_store: "no", onnewmessage: "",
+    ...Object.fromEntries(Array.from({ length: 30 }, (_, i) => [`onnewmessageparam${i + 1}`, ""])),
+    ivr_id: "", nextaftercmd: "", includeindbn: "", transcript_generate: "",
+    autodeleteolder: "0", voicemailbackup: "no", summary_generate: "",
+  };
+}
+
+const demoVoicemailList = [
+  voicemailListRecord({ uniqueid: "1001", mailbox: "1001", fullname: "Demo Mailbox One", email: "demo1@example.com" }),
+  voicemailListRecord({ uniqueid: "1002", mailbox: "1002", fullname: "Demo Mailbox Two", email: "demo2@example.com" }),
+];
+
+const voicemailListFixtures: DemoFixtureSet = {
+  endpoint: "proxy/voicemail-list",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "list-json",
+      label: "Mailbox list (JSON)",
+      basis: "A-77: format=json returns ~60 fields per mailbox, including imapuser/imappassword. Demo fixes both at null, matching the QUEUELOGS ex_* precedent (A-55).",
+      when: { tenant: "*" },
+      preset: { tenant: TENANT },
+      response: { status: 200, format: "json", contentType: "application/json", body: demoVoicemailList },
+    },
+  ],
+};
+
 export const proxyDemoFixtures: readonly DemoFixtureSet[] = [
   infoExtensionsFixtures,
   infoAgentsFixtures,
   infoDidsFixtures,
   infoSimplecdrsFixtures,
   infoQueuelogsFixtures,
+  infoQueuesFixtures,
+  infoQueueFixtures,
+  infoAgentsconnectedFixtures,
+  infoAgentsdelayFixtures,
+  infoOutdialedFixtures,
+  infoConfigFixtures,
+  infoBalanceFixtures,
+  infoExtstateFixtures,
+  infoPeersFixtures,
+  infoBlfsFixtures,
+  infoFlowsFixtures,
+  infoCountpeersFixtures,
+  voicemailListFixtures,
 ];
