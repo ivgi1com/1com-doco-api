@@ -58,6 +58,22 @@ Rules:
 - never put real credentials in documentation
 - never print secrets unnecessarily
 
+### Live Playground (Phase 5)
+
+Names only, see `.env.example`; all are optional with safe defaults (see
+`src/server/playground/config.ts` for the exact defaults/ceilings):
+
+- `PLAYGROUND_LIVE_ENABLED` — kill switch, off unless exactly `"true"`.
+- `PLAYGROUND_REQUEST_TIMEOUT_MS`, `PLAYGROUND_MAX_RESPONSE_BYTES`,
+  `PLAYGROUND_RATE_LIMIT` — each clamped to a hard ceiling regardless of
+  the value supplied.
+- `PLAYGROUND_TRUSTED_IP_HEADER` — a reverse-proxy header name to trust for
+  per-client rate limiting; unset means every caller shares one bucket.
+
+None of these configure the upstream host — it is fixed in
+`src/content/proxy-api.ts` and asserted at startup
+(`src/server/playground/allowlist.ts`), not overridable by any env var.
+
 ## Browser testing
 
 Use Playwright for functional and visual validation.

@@ -12,7 +12,7 @@ export const sampleLanguages: { id: SampleLanguage; label: string; shiki: string
 export const API_KEY_ENV = "SAMPLE_API_KEY";
 
 /** Env var name for an endpoint's credential. Header-auth endpoints keep the original constant. */
-function authEnvVar(endpoint: Endpoint): string {
+export function authEnvVar(endpoint: Endpoint): string {
   if (endpoint.authentication.location === "query") return `${endpoint.api.toUpperCase()}_API_KEY`;
   return API_KEY_ENV;
 }

@@ -1,0 +1,164 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { getEndpoint } from "@/content";
+import { proxyApi } from "@/content/proxy-api";
+import { sampleApi } from "@/content/sample-api";
+import {
+  curlEquivalent,
+  demoProvider,
+  liveProvider,
+  liveQueryParams,
+  MASK,
+  sanitizedRequest,
+} from "@/components/playground/executor";
+import { LIVE_ROUTE } from "@/lib/playground-protocol";
+
+const KEY = "TEST_KEY_do_not_leak_9d2f";
+const infoExtensions = getEndpoint("proxy", "info-extensions")!;
+const listCalls = getEndpoint("sample", "list-call-records")!;
+
+const fieldValues = { "query:tenant": "ACME", "query:id": "", "query:number": "  " };
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe("liveQueryParams", () => {
+  it("keeps only non-empty query values", () => {
+    expect(liveQueryParams(infoExtensions, fieldValues)).toEqual({ tenant: "ACME" });
+  });
+});
+
+describe("sanitizedRequest", () => {
+  it("masks the query-auth credential and keeps fixed selectors", () => {
+    const r = sanitizedRequest(proxyApi, infoExtensions, fieldValues);
+    expect(r.method).toBe("GET");
+    expect(r.url).toBe(
+      `https://pbx6webserver.1com.co.il/pbx/proxyapi.php?reqtype=INFO&info=EXTENSIONS&tenant=ACME&key=${MASK}`,
+    );
+  });
+
+  it("never includes the actual credential, only the mask", () => {
+    const r = sanitizedRequest(proxyApi, infoExtensions, fieldValues);
+    expect(r.url).not.toContain(KEY);
+  });
+});
+
+describe("curlEquivalent", () => {
+  it("swaps the mask for the endpoint's env var, unquoted", () => {
+    const r = sanitizedRequest(proxyApi, infoExtensions, fieldValues);
+    expect(curlEquivalent(r, "PROXY_API_KEY")).toBe(
+      `curl "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?reqtype=INFO&info=EXTENSIONS&tenant=ACME&key=$PROXY_API_KEY"`,
+    );
+  });
+});
+
+describe("liveProvider", () => {
+  it("posts the credential only in the request body, never the URL", async () => {
+    const fetchMock = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          ok: true,
+          upstream: {
+            status: 200,
+            latencyMs: 42,
+            sizeBytes: 10,
+            contentType: "application/json",
+            headers: { "content-type": "application/json" },
+            bodyText: '{"1":{"ex_id":"1"}}',
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await liveProvider.execute(
+      { api: proxyApi, endpoint: infoExtensions, fieldValues, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(LIVE_ROUTE);
+    expect(String(init.body)).toContain(KEY);
+    expect(url).not.toContain(KEY);
+
+    expect(result).toMatchObject({ source: "LIVE", kind: "response", status: 200, format: "json" });
+    if (result.source === "LIVE" && result.kind === "response") {
+      expect(result.body).toEqual({ "1": { ex_id: "1" } });
+      expect(result.request.url).not.toContain(KEY);
+    }
+  });
+
+  it("maps a portal error envelope to a portal-error result with retry-after", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify({ ok: false, error: { code: "rate_limited" } }), {
+            status: 429,
+            headers: { "retry-after": "30" },
+          }),
+      ),
+    );
+    const result = await liveProvider.execute(
+      { api: proxyApi, endpoint: infoExtensions, fieldValues, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "LIVE", kind: "portal-error", code: "rate_limited", retryAfterSeconds: 30 });
+  });
+
+  it("treats a network failure as portal_unreachable, not a thrown error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new TypeError("network down");
+      }),
+    );
+    const result = await liveProvider.execute(
+      { api: proxyApi, endpoint: infoExtensions, fieldValues, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "LIVE", kind: "portal-error", code: "portal_unreachable" });
+  });
+
+  it("treats a malformed JSON body as invalid_portal_response", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("not json", { status: 200 })));
+    const result = await liveProvider.execute(
+      { api: proxyApi, endpoint: infoExtensions, fieldValues, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "LIVE", kind: "portal-error", code: "invalid_portal_response" });
+  });
+});
+
+describe("demoProvider", () => {
+  it("never makes a network request", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await demoProvider.execute(
+      { api: sampleApi, endpoint: listCalls, fieldValues: {}, credential: "", simulateError: false },
+      new AbortController().signal,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("reports unavailable for a non-synthetic API instead of fabricating data", async () => {
+    const result = await demoProvider.execute(
+      { api: proxyApi, endpoint: infoExtensions, fieldValues: {}, credential: "", simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result).toEqual({ source: "DEMO", unavailable: true });
+  });
+
+  it("returns a synthetic success response for the synthetic Sample API", async () => {
+    const result = await demoProvider.execute(
+      { api: sampleApi, endpoint: listCalls, fieldValues: {}, credential: "", simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result.source).toBe("DEMO");
+    if (result.source === "DEMO" && !result.unavailable) {
+      expect(result.status).toBeLessThan(300);
+    }
+  });
+});

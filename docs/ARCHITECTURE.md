@@ -71,6 +71,20 @@ Browser -> Developer Portal Demo provider -> synthetic fixture response
 
 Demo provider must never call production systems.
 
+### Implementation (Phase 5)
+
+`src/components/playground/executor.ts` implements the contract above:
+`liveProvider` and `demoProvider`, both satisfying `ApiExecutor.execute()`,
+selected per-request by `use-playground.ts` with no fallback path between
+them. `liveProvider` only ever calls this portal's own
+`/api/playground` route (`src/lib/playground-protocol.ts` defines the
+wire contract); it never calls an external host directly from the browser.
+The backend side of the Live provider — the allowlist, validation,
+timeout/size enforcement, and upstream call — lives in
+`src/server/playground/` behind `src/app/api/playground/route.ts`; see
+`docs/SECURITY.md` "Implementation (Phase 5)" for how each proxy
+requirement is met there.
+
 ## API-neutral design
 
 The UI and content model must be reusable by both Proxy API and Open API.

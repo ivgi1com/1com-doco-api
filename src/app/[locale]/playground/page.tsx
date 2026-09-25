@@ -4,6 +4,8 @@ import { PlaygroundApp } from "@/components/playground/playground-app";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
 import { apis, getApi, getEndpoint, listEndpoints } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
+import { listLiveTargetIds } from "@/server/playground/allowlist";
+import { getPlaygroundConfig } from "@/server/playground/config";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("playground");
@@ -29,6 +31,8 @@ export default async function PlaygroundPage({
   const endpoint = requestedEndpoint ?? listEndpoints(api)[0];
 
   const samplesByEndpoint = await buildPlaygroundSamples(api);
+  // Read per request (this page is dynamic), so the kill switch applies without a rebuild.
+  const liveEndpointIds = getPlaygroundConfig().liveEnabled ? listLiveTargetIds() : [];
 
   return (
     <div className="flex min-h-[calc(100dvh-57px)] flex-col">
@@ -36,7 +40,12 @@ export default async function PlaygroundPage({
         {api.synthetic && <PrototypeBanner />}
         {locale !== "en" && <UntranslatedBanner />}
       </div>
-      <PlaygroundApp api={api} initialEndpoint={endpoint} samplesByEndpoint={samplesByEndpoint} />
+      <PlaygroundApp
+        api={api}
+        initialEndpoint={endpoint}
+        samplesByEndpoint={samplesByEndpoint}
+        liveEndpointIds={liveEndpointIds}
+      />
     </div>
   );
 }

@@ -114,13 +114,18 @@ test.describe("interactions", () => {
     await expect(desktopPane(page).getByLabel("API key")).toBeVisible();
   });
 
-  test("playground: Live send always errors and never falls back to Demo", async ({ page }) => {
+  // Phase 5: Live is allowlisted per endpoint (docs/phases/05-live-playground.md,
+  // U-08); the Sample API is never allowlisted, so Send must stay disabled
+  // rather than attempt (and fail) a request, as the old prototype stub did.
+  test("playground: Live is not allowlisted for the Sample API, so Send stays disabled", async ({ page }) => {
     await page.goto("/en/playground?endpoint=sample/list-call-records");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
-    await desktopPane(page).getByRole("button", { name: "Send request" }).click();
-    await expect(desktopPane(page).getByText("Request failed")).toBeVisible({ timeout: 3000 });
-    await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+    await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+    await expect(
+      desktopPane(page).getByText("Live requests aren't available for this endpoint in this deployment yet."),
+    ).toBeVisible();
+    await expect(desktopPane(page).getByText(/DEMO|LIVE/)).toHaveCount(0);
   });
 
   test("playground: required-field validation blocks Send with a missing path parameter", async ({ page }) => {
@@ -212,6 +217,184 @@ test.describe("interactions", () => {
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toHaveCount(0);
       await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+    });
+  });
+
+  // Phase 5: Live Playground (docs/phases/05-live-playground.md). Every test
+  // here mocks the browser -> portal request (`/api/playground`) before
+  // sending, so no test ever reaches the real 1com host, even though the
+  // e2e server itself has Live enabled (playwright.config.ts) so the
+  // allowlisted endpoint's Send button is actually enabled to click.
+  test.describe("Live Playground (Phase 5)", () => {
+    const FAKE_KEY = "not-a-real-key-e2e-only";
+
+    function mockPlayground(page: Page, body: unknown, init: { status?: number; headers?: Record<string, string> } = {}) {
+      return page.route("**/api/playground", (route) =>
+        route.fulfill({
+          status: init.status ?? 200,
+          contentType: "application/json",
+          headers: init.headers,
+          body: JSON.stringify(body),
+        }),
+      );
+    }
+
+    async function goLive(page: Page) {
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
+    }
+
+    test("this endpoint is allowlisted: Send is enabled once in Live mode", async ({ page }) => {
+      await goLive(page);
+      await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeEnabled();
+    });
+
+    test("missing API key blocks Send client-side, with no request sent", async ({ page }) => {
+      let called = false;
+      await page.route("**/api/playground", (route) => {
+        called = true;
+        return route.abort();
+      });
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("API key is required.")).toBeVisible();
+      expect(called).toBe(false);
+    });
+
+    test("a successful response shows the LIVE stamp, status, and JSON body, with Headers and Request tabs", async ({
+      page,
+    }) => {
+      await mockPlayground(page, {
+        ok: true,
+        upstream: {
+          status: 200,
+          latencyMs: 214,
+          sizeBytes: 64,
+          contentType: "application/json",
+          headers: { "content-type": "application/json" },
+          bodyText: JSON.stringify({ "3272": { ex_id: "3272", ex_name: "Jane Doe", ex_number: "201" } }),
+        },
+      });
+      await goLive(page);
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible();
+      await expect(desktopPane(page).getByText('"ex_name"')).toBeVisible();
+
+      await desktopPane(page).getByRole("tab", { name: "Headers" }).click();
+      await expect(desktopPane(page).getByText("content-type:")).toBeVisible();
+
+      await desktopPane(page).getByRole("tab", { name: "Request" }).click();
+      await expect(desktopPane(page).getByText(/key=••••/)).toBeVisible();
+      // "$PROXY_API_KEY" also appears in the always-present static "Code
+      // preview" curl sample (Phase 4), which renders it unmasked as
+      // documentation; that one mounts first, so this Request tab's own
+      // curl line (rendered after it in the response pane) is `.last()`.
+      await expect(desktopPane(page).getByText(/\$PROXY_API_KEY/).last()).toBeVisible();
+      // The credential itself must never reach the rendered page, masked or not.
+      await expect(page.getByText(FAKE_KEY)).toHaveCount(0);
+    });
+
+    test("a portal rate-limit error shows a distinct message with the retry time, not Demo data", async ({ page }) => {
+      await mockPlayground(
+        page,
+        { ok: false, error: { code: "rate_limited" } },
+        { status: 429, headers: { "retry-after": "45" } },
+      );
+      await goLive(page);
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Request failed")).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Too many requests. Try again in 45 seconds.")).toBeVisible();
+      await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+    });
+
+    test("an upstream timeout is reported distinctly from a portal-side failure", async ({ page }) => {
+      await mockPlayground(page, { ok: false, error: { code: "upstream_timeout" } }, { status: 504 });
+      await goLive(page);
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("The 1com server did not respond in time.")).toBeVisible({
+        timeout: 3000,
+      });
+    });
+
+    test("Download JSON on a Live response triggers a file download", async ({ page }) => {
+      await mockPlayground(page, {
+        ok: true,
+        upstream: {
+          status: 200,
+          latencyMs: 10,
+          sizeBytes: 20,
+          contentType: "application/json",
+          headers: {},
+          bodyText: JSON.stringify({ "1": { ex_id: "1", ex_name: "X", ex_number: "1" } }),
+        },
+      });
+      await goLive(page);
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      const [download] = await Promise.all([
+        page.waitForEvent("download"),
+        desktopPane(page).getByRole("button", { name: "Download JSON" }).click(),
+      ]);
+      expect(download.suggestedFilename()).toBe("info-extensions-response.json");
+    });
+
+    // These two hit the real /api/playground route directly (no browser
+    // page, no mock) — safe, since neither ever reaches the allowlist/fetch
+    // step: GET is rejected by Next.js before our handler runs, and a
+    // foreign Origin is rejected by the handler's first check.
+    test("the real route rejects GET (only POST is exported)", async ({ request }) => {
+      const res = await request.get("/api/playground");
+      expect(res.status()).toBe(405);
+    });
+
+    test("the real route rejects a cross-site Origin", async ({ request }) => {
+      const res = await request.post("/api/playground", {
+        headers: { origin: "https://evil.test", "content-type": "application/json" },
+        data: { endpoint: "proxy/info-extensions", params: {}, credential: "x" },
+      });
+      expect(res.status()).toBe(403);
+    });
+
+    test("mobile: Live success is reachable through the step flow and the Request tab shows the masked key", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await mockPlayground(page, {
+        ok: true,
+        upstream: {
+          status: 200,
+          latencyMs: 10,
+          sizeBytes: 20,
+          contentType: "application/json",
+          headers: {},
+          bodyText: JSON.stringify({ "1": { ex_id: "1", ex_name: "X", ex_number: "1" } }),
+        },
+      });
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      // The desktop 3-pane layout and the mobile step flow are both mounted
+      // at once (CSS-hidden, not JS-unmounted); at this viewport the mobile
+      // instance is the first one in the DOM.
+      await page.getByLabel("API key").first().fill(FAKE_KEY);
+      await page.getByRole("button", { name: "Send request" }).first().click();
+      await page.getByRole("tab", { name: "Response" }).click();
+      // ResponseViewer is likewise mounted twice (mobile step pane + the
+      // CSS-hidden desktop grid); the mobile instance is first in the DOM.
+      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
+      // Three "Request"-named tabs now exist: the mobile step nav's own
+      // "Request" step, plus each ResponseViewer instance's own Body/
+      // Headers/Request sub-tab. Scope to a tablist that also has a
+      // "Headers" tab (only the response viewers') to reach the sub-tab,
+      // not the step nav; `.first()` then picks the visible mobile instance.
+      const responseTablist = page.getByRole("tablist").filter({ hasText: "Headers" });
+      await responseTablist.getByRole("tab", { name: "Request" }).first().click();
+      await expect(page.getByText(/key=••••/).first()).toBeVisible();
     });
   });
 });

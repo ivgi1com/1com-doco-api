@@ -342,3 +342,71 @@ Consequences:
 Status:
 Approved by user (2026-09-25). Next phase (Phase 5 — Live Playground) has
 not started and is waiting for user approval to begin planning.
+
+---
+
+## 2026-09-25 — Phase 5 planning: Live Playground security boundary
+
+Decisions (Opus 5.5, before any implementation, per this phase's own model
+note):
+
+- **U-08 (Live allowlist scope)**: decided narrower than either original
+  option — only `proxy/info-extensions` (the one Phase 4 endpoint) is
+  allowlisted, not "every read-only reqtype." Widening is a separate, later,
+  explicit decision (Phase 7 scope). See `source-docs/unresolved.md` U-08.
+- **Access to `/api/playground`**: anonymous, no portal login. The caller
+  supplies their own 1com key each time. Controls: same-origin check
+  (`Origin`/`Sec-Fetch-Site` vs `Host`), JSON-only POST, an 8 KiB request
+  cap, a per-client rate limit, and a kill switch
+  (`PLAYGROUND_LIVE_ENABLED`, default off).
+- **Deployment / rate-limit storage**: undecided, so the limiter is an
+  in-memory sliding window behind a `RateLimiter` interface
+  (`src/server/playground/rate-limit.ts`), swappable for a shared store
+  (e.g. Redis) without touching the route. Documented limitation:
+  per-process, so N instances allow N× the limit. Client-IP trust is
+  env-controlled (`PLAYGROUND_TRUSTED_IP_HEADER`, unset by default — every
+  caller then shares one bucket).
+- **Credential in the upstream URL**: accepted. The Proxy API's `key` is
+  only ever documented as a query parameter; the portal forwards it that
+  way to `pbx6webserver.1com.co.il`, so it may appear in 1com's own
+  access logs — a known upstream limitation (`docs/SECURITY.md`), not
+  something this portal can avoid while honoring the documented contract.
+  The browser→portal leg never carries it this way: the credential is
+  POST-body-only there, and never appears in a portal-controlled URL,
+  application log, or error message (verified by unit tests asserting the
+  fake key/tenant used in tests never appear in any response, log line, or
+  thrown-error string).
+
+Architecture implemented against these decisions:
+
+- `src/server/playground/` (`config`, `allowlist`, `validate`, `execute`,
+  `rate-limit`, `log`) + `src/app/api/playground/route.ts`: the only code
+  path that may reach `pbx6webserver.1com.co.il`. The allowlist resolves
+  from the content model (`src/content/proxy-api.ts`) and asserts its
+  origin at module load; `validate.ts` rejects unknown fields, fixed-query
+  overrides, and credential-as-param attempts; `execute.ts` never follows a
+  redirect, enforces a timeout and response-size ceiling, and maps every
+  failure to a fixed code — never the underlying error message, since
+  Node's fetch errors can embed the request URL (and so the key).
+- `src/components/playground/executor.ts`: the client-side execution
+  contract (`docs/ARCHITECTURE.md`'s `ApiExecutor`) — separate `liveProvider`
+  and `demoProvider`, no code path from a Live failure to Demo data. The
+  rendered "Request" tab and curl sample always show the credential masked
+  (`••••`), swapped for its env var name only in the copyable curl line.
+- `playwright.config.ts`: the e2e server runs with `PLAYGROUND_LIVE_ENABLED=
+  true` so the allowlisted endpoint's Send button is actually enabled to
+  test; every Live-sending e2e test installs a `page.route("**/api/
+  playground", ...)` mock first, so no test can reach the real 1com host.
+
+Status:
+Implemented and validated: `npm run check` (78/78 unit tests, including
+server-boundary tests asserting the fake credential/tenant never leak into
+a response, log line, or error), `npm run build`, 98/98 Playwright tests
+(Chromium + WebKit, fresh `build && start`), manual visual pass (desktop
+1440, mobile 390, en + he) covering Live success, each portal-error code,
+and the disabled/not-allowlisted states — zero console errors. Real
+end-to-end verification against the live 1com host (with a real key) is a
+separate step the user performs directly (`docs/phases/05-live-playground.md`
+Step 5) — Claude does not receive or handle a real credential. Not yet
+reached: the final Opus security-review gate before the phase completion
+report.

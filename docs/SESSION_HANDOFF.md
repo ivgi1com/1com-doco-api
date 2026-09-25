@@ -1,6 +1,56 @@
 # Session Handoff
 
-Last updated: 2026-09-25 ~02:10 (Phase 4 approved, gate option B — stopped here; read this first)
+Last updated: 2026-09-25 ~10:10 (Phase 5 implementation in progress — read this first)
+
+## IN-PROGRESS checkpoint — Phase 5 (Live Playground), Steps 0–4 done, not approved
+
+- Plan file: `C:\Users\ivgi-pc\.claude\plans\plan-phase-5-temporal-tower.md`
+  (approved 2026-09-25). Covers Steps 0–7; this checkpoint is after Step 4.
+- Branch `phase/live-playground`, off `main` @ `c99ef81` (approving the plan
+  fast-forwarded `main` to the approved Phase 4 commit, same precedent as
+  Phase 4). **Nothing in this phase is committed yet** — the working tree
+  has all Step 0–4 changes uncommitted; see `git status` before doing
+  anything else.
+- Planning decisions (Opus 5.5, before implementation) are in
+  `docs/DECISIONS.md` "Phase 5 planning": U-08 decided (only
+  `proxy/info-extensions` allowlisted), anonymous access with
+  same-origin/rate-limit/kill-switch controls, in-memory rate limiter
+  behind a swappable interface, credential-in-upstream-URL accepted as a
+  known limitation. Also written to `source-docs/unresolved.md` (U-08
+  closed).
+- **Done**: the security boundary (`src/server/playground/*`,
+  `src/app/api/playground/route.ts`), the client execution contract
+  (`src/components/playground/executor.ts`, rewired `use-playground.ts`),
+  the response UI (`response-viewer.tsx` tabs/error callouts,
+  `request-builder.tsx`, Download JSON in `json-viewer.tsx`), and tests
+  (35 server + 11 executor unit tests, 20 new Playwright tests). A real
+  pre-existing bug was found and fixed while wiring the API-key field:
+  `RequestBuilder` used a hardcoded `SAMPLE_API_KEY` placeholder regardless
+  of the endpoint's own auth env var; now uses the (newly exported)
+  per-endpoint `authEnvVar()` from `src/lib/code-samples.ts`.
+- **Verified**: `npm run check` (78/78 unit tests), `npm run build`, 98/98
+  Playwright tests (Chromium + WebKit, fresh `build && start`), manual
+  visual pass (1440/900, 390/844, en + he) via Playwright-driven screenshots
+  with `page.route` mocks for every Live state (success, each portal-error
+  code, disabled/not-allowlisted) — zero console errors. `playwright.config.ts`
+  now runs its server with `PLAYGROUND_LIVE_ENABLED=true` so the
+  allowlisted endpoint's Send button is testable; every Live-sending test
+  mocks `/api/playground` first, so no test reaches the real 1com host.
+- **Not done yet**:
+  - Step 5: a **real** Live call against `pbx6webserver.1com.co.il` with a
+    real key, performed by the user directly (Claude never receives the
+    key). Only after the user confirms a real 200 does
+    `info-extensions`'s `verification.tested` flag get set in
+    `src/content/proxy-api.ts`. Any discrepancy between documented and
+    observed behavior goes to `source-docs/DOCS_AUDIT.md`, not a silent fix.
+  - Step 7: switch to Opus 5.5, run the `security-review` skill over the
+    full branch diff, fix findings, re-verify, then present the Phase
+    Completion Report and the mandatory A/B/C/D gate. **No phase-completion
+    checkpoint, tag, or approval exists yet.**
+- Next session's first action: continue Step 5 (ask the user to run a real
+  Live request) or, if they'd rather defer that, proceed to Step 7's
+  security review first and do Step 5 afterward — either order is fine,
+  but the gate in Step 7 cannot be presented as passed until both are done.
 
 ## STOP checkpoint — Phase 4 approved and complete; next phase not started
 

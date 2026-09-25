@@ -1,19 +1,81 @@
 # Current Status
 
 Current phase:
-**Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)
+**Phase 5 — Live Playground: IN PROGRESS** (implementation Steps 0–4 of the
+approved plan done — security boundary, execution contract, response UI,
+tests; Step 5 — real end-to-end verification by the user with a real key —
+and Step 7 — the Opus security-review gate — are not yet done; no
+completion gate reached, nothing approved yet)
 
 Current branch:
-`phase/one-endpoint` (from `main` @ `658c423`, which includes the approved Phase 3)
+`phase/live-playground` (from `main` @ `c99ef81`, which includes the
+approved Phase 4; `main` was fast-forwarded to `c99ef81` when this plan was
+approved, same precedent as Phase 4)
 
 Previous phase:
-**Phase 3 — Proxy API Audit: COMPLETE AND APPROVED** (approved 2026-09-24, gate option A; committed `658c423`)
+**Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)
 
 Previous phases:
 - Phase 1: approved, tagged `v0.1-design-approved`, merged.
 - Phase 2: approved 2026-09-24, tagged `v0.2-shell-approved` (`20597af`).
 - Phase 3: approved 2026-09-24, no milestone tag (audit-only phase).
 - Phase 4: approved 2026-09-25, tagged `v0.3-proxy-prototype-approved`.
+
+## Phase 5 work done so far (not yet complete)
+
+- **Planning decisions** (Opus 5.5, before implementation): U-08 decided —
+  only `proxy/info-extensions` allowlisted; anonymous access with
+  same-origin/rate-limit/kill-switch controls; in-memory rate limiter
+  behind a swappable interface; credential-in-upstream-URL accepted as a
+  documented, known limitation. Full detail in `docs/DECISIONS.md` "Phase 5
+  planning".
+- **Server boundary** (`src/server/playground/` + `src/app/api/playground/
+  route.ts`): allowlist resolved from the content model and asserted at
+  load; strict request validation (no fixed-query override, no credential
+  smuggling); redirects never followed; timeout and response-size ceiling
+  enforced; every upstream/network failure mapped to a fixed code, never
+  the underlying error message; sanitized, field-limited logging; a
+  same-origin + JSON-only + size-capped + rate-limited request pipeline; a
+  kill switch defaulting to off. See `docs/SECURITY.md` "Implementation
+  (Phase 5)" for the full mapping to each proxy requirement.
+- **Execution contract** (`src/components/playground/executor.ts`):
+  separate `liveProvider`/`demoProvider`, no fallback path between them;
+  the credential travels browser→portal only in the POST body, is masked
+  (`••••`) everywhere it's rendered, and is swapped for its env var name
+  only in the copyable curl sample.
+- **Response UI** (`response-viewer.tsx`, `request-builder.tsx`,
+  `json-viewer.tsx`): Live stamp, status/latency/size, Body/Headers/Request
+  tabs, a distinct callout per portal-error code (with retry-after where
+  applicable), non-JSON body rendered as escaped text, Download JSON added
+  to the JSON viewer. Also fixed a real pre-existing bug found while wiring
+  this up: the Live API-key input's placeholder always showed
+  `$SAMPLE_API_KEY` regardless of the endpoint's own auth env var, because
+  `RequestBuilder` used a hardcoded constant instead of the already-existing
+  (but unexported) per-endpoint `authEnvVar()` helper.
+- **Tests**: 35 new server unit tests + 11 executor unit tests (78/78 unit
+  tests total) asserting the fake test credential/tenant never leak into a
+  response, log line, or thrown-error string across every failure path.
+  20 new Playwright tests (98/98 total, Chromium + WebKit) covering
+  per-endpoint Live allowlisting, client-side missing-credential
+  validation, a full Live success round trip (desktop + mobile), every
+  portal-error code, Download JSON, and direct route-level checks (GET →
+  405, foreign Origin → 403) — all via `page.route` mocks, so no test ever
+  reaches the real 1com host even though the e2e server itself runs with
+  `PLAYGROUND_LIVE_ENABLED=true` (`playwright.config.ts`).
+- **Validation performed so far**: `npm run check` (typecheck + lint +
+  78/78 unit tests), `npm run build`, 98/98 Playwright tests (fresh
+  `build && start`), manual visual pass (1440/900 desktop, 390/844 mobile,
+  en + he) covering Live success, every portal-error tone, and the
+  disabled/not-allowlisted states — zero console errors observed.
+- **Not yet done**: Step 5 (the user performs a real Live call against
+  1com with their own key, outside this session, so Claude never receives
+  it; only after that succeeds does `info-extensions`'s `verification.tested`
+  flag get set), Step 6 remaining doc updates beyond this file and
+  `DECISIONS.md`/`unresolved.md`/`SECURITY.md`/`ENVIRONMENT.md`/
+  `ARCHITECTURE.md` (already done), and Step 7 (switch to Opus 5.5, run the
+  `security-review` skill over the branch diff, fix findings, then present
+  the Phase Completion Report and gate). Nothing in this phase is approved
+  yet; `phase/live-playground` is not merged into `main`.
 
 ## Phase 4 work done
 
@@ -106,10 +168,10 @@ Previous phases:
 - U-08 (Live allowlist scope) and U-10 (the 23 table-only reqtypes) remain
   open; neither blocks Phase 4.
 
-Next phase:
-**Phase 5 — Live Playground** (`docs/phases/05-live-playground.md`). Not
-started; Phase 4 is approved (gate option B — stopped here, not
-auto-continued). Per that phase's own model note, Opus 5.5 is required
-before its security-sensitive proxy-boundary architecture is designed.
+Remaining in this phase:
+Step 5 (user-run real Live verification), Step 7 (Opus 5.5 security review
++ Phase Completion Report + approval gate). See
+`docs/phases/05-live-playground.md` and the plan file referenced in
+`docs/SESSION_HANDOFF.md`.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

@@ -1,12 +1,12 @@
 # Unresolved Documentation Questions — Proxy API
 
 Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07,
-U-09 and U-11 were decided in Phase 4 (2026-09-25); U-02 and U-04 were
-applied by default (not decided, reversible). U-05 was deferred in Phase 3.
-U-08 and U-10 remain open. Nothing below has been silently resolved: every
-normalized file and the `proxy-api.ts` content keep `not_documented` /
-`"undocumented"` where these apply. Finding IDs (`A-nn`) refer to
-`DOCS_AUDIT.md`.
+U-09 and U-11 were decided in Phase 4 (2026-09-25); U-08 was decided in
+Phase 5 planning (2026-09-25); U-02 and U-04 were applied by default (not
+decided, reversible). U-05 was deferred in Phase 3. U-10 remains open.
+Nothing below has been silently resolved: every normalized file and the
+`proxy-api.ts` content keep `not_documented` / `"undocumented"` where these
+apply. Finding IDs (`A-nn`) refer to `DOCS_AUDIT.md`.
 
 Items marked **Blocks Phase 4** need a decision or input before the
 one-endpoint vertical slice can be built truthfully.
@@ -153,8 +153,14 @@ one-endpoint vertical slice can be built truthfully.
   3. anything the user's key permits
 - Recommendation: (1). Always block `callback`, free-form `filter`, and
   every A-31 operation.
-- User decision: pending
-- Final status: open
+- User decision (2026-09-25, Phase 5 planning): option 1, narrowed further —
+  only `reqtype=INFO&info=EXTENSIONS` (the Phase 4 endpoint) is allowlisted,
+  not "every read-only reqtype." Widening the allowlist to more reqtypes is
+  a separate, later, explicit decision (Phase 7 scope). Params on this one
+  target: `tenant`, `id`, `number` (the credential `key` travels separately,
+  never as an overridable param). Enforced in `src/server/playground/
+  allowlist.ts`, asserted against the content model at module load.
+- Final status: **decided**
 
 ## U-09 — Key scopes vs "all reqtypes exposed" — Blocks Phase 4 (auth docs)
 

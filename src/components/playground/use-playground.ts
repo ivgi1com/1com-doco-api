@@ -2,27 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { ApiDefinition, Endpoint } from "@/content/types";
-import { byteSize } from "@/lib/json-path";
+import { demoProvider, liveProvider, type PlaygroundResponse } from "./executor";
 
 export type PlaygroundMode = "live" | "demo";
 
-export type PlaygroundResponse =
-  | {
-      source: "DEMO";
-      unavailable?: false;
-      status: number;
-      latencyMs: number;
-      sizeBytes: number;
-      requestId: string;
-      body: unknown;
-    }
-  // Non-synthetic APIs have no Demo fixtures yet (Phase 6) and must never
-  // replay a real observed response (Evidence rule, API_CONTENT_MODEL.md).
-  | { source: "DEMO"; unavailable: true }
-  | {
-      source: "LIVE";
-      error: true;
-    };
+export type { PlaygroundResponse } from "./executor";
 
 const API_KEY_STORAGE = "portal-playground-api-key";
 const API_KEY_EVENT = "portal-playground-api-key-change";
@@ -30,12 +14,6 @@ const API_KEY_EVENT = "portal-playground-api-key-change";
 /** Field values are keyed `${location}:${name}`, e.g. "path:call_id". */
 export function fieldKey(location: string, name: string) {
   return `${location}:${name}`;
-}
-
-function randomId(prefix: string) {
-  const bytes = new Uint8Array(6);
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) crypto.getRandomValues(bytes);
-  return `${prefix}_${Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")}`;
 }
 
 function defaultFieldValues(endpoint: Endpoint): Record<string, string> {
@@ -72,7 +50,7 @@ function subscribeApiKey(cb: () => void) {
   return () => window.removeEventListener(API_KEY_EVENT, cb);
 }
 
-export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
+export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvailable: boolean) {
   const [mode, setMode] = useState<PlaygroundMode>("demo");
   const [pendingMode, setPendingMode] = useState<PlaygroundMode | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => defaultFieldValues(endpoint));
@@ -85,16 +63,16 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
   const [response, setResponse] = useState<PlaygroundResponse | null>(null);
   const [mobileStep, setMobileStep] = useState<0 | 1 | 2>(1);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
-  const sendTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const abortRef = useRef<AbortController | undefined>(undefined);
   const endpointRef = useRef(endpoint);
   // Bumped whenever an in-flight send should be abandoned (endpoint change,
-  // mode switch, unmount), so its setTimeout callback can no-op instead of
-  // applying a stale response for the wrong endpoint/mode.
+  // mode switch, unmount), so a late result can no-op instead of applying a
+  // stale response for the wrong endpoint/mode.
   const requestTokenRef = useRef(0);
 
   const abandonInFlightSend = useCallback(() => {
     requestTokenRef.current += 1;
-    clearTimeout(sendTimeoutRef.current);
+    abortRef.current?.abort();
     clearInterval(timerRef.current);
     setSending(false);
   }, []);
@@ -113,7 +91,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
   useEffect(
     () => () => {
       clearInterval(timerRef.current);
-      clearTimeout(sendTimeoutRef.current);
+      abortRef.current?.abort();
     },
     [],
   );
@@ -161,6 +139,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
 
   const validate = useCallback((): Record<string, string> => {
     const next: Record<string, string> = {};
+    if (mode === "live" && !apiKey.trim()) next.apiKey = "apiKey";
     for (const p of endpoint.pathParameters) {
       const key = fieldKey("path", p.name);
       if (!fieldValues[key]?.trim()) next[key] = p.name;
@@ -177,9 +156,10 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
       if (!fieldValues[key]?.trim()) next[key] = p.name;
     }
     return next;
-  }, [endpoint, fieldValues]);
+  }, [apiKey, endpoint, fieldValues, mode]);
 
   const send = useCallback(() => {
+    if (mode === "live" && !liveAvailable) return;
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -192,40 +172,31 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint) {
     const start = performance.now();
     timerRef.current = setInterval(() => setElapsedMs(performance.now() - start), 60);
     const token = ++requestTokenRef.current;
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-    const finish = () => {
-      // The endpoint or mode changed (or the component unmounted) while this
-      // request was in flight; abandonInFlightSend already bumped the token
-      // and reset `sending`/timers. Applying this response now would silently
-      // repopulate the response pane with data for the wrong endpoint/mode.
-      if (token !== requestTokenRef.current) return;
-      clearInterval(timerRef.current);
-      setSending(false);
-      if (mode === "live") {
-        setResponse({ source: "LIVE", error: true });
-        return;
-      }
-      if (!api.synthetic) {
-        setResponse({ source: "DEMO", unavailable: true });
-        return;
-      }
-      const success = endpoint.responses.find((r) => r.status < 300);
-      const failure = endpoint.responses.find((r) => r.status >= 400);
-      const chosen = (simulateError && failure) || success || endpoint.responses[0];
-      const body = chosen?.example ?? null;
-      setResponse({
-        source: "DEMO",
-        status: chosen?.status ?? 200,
-        latencyMs: Math.round(180 + Math.random() * 460),
-        sizeBytes: byteSize(body),
-        requestId: randomId("req_demo"),
-        body,
+    // One provider per mode; no fallback between them (docs/SECURITY.md).
+    const provider = mode === "live" ? liveProvider : demoProvider;
+    provider
+      .execute({ api, endpoint, fieldValues, credential: apiKey, simulateError }, controller.signal)
+      .then(
+        (result: PlaygroundResponse) => {
+          // The endpoint or mode changed (or the component unmounted) while
+          // this request was in flight; abandonInFlightSend already reset
+          // `sending`/timers. Applying this now would show the wrong response.
+          if (token !== requestTokenRef.current) return;
+          setResponse(result);
+        },
+        () => {
+          // Only an abort rejects; abandonInFlightSend owns the cleanup.
+        },
+      )
+      .finally(() => {
+        if (token !== requestTokenRef.current) return;
+        clearInterval(timerRef.current);
+        setSending(false);
       });
-    };
-
-    const delay = mode === "live" ? 500 : 400 + Math.random() * 500;
-    sendTimeoutRef.current = setTimeout(finish, delay);
-  }, [api, endpoint, mode, simulateError, validate]);
+  }, [api, apiKey, endpoint, fieldValues, liveAvailable, mode, simulateError, validate]);
 
   return {
     mode,

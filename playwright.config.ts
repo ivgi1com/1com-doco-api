@@ -18,6 +18,12 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run build && npm run start",
+    // Live proxying is on so tests can exercise the real allowlist/UI wiring
+    // for proxy/info-extensions. This is still safe: every test that sends a
+    // Live request first installs a `page.route("**/api/playground", ...)`
+    // mock, which intercepts the browser's request before it ever reaches
+    // this server — no test may send a real, unmocked Live request.
+    env: { PLAYGROUND_LIVE_ENABLED: "true" },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

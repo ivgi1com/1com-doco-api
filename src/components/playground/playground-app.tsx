@@ -16,14 +16,18 @@ export function PlaygroundApp({
   api,
   initialEndpoint,
   samplesByEndpoint,
+  liveEndpointIds,
 }: {
   api: ApiDefinition;
   initialEndpoint: Endpoint;
   samplesByEndpoint: Record<string, RenderedSample[]>;
+  /** Allowlisted `${api}/${endpoint}` ids; empty when Live is disabled server-side. */
+  liveEndpointIds: string[];
 }) {
   const router = useRouter();
   const [endpoint, setEndpoint] = useState(initialEndpoint);
-  const state = usePlayground(api, endpoint);
+  const liveAvailable = liveEndpointIds.includes(`${api.id}/${endpoint.id}`);
+  const state = usePlayground(api, endpoint, liveAvailable);
   const samples = samplesByEndpoint[endpoint.id] ?? [];
 
   const selectEndpoint = useCallback(
@@ -36,9 +40,15 @@ export function PlaygroundApp({
 
   const endpointPane = <EndpointPicker api={api} selected={endpoint} onSelect={selectEndpoint} />;
   const requestPane = (
-    <RequestBuilder endpoint={endpoint} samples={samples} state={state} synthetic={api.synthetic} />
+    <RequestBuilder
+      endpoint={endpoint}
+      samples={samples}
+      state={state}
+      synthetic={api.synthetic}
+      liveAvailable={liveAvailable}
+    />
   );
-  const responsePane = <ResponseViewer state={state} />;
+  const responsePane = <ResponseViewer state={state} endpoint={endpoint} />;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

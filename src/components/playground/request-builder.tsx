@@ -7,7 +7,7 @@ import type { RenderedSample } from "@/components/code/code-tabs";
 import { CodeTabs } from "@/components/code/code-tabs";
 import { MethodBadge } from "@/components/ui/method-badge";
 import type { Endpoint } from "@/content/types";
-import { API_KEY_ENV } from "@/lib/code-samples";
+import { authEnvVar } from "@/lib/code-samples";
 import { ParamField } from "./param-field";
 import { fieldKey, type PlaygroundState } from "./use-playground";
 
@@ -28,11 +28,14 @@ export function RequestBuilder({
   samples,
   state,
   synthetic,
+  liveAvailable,
 }: {
   endpoint: Endpoint;
   samples: RenderedSample[];
   state: PlaygroundState;
   synthetic: boolean;
+  /** False when this endpoint isn't allowlisted for Live, or Live is disabled server-side. */
+  liveAvailable: boolean;
 }) {
   const t = useTranslations("playground");
   const te = useTranslations("endpoint");
@@ -53,6 +56,8 @@ export function RequestBuilder({
   } = state;
 
   const hasErrors = Object.keys(errors).length > 0;
+  const envVar = authEnvVar(endpoint);
+  const liveBlocked = mode === "live" && !liveAvailable;
 
   return (
     <div className="space-y-5 p-4">
@@ -74,7 +79,9 @@ export function RequestBuilder({
               autoComplete="off"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder={`$${API_KEY_ENV}`}
+              placeholder={`$${envVar}`}
+              aria-invalid={!!errors.apiKey}
+              aria-describedby={errors.apiKey ? `${keyId}-error` : undefined}
               className="h-8 w-full rounded-md border border-border-control bg-bg px-2.5 text-sm text-ink placeholder:text-ink-muted"
             />
             <button
@@ -86,6 +93,11 @@ export function RequestBuilder({
               {keyRevealed ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
             </button>
           </div>
+          {errors.apiKey && (
+            <p id={`${keyId}-error`} className="mt-1 text-xs text-danger-ink">
+              {t("requiredField", { name: t("apiKey") })}
+            </p>
+          )}
           <p className="mt-1 text-xs text-ink-muted">{t("apiKeyHelp")}</p>
         </div>
       )}
@@ -169,7 +181,7 @@ export function RequestBuilder({
         <button
           type="button"
           onClick={send}
-          disabled={sending}
+          disabled={sending || liveBlocked}
           className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-accent text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {sending ? t("sending") : t("send")}
@@ -177,6 +189,7 @@ export function RequestBuilder({
         {mode === "demo" && (
           <p className="text-xs text-ink-muted">{synthetic ? t("prototypeNote") : t("demoUnavailableNote")}</p>
         )}
+        {liveBlocked && <p className="text-xs text-ink-muted">{t("liveUnavailable")}</p>}
       </div>
     </div>
   );

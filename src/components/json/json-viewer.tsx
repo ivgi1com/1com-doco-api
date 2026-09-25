@@ -1,11 +1,25 @@
 "use client";
 
-import { Copy, ListTree, Search } from "lucide-react";
+import { Copy, Download, ListTree, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 import { copyText } from "@/components/code/copy-button";
 import { formatJsonPath, type PathSegment } from "@/lib/json-path";
 import { JsonNode } from "./json-node";
+
+function downloadJson(text: string, filename: string) {
+  try {
+    const blob = new Blob([text], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    // Best-effort; no fallback needed (Copy JSON remains available).
+  }
+}
 
 function isContainer(value: unknown): value is Record<string, unknown> | unknown[] {
   return typeof value === "object" && value !== null;
@@ -54,10 +68,12 @@ export function JsonViewer({
   data,
   className = "",
   maxHeight = "28rem",
+  filename = "response.json",
 }: {
   data: unknown;
   className?: string;
   maxHeight?: string;
+  filename?: string;
 }) {
   const t = useTranslations("json");
   const searchId = useId();
@@ -153,6 +169,14 @@ export function JsonViewer({
         >
           <Copy className="size-3.5" aria-hidden />
           {t("copy")}
+        </button>
+        <button
+          type="button"
+          onClick={() => downloadJson(raw, filename)}
+          className="flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-code-muted hover:bg-code-surface hover:text-code-ink"
+        >
+          <Download className="size-3.5" aria-hidden />
+          {t("download")}
         </button>
       </div>
 
