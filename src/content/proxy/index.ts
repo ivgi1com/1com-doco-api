@@ -11,6 +11,14 @@ import {
 } from "./calls";
 import { cdrCategory } from "./cdr";
 import { dialCategory } from "./dial";
+import {
+  blfsCategory,
+  countpeersCategory,
+  peersCategory,
+  rebootCategory,
+  unregisterCategory,
+  virtualextCategory,
+} from "./extensions";
 import { infoCategory } from "./info";
 import { managedbCategory } from "./managedb";
 import { PROXY_BASE_URL } from "./shared";
@@ -34,14 +42,20 @@ export const proxyApi: ApiDefinition = {
     infoCategory,
     agentCategory,
     atxtransferCategory,
+    blfsCategory,
     cdrCategory,
     channelCategory,
     channelsCategory,
     countcallsCategory,
     countchannelsCategory,
+    countpeersCategory,
     dialCategory,
     hangupCategory,
     managedbCategory,
+    peersCategory,
+    rebootCategory,
     transferCategory,
+    unregisterCategory,
+    virtualextCategory,
   ],
 };
