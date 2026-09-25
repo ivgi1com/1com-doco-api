@@ -584,6 +584,29 @@ A-50 — `QUEUELOGS` returns no observable data on the test tenant (OBSERVED)
   (invalid JSON); default and `format=csv` → 0-byte body.
 - Structure is therefore unknown. Demo for this operation is blocked until a
   tenant/queue with queue-log data is supplied (user decision, 2026-09-25).
+- **Update, 2026-09-25 — one record supplied by the user** (pasted into the
+  session, `format=json`; tenant and request params not stated). Redacted
+  copy: `source-docs/observed/info-queuelogs.json`. Observed:
+  - JSON array of records. Each record has 156 named fields, each duplicated
+    under a bare positional key `"0"`..`"155"` (same pattern as SIMPLECDRS,
+    A-49).
+  - Fields 0–8 are the queue log itself: `time` (`YYYY-MM-DD HH:MM:SS`),
+    `qu_name`, `callerid`, `disposition`, `agent`, `holdtime`, `calltime`,
+    `origpos`, `callid` (`<host>-<epoch>.<seq>`, same shape as
+    `sc_uniqueid`).
+  - Fields 9–155 are `ex_id`..`ex_pinlocked`: the full extension row,
+    evidently joined on the answering agent (see A-55).
+  - The one record is `disposition=ABANDONED`, `agent`/`calltime` null, and
+    every `ex_*` field null. Non-null values are strings.
+  - The paste was truncated before the first key; key `"0"` = `time` is
+    inferred from the positional pattern.
+- Still unobserved: answered-call records (and so what the `ex_*` block
+  holds when non-null), other `disposition` values, `format=csv` and
+  default with data, and whether `queue`/`start`/`end` filter as named.
+- Demo (user decision, 2026-09-25): reproduce the full 156-key shape with
+  every `ex_*` null; offer only the observed cases (this ABANDONED record
+  in json, plus the two empty results above). Everything else shows
+  "Not simulated".
 
 A-51 — `EXTENSIONS` (OBSERVED; confirms A-40)
 
@@ -639,3 +662,25 @@ decoded (OBSERVED; found while building Demo fixtures, 2026-09-25)
   (`src/content/demo/proxy.ts`) — `json` and `csv`, both cleanly understood,
   are offered instead. Re-running the probe with a header-safe capture of
   this specific response would resolve it, if ever needed.
+
+A-55 — `QUEUELOGS` records embed the agent's full extension row, including
+credential fields (OBSERVED shape; values not yet observed; SECURITY)
+
+- Fields 9–155 of every QUEUELOGS record (A-50) are the `extensions` table
+  row: the same `ex_*` names `EXTENSIONS` returns in `format=json` (A-51).
+  They include credential/PII fields: `ex_webpassword`, `ex_token`,
+  `ex_token_validity`, `ex_2fa_param1`..`ex_2fa_param3`, `ex_lockpin`,
+  `ex_email`, `ex_alertemail`, `ex_webuser`.
+- In the only record observed (ABANDONED, no agent) all are null. The join
+  presumably fills them for an answered call; that is **inferred, not
+  observed**.
+- Each credential value would also appear a second time under its bare
+  positional key (e.g. `"43"` = `ex_webpassword`, `"44"` = `ex_token`), which
+  name-based redaction cannot match.
+- Consequence: QUEUELOGS must not be added to the Live allowlist without a
+  per-item output-field allowlist in `LIVE_POLICIES`
+  (`src/server/playground/allowlist.ts`), as EXTENSIONS has, that drops the
+  positional keys as well. It is not on the allowlist today. Demo is
+  unaffected: every `ex_*` value there is null.
+- Tracked as blocking requirement **SEC-REQ-01** in `docs/SECURITY.md`
+  "Blocking requirements for future Live enablement".

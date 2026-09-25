@@ -52,7 +52,7 @@ function PortalErrorCallout({
           })}
         </p>
       </Callout>
-      <div dir="ltr" className="rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-muted">
+      <div dir="ltr" className="break-all rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-muted">
         {response.request.method} {response.request.url}
       </div>
     </div>
@@ -136,7 +136,7 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
         <Callout kind="note" title={t("notSimulatedTitle")}>
           <p>{t("notSimulatedBody")}</p>
         </Callout>
-        <div dir="ltr" className="rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-muted">
+        <div dir="ltr" className="break-all rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-muted">
           {response.request.method} {response.request.url}
         </div>
       </div>

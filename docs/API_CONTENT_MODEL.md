@@ -102,6 +102,25 @@ Evidence rule: only `synthetic` examples may be replayed by Demo mode. An
 replaced. It is published as evidence, labelled as such, and never served
 as Demo data.
 
+### Demo fixtures are a separate model (Phase 6)
+
+A synthetic, replayable Demo response is **not** an `Endpoint.responses`
+entry — it lives in `src/content/demo/` as a `DemoFixtureSet` (see
+`docs/ARCHITECTURE.md` "Demo fixture system"), keyed to the endpoint by id
+rather than embedded in its content. This keeps the endpoint's own
+`responses` reserved for real evidence (`vendor` / `observed-sanitized`),
+never mixed with fabricated data, and lets Demo coverage be partial:
+a `DemoFixtureSet` only ever covers the parameter combinations someone has
+actually observed (each case cites the `DOCS_AUDIT.md` finding it
+reproduces); anything else is "Not simulated" rather than a guess.
+
+Three operations so far (`info-agents`, `info-simplecdrs`,
+`info-queuelogs`) were independently observed to duplicate every JSON field
+under a second, bare positional key (`"0"`, `"1"`, ...) alongside its name.
+This is a recurring shape in this vendor's API, not an isolated quirk — a
+new operation with named JSON fields should be checked for it before
+assuming a plain object.
+
 ## Authentication
 
 `location` and `parameter` drive the code samples: a header credential, or

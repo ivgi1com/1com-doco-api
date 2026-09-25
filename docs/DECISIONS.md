@@ -688,3 +688,47 @@ Status: Stage A (verification) done and committed (`e05cfcb`, `0631a95`
 on `phase/demo-mode`). Stage B (fixtures + UI) in progress, uncommitted —
 see `docs/SESSION_HANDOFF.md` for the exact file-by-file state and the
 next action.
+
+## 2026-09-25 — Phase 6 (Demo Mode) approved, gate B — QUEUELOGS added, SEC-REQ-01 recorded
+
+Approved by the user (gate B: approve, save, and stop; next phase not
+started). Supersedes "Demo Playground rescoped to 5 operations" above:
+all 5 operations now have Demo fixtures, including `QUEUELOGS`, which was
+unblocked mid-session by one real record the user pasted in.
+
+Decisions:
+- **QUEUELOGS shape**: reproduce the full observed 156-key record (9
+  queue-log fields + the answering agent's 147-field extension-row join),
+  every `ex_*` field null, positional-key duplicates included — user's
+  explicit choice over a trimmed "queue fields only" alternative.
+- **QUEUELOGS scenarios**: observed-only (3 cases: one abandoned-call
+  record in json, plus the two known empty results) — user's explicit
+  choice over waiting for more samples. Answered calls, other
+  dispositions, and csv/default with data are "Not simulated" until
+  observed.
+- **New blocking security requirement, SEC-REQ-01** (`docs/SECURITY.md`):
+  the QUEUELOGS extension-row join carries credential fields
+  (`ex_webpassword`, `ex_token`, `ex_2fa_*`, `ex_lockpin`, `ex_email`),
+  each also duplicated under a bare positional key that name-based
+  redaction cannot match (A-55). QUEUELOGS must not be added to
+  `LIVE_POLICIES` until a strict, default-deny, per-item field allowlist
+  (covering positional keys too) is implemented and tested; user directed
+  this be recorded as blocking rather than change current scope.
+- Real evidence handling: the user's pasted record was redacted before
+  being written to disk (`source-docs/observed/info-queuelogs.json`); real
+  values (time, queue name, caller id, call id) never committed anywhere
+  else — verified by a repo-wide search before this commit.
+- **No merge to `main`**: approval is for the phase's completion, not a
+  merge; `phase/demo-mode` stays unmerged pending a separate, explicit
+  merge instruction (matching Phase 5's precedent — see "COMPLETE AND
+  APPROVED" above, "No tag"). No tag created this round either, for the
+  same reason: not requested.
+
+Also fixed this session (not a scope decision, recorded for completeness):
+a mobile-width overflow bug in the Not-simulated/portal-error request-line
+boxes (missing `break-all`, `response-viewer.tsx`), and 5 Playwright
+locator strict-mode collisions in the Phase 6 test block, found while
+recovering from an interrupted validation run after an unexpected shutdown.
+
+Status: Phase 6 complete and approved. Full detail:
+`docs/CURRENT_STATUS.md`, `docs/SESSION_HANDOFF.md`.

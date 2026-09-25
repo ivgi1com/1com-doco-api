@@ -362,9 +362,108 @@ const infoSimplecdrsFixtures: DemoFixtureSet = {
   ],
 };
 
+// --- info-queuelogs (A-50, A-55) ---
+// Shape from the single user-supplied record (an abandoned call): 9 queue-log
+// fields, then the answering agent's full extension row (ex_*), all 156
+// duplicated under positional keys. Every ex_* value is null here, as
+// observed — never filled in, since that row carries credential fields
+// (A-55). Only observed outcomes are simulated: answered calls and csv with
+// data show "Not simulated".
+
+const QUEUELOG_FIELDS = ["time", "qu_name", "callerid", "disposition", "agent", "holdtime", "calltime", "origpos", "callid"] as const;
+
+// Observed order (tests/unit/demo-fixtures.test.ts checks it against
+// source-docs/observed/info-queuelogs.json).
+const QUEUELOG_EXTENSION_FIELDS = (
+  "ex_id ex_te_id ex_name ex_tech ex_number ex_trunk ex_tech_id ex_cidnum ex_cidname ex_cidusage ex_blockcid " +
+  "ex_prefix ex_mindigitprefix ex_maxdigitprefix ex_fmfmstatus ex_fmfmnumber ex_fmfmdialtimeout ex_fmfmdialmethod " +
+  "ex_fmfmcallerid ex_fmfmnumprefix ex_fmfmnameprefix ex_recording ex_dialtimeout ex_callgroup ex_pickupgroup " +
+  "ex_unconditionalstatus ex_onbusystatus ex_onofflinestatus ex_onnoanswerstatus ex_callallowed ex_destallowregex " +
+  "ex_rp_id ex_dnd ex_emergencycidnum ex_webpassword ex_token ex_token_validity ex_up_id ex_userpanel " +
+  "ex_datecreation ex_emailrecording ex_fmfmconfirm ex_fmfmconfirmmessage_id ex_minemailrecording ex_branch " +
+  "ex_department ex_autocallerid ex_trunkcidoverride ex_trunkemergencycidoverride ex_cr_id ex_trunkcidsource " +
+  "ex_description ex_fmfmholdmessage_id ex_notifymissingemail ex_webuseldap ex_webuser ex_txvolume ex_rxvolume " +
+  "ex_mu_id ex_faxgateway ex_faxalert ex_trunkdid ex_fmfmdelay ex_includeindbn ex_abusedetection ex_referenceid " +
+  "ex_notes ex_callwaiting ex_costlimits ex_dailycostlimit ex_dailycostlimitdom ex_dailycostlimitint " +
+  "ex_routecostlimit ex_dailycostwarning ex_dailycostwarningdom ex_dailycostwarningint ex_lastcostalert ex_cl_id " +
+  "ex_alertemail ex_includeinpb ex_onconditionstatus ex_oncondition_id ex_autoanswer ex_autocidname " +
+  "ex_regexprefix ex_fromfilterregex ex_ignoreemptyemergcallerid ex_overridesippermit ex_webrtcsupport " +
+  "ex_blockanonymous ex_dn_me_id ex_spygroups ex_email ex_inboundblockcid ex_inboundblockcidname " +
+  "ex_applyalwaysrpid ex_mailbox ex_outboundtimeout ex_smscidnum ex_useragentsecurity ex_useragentallowed " +
+  "ex_sms_rp_id ex_callallowedreason ex_permit ex_permit_fqdn ex_calleridregexsamesms ex_ignoreinternalmissed " +
+  "ex_webphone ex_prefixdefault ex_regexprefixdefault ex_alertwhenoffline ex_lastofflinealert ex_emergencynotes " +
+  "ex_parkinglot ex_monthlycostlimit ex_monthlycostlimitdom ex_monthlycostlimitint ex_monthlycostwarning " +
+  "ex_monthlycostwarningdom ex_monthlycostwarningint ex_workinghours ex_enableworkinghours ex_useextcallerid " +
+  "ex_pushnotification ex_ignorequeuemissed ex_fmfmonconditionid ex_transcript ex_outboundrecordingmessage " +
+  "ex_sw_id ex_overridecidnum ex_overridecidname ex_privacyrecording ex_userapp ex_ipfilter ex_useipfilter " +
+  "ex_switchboard ex_aisummary ex_aisentiment ex_2fatype ex_2fa_param1 ex_2fa_param2 ex_2fa_param3 " +
+  "ex_lastchange ex_neverexpire ex_passwordlocked ex_lockpin ex_pinlocked"
+).split(" ");
+
+const DEMO_QUEUE = "281"; // same fictional example value as info-agents (KNOWN_QUEUE).
+const UNKNOWN_QUEUE = "999999";
+
+function queuelogRecord(fields: Record<(typeof QUEUELOG_FIELDS)[number], string | null>) {
+  const values: (string | null)[] = [
+    ...QUEUELOG_FIELDS.map((f) => fields[f]),
+    ...QUEUELOG_EXTENSION_FIELDS.map(() => null),
+  ];
+  const names = [...QUEUELOG_FIELDS, ...QUEUELOG_EXTENSION_FIELDS];
+  // The raw response interleaves "0", "time", "1", "qu_name", ...; a JS object
+  // always enumerates integer-like keys first, so that order can't be kept
+  // (nor can any JSON.parse consumer see it).
+  return Object.fromEntries(names.flatMap((name, i) => [[String(i), values[i]], [name, values[i]]]));
+}
+
+const demoQueueLogs = [
+  queuelogRecord({
+    time: "2026-01-15 09:31:12",
+    qu_name: "Demo Support Queue",
+    callerid: "5550101003",
+    disposition: "ABANDONED",
+    agent: null,
+    holdtime: "31",
+    calltime: null,
+    origpos: "1",
+    callid: "demo01-1768469472.1003",
+  }),
+];
+
+const infoQueuelogsFixtures: DemoFixtureSet = {
+  endpoint: "proxy/info-queuelogs",
+  evidence: "synthetic",
+  cases: [
+    {
+      id: "abandoned-json",
+      label: "Abandoned call (JSON)",
+      basis: "A-50: one observed record — 156 fields duplicated under positional keys; ex_* all null for an abandoned call.",
+      when: { tenant: "*", queue: ["", DEMO_QUEUE], start: "*", end: "*", format: ["json"] },
+      preset: { tenant: TENANT, queue: DEMO_QUEUE, start: "2026-01-15", end: "2026-01-16", format: "json" },
+      response: { status: 200, format: "json", contentType: "application/json", body: demoQueueLogs },
+    },
+    {
+      id: "no-data-json",
+      label: "No data (JSON)",
+      basis: "A-50: with no queue-log data, format=json returns the single byte ] — not valid JSON.",
+      when: { tenant: "*", queue: [UNKNOWN_QUEUE], start: "*", end: "*", format: ["json"] },
+      preset: { tenant: TENANT, queue: UNKNOWN_QUEUE, start: "2026-01-15", end: "2026-01-16", format: "json" },
+      response: { status: 200, format: "text", contentType: "application/json", body: "]" },
+    },
+    {
+      id: "no-data-csv",
+      label: "No data (CSV)",
+      basis: "A-50: with no queue-log data, format=csv returns an empty body. Content type as other non-JSON output (A-41).",
+      when: { tenant: "*", queue: [UNKNOWN_QUEUE], start: "*", end: "*", format: ["csv"] },
+      preset: { tenant: TENANT, queue: UNKNOWN_QUEUE, start: "2026-01-15", end: "2026-01-16", format: "csv" },
+      response: { status: 200, format: "text", contentType: "text/html; charset=UTF-8", body: "" },
+    },
+  ],
+};
+
 export const proxyDemoFixtures: readonly DemoFixtureSet[] = [
   infoExtensionsFixtures,
   infoAgentsFixtures,
   infoDidsFixtures,
   infoSimplecdrsFixtures,
+  infoQueuelogsFixtures,
 ];

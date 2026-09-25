@@ -204,15 +204,19 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText("PROXY_API_KEY")).toBeVisible();
     });
 
-    test("Demo mode never fabricates or replays data for this endpoint", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+    // info-extensions gained Demo fixtures in Phase 6 (see "Demo Mode (Phase
+    // 6)" below); cdr-get still has none, so it's the one that still
+    // exercises the no-fixture-set fallback ("unavailable" — never a
+    // fabricated or replayed response).
+    test("Demo mode never fabricates or replays data for an endpoint with no fixtures", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
     });
 
     test("undocumented-required query parameters never block Send", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("/en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByLabel("tenant").fill("");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toHaveCount(0);
@@ -598,6 +602,181 @@ test.describe("interactions", () => {
       const responseTablist = page.getByRole("tablist").filter({ hasText: "Headers" });
       await responseTablist.getByRole("tab", { name: "Request" }).first().click();
       await expect(page.getByText(/key=••••/).first()).toBeVisible();
+    });
+  });
+
+  // Phase 6: Demo Mode fixtures for 4 of the 5 rescoped operations
+  // (info-extensions, info-agents, info-dids, info-simplecdrs — QUEUELOGS is
+  // blocked on real data, docs/SESSION_HANDOFF.md A-50). Demo is the
+  // Playground's default mode; none of these tests switch to Live, and
+  // demoProvider (executor.ts) never makes a network request — several
+  // tests below assert that directly.
+  test.describe("Demo Mode (Phase 6)", () => {
+    // Each endpoint's own documented example values, plugged through
+    // resolveDemoCase by hand: this is the scenario Send resolves to with no
+    // field changed, i.e. the fixture set actually covers the endpoint's own
+    // stated defaults.
+    const defaultResolves: { endpoint: string; label: string }[] = [
+      { endpoint: "proxy/info-extensions", label: "Extension list (plain)" },
+      { endpoint: "proxy/info-agents", label: "Queue agents (plain)" },
+      { endpoint: "proxy/info-dids", label: "DID list (plain)" },
+    ];
+
+    for (const { endpoint, label } of defaultResolves) {
+      test(`${endpoint}: default field values resolve a real Demo scenario, not Not simulated`, async ({ page }) => {
+        await page.goto(`/en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText("Scenario:")).toBeVisible();
+        // `label` also names the scenario chip button itself; `.last()` reaches
+        // the response's own "Scenario: <label>" line, matching the pattern
+        // used elsewhere in this block (e.g. line 669, 657).
+        await expect(desktopPane(page).getByText(label).last()).toBeVisible();
+        await expect(desktopPane(page).getByText("Not simulated")).toHaveCount(0);
+      });
+    }
+
+    // info-simplecdrs' default/plain format is deliberately not offered
+    // (A-54), so its default field values (format unset) match no case —
+    // the one fixture-backed endpoint whose *default* Send is Not simulated,
+    // exercising that path without contriving a param combination by hand.
+    test("info-simplecdrs: the unset-format default is Not simulated; a scenario chip resolves it", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-simplecdrs");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
+      await expect(
+        desktopPane(page).getByText(
+          "This exact combination of parameters was never observed on the real API, so Demo mode won't guess a response. Try one of the scenario chips, or switch to Live.",
+        ),
+      ).toBeVisible();
+      // Not simulated still shows the equivalent request line, never a fabricated body.
+      // `.first()` reaches the endpoint-path <code> element; the same substring
+      // also appears in the full-URL and curl-command lines below it.
+      await expect(
+        desktopPane(page).getByText(/reqtype=INFO&info=SIMPLECDRS/).first(),
+      ).toBeVisible();
+      await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
+
+      await desktopPane(page).getByRole("button", { name: "Calls, unfiltered (JSON)" }).click();
+      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Calls, unfiltered (JSON)").last()).toBeVisible();
+    });
+
+    test("a scenario chip fills the endpoint's own query fields, then Send reflects that exact scenario", async ({
+      page,
+    }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await desktopPane(page).getByRole("button", { name: "Unknown queue (JSON null)" }).click();
+      await expect(desktopPane(page).getByLabel("queue", { exact: true })).toHaveValue("999999");
+      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Unknown queue (JSON null)").last()).toBeVisible();
+      // Scoped to the JSON tree itself: "null" also appears as a substring of
+      // the chip button and scenario-line labels above.
+      await expect(desktopPane(page).getByTestId("json-content").getByText("null")).toBeVisible();
+    });
+
+    test("Simulate error is hidden once an endpoint has fixtures, unlike the fixture-less Sample API", async ({
+      page,
+    }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
+      await page.goto("/en/playground?endpoint=sample/list-call-records");
+      await expect(desktopPane(page).getByText("Simulate error response")).toBeVisible();
+    });
+
+    test("Demo mode makes no network request, across a scenario-chip + Send flow", async ({ page }) => {
+      let called = false;
+      await page.route("**/api/playground", (route) => {
+        called = true;
+        return route.abort();
+      });
+      await page.goto("/en/playground?endpoint=proxy/info-dids");
+      await desktopPane(page).getByRole("button", { name: "CSV (empty)" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      expect(called).toBe(false);
+    });
+
+    test("the Request tab is available for Demo too, explicitly marked not sent", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await desktopPane(page).getByRole("tab", { name: "Request" }).click();
+      await expect(
+        desktopPane(page).getByText("Not sent — Demo. This shows what the equivalent Live request would look like."),
+      ).toBeVisible();
+      // `.first()` reaches the endpoint-path <code> element; the same substring
+      // also appears in the full-URL and curl-command lines below it.
+      await expect(
+        desktopPane(page).getByText(/reqtype=INFO&info=EXTENSIONS/).first(),
+      ).toBeVisible();
+    });
+
+    test("mobile: a Demo scenario resolves through the step flow", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await page.getByRole("button", { name: "Send request" }).first().click();
+      await page.getByRole("tab", { name: "Response" }).click();
+      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText("Queue agents (plain)").first()).toBeVisible();
+    });
+
+    // Scenario labels are English-only by content-language decision (Phase 4,
+    // demo/types.ts DemoCase.label); the surrounding chrome is Hebrew.
+    test("he: scenario labels and the response stay English while the surrounding UI is Hebrew", async ({ page }) => {
+      await page.goto("/he/playground?endpoint=proxy/info-dids");
+      // Mobile step-flow and desktop grid are both mounted (CSS-hidden, not
+      // JS-unmounted), each with its own legend; scope to the desktop pane
+      // (this test uses the default desktop-sized viewport) like the rest of
+      // this file does.
+      await expect(desktopPane(page).getByText("תרחישים")).toBeVisible(); // "Scenarios" legend
+      const chip = page.getByRole("button", { name: "DID list (plain)" });
+      await expect(chip).toBeVisible();
+      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
+      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText("תרחיש:").first()).toBeVisible(); // "Scenario:" label
+      await expect(page.getByText("DID list (plain)").last()).toBeVisible();
+    });
+
+    test("he: Not simulated renders translated, resolved by the same English-labelled scenario chip", async ({
+      page,
+    }) => {
+      await page.goto("/he/playground?endpoint=proxy/info-simplecdrs");
+      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
+      await expect(page.getByText("לא מדומה").first()).toBeVisible({ timeout: 3000 }); // "Not simulated"
+      await page.getByRole("button", { name: "Calls, unfiltered (JSON)" }).first().click();
+      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
+      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
+    });
+
+    // info-queuelogs (A-50): one observed record, so only its observed
+    // outcomes are simulated; the default (format unset) is Not simulated.
+    test("info-queuelogs: default is Not simulated; the abandoned-call chip resolves the observed record", async ({
+      page,
+    }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
+
+      await desktopPane(page).getByRole("button", { name: "Abandoned call (JSON)" }).click();
+      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Abandoned call (JSON)").last()).toBeVisible();
+      await expect(desktopPane(page).getByTestId("json-content").getByText('"ABANDONED"').first()).toBeVisible();
+    });
+
+    test("info-queuelogs: the no-data JSON chip reproduces the single-byte ] body", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await desktopPane(page).getByRole("button", { name: "No data (JSON)" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText(/size: 1 B/)).toBeVisible();
+      await expect(desktopPane(page).locator("pre").filter({ hasText: /^\]$/ })).toBeVisible();
     });
   });
 });

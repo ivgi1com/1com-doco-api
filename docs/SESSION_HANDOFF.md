@@ -1,6 +1,60 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Demo Playground, 5 ops — mid-implementation, user-requested checkpoint — read this first)
+Last updated: 2026-09-25 (Phase 6 — Demo Mode, COMPLETE AND APPROVED, gate B — read this first)
+
+## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
+
+- Branch `phase/demo-mode`, committed on top of `950e1d4`. **Not merged
+  into `main`, not pushed, no tag** — none requested (matching Phase 5's
+  own precedent, see `docs/CURRENT_STATUS.md`). The next phase (Phase 7 —
+  Proxy API rollout) has **not started** and is waiting for a separate
+  approval before planning begins (gate B: stop completely, don't plan
+  ahead). Full decision record: `docs/DECISIONS.md` "Phase 6 (Demo Mode)
+  approved, gate B". Supersedes the Stage B checkpoint below in full (all
+  of its "not started yet" items are now done).
+- Session recovery after a PC shutdown: the interrupted Playwright run's
+  14 failures were test-only strict-mode locator collisions (scenario-chip
+  text repeated elsewhere); 5 locators fixed in `tests/e2e/smoke.spec.ts`.
+- Visual pass found a real bug: the Not-simulated and portal-error request
+  lines overflowed on mobile (no `break-all`). Fixed in
+  `response-viewer.tsx` (the portal-error one is Phase 5 code).
+- `tests/unit/demo-fixtures.test.ts` added (resolver, exhaustiveness,
+  shape and synthetic-value guards).
+- **QUEUELOGS added** (user-supplied record; user decisions: full 156-key
+  shape with every `ex_*` null; observed cases only):
+  - Evidence: `source-docs/observed/info-queuelogs.json` (real values
+    redacted; key "0" inferred from a truncated paste). Audit: A-50 updated,
+    A-55 added.
+  - Content: `infoQueuelogs` in `src/content/proxy-api.ts` (Queues,
+    "List queue calls"). Fixtures: 3 cases in `src/content/demo/proxy.ts`.
+    Unit and e2e tests added.
+  - **SEC-REQ-01** (`docs/SECURITY.md`, pointer in Phase 7 file): blocking
+    requirement before QUEUELOGS may ever go Live.
+- Checks: `npm run check` clean (194); `npm run build` clean; full
+  Playwright 127/134 (both projects, against the dev server).
+- **Known issues, recorded not fixed** (`docs/CURRENT_STATUS.md` has the
+  same note; both confirmed pre-existing via `git stash` back to
+  `950e1d4`, neither introduced by this phase):
+  - **6 failures** — "loads without console errors: /en/no-such-page"
+    (desktop/tablet/mobile). Cause: a dev-only React warning, "Encountered
+    a script tag while rendering React component" — almost certainly the
+    inline theme-init script in `src/app/[locale]/layout.tsx:62` (`<script
+    dangerouslySetInnerHTML={{__html: THEME_INIT_SCRIPT}}>`), surfaced via
+    the not-found boundary. Confirmed dev-only: the same check against a
+    production server (`npm run build && npm run start`, port 3001, this
+    session) shows only the expected 404 network-error entry, nothing
+    else. Not fixed here (Phase 5 layout code, out of Phase 6 scope) — a
+    fix, if wanted, would replace the inline `<script>` with Next's
+    `<Script>` component or move the theme-init logic out of the root
+    layout.
+  - **1 failure** — "search palette: keyboard shortcut opens it, Escape
+    closes it" (chromium-desktop only). Unrelated to Demo Mode (global
+    Ctrl+K search); confirmed pre-existing the same way; not investigated
+    further.
+- Phase 6 completion report was presented and approved (gate B) this
+  session; this checkpoint **is** that save. Next session: read this file
+  first, then wait for the user to request Phase 7 planning — do not start
+  it unprompted.
 
 ## WIP checkpoint — Demo Playground for 5 Proxy operations, Stage B in progress
 

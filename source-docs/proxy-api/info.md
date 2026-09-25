@@ -208,6 +208,16 @@ GET https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=APIKEY&reqtype=INFO&in
 ```
 Response: not documented (CSV column layout not given).
 
+### Observed response — `format=json` (user sample, 2026-09-25)
+Not from the 1com sources. One record, supplied by the user; redacted copy in
+`source-docs/observed/info-queuelogs.json`. JSON array; each record has 156
+named fields, each duplicated under a positional key `"0"`..`"155"`:
+`time, qu_name, callerid, disposition, agent, holdtime, calltime, origpos,
+callid`, then the joined extension row `ex_id`..`ex_pinlocked`, which includes
+credential fields. The only record observed was ABANDONED, with every `ex_*`
+field null. Empty results: `format=json` returns the single byte `]`; csv and
+default return 0 bytes. Details and open gaps: `DOCS_AUDIT.md` A-50, A-55.
+
 ---
 
 ## Doc-only `info` values (no Site example; purpose lines only, Doc 120–131, 135, 149)

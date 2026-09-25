@@ -514,6 +514,120 @@ const infoSimplecdrs: Endpoint = {
   related: [],
 };
 
+const queuelogsQueueParam: Parameter = {
+  ...agentsQueueParam,
+  description:
+    "Queue identifier. The source names it for queue logs (Doc line 151: \"queue id requested for agents info or queue logs\"). Whether it actually narrows the result was not observed (A-50): a nonexistent queue returned the same empty result as every other request on the test tenant.",
+  source: "source-docs/DOCS_AUDIT.md#a-50",
+};
+
+const queuelogsStartParam: Parameter = {
+  ...simplecdrsStartParam,
+  description: "Start date/time filter (Doc lines 152–153). Its effect on this operation was not observed (A-50).",
+  source: "source-docs/proxy-api/info.md",
+};
+
+const queuelogsEndParam: Parameter = {
+  ...simplecdrsEndParam,
+  description: "End date/time filter (Doc lines 152–153). Its effect on this operation was not observed (A-50).",
+  source: "source-docs/proxy-api/info.md",
+};
+
+const queuelogsFormatParam: Parameter = {
+  name: "format",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  enum: ["json", "csv"],
+  description:
+    "Output format. json returns an array of records, each field also duplicated under a bare positional key (observed from one user-supplied record, A-50). csv is the Site's own example format; only its empty result (0 bytes) has been observed. The default format's structure with data is unknown and is not offered here.",
+  source: "source-docs/DOCS_AUDIT.md#a-50",
+};
+
+const queuelogsItemSchema: Parameter[] = [
+  { name: "time", location: "body", type: "string", required: true, description: "Event time, \"YYYY-MM-DD HH:MM:SS\"." },
+  { name: "qu_name", location: "body", type: "string", required: true, description: "Queue name." },
+  { name: "callerid", location: "body", type: "string", required: true, description: "Caller number." },
+  { name: "disposition", location: "body", type: "string", required: true, description: "Observed value: ABANDONED. Other values not yet observed." },
+  { name: "agent", location: "body", type: "string", required: false, description: "Agent who took the call; null when abandoned." },
+  { name: "holdtime", location: "body", type: "string", required: true, description: "Seconds the caller waited in the queue." },
+  { name: "calltime", location: "body", type: "string", required: false, description: "Talk time in seconds; null when abandoned." },
+  { name: "origpos", location: "body", type: "string", required: true, description: "Caller's original position in the queue." },
+  { name: "callid", location: "body", type: "string", required: true, description: "Call identifier, \"<host>-<epoch>.<seq>\"." },
+  {
+    name: "ex_id … ex_pinlocked",
+    location: "body",
+    type: "string",
+    required: false,
+    description:
+      "147 fields: the answering agent's full extension row, same names as info=EXTENSIONS json (A-51). Null in the only record observed (an abandoned call). Includes credential fields, which is why this operation is not offered on Live (A-55, docs/SECURITY.md SEC-REQ-01).",
+  },
+];
+
+const infoQueuelogsResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "With format=json: a JSON array, one object per queue event; 156 named fields, each also under a bare positional key (\"0\"..\"155\", same order). Observed from a single user-supplied record, an abandoned call (A-50). No data: format=json returns the single byte ] (invalid JSON); csv and default return an empty body (A-50). The example is truncated: it shows the 9 queue-log fields and the first ex_* field only, without the positional keys.",
+  format: "json",
+  evidence: "observed-sanitized",
+  verified: true,
+  source: "source-docs/DOCS_AUDIT.md#a-50",
+  schema: [
+    {
+      name: "[ ]",
+      location: "body",
+      type: "object",
+      required: true,
+      description: "One item per queue event, plus every field duplicated under a bare positional key.",
+      children: queuelogsItemSchema,
+    },
+  ],
+  example: [
+    {
+      time: "2026-01-15 09:31:12",
+      qu_name: "Demo Support Queue",
+      callerid: "5550101003",
+      disposition: "ABANDONED",
+      agent: null,
+      holdtime: "31",
+      calltime: null,
+      origpos: "1",
+      callid: "demo01-1768469472.1003",
+      ex_id: null,
+    },
+  ],
+};
+
+const infoQueuelogs: Endpoint = {
+  id: "info-queuelogs",
+  api: "proxy",
+  version: "legacy",
+  category: "queues",
+  status: "legacy",
+  deprecation: infoExtensions.deprecation,
+  method: "GET",
+  methodBasis: "inferred",
+  path: "/pbx/proxyapi.php",
+  fixedQuery: { reqtype: "INFO", info: "QUEUELOGS" },
+  title: "List queue calls",
+  summary: "Returns the queue log: calls processed by a tenant's queues, with wait time, position and outcome.",
+  sourceUrl: NEW_SOURCE_SITE,
+  verification: { documented: true, implemented: true, tested: false, verified: false },
+  authentication: auth,
+  headers: [],
+  pathParameters: [],
+  queryParameters: [tenantParam, queuelogsQueueParam, queuelogsStartParam, queuelogsEndParam, queuelogsFormatParam],
+  requestBody: null,
+  responses: [infoQueuelogsResponse],
+  errors: "undocumented",
+  notes: [
+    "One operation of the Proxy API INFO reqtype (info=QUEUELOGS). Full audit: source-docs/proxy-api/info.md.",
+    "The response shape comes from one record supplied by the user (an abandoned call), not from the vendor documentation or a controlled probe (source-docs/DOCS_AUDIT.md A-50). Answered calls, other dispositions and csv/default output with data are not yet observed.",
+    "Each record embeds the answering agent's extension row, including credential fields, duplicated under positional keys (A-55). Not offered on Live until docs/SECURITY.md SEC-REQ-01 is implemented and validated.",
+  ],
+  related: [],
+};
+
 export const proxyApi: ApiDefinition = {
   id: "proxy",
   name: "Proxy API",
@@ -521,10 +635,10 @@ export const proxyApi: ApiDefinition = {
   baseUrl: "https://pbx6webserver.1com.co.il",
   synthetic: false,
   summary:
-    "1com's HTTP API for MiRTA PBX (proxyapi.php). Five read-only operations are documented here; the remaining reqtypes are audited in source-docs/proxy-api/ pending a later phase.",
+    "1com's HTTP API for MiRTA PBX (proxyapi.php). Six read-only operations are documented here; the remaining reqtypes are audited in source-docs/proxy-api/ pending a later phase.",
   categories: [
     { id: "extensions", title: "Extensions", endpoints: [infoExtensions] },
-    { id: "queues", title: "Queues", endpoints: [infoAgents] },
+    { id: "queues", title: "Queues", endpoints: [infoAgents, infoQueuelogs] },
     { id: "cdr", title: "Call records", endpoints: [cdrGet, infoSimplecdrs] },
     { id: "numbers", title: "Numbers", endpoints: [infoDids] },
   ],

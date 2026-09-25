@@ -54,3 +54,10 @@ Run final Proxy API architecture review.
 Refactor anything unnecessarily Proxy-specific.
 
 STOP for explicit approval before Open API.
+
+## Blocking security requirements
+
+Before any operation is added to the Live allowlist, check
+`docs/SECURITY.md` "Blocking requirements for future Live enablement".
+Open item: **SEC-REQ-01**. QUEUELOGS stays Demo-only until its response
+field allowlist is implemented and validated.

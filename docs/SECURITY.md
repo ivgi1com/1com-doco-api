@@ -226,3 +226,40 @@ Accepted (user decisions, 2026-09-25):
   limit; the upstream is authoritative for access.
 - **Tenant scoping is upstream's**: the portal does not check that `tenant`
   belongs to the key (unchanged from U-08).
+
+## Blocking requirements for future Live enablement
+
+Each item here blocks one operation from the Live allowlist
+(`src/server/playground/allowlist.ts#LIVE_POLICIES`) until it passes
+validation. Demo mode is unaffected by these requirements: its data is
+synthetic by construction.
+
+### SEC-REQ-01 — QUEUELOGS response field allowlist (BLOCKING, open)
+
+Recorded 2026-09-25 by user direction. Evidence: `source-docs/DOCS_AUDIT.md`
+A-50, A-55.
+
+Every `INFO QUEUELOGS` record embeds the answering agent's full extension row
+(`ex_*`, 147 fields). That row includes passwords, tokens, 2FA data, lock
+PINs, email addresses and other private extension data. Each value is also
+repeated under a bare numeric key (`"0"`..`"155"`). Name-based redaction
+cannot match those keys.
+
+QUEUELOGS stays **disabled for Live** until all of the following are
+implemented and validated:
+
+1. A strict server-side, per-item response field allowlist for QUEUELOGS in
+   `LIVE_POLICIES`.
+2. Sensitive `ex_*` fields are removed: passwords, tokens, 2FA data, lock
+   PINs, email where inappropriate, and other private extension data.
+3. The numeric/positional duplicate keys are removed as well, so the same
+   values cannot leak under an index.
+4. Default deny: any QUEUELOGS response field not explicitly approved is
+   dropped, including fields the upstream adds later.
+5. Tests prove that sensitive values cannot reach the browser. At minimum:
+   a unit test on the sanitizer with a record whose `ex_*` credential fields
+   and their positional twins are populated, and an end-to-end test through
+   `/api/playground` asserting none of them appear in the response.
+
+Closing this requirement needs an Opus security review (`CLAUDE.md` model
+routing), and the user's explicit approval to add QUEUELOGS to Live.

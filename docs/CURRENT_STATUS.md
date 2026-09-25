@@ -1,18 +1,40 @@
 # Current Status
 
 Current work:
-**Demo Playground for 5 Proxy operations — IN PROGRESS, mid-implementation**
-(branch `phase/demo-mode` @ `0631a95`). The user narrowed Demo scope to
-exactly 5 operations — `INFO SIMPLECDRS`, `QUEUELOGS`, `EXTENSIONS`,
-`AGENTS`, `DIDS` — built from real-API verification (a user-supplied TEST
-key/tenant, structure only, never written to disk) rather than the
-earlier 7-operation plan. Stage A (verification) is done and committed;
-Stage B (Demo fixtures + UI) is in progress and **uncommitted**.
-`QUEUELOGS` is blocked on real data (no observable structure on the test
-tenant) and is deferred; the other 4 operations are being implemented
-first, per the user's choice. Full detail: `docs/SESSION_HANDOFF.md`
-(read this first — it has the exact file-by-file state and the next
-action), `source-docs/DOCS_AUDIT.md` §11 (A-48..A-54).
+**Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
+B — approve, save, and stop; next phase **not started**, waiting for
+separate approval before planning begins). Branch `phase/demo-mode`,
+committed on top of `950e1d4`. Not merged into `main`, not pushed, no tag
+(matching Phase 5's precedent below — neither requested).
+
+All 5 rescoped operations have Reference content and Demo fixtures:
+`INFO EXTENSIONS`, `AGENTS`, `DIDS`, `SIMPLECDRS`, and now `QUEUELOGS`,
+unblocked mid-phase by one user-supplied real record (A-50; redacted copy
+in `source-docs/observed/info-queuelogs.json`) — only its observed
+outcomes are simulated, per user decision (`docs/DECISIONS.md`). Security
+finding A-55 is recorded as blocking requirement **SEC-REQ-01**
+(`docs/SECURITY.md`): QUEUELOGS stays off Live until a strict field
+allowlist (incl. positional keys) passes validation. Checks: `npm run
+check` clean (194 unit tests), build clean, full Playwright 127/134 (7
+pre-existing, unrelated failures — see known issues below and
+`docs/SESSION_HANDOFF.md`). Full detail, incl. the completion report:
+`docs/SESSION_HANDOFF.md`, `docs/DECISIONS.md`.
+
+**Known issues (not fixed, recorded 2026-09-25, both confirmed pre-existing
+via `git stash` back to this phase's starting checkpoint `950e1d4` —
+neither introduced by Phase 6, neither fixed here):**
+- **6 of 134** — "loads without console errors" fails on `/en/no-such-page`
+  (desktop/tablet/mobile) when run against `npm run dev`. Cause: React's
+  dev-only warning "Encountered a script tag while rendering React
+  component", almost certainly from the inline theme-init `<script
+  dangerouslySetInnerHTML>` in `src/app/[locale]/layout.tsx:62`
+  re-rendering through the not-found boundary; dev-only (React strips this
+  warning from production bundles) — passes clean against a production
+  server (`npm run build && npm run start`, verified this session). Fix,
+  if wanted, belongs with Phase 5's layout code.
+- **1 of 134** — "search palette: keyboard shortcut opens it, Escape
+  closes it" (chromium-desktop only), unrelated to Demo Mode. Not
+  investigated further.
 
 This superseded an earlier, narrower "waiting for the 7 examples"
 checkpoint, itself preceded by a full rebuild of `source-docs/proxy-api/`

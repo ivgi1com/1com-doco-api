@@ -85,6 +85,40 @@ timeout/size enforcement, and upstream call — lives in
 `docs/SECURITY.md` "Implementation (Phase 5)" for how each proxy
 requirement is met there.
 
+### Demo fixture system (Phase 6)
+
+`demoProvider` (`executor.ts`) makes no network request. For an endpoint
+with a fixture set, it resolves a scenario instead of falling back
+straight to `unavailable`:
+
+`src/content/demo/` defines the model (`types.ts`) and holds the fixture
+data itself, one file per API (`proxy.ts`). A `DemoFixtureSet` attaches to
+one non-synthetic endpoint (`ApiDefinition.synthetic === false`) without
+touching that endpoint's own `responses` field — those stay vendor/observed
+documentation and are never replayed. Every fixture value is
+`evidence: "synthetic"` by construction: fabricated data that mirrors an
+observed shape (real values never survive past the audit trail that
+produced them — see `docs/SECURITY.md` "Demo mode guarantees").
+
+A `DemoFixtureSet` is a list of `DemoCase`s, matched **in order**; the
+first whose `when` matches every current query parameter wins. `when` must
+cover every one of the endpoint's own query parameters — enforced by
+`tests/unit/demo-fixtures.test.ts`'s exhaustiveness check — either `"*"`
+(any value) or an explicit list of accepted values. **No match is not an
+error**: the Playground shows "Not simulated" (`response-viewer.tsx`),
+never a guessed response. This is the mechanism, not a per-endpoint
+exception: `info-simplecdrs`'s default/plain format and `info-queuelogs`'s
+answered-call records both resolve to "Not simulated" today simply because
+no case's `when` covers them yet (A-54, A-50) — new evidence extends
+coverage by adding a case, not by changing the resolver.
+
+`getDemoFixtures(apiId, endpointId)` / `resolveDemoCase(set, query)`
+(`resolve.ts`) are the only entry points `executor.ts` and the UI use;
+callers never reach into `proxy.ts`'s fixture arrays directly. The UI
+surfaces a resolved case's `label` as a scenario chip
+(`request-builder.tsx`) and its `basis` on the response's "Scenario:" line
+(`response-viewer.tsx`), citing the `DOCS_AUDIT.md` finding it reproduces.
+
 ## API-neutral design
 
 The UI and content model must be reusable by both Proxy API and Open API.
