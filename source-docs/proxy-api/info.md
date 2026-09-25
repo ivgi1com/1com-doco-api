@@ -216,7 +216,6 @@ Response: not documented (CSV column layout not given).
 |---|---|
 | `queues` | list of queues |
 | `queue` | info about the queue based on id |
-| `agents` | info about the agents in all or selected queue |
 | `agentsconnected` | info about the agents in all or selected queue, but only if currently connected |
 | `agentsdelay` | info about the agents delay in answering in all or selected queue |
 | `outdialed` | info about the calls dialed out by extensions |
@@ -230,13 +229,37 @@ Response: not documented (CSV column layout not given).
 No examples, no response samples, no parameter specifics beyond the
 shared `id`/`queue`/`start`/`end` block for any of these.
 
-## Not confirmed by the new source (see `README.md` "Live endpoints")
+## `info=EXTENSIONS` — list of extensions, including state
 
-`info=EXTENSIONS` ("list of extensions, including state") and
-`info=AGENTS` do **not** appear in the Doc's `info` value list above, and
-have no Site example. Both are already implemented Live endpoints,
-originally sourced from the old MiRTA documentation
-(`../DOCS_AUDIT.md` A-40, A-43) and confirmed by real observed behavior —
-that observed-behavior evidence is unaffected by this rebuild. Only their
-*documentation* provenance changes: the new 1com source does not restate
-them. Flagged, not resolved — re-mapping is out of scope here.
+**Doc purpose** (line 133): "extensions (list of extensions, including state)".
+No Site example.
+
+| Param | Required | Accepted values | Description | Source |
+|---|---|---|---|---|
+| `tenant` | see `_common.md` | tenant code | | Doc 40 |
+| `format` | optional | see `_common.md` format conflict | | Doc 42 |
+| `id` | optional | object id | shared INFO param (Doc 150); meaning for this operation not stated | Doc 150 |
+
+Response: not documented by the source. Observed behavior (Live-tested,
+not from this source): `../DOCS_AUDIT.md` A-40.
+
+---
+
+## `info=AGENTS` — agents in all or a selected queue
+
+**Doc purpose** (line 122): "info about the agents in all or selected queue".
+Related values: `agentsconnected` (only currently connected agents),
+`agentsdelay` (answer-delay info). No Site example.
+
+| Param | Required | Accepted values | Description | Source |
+|---|---|---|---|---|
+| `tenant` | see `_common.md` | tenant code | | Doc 40 |
+| `queue` | optional | queue id | "id of queue requested for agents info or queue logs" | Doc 151 |
+| `format` | optional | see `_common.md` format conflict | | Doc 42 |
+
+Response: not documented by the source. Observed behavior (Live-tested,
+not from this source): `../DOCS_AUDIT.md` A-43.
+
+Correction note (2026-09-25): the first version of this file wrongly said
+`extensions`/`agents` were absent from the Doc's `info` list. Both are
+listed (Doc lines 122, 133). Fixed; U-16 closed as a documentation error.

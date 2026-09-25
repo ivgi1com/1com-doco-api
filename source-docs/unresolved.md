@@ -5,7 +5,8 @@ U-09 and U-11 were decided in Phase 4 (2026-09-25); U-08 was decided in
 Phase 5 planning (2026-09-25); U-02 and U-04 were applied by default (not
 decided, reversible). U-05 was deferred in Phase 3. U-10 remains open.
 U-12–U-16 were added 2026-09-25 during the 1com-source documentation
-rebuild (`DOCS_AUDIT.md` §10) and are all open. Nothing below has been
+rebuild (`DOCS_AUDIT.md` §10); U-12–U-15 are open, U-16 was closed as a
+documentation error of the rebuild itself. Nothing below has been
 silently resolved: every normalized file and the `proxy-api.ts` content
 keep `not_documented` / `"undocumented"` where these apply. Finding IDs
 (`A-nn`) refer to `DOCS_AUDIT.md`.
@@ -326,5 +327,7 @@ one-endpoint vertical slice can be built truthfully.
 - Options: as U-15 (cite historical MiRTA evidence, or observed-only, or
   ask 1com to confirm/add these `info` values to their documentation).
 - Recommendation: deferred — not blocking this rebuild.
-- User decision: pending
-- Final status: open
+- User decision: none needed.
+- Final status: **closed — not a real ambiguity (2026-09-25).** The premise
+  was a documentation error made during the rebuild: the Doc lists both
+  `agents` (line 122) and `extensions` (line 133). `info.md` corrected.

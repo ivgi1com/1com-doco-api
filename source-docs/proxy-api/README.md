@@ -83,7 +83,7 @@ Live-endpoint operations already implemented and observed
 
 Three operations are already implemented, tested against the real host,
 and live in the portal's Playground: `info-extensions` (`INFO&info=EXTENSIONS`),
-`info-agents` (`INFO&info=AGENTS`... see note below), `cdr-get`
+`info-agents` (`INFO&info=AGENTS`), `cdr-get`
 (`reqtype=CDR&action=GET`). Their `src/content/proxy-api.ts` comments cite
 the now-removed `info.yaml`/`cdr.yaml`/`_common.yaml` files by name — those
 citations are now stale (see the Findings section of the completion
@@ -92,12 +92,10 @@ anything about their documented behavior changes, is **out of scope for
 this rebuild** and not done here.
 
 Specifically:
-- `info=EXTENSIONS` and `info=AGENTS` are **not** in the Doc's `info`
-  value list (`info.md`'s "not confirmed by the new source" section) —
-  the Doc lists `agents`/`agentsconnected`/`agentsdelay` (queue-agent
-  info) and has no `extensions`/`agents` entries matching the old
-  MiRTA-sourced meaning ("list of extensions, including state" /
-  "AGENTS... Not exemplified"). This is flagged, not resolved.
+- `info=EXTENSIONS` and `info=AGENTS` **are** in the Doc's `info` value
+  list (Doc lines 133, 122; `info.md`). Neither source gives an example
+  or a response sample; observed behavior is in `../DOCS_AUDIT.md` A-40,
+  A-43. (An earlier version of this file said otherwise; that was wrong.)
 - `reqtype=CDR` (standalone, `action=GET`/`UPDATE` on one CDR row's
   `userfield`) does not appear in either new source at all. See
   `cdr-standalone.md` for what's carried forward as historical-only.

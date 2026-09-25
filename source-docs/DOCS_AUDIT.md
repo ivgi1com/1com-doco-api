@@ -521,12 +521,12 @@ source documents" rule):
 | `USERGROUP` | Manage tenant/user group assignment | — |
 | `PHONEBOOKS` (plural) | Was already flagged in the old audit as not a real distinct reqtype (its section only ever documents `PHONEBOOK`, singular) | Confirmed again — not a real gap, just a recurring heading typo. No `.md` file. |
 
-Also absent: `info=EXTENSIONS` and `info=AGENTS` as documented `info`
-values (both already-implemented Live endpoints — `info.md`'s "Not
-confirmed by the new source" section, `proxy-api/README.md`'s "Live
-endpoints" section). Their prior documentation provenance (citing the
-now-removed `info.yaml`) is stale; their observed, tested behavior
-(A-40, A-43 above) is unaffected.
+Correction (2026-09-25): an earlier version of this section also listed
+`info=EXTENSIONS` and `info=AGENTS` as absent. That was wrong — the Doc
+lists both (lines 122, 133). They are documented as purpose lines only
+(no example, no response sample); `info.md` now has proper entries. U-16
+is closed as a documentation error. `src/content/proxy-api.ts` still
+cites the removed `info.yaml` for them (stale citation, unchanged).
 
 ### 10.4 Scope note
 
