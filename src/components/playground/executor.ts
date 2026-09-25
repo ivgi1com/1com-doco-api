@@ -1,3 +1,4 @@
+import { getDemoFixtures, resolveDemoCase } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { byteSize } from "@/lib/json-path";
 import {
@@ -26,15 +27,27 @@ export type PlaygroundResponse =
   | {
       source: "DEMO";
       unavailable?: false;
+      notSimulated?: false;
       status: number;
       latencyMs: number;
       sizeBytes: number;
       requestId: string;
+      format: "json" | "text";
+      contentType: string;
       body: unknown;
+      /** Present when a fixture case resolved this response (executor.ts demoProvider). Absent for the Sample API's own synthetic examples. */
+      caseLabel?: string;
+      basis?: string;
+      /** What the equivalent Live request would look like. Never actually sent. */
+      request: SanitizedRequest;
     }
-  // Non-synthetic APIs have no Demo fixtures yet (Phase 6) and must never
-  // replay a real observed response (Evidence rule, API_CONTENT_MODEL.md).
-  | { source: "DEMO"; unavailable: true }
+  // A non-synthetic API with no fixture set for this endpoint has no Demo
+  // data at all (must never replay a real observed response — the Evidence
+  // rule, API_CONTENT_MODEL.md).
+  | { source: "DEMO"; unavailable: true; notSimulated?: false }
+  // A fixture set exists for this endpoint, but no case matches this exact
+  // input combination — never guessed, shown as "Not simulated".
+  | { source: "DEMO"; notSimulated: true; unavailable?: false; request: SanitizedRequest }
   | {
       source: "LIVE";
       kind: "response";
@@ -196,10 +209,37 @@ function delay(ms: number, signal: AbortSignal) {
   });
 }
 
+/** `format: "text"` bodies are already text; byteSize's JSON.stringify would over-count (and misreport 0 bytes as 2). */
+function demoBodySize(format: "json" | "text", body: unknown): number {
+  return format === "text" ? new TextEncoder().encode(String(body)).length : byteSize(body);
+}
+
 /** Never makes a network request. */
 export const demoProvider: ApiExecutor = {
-  async execute({ api, endpoint, simulateError }, signal) {
+  async execute({ api, endpoint, fieldValues, simulateError }, signal) {
     await delay(400 + Math.random() * 500, signal);
+    const request = sanitizedRequest(api, endpoint, fieldValues);
+
+    const fixtures = getDemoFixtures(api.id, endpoint.id);
+    if (fixtures) {
+      const resolved = resolveDemoCase(fixtures, liveQueryParams(endpoint, fieldValues));
+      if (!resolved) return { source: "DEMO", notSimulated: true, request };
+      const { response } = resolved;
+      return {
+        source: "DEMO",
+        status: response.status,
+        latencyMs: Math.round(180 + Math.random() * 460),
+        sizeBytes: demoBodySize(response.format, response.body),
+        requestId: randomId("req_demo"),
+        format: response.format,
+        contentType: response.contentType,
+        body: response.body,
+        caseLabel: resolved.label,
+        basis: resolved.basis,
+        request,
+      };
+    }
+
     if (!api.synthetic) return { source: "DEMO", unavailable: true };
     const success = endpoint.responses.find((r) => r.status < 300);
     const failure = endpoint.responses.find((r) => r.status >= 400);
@@ -211,7 +251,10 @@ export const demoProvider: ApiExecutor = {
       latencyMs: Math.round(180 + Math.random() * 460),
       sizeBytes: byteSize(body),
       requestId: randomId("req_demo"),
+      format: "json",
+      contentType: "application/json",
       body,
+      request,
     };
   },
 };

@@ -1,8 +1,128 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Proxy API documentation reset — read this first)
+Last updated: 2026-09-25 (Demo Playground, 5 ops — mid-implementation, user-requested checkpoint — read this first)
 
-## STOP checkpoint — Proxy API documentation rebuild complete, waiting for the 7 examples
+## WIP checkpoint — Demo Playground for 5 Proxy operations, Stage B in progress
+
+- Branch `phase/demo-mode` @ `0631a95` (fast-forwarded from
+  `docs/proxy-api-rebuild`; see the superseded section below for that
+  rebuild). Not merged, not pushed.
+- **Supersedes** the "waiting for the 7 examples" checkpoint below: the
+  user narrowed scope to **5** operations (not 7) and this is that work,
+  already past the question stage:
+  `INFO SIMPLECDRS`, `QUEUELOGS`, `EXTENSIONS`, `AGENTS`, `DIDS`.
+- **Stage A (verification) — done, committed** (`e05cfcb`, `0631a95`):
+  real-API structure-only verification of all 5 operations with a
+  user-supplied TEST key/tenant (never written to disk or committed).
+  Findings: `source-docs/DOCS_AUDIT.md` §11 (A-48..A-54). One correction
+  to the doc rebuild itself: `info=EXTENSIONS`/`info=AGENTS` **are** in
+  the 1com Doc (an earlier claim they were absent was wrong; fixed,
+  `e05cfcb`). **QUEUELOGS has no observable data on the test tenant**
+  (A-50) — every date range/queue tried returns an empty or 1-byte body.
+  Its Demo build is blocked pending real data; the user chose to proceed
+  with the other 4 operations meanwhile (recorded decision, not asked
+  again this checkpoint).
+- User decisions from Stage A's follow-up questions (also in
+  `DOCS_AUDIT.md` §11.1): EXTENSIONS Demo mirrors the Live view's 6
+  fields; DIDS Demo mirrors only the plain-format columns' `di_*` fields
+  (no `te_*` tenant block, no credential fields); faithfully reproduce
+  the 0-byte-empty-result quirk, the fixed auth-error text (Live only,
+  not applicable to Demo), SIMPLECDRS's positional duplicate keys, and
+  `plain`/`csv` formats where the structure is actually understood.
+- **Stage B (Demo data + UI) — in progress, uncommitted.** Model: Sonnet 5
+  (routine implementation, per `CLAUDE.md` routing — Stage A's credential
+  handling was the Opus-requiring part, already done).
+  **Working tree is dirty; nothing from this stage is committed yet.**
+  - **Done**, per `npm run check` (typecheck + lint + 168/168 unit tests,
+    including new/updated ones below) passing as of the last run this
+    session:
+    - `src/content/proxy-api.ts`: two new endpoints, `info-dids`
+      (category `numbers`, new) and `info-simplecdrs` (category `cdr`,
+      alongside the existing `cdr-get`) — Reference content only, not
+      added to `LIVE_POLICIES` (`src/server/playground/allowlist.ts`
+      untouched, per the user's explicit "no Live allowlist expansion").
+      Also fixed stale citations left dangling by the earlier docs
+      rebuild (`info.yaml`/`cdr.yaml` → the new `.md` files).
+    - `source-docs/DOCS_AUDIT.md`: A-54 added (SIMPLECDRS's default/plain
+      format is malformed and only partially decoded from the masked
+      probe — deliberately **not** simulated in Demo; `json`/`csv` are).
+    - New module `src/content/demo/` (`types.ts`, `resolve.ts`,
+      `proxy.ts`, `index.ts`): the fixture-set/case model, the
+      first-match-wins resolver, and synthetic fixture data for 4
+      operations (`info-extensions`, `info-agents`, `info-dids`,
+      `info-simplecdrs` — **not** `info-queuelogs`, blocked per above).
+      All values fabricated: tenant `EXAMPLE`, phone numbers in the
+      fictional `555-01xx` range, names prefixed "Demo".
+    - `src/components/playground/executor.ts`: `demoProvider` now checks
+      for a fixture set first (via the new `getDemoFixtures`/
+      `resolveDemoCase`), falls back to the existing `api.synthetic`
+      Sample-API behavior, then `unavailable`. `PlaygroundResponse`'s
+      DEMO variants gained `format`/`contentType`/`request` (always) and
+      `caseLabel`/`basis` (when a fixture resolved). New
+      `{ source: "DEMO", notSimulated: true, request }` variant for an
+      input combination no case covers.
+    - `src/components/playground/response-viewer.tsx`: handles
+      `notSimulated` (a dedicated callout); the Request tab is now
+      available for Demo too (reuses the same `RequestTab`, generalized
+      to take a bare `request`, with a "not sent" note); a "Scenario:
+      &lt;label&gt; · &lt;basis&gt;" line shows under the status bar
+      when a fixture resolved.
+    - `src/components/playground/request-builder.tsx` +
+      `playground-app.tsx`: a scenario-chip row when the endpoint has
+      fixtures (clicking one fills the preset query values); "Simulate
+      error" is now hidden whenever fixtures exist (unchanged for the
+      Sample API, which has none); the Demo note text is fixture-aware.
+    - `messages/en.json` + `messages/he.json`: `scenarios`, `scenario`,
+      `demoFixtureNote`, `notSimulatedTitle`, `notSimulatedBody`,
+      `demoRequestNotSent` (Hebrew stays DRAFT, per the standing
+      decision, but is filled in, not omitted).
+    - `tests/unit/executor.test.ts`: updated the old "reports unavailable
+      for a non-synthetic API" test to use `cdr-get` (which genuinely has
+      no fixture set) instead of `info-extensions` (which now resolves a
+      case) — that old assertion would otherwise now be wrong, not just
+      stale. Added tests for fixture resolution and `notSimulated`.
+  - **Not started yet**:
+    - `tests/unit/demo-fixtures.test.ts` (the resolver's own unit tests,
+      the exhaustiveness check — every case's `when` covers every query
+      param — schema-conformance check, and the synthetic-value guard
+      scanning for `demo`-as-tenant / anything from `source-docs/observed/`
+      / phone numbers outside `555-01xx`). This was the very next step
+      when the session was stopped.
+    - Playwright coverage for Demo mode (the new "Demo mode (Phase 6)"
+      block from the original plan): success + scenario chips + Not
+      simulated + no-network-request assertion + mobile + en/he, for the
+      4 operations that have fixtures.
+    - `npm run build` has not been run this session with the new code.
+    - No manual/visual browser pass yet.
+    - Docs updates from the original plan's Step 7
+      (`docs/ARCHITECTURE.md` "Demo provider", `docs/SECURITY.md` "Demo
+      mode guarantees", `docs/API_CONTENT_MODEL.md`, `docs/DECISIONS.md`)
+      have **not** been done yet — this handoff and `DOCS_AUDIT.md` are
+      the only docs touched so far this stage.
+    - QUEUELOGS itself: still needs real data from the user, then its own
+      structure-only verification pass (same method as the other 4),
+      then its content entry + fixture set + inclusion in Playwright.
+- **No git checkpoint commit exists for Stage B** — the working tree is
+  dirty with exactly the files listed above (`git status --short`
+  confirms nothing unrelated is mixed in) and was left uncommitted
+  because `npm run check` had passed but the broader validation
+  (Playwright, build, visual pass, docs) had not, so this isn't yet a
+  safe/complete point to describe as "done" in a commit message.
+- Next session's first action: continue Stage B exactly where it left
+  off — write `tests/unit/demo-fixtures.test.ts`, then the Playwright
+  block, then `npm run build`, then the visual pass, then the docs
+  updates, then decide with the user whether to present a Phase
+  Completion Report for 4/5 operations now or wait for QUEUELOGS data
+  first (the user was not asked this explicitly; both were left open in
+  the last message to them before this checkpoint).
+
+## Superseded — Proxy API documentation rebuild, "waiting for the 7 examples"
+
+This section is historical: the user's next message narrowed scope to 5
+operations (not the 7 named here) and this repo state has moved well past
+it (see the WIP checkpoint above). Kept only for the rebuild's own record.
+
+### STOP checkpoint — Proxy API documentation rebuild complete, waiting for the 7 examples
 
 - Branch `docs/proxy-api-rebuild`, from `phase/demo-mode` @ `c802eb9`.
   Documentation-only; `src/` untouched. `phase/demo-mode` itself is

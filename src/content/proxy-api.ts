@@ -1,19 +1,28 @@
 import type { ApiDefinition, Authentication, Endpoint, Parameter, ResponseSpec } from "./types";
 
 /**
- * PHASE 4 VERTICAL SLICE — real content, hand-authored from the Phase 3
- * audit evidence (source-docs/proxy-api/info.yaml, source-docs/proxy-api/_common.yaml).
+ * Real content, hand-authored from source-docs/proxy-api/ — rebuilt
+ * 2026-09-25 from 1com's own documentation (see
+ * source-docs/proxy-api/README.md for the source and its conventions).
  * Every parameter/response/error state follows the no-guessing rule: what
  * the source does not say is marked `"undocumented"`, never invented.
  *
- * Scope: three operations of the legacy MiRTA PBX `proxyapi.php` reqtype
- * catalogue: INFO / EXTENSIONS (Phase 4), INFO / agents and CDR / GET
- * (Phase 5 adjustment, A-42/A-43). The rest are audited (source-docs/) but
- * not implemented; see docs/phases/07-proxy-api-rollout.md.
+ * Scope: five read-only operations of the Proxy API `proxyapi.php`:
+ * INFO/EXTENSIONS, INFO/AGENTS, CDR/GET (Phase 4/5 — CDR/GET's only
+ * documentation is the now-historical MiRTA source; see
+ * source-docs/proxy-api/cdr-standalone.md), and INFO/DIDS, INFO/SIMPLECDRS
+ * (Phase 6, added below). The remaining reqtypes are audited in
+ * source-docs/proxy-api/ but not implemented; see
+ * docs/phases/07-proxy-api-rollout.md.
  */
 
+// The historical MiRTA vendor page (Phase 3/4/5 evidence for the three
+// endpoints below, superseded as the general source — DOCS_AUDIT.md SS10).
 const SOURCE_PAGE =
   "https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples";
+
+// The current source (Phase 6 rebuild) for the two endpoints added below.
+const NEW_SOURCE_SITE = "https://sites.google.com/1com.co.il/1com-api/בית";
 
 const auth: Authentication = {
   type: "API key",
@@ -137,7 +146,7 @@ const infoExtensions: Endpoint = {
   responses: [infoExtensionsResponse],
   errors: "undocumented",
   notes: [
-    "One operation of the legacy proxyapi.php reqtype catalogue (reqtype=INFO, info=EXTENSIONS). Full audit: source-docs/proxy-api/info.yaml.",
+    "One operation of the legacy proxyapi.php reqtype catalogue (reqtype=INFO, info=EXTENSIONS). Full audit: source-docs/proxy-api/info.md.",
     "1com's production path is /pbx/proxyapi.php. The vendor's own documentation examples use /mirtapbx/proxyapi.php; only the 1com path is used in this portal.",
     "The source shows three usage patterns only by example: list every extension (tenant only), filter by id, or filter by number. Whether id and number can be combined, and how the list is paginated, is not documented.",
     "Response formats are observed, not vendor-documented (source-docs/DOCS_AUDIT.md A-40): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array. format=xml and format=csv returned an empty body for this operation, so they are not offered.",
@@ -297,11 +306,210 @@ const cdrGet: Endpoint = {
   responses: [cdrGetResponse],
   errors: "undocumented",
   notes: [
-    "One operation of the legacy CDR reqtype (action=GET). Full audit: source-docs/proxy-api/cdr.yaml.",
+    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical MiRTA evidence: source-docs/proxy-api/cdr-standalone.md.",
     "field is fixed to userfield in this portal: it is the only value the source shows, and other CDR columns (such as caller and callee numbers) are personal data.",
     "The userfield is free-form data written by your own integration. The portal cannot tell what it contains, so Live mode shows it as returned.",
     "Errors are not signalled by HTTP status: an unknown uniqueid returns HTTP 200 with an empty body (A-42).",
     "CDR action=UPDATE exists in the same reqtype and is not offered here.",
+  ],
+  related: [],
+};
+
+// --- INFO / DIDS (Phase 6, A-53) ---
+
+const didsFormatParam: Parameter = {
+  name: "format",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  enum: ["plain", "json", "csv"],
+  description:
+    "Output format. Observed (A-53): the default is plain (an 11-column pipe-delimited table); json returns an array where each upstream item also carries the whole tenant record (this portal shows only the DID's own fields); csv returned an empty body on the tenant tested.",
+  source: "source-docs/DOCS_AUDIT.md#a-53",
+};
+
+// Observed 2026-09-25 (A-53), structure only. The real record also carries
+// about 174 positional duplicate keys and the entire tenant row (te_*,
+// including recording credentials and billing codes); neither is shown
+// here — only the DID's own core fields, matching the plain-format
+// columns (user decision, 2026-09-25).
+const didItemSchema: Parameter[] = [
+  { name: "di_country", location: "body", type: "string", required: true, description: "Country code prefix. Empty in every record observed." },
+  { name: "di_area", location: "body", type: "string", required: true, description: "Area code. Empty in every record observed." },
+  { name: "di_number", location: "body", type: "string", required: true, description: "The DID number." },
+  { name: "di_comment", location: "body", type: "string", required: true, description: "Free-text comment on the DID." },
+  { name: "di_recording", location: "body", type: "string", required: true, description: "Whether calls to this DID are recorded. Observed values: yes, empty string." },
+  { name: "di_faxstationid", location: "body", type: "string", required: true, description: "Fax station identifier." },
+  { name: "di_fax_email", location: "body", type: "string", required: true, description: "Email address for incoming faxes. Empty in every record observed." },
+  { name: "di_maxchannels", location: "body", type: "string", required: true, description: "Maximum simultaneous channels for this DID, or -1 for unlimited (observed)." },
+  { name: "di_emailrecording", location: "body", type: "string", required: true, description: "Email address for call recordings. Empty in every record observed." },
+  { name: "di_smsemail", location: "body", type: "string", required: true, description: "Email address for incoming SMS. Empty in every record observed." },
+];
+
+const infoDidsResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "With format=json: a JSON array, one object per DID. Shown here: the ten fields this portal returns; the upstream record has about 348 keys, including the whole tenant record (recording credentials, billing codes), which this portal never surfaces. Without format (or format=plain): an 11-column pipe-delimited table with a header row (Country|Area|Number|Tenant|Comment|Recording|Faxstation ID|FAX Email|Max Channels|Recording EMail|SMS Email). format=csv returned an empty body on the tenant tested.",
+  format: "json",
+  evidence: "observed-sanitized",
+  verified: true,
+  source: "source-docs/DOCS_AUDIT.md#a-53",
+  schema: [
+    { name: "[ ]", location: "body", type: "object", required: true, description: "One item per DID.", children: didItemSchema },
+  ],
+  example: [
+    { di_country: "", di_area: "", di_number: "5550101010", di_comment: "Main line", di_recording: "yes", di_faxstationid: "Fax Station", di_fax_email: "", di_maxchannels: "-1", di_emailrecording: "", di_smsemail: "" },
+  ],
+};
+
+const infoDids: Endpoint = {
+  id: "info-dids",
+  api: "proxy",
+  version: "legacy",
+  category: "numbers",
+  status: "legacy",
+  deprecation: infoExtensions.deprecation,
+  method: "GET",
+  methodBasis: "inferred",
+  path: "/pbx/proxyapi.php",
+  fixedQuery: { reqtype: "INFO", info: "DIDS" },
+  title: "List DIDs",
+  summary: "Returns the DIDs (phone numbers) configured for a tenant.",
+  sourceUrl: NEW_SOURCE_SITE,
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  authentication: auth,
+  headers: [],
+  pathParameters: [],
+  queryParameters: [tenantParam, didsFormatParam],
+  requestBody: null,
+  responses: [infoDidsResponse],
+  errors: "undocumented",
+  notes: [
+    "One operation of the Proxy API INFO reqtype (info=DIDS). Full audit: source-docs/proxy-api/info.md.",
+    "Omitting tenant may return every tenant's DIDs with an admin key (the source shows this by example), but that form is not offered or tested here — see source-docs/unresolved.md U-12/U-13 (base host and tenant-placeholder ambiguity).",
+    "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-53): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array; format=csv returned an empty body on the tenant tested.",
+    "format=json here shows only the DID's own fields, never the joined tenant record the real API also returns in the same item.",
+    "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
+  ],
+  related: [],
+};
+
+// --- INFO / SIMPLECDRS (Phase 6, A-49/A-54) ---
+
+const simplecdrsPhoneParam: Parameter = {
+  name: "phone",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  description:
+    "Filters by caller, dialed, or answered number (source-docs/proxy-api/info.md); comma-separated for multiple values (documented, not independently tested). Observed (A-49): a value matching no call returns an empty 200 body, not [].",
+  source: "source-docs/proxy-api/info.md",
+};
+
+const simplecdrsStartParam: Parameter = {
+  name: "start",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  description: "Start date/time filter, observed as YYYY-MM-DD.",
+  example: "2026-01-01",
+  source: "source-docs/proxy-api/info.md",
+};
+
+const simplecdrsEndParam: Parameter = {
+  ...simplecdrsStartParam,
+  name: "end",
+  description: "End date/time filter, observed as YYYY-MM-DD.",
+  example: "2026-01-31",
+};
+
+const simplecdrsFormatParam: Parameter = {
+  name: "format",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  enum: ["json", "csv"],
+  description:
+    "Output format. Observed (A-49): json returns an array (each record's fields also duplicated under bare positional keys); csv returns the same fields as a comma-separated table. Default/plain is not offered here: its real structure is only partially decoded from a masked capture (A-54) and is not reproduced without confidence.",
+  source: "source-docs/DOCS_AUDIT.md#a-54",
+};
+
+const simplecdrsItemSchema: Parameter[] = [
+  { name: "sc_te_id", location: "body", type: "string", required: true, description: "Internal tenant identifier." },
+  { name: "tenantcode", location: "body", type: "string", required: true, description: "Tenant short code." },
+  { name: "sc_start", location: "body", type: "string", required: true, description: "Call start time, \"YYYY-MM-DD HH:MM:SS\"." },
+  { name: "sc_direction", location: "body", type: "string", required: true, description: "Observed values: IN, OUT, LOCAL." },
+  { name: "sc_calleridnum", location: "body", type: "string", required: true, description: "Caller number." },
+  { name: "sc_calleridname", location: "body", type: "string", required: true, description: "Caller name, when known; often empty." },
+  { name: "sc_dialednum", location: "body", type: "string", required: true, description: "Dialed number." },
+  { name: "sc_disposition", location: "body", type: "string", required: true, description: "Observed values: ANSWERED, NO ANSWER, FAILED, CONGESTION." },
+  { name: "sc_duration", location: "body", type: "string", required: true, description: "Call duration in seconds." },
+  { name: "sc_uniqueid", location: "body", type: "string", required: true, description: "Unique call identifier." },
+  { name: "sc_whoanswered", location: "body", type: "string", required: true, description: "Extension that answered, when applicable; often empty." },
+];
+
+const infoSimplecdrsResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "With format=json: a JSON array, one object per call; every field also appears a second time under a bare positional key (\"0\"..\"10\", same order as listed here) — observed, not vendor-documented (A-49). With format=csv: the same 11 named fields as a comma-separated table with a header row; values containing a space are quoted. No matching calls returns an empty 200 body, not [] (A-49). A default/plain format exists but is not reproduced here — see A-54.",
+  format: "json",
+  evidence: "observed-sanitized",
+  verified: true,
+  source: "source-docs/DOCS_AUDIT.md#a-49",
+  schema: [
+    {
+      name: "[ ]",
+      location: "body",
+      type: "object",
+      required: true,
+      description: "One item per call, plus the same 11 fields duplicated under bare positional keys.",
+      children: simplecdrsItemSchema,
+    },
+  ],
+  example: [
+    {
+      sc_te_id: "9001",
+      tenantcode: "TENANTCODE",
+      sc_start: "2026-01-15 09:30:00",
+      sc_direction: "IN",
+      sc_calleridnum: "5550101001",
+      sc_calleridname: "Caller One",
+      sc_dialednum: "201",
+      sc_disposition: "ANSWERED",
+      sc_duration: "42",
+      sc_uniqueid: "demo01-1768469400.1001",
+      sc_whoanswered: "201-TENANTCODE",
+    },
+  ],
+};
+
+const infoSimplecdrs: Endpoint = {
+  id: "info-simplecdrs",
+  api: "proxy",
+  version: "legacy",
+  category: "cdr",
+  status: "legacy",
+  deprecation: infoExtensions.deprecation,
+  method: "GET",
+  methodBasis: "inferred",
+  path: "/pbx/proxyapi.php",
+  fixedQuery: { reqtype: "INFO", info: "SIMPLECDRS" },
+  title: "List calls (simplified)",
+  summary: "Returns call records from the simplified call-history source, optionally filtered by phone number and date range.",
+  sourceUrl: NEW_SOURCE_SITE,
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  authentication: auth,
+  headers: [],
+  pathParameters: [],
+  queryParameters: [tenantParam, simplecdrsPhoneParam, simplecdrsStartParam, simplecdrsEndParam, simplecdrsFormatParam],
+  requestBody: null,
+  responses: [infoSimplecdrsResponse],
+  errors: "undocumented",
+  notes: [
+    "One operation of the Proxy API INFO reqtype (info=SIMPLECDRS). Full audit: source-docs/proxy-api/info.md.",
+    "The source also names id/uniqueid/calleridnum/calleridname/disposition/direction/whoanswered as filter parameters (source-docs/proxy-api/info.md); only phone, start and end are offered here, matching what was actually characterised (A-49).",
+    "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-49, A-54): format=json and format=csv are well understood; a default/plain table exists but is not offered here because its structure could only be partially decoded from a masked capture (A-54).",
+    "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
   ],
   related: [],
 };
@@ -313,10 +521,11 @@ export const proxyApi: ApiDefinition = {
   baseUrl: "https://pbx6webserver.1com.co.il",
   synthetic: false,
   summary:
-    "1com's legacy HTTP API for MiRTA PBX (proxyapi.php). Three read-only operations are documented here; the remaining reqtypes are audited in source-docs/ pending a later phase.",
+    "1com's HTTP API for MiRTA PBX (proxyapi.php). Five read-only operations are documented here; the remaining reqtypes are audited in source-docs/proxy-api/ pending a later phase.",
   categories: [
     { id: "extensions", title: "Extensions", endpoints: [infoExtensions] },
     { id: "queues", title: "Queues", endpoints: [infoAgents] },
-    { id: "cdr", title: "Call records", endpoints: [cdrGet] },
+    { id: "cdr", title: "Call records", endpoints: [cdrGet, infoSimplecdrs] },
+    { id: "numbers", title: "Numbers", endpoints: [infoDids] },
   ],
 };

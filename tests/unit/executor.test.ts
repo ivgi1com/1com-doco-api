@@ -14,6 +14,8 @@ import { LIVE_ROUTE } from "@/lib/playground-protocol";
 
 const KEY = "TEST_KEY_do_not_leak_9d2f";
 const infoExtensions = getEndpoint("proxy", "info-extensions")!;
+const infoAgents = getEndpoint("proxy", "info-agents")!;
+const cdrGet = getEndpoint("proxy", "cdr-get")!;
 const listCalls = getEndpoint("sample", "list-call-records")!;
 
 const fieldValues = { "query:tenant": "ACME", "query:id": "", "query:number": "  " };
@@ -143,9 +145,12 @@ describe("demoProvider", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("reports unavailable for a non-synthetic API instead of fabricating data", async () => {
+  it("reports unavailable for a non-synthetic API endpoint with no fixture set", async () => {
+    // cdr-get has no Demo fixture set (out of the Phase 6 scope decided by
+    // the user) and proxyApi.synthetic is false, so this must fall through
+    // to unavailable rather than fabricating a response.
     const result = await demoProvider.execute(
-      { api: proxyApi, endpoint: infoExtensions, fieldValues: {}, credential: "", simulateError: false },
+      { api: proxyApi, endpoint: cdrGet, fieldValues: {}, credential: "", simulateError: false },
       new AbortController().signal,
     );
     expect(result).toEqual({ source: "DEMO", unavailable: true });
@@ -157,8 +162,46 @@ describe("demoProvider", () => {
       new AbortController().signal,
     );
     expect(result.source).toBe("DEMO");
-    if (result.source === "DEMO" && !result.unavailable) {
+    if (result.source === "DEMO" && !result.unavailable && !result.notSimulated) {
       expect(result.status).toBeLessThan(300);
+      expect(result.format).toBe("json");
+      expect(result.request.url).toContain(sampleApi.baseUrl);
     }
+  });
+
+  it("resolves a fixture case for a non-synthetic API endpoint that has one", async () => {
+    const result = await demoProvider.execute(
+      {
+        api: proxyApi,
+        endpoint: infoExtensions,
+        fieldValues: { "query:tenant": "EXAMPLE", "query:id": "", "query:number": "", "query:format": "json" },
+        credential: "",
+        simulateError: false,
+      },
+      new AbortController().signal,
+    );
+    expect(result.source).toBe("DEMO");
+    if (result.source === "DEMO" && !result.unavailable && !result.notSimulated) {
+      expect(result.status).toBe(200);
+      expect(result.format).toBe("json");
+      expect(result.caseLabel).toBeTruthy();
+      expect(Array.isArray(result.body)).toBe(true);
+    } else {
+      throw new Error("expected a resolved fixture case");
+    }
+  });
+
+  it("reports notSimulated for an input combination no fixture case covers", async () => {
+    const result = await demoProvider.execute(
+      {
+        api: proxyApi,
+        endpoint: infoAgents,
+        fieldValues: { "query:tenant": "EXAMPLE", "query:queue": "281", "query:format": "csv" },
+        credential: "",
+        simulateError: false,
+      },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "DEMO", notSimulated: true });
   });
 });

@@ -649,3 +649,42 @@ documentation work, no architecture/security/credential handling):
 Status: rebuild complete on `docs/proxy-api-rebuild`, not merged. Phase 6
 (`phase/demo-mode`) is paused, not resumed, pending the user's re-supplied
 7 examples and a decision on how/whether to merge this branch first.
+
+## 2026-09-25 — Demo Playground rescoped to 5 operations; Stage A/B split
+
+Supersedes "Phase 6 planning" above: the user replaced the 7-operation
+scope with exactly 5: `INFO SIMPLECDRS`, `QUEUELOGS`, `EXTENSIONS`,
+`AGENTS`, `DIDS`. `docs/proxy-api-rebuild` was fast-forwarded into
+`phase/demo-mode` (`0631a95`) as the base.
+
+Decisions:
+- **Verification before fixtures**: a user-supplied TEST key/tenant was
+  used for a structure-only, masked probe of all 5 operations (never
+  written to disk; findings only, no values — `DOCS_AUDIT.md` §11,
+  A-48..A-54). The key is rotated after use, not by this project's
+  tooling.
+- **QUEUELOGS deferred**: no observable data on the test tenant (A-50).
+  The user chose to proceed with Demo for the other 4 operations rather
+  than wait or drop the operation.
+- **Demo response shape**: EXTENSIONS mirrors the Live view's 6 fields;
+  DIDS mirrors only the plain-format columns' `di_*` fields (no `te_*`
+  tenant block, no credential fields) — full detail `DOCS_AUDIT.md`
+  §11.1.
+- **Faithfully reproduced quirks**: the 0-byte empty-result body, the
+  fixed Live auth-error text (not applicable to Demo, which sends no
+  credential), SIMPLECDRS's positional duplicate keys, and `plain`/`csv`
+  formats wherever their structure is actually understood.
+- **SIMPLECDRS default/plain excluded from Demo** (A-54): its real
+  structure is only partially decoded from a masked capture (found while
+  building fixtures, not during the original probe); reproducing it with
+  confidence isn't possible, so the Playground shows "Not simulated" for
+  that combination rather than a guessed layout. `json`/`csv` are
+  unaffected and fully simulated.
+- **No Live allowlist change**: per explicit instruction, adding these
+  operations to Demo does not add them to `LIVE_POLICIES`
+  (`src/server/playground/allowlist.ts`, untouched).
+
+Status: Stage A (verification) done and committed (`e05cfcb`, `0631a95`
+on `phase/demo-mode`). Stage B (fixtures + UI) in progress, uncommitted —
+see `docs/SESSION_HANDOFF.md` for the exact file-by-file state and the
+next action.

@@ -6,6 +6,7 @@ import { useId } from "react";
 import type { RenderedSample } from "@/components/code/code-tabs";
 import { CodeTabs } from "@/components/code/code-tabs";
 import { MethodBadge } from "@/components/ui/method-badge";
+import type { DemoFixtureSet } from "@/content/demo";
 import type { Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
 import { ParamField } from "./param-field";
@@ -29,6 +30,7 @@ export function RequestBuilder({
   state,
   synthetic,
   liveAvailable,
+  demoFixtures,
 }: {
   endpoint: Endpoint;
   samples: RenderedSample[];
@@ -36,6 +38,8 @@ export function RequestBuilder({
   synthetic: boolean;
   /** False when this endpoint isn't allowlisted for Live, or Live is disabled server-side. */
   liveAvailable: boolean;
+  /** Present when this endpoint has Demo scenario presets (src/content/demo). */
+  demoFixtures?: DemoFixtureSet;
 }) {
   const t = useTranslations("playground");
   const te = useTranslations("endpoint");
@@ -58,6 +62,10 @@ export function RequestBuilder({
   const hasErrors = Object.keys(errors).length > 0;
   const envVar = authEnvVar(endpoint);
   const liveBlocked = mode === "live" && !liveAvailable;
+
+  const applyScenario = (preset: Readonly<Record<string, string>>) => {
+    for (const [name, value] of Object.entries(preset)) setField(fieldKey("query", name), value);
+  };
 
   return (
     <div className="space-y-5 p-4">
@@ -165,8 +173,26 @@ export function RequestBuilder({
         </div>
       </details>
 
+      {mode === "demo" && demoFixtures && (
+        <fieldset className="space-y-2">
+          <legend className="mb-1 text-xs font-semibold text-ink-muted">{t("scenarios")}</legend>
+          <div className="flex flex-wrap gap-1.5">
+            {demoFixtures.cases.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => applyScenario(c.preset)}
+                className="rounded-full border border-border-control px-2.5 py-1 text-xs font-medium text-ink transition-colors duration-150 hover:border-accent hover:text-accent"
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       <div className="space-y-3 border-t border-border pt-4">
-        {mode === "demo" && (
+        {mode === "demo" && !demoFixtures && (
           <label className="flex items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"
@@ -187,7 +213,9 @@ export function RequestBuilder({
           {sending ? t("sending") : t("send")}
         </button>
         {mode === "demo" && (
-          <p className="text-xs text-ink-muted">{synthetic ? t("prototypeNote") : t("demoUnavailableNote")}</p>
+          <p className="text-xs text-ink-muted">
+            {demoFixtures ? t("demoFixtureNote") : synthetic ? t("prototypeNote") : t("demoUnavailableNote")}
+          </p>
         )}
         {liveBlocked && <p className="text-xs text-ink-muted">{t("liveUnavailable")}</p>}
       </div>

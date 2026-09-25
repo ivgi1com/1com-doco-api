@@ -621,3 +621,21 @@ A-53 — `DIDS` (OBSERVED)
 - Reproduce faithfully: 0-byte empty result, the auth-error text,
   SIMPLECDRS positional duplicate keys, and `plain`/`csv` where observed.
 - All Demo values synthetic; Live allowlist unchanged.
+
+A-54 — `SIMPLECDRS` default/plain format is malformed and only partially
+decoded (OBSERVED; found while building Demo fixtures, 2026-09-25)
+
+- With calls present, the first line already mixes what look like field
+  labels and a first data row with no line break in between (unlike
+  `EXTENSIONS`/`DIDS`, whose default/plain first line is a clean header).
+  The masked capture shows a repeating `<digit(s)>|<letters_with_underscore>`
+  pattern consistent with the same 22-key shape seen in `format=json`
+  (11 named fields duplicated under bare positional keys "0".."10"), i.e.
+  the positional key and the field name appear to be interleaved into the
+  header row itself, and each following row repeats every value twice.
+- This is a partial read from masked structure only (no raw values were
+  captured), so the exact layout is not established with confidence.
+- Consequence: this format is **not simulated** in Demo for this operation
+  (`src/content/demo/proxy.ts`) — `json` and `csv`, both cleanly understood,
+  are offered instead. Re-running the probe with a header-safe capture of
+  this specific response would resolve it, if ever needed.

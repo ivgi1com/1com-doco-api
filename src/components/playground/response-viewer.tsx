@@ -9,7 +9,7 @@ import { JsonViewer } from "@/components/json/json-viewer";
 import type { Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
 import { formatBytes } from "@/lib/json-path";
-import { curlEquivalent, type PlaygroundResponse } from "./executor";
+import { curlEquivalent, type PlaygroundResponse, type SanitizedRequest } from "./executor";
 import type { PlaygroundState } from "./use-playground";
 
 function statusTone(status: number) {
@@ -59,17 +59,22 @@ function PortalErrorCallout({
   );
 }
 
-function RequestTab({ response, endpoint }: { response: Extract<PlaygroundResponse, { source: "LIVE"; kind: "response" }>; endpoint: Endpoint }) {
+/** Shared by Live (actually sent) and Demo (shown for reference only) responses. */
+function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest; endpoint: Endpoint; notSent?: boolean }) {
   const t = useTranslations("code");
+  const tp = useTranslations("playground");
   const envVar = authEnvVar(endpoint);
-  const curl = curlEquivalent(response.request, envVar);
+  const curl = curlEquivalent(request, envVar);
   return (
     <div dir="ltr" className="space-y-3">
+      {notSent && (
+        <p className="text-xs text-ink-muted">{tp("demoRequestNotSent")}</p>
+      )}
       <div>
-        <p className="mb-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted">{response.request.method}</p>
+        <p className="mb-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted">{request.method}</p>
         <div className="flex items-start gap-2 rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-ink">
-          <span className="min-w-0 flex-1 break-all">{response.request.url}</span>
-          <CopyButton text={response.request.url} label={t("copy")} tone="code" />
+          <span className="min-w-0 flex-1 break-all">{request.url}</span>
+          <CopyButton text={request.url} label={t("copy")} tone="code" />
         </div>
       </div>
       <div>
@@ -125,6 +130,19 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
     );
   }
 
+  if (response.source === "DEMO" && response.notSimulated) {
+    return (
+      <div className="space-y-3 p-4">
+        <Callout kind="note" title={t("notSimulatedTitle")}>
+          <p>{t("notSimulatedBody")}</p>
+        </Callout>
+        <div dir="ltr" className="rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-muted">
+          {response.request.method} {response.request.url}
+        </div>
+      </div>
+    );
+  }
+
   const isLive = response.source === "LIVE";
   const { status, latencyMs, sizeBytes } = response;
 
@@ -133,10 +151,10 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
     : [
         ["x-request-id", response.requestId],
         ["x-response-source", response.source],
-        ...(response.body !== null ? ([["content-type", "application/json"]] as [string, string][]) : []),
+        ["content-type", response.contentType],
       ];
 
-  const tabs: ("body" | "headers" | "request")[] = isLive ? ["body", "headers", "request"] : ["body", "headers"];
+  const tabs: ("body" | "headers" | "request")[] = ["body", "headers", "request"];
   // A tab selected for a previous response (e.g. "request") may not apply to
   // this one; fall back to "body" for this render without touching state.
   const activeTab = tabs.includes(tab) ? tab : "body";
@@ -166,6 +184,13 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
           </span>
         )}
       </div>
+
+      {!isLive && response.caseLabel && (
+        <p className="border-b border-border px-4 py-1.5 text-xs text-ink-muted">
+          {t("scenario")}: <span className="font-semibold text-ink">{response.caseLabel}</span>
+          {response.basis && <> · {response.basis}</>}
+        </p>
+      )}
 
       <div role="tablist" className="flex items-center gap-1 border-b border-border px-3 py-1.5">
         {tabs.map((id) => (
@@ -197,13 +222,13 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
             </p>
           </Callout>
         )}
-        {activeTab === "body" && isLive && response.format === "text" && String(response.body).trim() === "" && (
+        {activeTab === "body" && response.format === "text" && String(response.body).trim() === "" && (
           <Callout kind="note" className="mb-3">
             <p>{t("upstreamEmpty")}</p>
           </Callout>
         )}
         {activeTab === "body" &&
-          (isLive && response.format === "text" ? (
+          (response.format === "text" ? (
             <pre dir="ltr" className="whitespace-pre-wrap break-all rounded-md border border-code-border bg-code-bg p-3 font-mono text-xs text-code-ink">
               {String(response.body)}
             </pre>
@@ -224,9 +249,7 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
             ))}
           </dl>
         )}
-        {activeTab === "request" && isLive && response.kind === "response" && (
-          <RequestTab response={response} endpoint={endpoint} />
-        )}
+        {activeTab === "request" && <RequestTab request={response.request} endpoint={endpoint} notSent={!isLive} />}
       </div>
     </div>
   );

@@ -1,29 +1,33 @@
 # Current Status
 
 Current work:
-**Proxy API documentation baseline reset — IN PROGRESS** (started
-2026-09-25 on branch `docs/proxy-api-rebuild`, from `phase/demo-mode` @
-`c802eb9`). The user directed discarding the MiRTA-sourced audit as
-authoritative and rebuilding `source-docs/proxy-api/` from 1com's own
-documentation (a Google Site + its linked Google Doc). This **suspends**
-Phase 6 below — its Step 1 probe and its 7 Demo example selections are
-voided, not decided differently; the user will re-supply the 7 examples
-against the rebuilt documentation. Full detail: `docs/DECISIONS.md`
-"Proxy API documentation baseline reset", `source-docs/DOCS_AUDIT.md`
-§10, `source-docs/unresolved.md` U-12–U-16. See `docs/SESSION_HANDOFF.md`.
+**Demo Playground for 5 Proxy operations — IN PROGRESS, mid-implementation**
+(branch `phase/demo-mode` @ `0631a95`). The user narrowed Demo scope to
+exactly 5 operations — `INFO SIMPLECDRS`, `QUEUELOGS`, `EXTENSIONS`,
+`AGENTS`, `DIDS` — built from real-API verification (a user-supplied TEST
+key/tenant, structure only, never written to disk) rather than the
+earlier 7-operation plan. Stage A (verification) is done and committed;
+Stage B (Demo fixtures + UI) is in progress and **uncommitted**.
+`QUEUELOGS` is blocked on real data (no observable structure on the test
+tenant) and is deferred; the other 4 operations are being implemented
+first, per the user's choice. Full detail: `docs/SESSION_HANDOFF.md`
+(read this first — it has the exact file-by-file state and the next
+action), `source-docs/DOCS_AUDIT.md` §11 (A-48..A-54).
 
-Paused phase (suspended by the rebuild above, not abandoned):
-**Phase 6 — Demo mode: PAUSED** (started 2026-09-25 on branch
-`phase/demo-mode`, from `main` @ `b37e51c`). Approved plan:
-`C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`. Scope and
-decisions are in `docs/DECISIONS.md` under "Phase 6 planning" — **now
-superseded by the documentation reset**; the 7 examples it names will be
-re-supplied and re-mapped before any Phase 6 work resumes. Step 0 is
-done. Step 1 (a structure-only probe of INFO DIDS/SIMPLECDRS/EXTSTATE/
-QUEUELOGS) is incomplete: one partial run covered EXTSTATE only, and the
-probe script is currently broken (a SyntaxError) — this is now moot for
-the DIDS/SIMPLECDRS/EXTSTATE/QUEUELOGS operations named in the old scope,
-since that scope itself needs re-deciding. See `docs/SESSION_HANDOFF.md`.
+This superseded an earlier, narrower "waiting for the 7 examples"
+checkpoint, itself preceded by a full rebuild of `source-docs/proxy-api/`
+from 1com's own documentation (the MiRTA-sourced audit was discarded as
+authoritative). That rebuild is done and committed (`docs/DECISIONS.md`
+"Proxy API documentation baseline reset", `source-docs/DOCS_AUDIT.md`
+§10, `source-docs/unresolved.md` U-12–U-16, all still open/unaffected by
+the work above).
+
+Superseded (kept for history, not current):
+**Phase 6 — Demo mode (7-operation scope): SUPERSEDED.** Its plan
+(`C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`) and
+`docs/DECISIONS.md` "Phase 6 planning" named 7 operations and a broken
+probe script; both are moot now that the user re-scoped to the 5
+operations described above and verification was done a different way.
 
 Previous phase:
 **Phase 5 — Live Playground: COMPLETE AND APPROVED, including both
@@ -79,9 +83,9 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`docs/proxy-api-rebuild` (from `phase/demo-mode` @ `c802eb9`, which is
-itself from `main` @ `b37e51c`). `phase/demo-mode` is untouched and still
-exists, paused.
+`phase/demo-mode` @ `0631a95` (fast-forwarded from `docs/proxy-api-rebuild`,
+which was itself from `main` @ `b37e51c`). Working tree has uncommitted
+Stage B changes (Demo fixtures + UI) — see `docs/SESSION_HANDOFF.md`.
 
 Earlier phase:
 **Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)

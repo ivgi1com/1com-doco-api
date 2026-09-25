@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { RenderedSample } from "@/components/code/code-tabs";
+import { getDemoFixtures } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { useRouter } from "@/i18n/navigation";
 import { EndpointPicker } from "./endpoint-picker";
@@ -29,6 +30,7 @@ export function PlaygroundApp({
   const liveAvailable = liveEndpointIds.includes(`${api.id}/${endpoint.id}`);
   const state = usePlayground(api, endpoint, liveAvailable);
   const samples = samplesByEndpoint[endpoint.id] ?? [];
+  const demoFixtures = getDemoFixtures(api.id, endpoint.id);
 
   const selectEndpoint = useCallback(
     (next: Endpoint) => {
@@ -46,6 +48,7 @@ export function PlaygroundApp({
       state={state}
       synthetic={api.synthetic}
       liveAvailable={liveAvailable}
+      demoFixtures={demoFixtures}
     />
   );
   const responsePane = <ResponseViewer state={state} endpoint={endpoint} />;
