@@ -534,3 +534,90 @@ Re-mapping the 3 already-implemented Live endpoints, and specifying the 7
 Demo Playground examples, against this rebuilt source is explicitly
 **out of scope** for this rebuild, per the user's request. `src/` was not
 touched.
+
+## 11. Real-API verification of the 5 Demo operations (2026-09-25)
+
+Direct requests to `https://pbx6webserver.1com.co.il/pbx/proxyapi.php` with a
+user-supplied TEST key on a test tenant, from a local script (not the portal,
+not committed). GET only. Output was structure-only (field names, types,
+value masks, counts); no values, key or tenant were recorded. Enum-like
+fields were read as distinct values only when they were letters-only.
+Scope: INFO `SIMPLECDRS`, `QUEUELOGS`, `EXTENSIONS`, `AGENTS`, `DIDS`.
+
+A-48 — Errors are HTTP 200 with a fixed text body (OBSERVED; undocumented)
+
+- Bad key, missing `tenant`, and a nonexistent tenant all return HTTP 200 and
+  the same 46-byte body: `Too bad... you mistaken the security api key.`
+- Content type follows `format` (`application/json` for `format=json`) even
+  though the body is not JSON.
+- Unknown `info` value: HTTP 200, 0-byte body.
+
+A-49 — `SIMPLECDRS` (OBSERVED)
+
+- `format=json`: array of records. Each record has 11 named fields —
+  `sc_te_id`, `tenantcode`, `sc_start`, `sc_direction`, `sc_calleridnum`,
+  `sc_calleridname`, `sc_dialednum`, `sc_disposition`, `sc_duration`,
+  `sc_uniqueid`, `sc_whoanswered` — plus the same 11 values under positional
+  keys `"0"`..`"10"` (22 keys). All values are strings; `sc_start` is
+  `YYYY-MM-DD HH:MM:SS`.
+- Observed enums: `sc_direction` ∈ {IN, OUT, LOCAL};
+  `sc_disposition` ∈ {ANSWERED, NO ANSWER, FAILED, CONGESTION}.
+- No match (date range without calls, nonexistent `phone`): HTTP 200,
+  `application/json`, **0-byte body** (not `[]`).
+- `format=csv`: header row of the 11 named fields, comma-delimited,
+  values with spaces quoted.
+- Default ≡ `format=plain`: pipe-delimited; the header lists all 22 keys
+  (positional and named interleaved) and is **not** followed by a line break
+  before the first row; each data row carries every value twice plus a
+  trailing `|`. Malformed as a table.
+- `phone` and `direction` filters narrow results (`direction=in` matched
+  `IN`, so case-insensitive). Filter names are the Doc's; response fields are
+  `sc_`-prefixed.
+- No `start`/`end`: returned 1 row where 2020→today returned 77. The default
+  range is not documented and was not determined.
+
+A-50 — `QUEUELOGS` returns no observable data on the test tenant (OBSERVED)
+
+- Every date range tried (7 days, 2026, 2020→today, 2015), with and without
+  `queue` (including a real queue id and a nonexistent one):
+  `format=json` → HTTP 200, `application/json`, the single byte `]`
+  (invalid JSON); default and `format=csv` → 0-byte body.
+- Structure is therefore unknown. Demo for this operation is blocked until a
+  tenant/queue with queue-log data is supplied (user decision, 2026-09-25).
+
+A-51 — `EXTENSIONS` (OBSERVED; confirms A-40)
+
+- `format=json`: array of records, 148 named fields each (no positional
+  duplicates), including credential/PII fields (`password`, `ex_webpassword`
+  64-char hash, `ex_2fa_*`, `ex_email`). Two fields are `null`
+  (`ex_lastcostalert`, `ex_lastofflinealert`); the rest are strings.
+- Default: pipe-delimited, header `Number|Name|Tech|State|Username|Password`.
+- Observed enums: `ex_tech` = SIP; `st_state` = UNAVAILABLE.
+
+A-52 — `AGENTS` (OBSERVED; confirms A-43, one type detail)
+
+- As A-43. Addition: in `format=json` the value at key `"0"` is a JSON
+  **number**; all other positions are strings. Position `1` = `available`,
+  position `2` = `UNAVAILABLE` on this tenant.
+- Nonexistent `queue`: body `null`.
+
+A-53 — `DIDS` (OBSERVED)
+
+- `format=json`: array of records, 348 keys each: 174 positional plus 174
+  named. Named keys are the DID row (`di_*`, 50 fields) joined with the
+  **entire tenant row** (`te_*`), which includes `te_recordingpassword`,
+  `te_recordinguser`, `te_recordinghost`, `te_billingcode`.
+- Default ≡ `format=plain`: pipe-delimited, 11 columns, header
+  `Country|Area|Number|Tenant|Comment|Recording|Faxstation ID|FAX Email|Max Channels|Recording EMail|SMS Email`.
+- `format=csv`: 0-byte body.
+- Observed enums: `di_recording` ∈ {yes, ""}; `di_fax` = no.
+
+### 11.1 Demo decisions (user, 2026-09-25)
+
+- QUEUELOGS: get real data first (A-50) before building its Demo.
+- Shape: EXTENSIONS Demo mirrors the Live view (the 6 allowlisted fields);
+  DIDS Demo mirrors the plain-format columns' `di_*` equivalents only — no
+  `te_*` block, no credential fields.
+- Reproduce faithfully: 0-byte empty result, the auth-error text,
+  SIMPLECDRS positional duplicate keys, and `plain`/`csv` where observed.
+- All Demo values synthetic; Live allowlist unchanged.
