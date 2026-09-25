@@ -306,7 +306,7 @@ export function EndpointView({
             <Feedback />
             {!endpoint.verification.verified && (
               <p className="text-xs text-ink-muted">
-                {t("verification")}: {t("notVerified")}
+                {t("verification")}: {endpoint.verification.tested ? t("testedNotVerified") : t("notVerified")}
               </p>
             )}
           </footer>

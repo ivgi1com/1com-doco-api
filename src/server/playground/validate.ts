@@ -52,6 +52,8 @@ export function validateLiveRequest(input: unknown): ValidationResult {
     if (typeof value !== "string") return invalid;
     if (value.length > MAX_PARAM_LENGTH || CONTROL_CHARS.test(value)) return invalid;
     if (value.trim() === "") continue;
+    const allowedValues = target.paramEnums.get(name);
+    if (allowedValues && !allowedValues.has(value)) return invalid;
     clean[name] = value;
   }
 

@@ -1,11 +1,10 @@
 # Current Status
 
 Current phase:
-**Phase 5 — Live Playground: IN PROGRESS** (implementation Steps 0–4 of the
-approved plan done — security boundary, execution contract, response UI,
-tests; Step 5 — real end-to-end verification by the user with a real key —
-and Step 7 — the Opus security-review gate — are not yet done; no
-completion gate reached, nothing approved yet)
+**Phase 5 — Live Playground: AT APPROVAL GATE, NOT APPROVED** (all plan
+steps done: boundary, execution contract, UI, tests, Opus security review,
+and a real Live call through the proxy; A-40 found and resolved by user
+decisions; awaiting the user's A/B/C/D gate choice)
 
 Current branch:
 `phase/live-playground` (from `main` @ `c99ef81`, which includes the
@@ -67,15 +66,19 @@ Previous phases:
   `build && start`), manual visual pass (1440/900 desktop, 390/844 mobile,
   en + he) covering Live success, every portal-error tone, and the
   disabled/not-allowlisted states — zero console errors observed.
-- **Not yet done**: Step 5 (the user performs a real Live call against
-  1com with their own key, outside this session, so Claude never receives
-  it; only after that succeeds does `info-extensions`'s `verification.tested`
-  flag get set), Step 6 remaining doc updates beyond this file and
-  `DECISIONS.md`/`unresolved.md`/`SECURITY.md`/`ENVIRONMENT.md`/
-  `ARCHITECTURE.md` (already done), and Step 7 (switch to Opus 5.5, run the
-  `security-review` skill over the branch diff, fix findings, then present
-  the Phase Completion Report and gate). Nothing in this phase is approved
-  yet; `phase/live-playground` is not merged into `main`.
+- **Step 5 + A-40** (real call, user's key, `tenant=demo`, via the proxy): the
+  documented response was wrong. Decisions: `format` allowlisted as
+  plain/json; server-side JSON field allowlist (6 fields) plus
+  credential redaction that fails closed; reference docs rewritten from the
+  observed structure (U-11 superseded). Re-verified against the real host:
+  JSON returns exactly the 6 fields (142 dropped); no password survives in
+  plain output; logs contain no key/tenant/URL. `info-extensions` is
+  `tested: true`, `verified: false`.
+- **Security review** (Opus): no high/medium findings; three low fixed;
+  accepted/open items in `docs/SECURITY.md`.
+- **Final validation**: `npm run check` (111/111 unit), `npm run build`,
+  98/98 Playwright (fresh build), visual pass of the reference page and the
+  Live notes; zero console errors.
 
 ## Phase 4 work done
 
@@ -169,9 +172,7 @@ Previous phases:
   open; neither blocks Phase 4.
 
 Remaining in this phase:
-Step 5 (user-run real Live verification), Step 7 (Opus 5.5 security review
-+ Phase Completion Report + approval gate). See
-`docs/phases/05-live-playground.md` and the plan file referenced in
-`docs/SESSION_HANDOFF.md`.
+The user's gate decision (A/B/C/D). Nothing is approved; `phase/live-playground`
+is not merged.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

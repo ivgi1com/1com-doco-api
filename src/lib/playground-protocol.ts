@@ -33,7 +33,16 @@ export interface LiveUpstream {
   sizeBytes: number;
   contentType: string | null;
   headers: Record<string, string>;
+  /** Upstream body after server-side redaction (src/server/playground/redact.ts). */
   bodyText: string;
+  /**
+   * Credential-like values the portal replaced; -1 when the whole body was
+   * withheld because it could not be redacted safely. `sizeBytes` is always
+   * the upstream size, before redaction.
+   */
+  redactedCount: number;
+  /** Distinct upstream JSON fields dropped by the portal's field allowlist. */
+  fieldsOmitted: number;
 }
 
 export type LiveResponseBody =

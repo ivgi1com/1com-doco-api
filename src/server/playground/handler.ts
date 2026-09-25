@@ -4,6 +4,7 @@ import type { LiveResponseBody, PortalErrorCode } from "@/lib/playground-protoco
 import type { PlaygroundConfig } from "./config";
 import { executeLive } from "./execute";
 import { logLive } from "./log";
+import { projectJsonFields, redactSensitive } from "./redact";
 import { clientKey, type RateLimiter } from "./rate-limit";
 import { validateLiveRequest } from "./validate";
 
@@ -137,7 +138,17 @@ export async function handleLiveRequest(request: Request, deps: HandlerDeps): Pr
     return portalError(result.code);
   }
 
-  const { upstream } = result;
+  // Nothing sensitive leaves the server (A-40 decisions): JSON is cut down to
+  // the target's field allowlist, then credential-like values are redacted
+  // as a second layer (which also covers the plain-text table).
+  const projection = projectJsonFields(result.upstream.bodyText, validation.value.target.jsonFields);
+  const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text);
+  const upstream = {
+    ...result.upstream,
+    bodyText: redaction.text,
+    redactedCount: redaction.redacted,
+    fieldsOmitted: projection.omittedFields,
+  };
   log({
     endpoint: endpointId,
     outcome: "upstream_response",

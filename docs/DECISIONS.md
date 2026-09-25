@@ -410,3 +410,36 @@ separate step the user performs directly (`docs/phases/05-live-playground.md`
 Step 5) — Claude does not receive or handle a real credential. Not yet
 reached: the final Opus security-review gate before the phase completion
 report.
+
+---
+
+## 2026-09-25 — Phase 5 Step 5: first real Live call, A-40 decisions
+
+Context:
+The first real call (user-supplied key, `tenant=demo`, through the portal's
+Live proxy) showed the documented response was wrong (A-40): the default
+output is a pipe-delimited table with a `Password` column; `format=json`
+is an array of about 148-field config records including credentials, 2FA
+params, PINs and PII; xml/csv returned empty bodies.
+
+Decisions (user, 2026-09-25):
+- `format` becomes an allowlisted, enum-restricted param. It was first
+  exposed as plain/json/xml/csv, then narrowed to **plain/json** once
+  xml/csv were observed to return empty bodies.
+- **Server-side redaction** of credential-like values
+  (`src/server/playground/redact.ts`), which fails closed (whole body
+  withheld) when it can't align a sensitive column.
+- **JSON field allowlist**: Live returns only `ex_id, ex_number, ex_name,
+  ex_tech, st_state, username` per item (the plain table's columns minus
+  Password); everything else is dropped on the server, with redaction as a
+  second layer. Unit-tested to match the documented schema exactly.
+- **Reference docs rewritten from observation** (structure only, synthetic
+  example values); the U-11 sample is superseded.
+
+Consequences:
+- `info-extensions`: `verification.tested = true`, `verified = false` (one
+  tenant observed; pagination, id+number combination, and full enum values
+  are still undocumented). The footer now shows the tested stage.
+- Content-model limitation: responses are keyed by status, so the two
+  observed 200 formats are documented as one response plus a description.
+  Multi-format responses belong to Phase 7 model work.

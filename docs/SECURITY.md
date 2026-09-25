@@ -161,3 +161,23 @@ Accepted / open (not code defects in this phase):
   concern.
 - **Credential in the upstream URL** (1com access logs): accepted in
   planning; see "Implementation (Phase 5)".
+
+### Response sanitization (added after A-40, 2026-09-25)
+
+Pipeline in `handler.ts`, applied to every upstream body before it leaves
+the server:
+
+1. `projectJsonFields` keeps only the target's JSON field allowlist
+   (`allowlist.ts#JSON_FIELD_ALLOWLIST`). Any JSON shape other than
+   array-of-objects or object-of-objects is withheld entirely.
+2. `redactSensitive` replaces credential-like values
+   (`pass|pwd|secret|token|2fa|otp|mfa|pin`) in JSON keys, XML
+   elements/attributes and delimited-text columns. It fails closed on
+   misaligned rows, quoted CSV, and sensitive XML elements containing
+   markup.
+
+The browser is told how many values were redacted and how many fields were
+dropped (`redactedCount`, `fieldsOmitted`) and says so in the UI.
+`sizeBytes` is the upstream size, before sanitization. Verified against the
+real host: JSON returns exactly the 6 allowlisted fields (142 dropped); no
+non-empty password cell survives in plain output.

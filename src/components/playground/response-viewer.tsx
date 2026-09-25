@@ -180,6 +180,20 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3" aria-live="polite">
+        {isLive && response.fieldsOmitted > 0 && (
+          <Callout kind="note" className="mb-3">
+            <p>{t("fieldsOmitted", { count: response.fieldsOmitted })}</p>
+          </Callout>
+        )}
+        {isLive && response.redactedCount !== 0 && (
+          <Callout kind="note" className="mb-3">
+            <p>
+              {response.redactedCount < 0
+                ? t("redactedWithheld")
+                : t("redactedCount", { count: response.redactedCount })}
+            </p>
+          </Callout>
+        )}
         {activeTab === "body" &&
           (isLive && response.format === "text" ? (
             <pre dir="ltr" className="whitespace-pre-wrap break-all rounded-md border border-code-border bg-code-bg p-3 font-mono text-xs text-code-ink">

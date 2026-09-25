@@ -43,6 +43,10 @@ export type PlaygroundResponse =
       sizeBytes: number;
       contentType: string | null;
       headers: Record<string, string>;
+      /** Values the portal redacted; -1 if the whole body was withheld. */
+      redactedCount: number;
+      /** Distinct upstream JSON fields the portal's allowlist removed. */
+      fieldsOmitted: number;
       format: "json" | "text";
       body: unknown;
       request: SanitizedRequest;
@@ -164,6 +168,8 @@ export const liveProvider: ApiExecutor = {
       sizeBytes: upstream.sizeBytes,
       contentType: upstream.contentType,
       headers: upstream.headers,
+      redactedCount: typeof upstream.redactedCount === "number" ? upstream.redactedCount : 0,
+      fieldsOmitted: typeof upstream.fieldsOmitted === "number" ? upstream.fieldsOmitted : 0,
       ...parseBody(upstream.bodyText),
       request,
     };

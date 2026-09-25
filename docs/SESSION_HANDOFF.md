@@ -1,8 +1,21 @@
 # Session Handoff
 
-Last updated: 2026-09-25 ~10:10 (Phase 5 implementation in progress — read this first)
+Last updated: 2026-09-25 (Phase 5 at approval gate, NOT approved — read this first)
 
-## IN-PROGRESS checkpoint — Phase 5 (Live Playground), Steps 0–4 done, not approved
+## GATE checkpoint — Phase 5 complete pending approval
+
+- All plan steps are done, including the Opus security review and a real
+  Live call (Step 5). The real call found A-40 (the documented response was
+  wrong; json output carries credentials, 2FA params and PII), resolved by
+  user decisions: `format` plain/json, a server-side JSON field allowlist,
+  fail-closed redaction, docs rewritten from observation. See
+  `docs/DECISIONS.md` "Phase 5 Step 5".
+- Waiting for the user's A/B/C/D gate choice. No tag, no merge.
+- The user pasted a production key (tenant `demo`) into the chat on
+  2026-09-25 and it was used for verification. Recommended: rotate it. It is
+  not written to any file in the repo or scratchpad.
+
+## Earlier IN-PROGRESS checkpoint — Phase 5, Steps 0–4 (superseded)
 
 - Plan file: `C:\Users\ivgi-pc\.claude\plans\plan-phase-5-temporal-tower.md`
   (approved 2026-09-25). Covers Steps 0–7; this checkpoint is after Step 4.

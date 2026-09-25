@@ -65,7 +65,8 @@ describe("allowlist", () => {
       fixedQuery: { reqtype: "INFO", info: "EXTENSIONS" },
       credentialParam: "key",
     });
-    expect([...t!.allowedParams].sort()).toEqual(["id", "number", "tenant"]);
+    // `format` added after A-40 (enum-restricted; see redact.test.ts).
+    expect([...t!.allowedParams].sort()).toEqual(["format", "id", "number", "tenant"]);
     expect(getLiveTarget("sample/list-calls")).toBeUndefined();
     expect(getLiveTarget("__proto__")).toBeUndefined();
   });
@@ -311,5 +312,40 @@ describe("credential-leak guards outside the proxy code", () => {
     });
     expect(res.status).toBe(400);
     expect(await res.text()).not.toContain(KEY);
+  });
+});
+
+describe("handler applies redaction before anything leaves the server", () => {
+  it("redacts a Password column from the upstream body", async () => {
+    const SECRET = "sip-pw-e2e-9";
+    const fetch = vi.fn(
+      async () => new Response(`Number|Name|Password\n201|A|${SECRET}\n`, { headers: { "content-type": "text/html" } }),
+    );
+    const res = await handleLiveRequest(post(validBody), {
+      config: config(),
+      limiter: createMemoryRateLimiter({ limit: 100, windowMs: 60_000 }),
+      fetch,
+      log: () => {},
+    });
+    const text = await res.text();
+    expect(text).not.toContain(SECRET);
+    expect(JSON.parse(text).upstream.redactedCount).toBe(1);
+  });
+});
+
+describe("handler: JSON output is cut to the field allowlist before redaction", () => {
+  it("drops non-allowlisted fields (incl. 2FA/email) and reports how many", async () => {
+    const upstreamItem = { ex_id: "1", ex_number: "201", ex_name: "A", ex_tech: "SIP", st_state: "UNAVAILABLE", username: "201-t", password: "pw-x", ex_2fa_param1: "totp-x", ex_email: "a@b.c" };
+    const fetch = vi.fn(async () => new Response(JSON.stringify([upstreamItem]), { headers: { "content-type": "application/json" } }));
+    const res = await handleLiveRequest(post({ ...validBody, params: { tenant: TENANT, format: "json" } }), {
+      config: config(),
+      limiter: createMemoryRateLimiter({ limit: 100, windowMs: 60_000 }),
+      fetch,
+      log: () => {},
+    });
+    const env = (await res.json()) as { upstream: { bodyText: string; fieldsOmitted: number } };
+    expect(Object.keys(JSON.parse(env.upstream.bodyText)[0]).sort()).toEqual(["ex_id", "ex_name", "ex_number", "ex_tech", "st_state", "username"]);
+    expect(env.upstream.fieldsOmitted).toBe(3);
+    for (const s of ["pw-x", "totp-x", "a@b.c"]) expect(env.upstream.bodyText).not.toContain(s);
   });
 });

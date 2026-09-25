@@ -98,7 +98,8 @@
     "evidenceObservedSanitized": "Observed, sanitized — not vendor-documented",
     "notes": "Notes",
     "verification": "Verification",
-    "notVerified": "Not verified against a live API"
+    "notVerified": "Not verified against a live API",
+    "testedNotVerified": "Tested against the live API (one tenant); not fully verified"
   },
   "lifecycle": {
     "stable": "Stable",
@@ -173,7 +174,10 @@
     "prototypeNote": "Demo responses in this prototype come from the synthetic sample content.",
     "demoUnavailableNote": "Demo data for this endpoint isn't available yet (planned for a later phase).",
     "demoUnavailableTitle": "Demo data not available yet",
-    "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page."
+    "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page.",
+    "redactedCount": "{count, plural, one {# credential-like value was} other {# credential-like values were}} redacted by the portal and never left the server.",
+    "redactedWithheld": "The portal withheld this response: it contains a credential-like field that couldn't be redacted safely.",
+    "fieldsOmitted": "The portal shows only documented fields. {count, plural, one {# other field} other {# other fields}} in the upstream record {count, plural, one {was} other {were}} removed on the server."
   },
   "json": {
     "expandAll": "Expand all",

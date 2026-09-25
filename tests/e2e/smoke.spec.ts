@@ -166,7 +166,7 @@ test.describe("interactions", () => {
       // toggled), hence `.first()`. Errors remain genuinely undocumented by
       // the source, so that section must still say so.
       await expect(
-        page.locator('section[aria-labelledby="responses"]').getByText("An object keyed by each extension's internal id"),
+        page.locator('section[aria-labelledby="responses"]').getByText(/With format=json: a JSON array, one object per extension/),
       ).toBeVisible();
       // The evidence badge lives inside the request panel, which is mounted
       // twice: a desktop `<aside>` (always open) and a mobile `<details>`

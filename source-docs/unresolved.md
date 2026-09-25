@@ -231,3 +231,7 @@ one-endpoint vertical slice can be built truthfully.
   capture only; `evidence: "observed-sanitized"` ensures Demo mode never
   replays it.
 - Final status: **decided**
+- Superseded (2026-09-25, Phase 5, A-40): the U-11 sample (object keyed by
+  `ex_id`, 3 fields) matches neither real format observed through the Live
+  proxy. The reference docs are rewritten from the observed structure; the
+  sample file is kept as history only.

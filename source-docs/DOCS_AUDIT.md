@@ -330,3 +330,45 @@ Criteria:
 Every candidate lacks a response sample (A-03). Phase 4 needs a real,
 sanitized response supplied through an approved route before any response
 schema is published.
+
+## 7. Phase 5 — first real Live call (2026-09-25)
+
+A-40 — `INFO info=EXTENSIONS` default output is plain text, not JSON
+(DOCUMENTED ≠ OBSERVED)
+
+- Request: through the portal's Live proxy, `tenant=demo`, user's own key,
+  no `format` parameter (the allowlist does not include `format`).
+- Observed: upstream HTTP 200, `content-type: text/html; charset=UTF-8`,
+  152 bytes, a pipe-delimited table with header row
+  `Number|Name|Tech|State|Username|Password` and one row per extension.
+  (Row values are real tenant data and are not recorded here.)
+- Conflicts with: the portal's published response for this endpoint
+  (`src/content/proxy-api.ts`, from the U-11 capture), which is a JSON
+  object keyed by `ex_id` with fields `ex_id`, `ex_name`, `ex_number`.
+  Both field sets and format differ.
+- Likely cause (not verified): the common `format` parameter
+  (`_common.yaml`: plain, json, xml, csv; default not_documented). The
+  U-11 capture was probably taken with `format=json`, and the default is
+  probably `plain`. Not tested, since `format` is outside the U-08
+  allowlist.
+- Security note: the plain output has a `Password` column (empty for every
+  row on this tenant). Whether other tenants/keys return SIP credentials
+  here, and whether JSON output includes them, is not_documented.
+- Status: open. Nothing silently changed; `verification.tested` stays
+  `false` pending a user decision.
+- Follow-up (same day, `format` now allowlisted, all calls via the proxy,
+  structure only recorded):
+  - no `format` ≡ `format=plain`: the pipe table above.
+  - `format=json`: `application/json`, a JSON **array** (not an object keyed
+    by `ex_id`), one item per extension, **148 fields per item**: the full
+    extension configuration record. It includes credential fields
+    (`password`, `ex_webpassword`, non-empty for some rows), 2FA params
+    (`ex_2fa_param1..3`), `ex_lockpin`, PII (`ex_email`, `ex_alertemail`,
+    `ex_mailbox`, `ex_notes`, `ex_emergencynotes`) and network rules
+    (`ex_permit`, `ex_ipfilter`). Server-side redaction removed the non-empty
+    credential values before anything reached the browser.
+  - `format=xml`, `format=csv`: HTTP 200, 0-byte body (apparently
+    unsupported for this operation; not documented either way).
+  - The U-11 capture (object keyed by `ex_id`, 3 fields) matches **neither**
+    real format. It may have been reshaped before it was supplied (unknown).
+    The published response schema in `proxy-api.ts` is therefore unverified.

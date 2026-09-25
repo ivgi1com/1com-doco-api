@@ -114,6 +114,8 @@ export async function executeLive(request: LiveRequest, options: ExecuteOptions)
         contentType: res.headers.get("content-type"),
         headers,
         bodyText: new TextDecoder("utf-8").decode(bytes),
+        redactedCount: 0,
+        fieldsOmitted: 0,
       },
     };
   } catch (err) {
