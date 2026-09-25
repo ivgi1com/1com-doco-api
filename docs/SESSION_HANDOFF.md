@@ -1,8 +1,8 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–3 done, STOP at the Stage 4 gate — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–4 done, STOP at the Stage 5 gate — read this first)
 
-## Phase 7 in progress — Stages 0–3 done, STOP before Stage 4
+## Phase 7 in progress — Stages 0–4 done, STOP before Stage 5
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
   (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
@@ -56,12 +56,54 @@ Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–3 done, STOP
     including `responsepath-getlast`, `managedb-mediafile-updatebinary`,
     `managedb-condition-replaceextendedinfos`: zero console errors, zero
     horizontal overflow.
-- **Next: STOP for the Stage 4 gate.** Probing the read operations needs
-  **Opus 5.5** (credential handling) **and the user's TEST key/tenant in
-  chat** (Phase 6 Stage A method — never written to disk, repo, logs or
-  scratchpad; rotate afterward). Do not start Stage 4 without both.
-  ManageDB operations are excluded from probing permanently (no admin key
-  available, Stage 1 decision) unless the user says otherwise.
+- **Stage 4 — Probe the read operations, COMPLETE** (Opus 5.5 for the probe
+  itself; Sonnet 5 for writing up the findings once the raw output was in
+  hand, per model routing). 35 non-ManageDB read operations (all except the
+  6 already characterised: EXTENSIONS, AGENTS, DIDS, SIMPLECDRS, QUEUELOGS,
+  CDR GET) were probed once with a user-supplied TEST key/tenant, in-process
+  env only, never written to disk — a follow-up probe on 6 ops used a
+  longer timeout and explicit tenant handling. The probe script (session
+  scratchpad, not committed) masked every value before printing and its own
+  self-test (fake secrets in values, keys, error text, CSV, XML, an echoed
+  URL, and a mixed-key map) found zero leaks before each real run. **The
+  user was told to rotate the TEST key after this stage.**
+  - Findings: `source-docs/DOCS_AUDIT.md` §12, A-56..A-77. Two are
+    security-relevant: A-58 (INFO outdialed's json keys can be human-
+    readable device labels, not just numeric ids) and **A-77 (VOICEMAIL
+    list exposes a plaintext `imapuser`/`imappassword` pair per mailbox)**
+    — tracked as new blocking requirement **SEC-REQ-02** in
+    `docs/SECURITY.md`, alongside Phase 6's SEC-REQ-01 (QUEUELOGS).
+  - All 32 operations with an observed response (not the 3 that timed out
+    or returned truly nothing new) got their Reference response spec filled
+    in (`src/content/proxy/{info,calls,extensions,queues,misc,voicemail}.ts`):
+    `evidence: "observed-sanitized"`, `verification.tested = true`, full
+    schemas from the probe's masked shapes, synthetic example values. Three
+    operations that already had a vendor-presumed response (INFO
+    recording/playrecording/mediafile-getaudio) kept that response and got
+    the new "no id → error text" finding folded into a note instead of a
+    second same-status response entry (the response viewer only supports
+    one example per status code — same constraint as the Stage 3
+    RESPONSEPATH-GETLAST fix). `info-call` alone stayed untouched
+    (`tested: false`): both attempts timed out with no response at all.
+  - **No Live allowlist change.** `src/server/playground/allowlist.ts` is
+    untouched; nothing from this stage is newly callable in the Live
+    Playground.
+  - Validation: `npm run check` 209/209, `npm run build` clean (`npm run
+    rollout:status`: 109/109 Reference pages, 0 broken links, endpoints
+    tested 38/109), a Playwright visual pass over 10 of the newly-filled
+    pages (desktop 1440 + mobile 390) — zero console errors, no overflow.
+    Full Playwright suite and a locale (he) pass were **not** re-run this
+    stage (content-only change to already-tested components); do before the
+    Stage 7 gate if not done by then.
+- **Next: Stage 5 — Demo fixtures for the observed reads** (Sonnet 5, per
+  the approved plan). Extend `src/content/demo/proxy.ts`; only observed
+  outcomes are simulated, synthetic values only (tenant `EXAMPLE`, `555-01xx`
+  numbers, "Demo"-prefixed names). Before starting, decide with the user how
+  `imapuser`/`imappassword` (VOICEMAIL list, A-77) should appear in Demo —
+  the QUEUELOGS precedent (A-55) is to keep the fields in the schema, fixed
+  at `null`, never a synthetic-looking password. ManageDB and the two
+  `unclear` operations (`info-voicemail`, `voicemail-message`) get no Demo
+  fixture, per the Stage 1 decision.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

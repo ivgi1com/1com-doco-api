@@ -1,5 +1,5 @@
 import type { Category } from "../types";
-import { proxyOperation, q } from "./shared";
+import { proxyOperation, q, tenantParam } from "./shared";
 
 /**
  * Smaller reqtypes, one section each: FAX, MEDIAFILE (standalone; distinct
@@ -63,8 +63,10 @@ export const mediafileGetaudio = proxyOperation({
       source: "source-docs/proxy-api/mediafile.md",
     },
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
     "Distinct from MANAGEDB object=MEDIAFILE (managedb.ts), which is the broader CRUD form (list/get/getbinary/update/updatebinary). This is the narrower single-action \"retrieve a file by its id\" form.",
+    "Observed (A-74): without objectid, returns an empty 200 body (0 bytes) rather than an error string. The binary shape itself remains unconfirmed.",
   ],
   related: ["managedb-mediafile-getbinary"],
 });
@@ -90,9 +92,20 @@ export const phonebookQuery = proxyOperation({
     q("field", "Field name to search on.", { example: "name" }),
     q("value", "Search value; % matches partially.", { example: "Ben" }),
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without field/value, returns an explicit \"Wrong or missing phonebook or id\"-style error naming the missing parameters (source-docs/DOCS_AUDIT.md A-75). Success response with a real search is not documented.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-75",
+    },
+  ],
   notes: [
     "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior MiRTA-sourced audit and unchanged in this source.",
-    "Response not documented.",
+    "Response observed by probe without field/value (source-docs/DOCS_AUDIT.md A-75); the success shape remains undocumented.",
   ],
   related: ["phonebook-add"],
 });
@@ -174,8 +187,19 @@ export const responsepathList = proxyOperation({
   summary: "Lists every response recorded for a response path.",
   source: "responsepath.md",
   queryParameters: [rpTenantParam, rpIdParam, ...rpFilterParams],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "An empty 200 body (0 bytes), with no error text, observed on the test tenant regardless of parameters or format (source-docs/DOCS_AUDIT.md A-76). Consistent with the source's own lack of a response sample.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-76",
+    },
+  ],
   notes: [
-    "The Doc's parameter block for RESPONSEPATH appears twice with different action lists; both copies document list. No example and no response sample for this action.",
+    "The Doc's parameter block for RESPONSEPATH appears twice with different action lists; both copies document list. No vendor example or response sample for this action; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
   ],
   related: ["responsepath-getlast"],
 });
@@ -194,9 +218,20 @@ export const responsepathGetid = proxyOperation({
     q("rrid", "Response-path response id, or response-path unique id."),
     ...rpFilterParams,
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "An empty 200 body (0 bytes), with no error text, observed on the test tenant regardless of parameters (source-docs/DOCS_AUDIT.md A-76).",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-76",
+    },
+  ],
   notes: [
     "A source defect: this action and its rrid parameter appear only in the Doc's first copy of the RESPONSEPATH block (lines 264-276); the second copy (330-339) omits both, listing only list and getlast. Which is current is not stated — both are recorded here as documented, but treat getid as less certain than list/getlast.",
-    "No example and no response sample.",
+    "No vendor example or response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
   ],
   related: ["responsepath-list", "responsepath-getlast"],
 });
@@ -228,9 +263,11 @@ export const responsepathGetlast = proxyOperation({
         "UniqueID|Type|Type ID|Value|Type Name|Value Name\nsrv02-1509806457.625|START|0|2017-11-04 15:41:01||\nsrv02-1509806457.625|CALLERID|0|Susan <1132555678>||\nsrv02-1509806457.625|VARIABLE|85|36985||\nsrv02-1509806457.625|VARIABLE|144|56896||\nsrv02-1509806457.625|QUEUE|281|||\nsrv02-1509806457.625|ANSWER|0|105-DEMO||\nsrv02-1509806457.625|HANGUP|0|||",
     },
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
     "The plain sample above comes from the vendor source itself (evidence: vendor), not from a probe against a real tenant — shown as-is per the no-guessing rule.",
     "format=xml also exists (Site lines 212-223), but the source's own caveat (Site line 213) is \"Based on the xml format shown in the manual, it returns something like:\" — not a guaranteed-exact sample. Its own example is additionally malformed: <ClientID> and <OrderNumber> both close with a mismatched </MemberNumber> tag rather than their own closing tags. Not reproduced as a second response example here, since this portal's response viewer shows one example per status code and the plain sample is the better-attested of the two.",
+    "A structure-only probe found an empty 200 body on the test tenant, for both format=(default) and format=xml (source-docs/DOCS_AUDIT.md A-76) — no matching data on that tenant; the vendor sample above remains the documented format.",
   ],
   related: ["responsepath-list", "responsepath-getid"],
 });
@@ -278,9 +315,21 @@ export const help = proxyOperation({
   title: "Get the operation syntax",
   summary: "Returns the latest syntax for proxyapi.php's own operations, as reported by the server itself.",
   source: "_common.md",
-  queryParameters: [],
+  queryParameters: [tenantParam],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With tenant: a large (~24 KB) text/html page wrapped in <pre>/<i> tags, consistent with \"the latest syntax for the operations\" (page text not captured — structure only). Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/COUNTCHANNELS (source-docs/DOCS_AUDIT.md A-69).",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-69",
+    },
+  ],
   notes: [
-    "Site line 95: \"The latest syntax for the operations can be retrieved by proxyapi itself.\" No further detail — response shape, and whether it needs a specific key type — is given by either source.",
+    "Site line 95: \"The latest syntax for the operations can be retrieved by proxyapi itself.\"",
+    "tenant is not documented for this operation, but a probe found it required in practice: omitting it returns the same fixed error shared with CHANNEL/COUNTCALLS/COUNTCHANNELS (source-docs/DOCS_AUDIT.md A-69).",
   ],
 });
 

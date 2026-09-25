@@ -1,4 +1,4 @@
-import type { Category } from "../types";
+import type { Category, Parameter } from "../types";
 import { proxyOperation, q } from "./shared";
 
 /** reqtype=VOICEMAIL — source-docs/proxy-api/voicemail.md (Site 140-150, Doc 311-319). */
@@ -6,6 +6,79 @@ import { proxyOperation, q } from "./shared";
 const vmTenantParam = q("tenant", "Tenant for the voicemails.", { required: false });
 const vmMailboxParam = q("mailbox", "Mailbox number to show info about.", { required: false, example: "102" });
 const vmMsgidParam = q("msgid", "Message id.", { example: "1475685709-00000004" });
+
+// Observed 2026-09-26 by a structure-only probe (source-docs/DOCS_AUDIT.md
+// A-77, SECURITY). imapuser/imappassword were null in every mailbox
+// observed; a populated mailbox's actual value was not confirmed.
+const voicemailListItemSchema: Parameter[] = [
+  { name: "uniqueid", location: "body", type: "string", required: true, description: "Mailbox record id." },
+  { name: "te_id", location: "body", type: "string", required: true, description: "Internal tenant id." },
+  { name: "context", location: "body", type: "string", required: true, description: "Dial-plan context." },
+  { name: "mailbox", location: "body", type: "string", required: true, description: "Mailbox number." },
+  { name: "fullname", location: "body", type: "string", required: true, description: "Mailbox owner's display name." },
+  { name: "email", location: "body", type: "string", required: true, description: "Notification email address(es), comma-separated." },
+  { name: "pager", location: "body", type: "string", required: false, description: "Pager email address. Often empty." },
+  { name: "attach", location: "body", type: "string", required: true, description: "Whether to attach the audio to the notification email." },
+  { name: "attachfmt", location: "body", type: "string", required: false, description: "Attachment audio format." },
+  { name: "serveremail", location: "body", type: "string", required: false, description: "From address used for notification email." },
+  { name: "language", location: "body", type: "string", required: false, description: "Mailbox language. Often empty." },
+  { name: "tz", location: "body", type: "string", required: false, description: "Timezone. Often empty." },
+  { name: "tzbytenant", location: "body", type: "string", required: true, description: "Whether the timezone follows the tenant setting." },
+  { name: "deletevoicemail", location: "body", type: "string", required: true, description: "Whether to delete voicemail after notification." },
+  { name: "saycid", location: "body", type: "string", required: true, description: "Whether to announce caller id." },
+  { name: "sendvoicemail", location: "body", type: "string", required: false, description: "Whether to send the voicemail by email." },
+  { name: "review", location: "body", type: "string", required: true, description: "Whether the caller can review before leaving a message." },
+  { name: "tempgreetwarn", location: "body", type: "string", required: false, description: "Temporary-greeting warning setting." },
+  { name: "operator", location: "body", type: "string", required: false, description: "Operator escape setting. Often empty." },
+  { name: "envelope", location: "body", type: "string", required: true, description: "Whether to play the message envelope." },
+  { name: "sayduration", location: "body", type: "string", required: false, description: "Whether to announce message duration." },
+  { name: "saydurationm", location: "body", type: "string", required: false, description: "Minimum duration (minutes) to trigger the announcement." },
+  { name: "forcename", location: "body", type: "string", required: false, description: "Whether to force name recording." },
+  { name: "forcegreetings", location: "body", type: "string", required: false, description: "Whether to force greeting recording." },
+  { name: "callback", location: "body", type: "string", required: false, description: "Callback context. Often empty." },
+  { name: "dialout", location: "body", type: "string", required: false, description: "Dialout context. Often empty." },
+  { name: "exitcontext", location: "body", type: "string", required: true, description: "Context to exit to." },
+  { name: "maxmsg", location: "body", type: "string", required: true, description: "Maximum stored messages." },
+  { name: "volgain", location: "body", type: "string", required: false, description: "Playback volume gain. Often empty." },
+  {
+    name: "imapuser",
+    location: "body",
+    type: "string",
+    required: false,
+    description:
+      "IMAP username for message storage (SECURITY, source-docs/DOCS_AUDIT.md A-77). Null in every mailbox observed; a populated value's actual content was not confirmed.",
+  },
+  {
+    name: "imappassword",
+    location: "body",
+    type: "string",
+    required: false,
+    description:
+      "IMAP password for message storage, in the clear if populated (SECURITY, source-docs/DOCS_AUDIT.md A-77, docs/SECURITY.md SEC-REQ-02). Null in every mailbox observed.",
+  },
+  { name: "stamp", location: "body", type: "string", required: true, description: "Record timestamp, \"YYYY-MM-DD HH:MM\"." },
+  { name: "welcomeoption", location: "body", type: "string", required: false, description: "Welcome-message option." },
+  { name: "category", location: "body", type: "string", required: false, description: "Category tag. Often empty." },
+  { name: "fromstring", location: "body", type: "string", required: false, description: "From-name override for notification email. Often empty." },
+  { name: "minsecs", location: "body", type: "string", required: true, description: "Minimum message length in seconds." },
+  { name: "maxsecs", location: "body", type: "string", required: true, description: "Maximum message length in seconds." },
+  { name: "transcript_store", location: "body", type: "string", required: true, description: "Whether to store a transcript." },
+  { name: "onnewmessage", location: "body", type: "string", required: false, description: "Action to run on a new message." },
+  ...Array.from({ length: 30 }, (_, i): Parameter => ({
+    name: `onnewmessageparam${i + 1}`,
+    location: "body",
+    type: "string",
+    required: false,
+    description: "Parameter for the on-new-message action. Often empty.",
+  })),
+  { name: "ivr_id", location: "body", type: "string", required: false, description: "Associated IVR id." },
+  { name: "nextaftercmd", location: "body", type: "string", required: false, description: "Next command after playback." },
+  { name: "includeindbn", location: "body", type: "string", required: false, description: "Whether included in the directory by name." },
+  { name: "transcript_generate", location: "body", type: "string", required: false, description: "Whether to generate a transcript. Often empty." },
+  { name: "autodeleteolder", location: "body", type: "string", required: true, description: "Auto-delete threshold." },
+  { name: "voicemailbackup", location: "body", type: "string", required: true, description: "Whether messages are backed up." },
+  { name: "summary_generate", location: "body", type: "string", required: false, description: "Whether to generate a summary. Often empty." },
+];
 
 export const voicemailList = proxyOperation({
   id: "voicemail-list",
@@ -16,7 +89,37 @@ export const voicemailList = proxyOperation({
   summary: "Lists every voicemail for a tenant.",
   source: "voicemail.md",
   queryParameters: [vmTenantParam],
-  notes: ["Response not documented."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description:
+        "With format=json (undocumented): an array, one object per mailbox (42 observed on the test tenant), roughly 60 fields including a plaintext IMAP credential pair. Without format (or format=plain): a smaller 5-column pipe-delimited table (header: Mailbox|Fullname|Email|Attach|, the fifth column's header was empty in the observed capture).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-77",
+      schema: [
+        { name: "[ ]", location: "body", type: "object", required: true, description: "One item per mailbox.", children: voicemailListItemSchema },
+      ],
+      example: [
+        {
+          uniqueid: "1001", te_id: "500", context: "default", mailbox: "1001", fullname: "Demo Mailbox",
+          email: "demo@example.com", pager: "", attach: "yes", attachfmt: null, serveremail: null,
+          language: "", tz: "", tzbytenant: "no", deletevoicemail: "no", saycid: "no", sendvoicemail: null,
+          review: "no", tempgreetwarn: null, operator: "", envelope: "yes", sayduration: null, saydurationm: null,
+          forcename: null, forcegreetings: null, callback: "", dialout: "", exitcontext: "default-exit",
+          maxmsg: "100", volgain: null, imapuser: null, imappassword: null, stamp: "2026-01-15 09:30",
+          welcomeoption: "std", category: "", fromstring: "", minsecs: "1", maxsecs: "60",
+          transcript_store: "no", onnewmessage: "", onnewmessageparam1: "",
+        },
+      ],
+    },
+  ],
+  notes: [
+    "Response observed by probe (source-docs/DOCS_AUDIT.md A-77).",
+    "SECURITY: the format=json response includes a plaintext IMAP credential pair (imapuser, imappassword) per mailbox. This operation must never be added to the Live allowlist without a field-level output allowlist that drops both — tracked as blocking requirement SEC-REQ-02 in docs/SECURITY.md.",
+  ],
   related: ["voicemail-messages"],
 });
 
@@ -29,7 +132,18 @@ export const voicemailMessages = proxyOperation({
   summary: "Lists the messages in one mailbox.",
   source: "voicemail.md",
   queryParameters: [vmTenantParam, vmMailboxParam],
-  notes: ["Response not documented."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "An empty 200 body (0 bytes) without mailbox, for both the default and format=json requests (source-docs/DOCS_AUDIT.md A-74). Response with a real mailbox is unknown.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-74",
+    },
+  ],
+  notes: ["Response observed by probe without mailbox (source-docs/DOCS_AUDIT.md A-74); the populated shape remains undocumented."],
   related: ["voicemail-list", "voicemail-message"],
 });
 

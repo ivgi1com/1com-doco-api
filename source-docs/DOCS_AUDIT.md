@@ -684,3 +684,270 @@ credential fields (OBSERVED shape; values not yet observed; SECURITY)
   unaffected: every `ex_*` value there is null.
 - Tracked as blocking requirement **SEC-REQ-01** in `docs/SECURITY.md`
   "Blocking requirements for future Live enablement".
+
+## 12. Phase 7 Stage 4 — structure-only probe of the read operations (2026-09-26)
+
+35 non-ManageDB read operations (excluding the 6 already characterised:
+EXTENSIONS, AGENTS, DIDS, SIMPLECDRS, QUEUELOGS, CDR GET) were probed once
+with the documented default format and once per documented `format` value,
+plus one additional `format=json` call marked "undocumented variant" for
+operations that don't document `json`. A user-supplied TEST key/tenant was
+used, in-process only, never written to disk; the script masked every value
+to its letter/digit shape before printing, scrubbed the key/tenant
+longest-first (including URL-encoded and cased variants), and its own
+self-test (fake secrets in values, keys, error text, CSV, XML and an echoed
+URL) found zero leaks before the real run. A follow-up probe re-tested 6
+ambiguous operations with `tenant` added, a longer timeout, or `tenant`
+deliberately omitted. Six operations returned no data (empty body or
+timeout) either run; those are recorded with the others below rather than
+skipped, since "no data" is itself an observed fact.
+
+A-56 — `INFO queues` / `INFO queue` (OBSERVED)
+
+- `queues`: default is one line of pipe-delimited `<id>: <label>` pairs (no
+  header), 38 entries on this tenant; one label contained a literal comma,
+  which is why this project's own probe tooling mis-detected the line's
+  separator — the wire format is pipe-delimited, not comma. `format=json`
+  (undocumented): an object keyed by queue id, each value a short string
+  (the queue name).
+- `queue`: called with no `id` (none was supplied), it still returned one
+  queue's full stats as a pipe-delimited row of 24 named fields
+  (`AGENTSAVAILABLE`, `AGENTSPAUSED`, `AGENTSFREE`, `AGENTSONLINE`,
+  `CALLSINQUEUE`, `SERVICELEVEL`, `FIRSTWAITING`, `SECONDWAITING`,
+  `THIRDWAITING`, `CALLSONLINE`, `TALKTIME`, `HOLDTIME`, `ANSWEREDCALLS`,
+  `CALLSRECEIVED`, `REALANSWEREDCALLS`, `TRANSFEREDCALLS`,
+  `ABANDONEDCALLS`, `TIMEDOUTCALLS`, `QUEUECAR`, `EXITWITHKEYCALLS`,
+  `MAXHOLDTIME`, `AVERAGETALKTIME`, `AVERAGEHOLDTIME`); `format=json`
+  confirms the same 24 field names. **Not confirmed**: whether this is the
+  tenant's only/first queue, a default, or `id` silently ignored when
+  absent — no id-filtering behavior was observed.
+
+A-57 — `INFO agentsconnected` / `INFO agentsdelay` (OBSERVED)
+
+- `agentsconnected`: default is one line of pipe-delimited `<number>:<state>`
+  pairs (38 on this tenant, no `queue` filter supplied). `format=json`
+  (undocumented): an object keyed by a 10-digit number, each value itself an
+  object keyed by a single digit (queue id, presumably) mapping to an
+  integer. Field/key meanings are not documented; this is the raw observed
+  shape only.
+- `agentsdelay`: same two-level keyed-object shape in `format=json`
+  (outer key a 3-digit id, inner key a single digit, value an integer,
+  presumably an answer-delay count or seconds). Default is a pipe-delimited
+  `<id>:<value>` line, 39 entries.
+- Neither operation's `queue` filter was exercised (omitted, since it is
+  undocumented as optional); both returned tenant-wide data without it.
+
+A-58 — `INFO outdialed` (OBSERVED)
+
+- Default (no format) is an empty 200 body. `format=json` (undocumented)
+  returns an object keyed by a free-text device/extension identifier —
+  **not always numeric**: some keys observed during this probe were
+  human-readable device labels, including what appears to be a real
+  person's name embedded in a device/system label on the test tenant. That
+  value is not reproduced here or anywhere in the repo; it is a live-data
+  characteristic of this operation worth flagging for any future Live
+  consideration — unlike EXTENSIONS/AGENTS/DIDS, this key space is
+  **not a stable, anonymous identifier**. Each value is `{ STATE: string }`.
+
+A-59 — `INFO call` (OBSERVED — no data)
+
+- Both format variants timed out (30 s) with no `id` supplied. The response
+  shape for this operation remains completely undocumented; a real call id
+  or a returned-by-DIAL id would be needed to observe it, and none was
+  available during this probe.
+
+A-60 — `INFO recording` / `playrecording` / `inforecording` (OBSERVED)
+
+- All three return the identical plain-text error `No id specified` (14
+  bytes, `text/html`) when `id` is omitted, for both the default and
+  `format=json` request — `format` makes no difference to this error path.
+  No binary/audio body or metadata shape was observed for any of the three
+  (would need a real recording id).
+
+A-61 — `INFO voicemailtranscript` (OBSERVED — no data)
+
+- Empty 200 body (0 bytes, `text/plain`) for both format variants when `id`
+  is omitted. Response shape with a real id is unknown.
+
+A-62 — `INFO EXTSTATE` (OBSERVED; confirms the Phase 6 partial probe)
+
+- Default/plain: a 2-byte whitespace-only body (`\r\n`), matching exactly
+  the partial finding recorded during Phase 6 Step 1 (see
+  `docs/SESSION_HANDOFF.md`'s "Earlier IN-PROGRESS checkpoint" history).
+  `format=json`: `{ UniqueID: 2-letter string, LinkedID: string, ≤24 chars
+  observed }` — also matches that partial finding, now confirmed complete.
+  `ext` was omitted in this run (undocumented as optional); the response
+  did not appear to depend on it.
+
+A-63 — `INFO config` (OBSERVED)
+
+- Default is a 7-field pipe-delimited positional row (values include two
+  small integers and one that looks like a signed number, e.g. `-1`).
+  `format=json` returns only **3** named fields: `maxchannels`,
+  `maxextensions`, `maxdids` — a strict subset of the 7 positional values,
+  not a full mirror. The other 4 positional fields' names/meanings are not
+  established by either format.
+- Note (carried from `info.ts`): a full probe of this operation risks
+  surfacing tenant configuration fields not meant for display (by analogy
+  with DIDS's joined tenant row, A-53) — treat with the same caution before
+  ever adding it to Live.
+
+A-64 — `INFO CDRS` (OBSERVED — no data on this tenant)
+
+- Default, `format=csv` and `format=xml` all returned an empty 200 body (0
+  bytes) — no CDR data on this tenant for the (unfiltered) query used.
+  `format=json` (undocumented) returned a single byte, `]` — a
+  malformed/truncated empty-array artifact, the same server-side pattern
+  already seen for SIMPLECDRS (A-54) and QUEUELOGS (A-50) when they have no
+  matching data. This appears to be a shared platform quirk across multiple
+  reqtypes' JSON-empty-result path, not specific to one operation.
+
+A-65 — `INFO balance` (OBSERVED)
+
+- The response body is a **bare number** (e.g. `123.45`), not wrapped in a
+  JSON object or array, identically for the default and `format=json`
+  requests (`format` has no observed effect). 12 bytes on this tenant.
+
+A-66 — `INFO FLOW` (OBSERVED — incomplete, no `id` supplied)
+
+- Both default and `format=json` returned the same 11-byte plain-text word
+  (a state-like string). Since no `id` was supplied, it is **not
+  established** whether this is a real single-flow state, a default/first
+  flow, or a fixed filler value when `id` is absent.
+
+A-67 — `INFO variable` (OBSERVED — no data)
+
+- Empty 200 body (0 bytes) for both format variants when `id` is omitted.
+
+A-68 — `AGENT LISTQUEUES` (OBSERVED; refines A-41)
+
+- Without `extension`, both format variants return the plain-text error
+  `No extension specified` (paraphrased from a masked capture; exact
+  wording not preserved by the probe's masking). This refines A-41's "no
+  observable data" into a concrete, named-parameter validation error —
+  the operation is reachable and responsive, it simply requires
+  `extension`, which was not supplied by either the original probe or this
+  one.
+
+A-69 — `CHANNEL`, `COUNTCALLS`, `COUNTCHANNELS`, `HELP` all require an
+undocumented `tenant` (OBSERVED)
+
+- Without `tenant`, all four return the **identical** fixed error text (46
+  bytes, `text/html`) — the same message across four independently
+  documented reqtypes suggests a shared platform-level key/tenant guard,
+  not a per-operation check. None of the four documents `tenant` as
+  required; `COUNTCALLS` and `HELP` don't document it as a parameter at
+  all, and `CHANNEL`'s only documented parameter is `channel`.
+- With `tenant` supplied (follow-up probe): `COUNTCALLS` returns an empty
+  200 body (0 bytes — plausibly "no calls in progress", not confirmed);
+  `CHANNEL` returns an array of same-length, content-empty pairs (55 items
+  on this tenant — plausibly an idle-channel enumeration, not confirmed);
+  `HELP` returns a large (~24 KB) `text/html` page wrapped in `<pre>`/`<i>`
+  tags, consistent with its documented purpose ("the latest syntax for the
+  operations", `_common.md`) — the page's own text content was not
+  captured (structure only: tags and byte count).
+- `COUNTCHANNELS` is a partial exception: with `tenant` sent it instead
+  returns `Wrong or missing tenant` (28 bytes) — different from the other
+  three, suggesting it wants its other documented parameter (`nodename`)
+  and/or an Admin key rather than a tenant key. Not resolved further; both
+  variants of the error are now recorded rather than assumed to be the
+  same.
+
+A-70 — `COUNTPEERS` is slow (OBSERVED — timing)
+
+- The initial probe (15 s timeout) timed out. A follow-up with a 30 s
+  timeout succeeded, but only after **~23 seconds**. Response: default is a
+  pipe-delimited `<node>:<count>` line (50 entries); `format=json` is an
+  object keyed by node id, integer values.
+- This exceeds this portal's own request timeout used elsewhere for Live
+  proxying (`src/server/playground/allowlist.ts` / `docs/SECURITY.md`); if
+  this operation is ever considered for Live, its latency — not just its
+  data sensitivity — is a separate blocking concern.
+
+A-71 — `PEERS` (OBSERVED)
+
+- `format=json` gives the full field list: `node`, `Name`, `Host`, `Dyn`,
+  `Forcerport`, `Comedia`, `ACL`, `Port`, `Status`, `Description`,
+  `Realtime` — one object per peer, 41 peers observed on this tenant. The
+  default's pipe-delimited table carries the same 11 columns in the same
+  order.
+
+A-72 — `BLFS` (OBSERVED)
+
+- `format=json` gives the full field list: one bare positional duplicate
+  key (a timestamp, matching a field also named elsewhere) plus
+  `st_extension`, `st_state`, `st_timestamp` — 518 records observed on this
+  tenant. Default is the same 4 values pipe-delimited, in the same
+  positional-then-named order already seen elsewhere (SIMPLECDRS,
+  QUEUELOGS): each record repeats its own field values under both a bare
+  positional key and its name.
+
+A-73 — `FLOWS` (OBSERVED)
+
+- `format=json` gives the full field list: `fl_id`, `fl_te_id`, `fl_name`,
+  `fl_comment`, `fl_number`, `fl_value`, `fl_value_for_unavailable`,
+  `fl_value_for_inuse`, `fl_value_for_notinuse`, `fl_value_for_ringing`,
+  `fl_variable_name`, `fl_monitor_type`, `fl_monitor_type_id`,
+  `fl_monitor_parameter`, `st_extension`, `st_state`, `st_timestamp`,
+  `st_peername`, plus two bare positional duplicate keys — 5 flow records
+  observed on this tenant. Default is the same fields pipe-delimited.
+
+A-74 — `MEDIAFILE GETAUDIO` / `VOICEMAIL messages` (OBSERVED — no data)
+
+- Both return an empty 200 body (0 bytes) when their selecting parameter
+  (`objectid`/`id` for MEDIAFILE, `mailbox` for VOICEMAIL messages) is
+  omitted — unlike most other operations tested without their id, neither
+  returns an error string.
+
+A-75 — `PHONEBOOK query` / `QUEUE list` / `VIRTUALEXT list` (OBSERVED)
+
+- Each returns an explicit, named-parameter error string when its selecting
+  parameter is omitted: PHONEBOOK names `phonebook`/id, QUEUE names
+  `id`/`number`, VIRTUALEXT names its extension-number parameter. Exact
+  wording is only partially preserved by the probe's masking (common words
+  survive; identifiers do not) but the pattern — a specific, named-field
+  validation message, not a generic error — is consistent across all
+  three.
+
+A-76 — `RESPONSEPATH list` / `getid` / `getlast` (OBSERVED — no data)
+
+- All three returned an empty 200 body (0 bytes) with no error text,
+  regardless of the `id`/`filter`/`filterdata` values supplied (none) or
+  `format` (including `format=xml` for `getlast`), on this tenant. This is
+  consistent with the source's own lack of a response sample for `list`
+  and `getid`; `getlast`'s vendor-sourced plain-text sample
+  (`responsepath.md`, `evidence: "vendor"`) was not reproduced or
+  contradicted here — this tenant simply had no matching data.
+
+A-77 — `VOICEMAIL list` exposes a plaintext IMAP credential pair per mailbox
+(OBSERVED; SECURITY)
+
+- `format=json` returns one object per mailbox with roughly 60 fields,
+  including `imapuser` and `imappassword` alongside personal fields
+  (`fullname`, `email`) — 42 mailboxes observed on this tenant. Every value
+  observed for `imapuser`/`imappassword` in this probe was `null`, so
+  whether a populated mailbox exposes a real password here was **not**
+  directly confirmed, but the field exists in the schema and its name is
+  unambiguous.
+- Default/plain is a much smaller 5-column pipe-delimited table (header:
+  `Mailbox|Fullname|Email|Attach|` — the fifth column's header was empty in
+  the observed capture) and does not include the IMAP fields.
+- Consequence: same category of risk as A-55 (QUEUELOGS) — this operation
+  must never be added to the Live allowlist without a field-level output
+  allowlist that drops `imapuser`/`imappassword` (and re-checks the other
+  ~55 fields for anything similarly sensitive, e.g. `serveremail`). Tracked
+  as blocking requirement **SEC-REQ-02** in `docs/SECURITY.md`.
+- Demo (Stage 5) must decide, with the user, how to represent these two
+  fields — QUEUELOGS's precedent (A-55) is to keep the field in the
+  documented schema but fix it at `null` in every fixture, never a
+  synthetic-looking password value.
+
+### 12.1 Not added to the allowlist / no Live change
+
+Nothing in this stage adds any operation to
+`src/server/playground/allowlist.ts#LIVE_POLICIES`. All 35 operations above
+gain Reference-only response documentation (`evidence: "observed-sanitized"`,
+`verification.tested = true`); none becomes newly available in the Live
+Playground. `ManageDB` and the two `unclear` operations
+(`info-voicemail`, `voicemail-message`) remain excluded from probing, per
+the Stage 1 decision.

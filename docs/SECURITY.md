@@ -263,3 +263,34 @@ implemented and validated:
 
 Closing this requirement needs an Opus security review (`CLAUDE.md` model
 routing), and the user's explicit approval to add QUEUELOGS to Live.
+
+### SEC-REQ-02 — VOICEMAIL list response field allowlist (BLOCKING, open)
+
+Recorded 2026-09-26 by Phase 7 Stage 4 probe. Evidence:
+`source-docs/DOCS_AUDIT.md` A-77.
+
+`INFO VOICEMAIL list`'s `format=json` response includes a plaintext IMAP
+credential pair (`imapuser`, `imappassword`) per mailbox, alongside personal
+fields (`fullname`, `email`), among roughly 60 fields total. Every value
+observed for the credential fields in the probe was `null`; a populated
+mailbox's actual behavior is not confirmed.
+
+VOICEMAIL list stays **disabled for Live** (it is not on `LIVE_POLICIES`
+today) until all of the following are implemented and validated, if it is
+ever proposed for Live:
+
+1. A strict server-side, per-item response field allowlist for this
+   operation, matching the EXTENSIONS/QUEUELOGS pattern.
+2. `imapuser`, `imappassword`, and any other credential-shaped field found
+   on closer review (e.g. `serveremail`) are removed.
+3. Default deny: any field not explicitly approved is dropped.
+4. Tests prove the credential fields cannot reach the browser, including a
+   case where they are populated (not just the all-null case observed so
+   far).
+
+Closing this requirement needs an Opus security review and the user's
+explicit approval to add this operation to Live. Demo mode is unaffected
+(synthetic data only), but Stage 5 must still decide, with the user, how to
+represent `imapuser`/`imappassword` in the documented schema/fixtures — see
+the QUEUELOGS precedent (SEC-REQ-01, A-55): keep the fields in the schema,
+fixed at `null`.

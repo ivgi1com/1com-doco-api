@@ -1,7 +1,7 @@
 # Current Status
 
 Current work:
-**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–3 done).** Plan
+**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–4 done).** Plan
 approved 2026-09-25
 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
 decisions in `docs/DECISIONS.md` "Phase 7 planning", "Phase 7 Stage 1
@@ -11,14 +11,22 @@ Stage 3 (Reference authoring) is complete: **all 109 non-excluded
 operations now have a Reference page** (`npm run rollout:status`:
 109/109, 0 broken links); `tests/unit/proxy-coverage.test.ts`'s
 `ROLLOUT_COMPLETE` flag is now `true`, enforcing full coverage going
-forward. `npm run check` 209/209, build clean (228 pre-rendered paths),
-full Playwright suite passing on a fresh production build (two runs,
-141/142 each — the one failure differed each time and passed in
-isolation, consistent with pre-existing test-infra flakiness, not a
-regression), visual pass at desktop/mobile × en/he with zero console
-errors and no overflow. Next: **STOP for the Stage 4 gate** — probing
-the read operations needs the user's TEST key/tenant in chat and a model
-switch to Opus 5.5 (credential handling).
+forward.
+Stage 4 (probe the read operations, Opus for the probe + Sonnet for the
+write-up) is also complete: 35 operations probed with a user-supplied TEST
+key/tenant (never written to disk; rotated after the stage), full findings
+in `source-docs/DOCS_AUDIT.md` §12 (A-56..A-77), 32 operations gained a
+full observed Reference response. Two security findings: A-58 (INFO
+outdialed's json keys can be human-readable device labels) and **A-77**
+(VOICEMAIL list exposes a plaintext `imapuser`/`imappassword` pair) — new
+blocking requirement **SEC-REQ-02** in `docs/SECURITY.md`. No Live
+allowlist change. `npm run check` 209/209, build clean (`rollout:status`:
+109/109, 0 broken links, 38/109 endpoints tested), a Playwright visual
+pass over 10 newly-filled pages (desktop/mobile) — zero console errors, no
+overflow. The full Playwright suite and an he-locale pass were not re-run
+this stage; do before the Stage 7 gate.
+Next: **Stage 5 — Demo fixtures for the observed reads** (Sonnet 5). Full
+detail: `docs/SESSION_HANDOFF.md`.
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
@@ -125,9 +133,10 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`phase/demo-mode` @ `0631a95` (fast-forwarded from `docs/proxy-api-rebuild`,
-which was itself from `main` @ `b37e51c`). Working tree has uncommitted
-Stage B changes (Demo fixtures + UI) — see `docs/SESSION_HANDOFF.md`.
+`phase/proxy-rollout` (Phase 7, Stages 0–4 committed; see the top of this
+file and `docs/SESSION_HANDOFF.md`). The `phase/demo-mode` @ `0631a95` line
+this section used to show is stale history from before the Phase 6 approval
+and the Phase 7 branch — kept below only as Phase 6/6-superseded record.
 
 Earlier phase:
 **Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)

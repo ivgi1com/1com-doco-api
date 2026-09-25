@@ -60,9 +60,20 @@ export const agentListqueues = proxyOperation({
     agentExtensionParam,
     q("format", "Output format. The Site's own example always sends format=json; no other value has been tried.", { enum: ["json"], example: "json" }),
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without extension, both format variants return the plain-text error \"No extension specified\" (source-docs/DOCS_AUDIT.md A-68). This refines an earlier probe's \"no observable data\" finding (A-41) into a concrete parameter-validation error; the real success response remains undocumented.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-68",
+    },
+  ],
   notes: [
     "Site-only action (Site line 133); not in the Doc's action list, which names only pause and unpause. Neither source explains it further or states whether other action values exist beyond these three.",
-    "A structure-only probe against a real test tenant returned no observable data for this operation (source-docs/DOCS_AUDIT.md A-41), so its response shape remains undocumented here.",
+    "A structure-only probe against a real test tenant returned an explicit \"No extension specified\" error without an extension value (source-docs/DOCS_AUDIT.md A-68, refining A-41); the success response shape remains undocumented here.",
   ],
 });
 
@@ -106,8 +117,32 @@ export const channel = proxyOperation({
   title: "Get a channel",
   summary: "Shows one channel's details for the selected tenant.",
   source: "channel.md",
-  queryParameters: [q("channel", "The channel to show info for.")],
-  notes: ["Singular form. Compare CHANNELS, the plural listing form. No example and no response sample in either source; the method is not stated."],
+  queryParameters: [q("channel", "The channel to show info for."), tenantParam],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without a channel value, returns an array of same-length, content-empty pairs (55 items observed) — plausibly an idle-channel enumeration when no channel is selected; not confirmed. Without tenant, returns the shared \"tenant required\" error also seen on COUNTCALLS/COUNTCHANNELS/HELP (source-docs/DOCS_AUDIT.md A-69).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-69",
+      schema: [
+        {
+          name: "[ ]",
+          location: "body",
+          type: "array",
+          required: true,
+          description: "One item per entry; each item observed as a 2-element array of empty strings when no channel is active.",
+        },
+      ],
+      example: [["", ""]],
+    },
+  ],
+  notes: [
+    "Singular form. Compare CHANNELS, the plural listing form.",
+    "tenant is not documented for this operation, but a probe found it required in practice: omitting it returns a fixed error shared with COUNTCALLS, COUNTCHANNELS and HELP (source-docs/DOCS_AUDIT.md A-69).",
+  ],
   related: ["channels"],
 });
 
@@ -139,10 +174,20 @@ export const countcalls = proxyOperation({
   title: "Count running calls",
   summary: "Counts the number of calls currently running.",
   source: "countcalls.md",
-  queryParameters: [],
+  queryParameters: [tenantParam],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With tenant supplied: an empty 200 body (0 bytes) — plausibly \"no calls in progress\" on the test tenant, not confirmed. Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCHANNELS/HELP (source-docs/DOCS_AUDIT.md A-69).",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-69",
+    },
+  ],
   notes: [
-    "No parameters are documented, and the Doc gives only the one-line purpose (unlike every other reqtype) — this genuinely appears to take no parameters beyond the common ones. The Site's own example (Site line 152) sends no tenant.",
-    "Response not documented.",
+    "No parameters are documented, and the Doc gives only the one-line purpose (unlike every other reqtype). The Site's own example (Site line 152) sends no tenant, but a probe found tenant required in practice to avoid a fixed error response (source-docs/DOCS_AUDIT.md A-69).",
   ],
 });
 
@@ -160,7 +205,21 @@ export const countchannels = proxyOperation({
     q("nodename", "Count only this node's channels.", { required: false }),
     q("tenant", "Optional if using the Admin API key, returns only channels from the selected tenant.", { required: false }),
   ],
-  notes: ["No example and no response sample in either source; the method is not stated."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/HELP. With tenant (but no nodename): \"Wrong or missing tenant\" instead — a different error from the other three, suggesting this operation actually wants nodename and/or an Admin key rather than a tenant key (source-docs/DOCS_AUDIT.md A-69). Neither variant was resolved to a success response.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-69",
+    },
+  ],
+  notes: [
+    "No example and no response sample in either source; the method is not stated.",
+    "A probe found two distinct error responses depending on whether tenant is supplied, neither of them a success (source-docs/DOCS_AUDIT.md A-69) — this operation may need nodename and/or an Admin key instead of a tenant key.",
+  ],
   related: ["countpeers", "countcalls"],
 });
 

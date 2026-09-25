@@ -23,7 +23,37 @@ export const blfs = proxyOperation({
   summary: "Returns the BLF (Busy Lamp Field) status, peers and flows for the tenant.",
   source: "blfs.md",
   queryParameters: [q("tenant", "The tenant to report.")],
-  notes: ["No example and no response sample in either source; the method is not stated."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an array, one object per BLF entry (518 observed on the test tenant). Without format: the same 4 values pipe-delimited (one bare positional duplicate key, then the 3 named fields).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-72",
+      schema: [
+        {
+          name: "[ ]",
+          location: "body",
+          type: "object",
+          required: true,
+          description: "One item per BLF entry.",
+          children: [
+            { name: "0", location: "body", type: "string", required: true, description: "Bare positional duplicate of st_timestamp." },
+            { name: "st_extension", location: "body", type: "string", required: true, description: "Extension identifier." },
+            { name: "st_state", location: "body", type: "string", required: true, description: "State value. Full value set not documented." },
+            { name: "st_timestamp", location: "body", type: "string", required: true, description: "Timestamp, \"YYYY-MM-DD HH:MM:SS\"." },
+          ],
+        },
+      ],
+      example: [{ "0": "2026-01-15 09:30:00", st_extension: "201", st_state: "NOT_INUSE", st_timestamp: "2026-01-15 09:30:00" }],
+    },
+  ],
+  notes: [
+    "No example and no response sample in either source; the method is not stated.",
+    "Response observed by probe (source-docs/DOCS_AUDIT.md A-72).",
+  ],
 });
 
 export const blfsCategory: Category = { id: "blfs", title: "BLFS", endpoints: [blfs] };
@@ -39,7 +69,23 @@ export const countpeers = proxyOperation({
   summary: "Returns the number of peers on each node, and the total.",
   source: "countpeers.md",
   queryParameters: [peerCountTenantParam],
-  notes: ["No example and no response sample in either source; the method is not stated."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an object keyed by node id, integer values. Without format: a pipe-delimited `<node>:<count>` line (50 entries observed). Observed latency was high (~23 seconds); an initial 15-second attempt timed out (source-docs/DOCS_AUDIT.md A-70).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-70",
+      schema: [{ name: "{node}", location: "body", type: "integer", required: true, description: "Peer count for this node." }],
+      example: { srv02: 12 },
+    },
+  ],
+  notes: [
+    "No example and no response sample in either source; the method is not stated.",
+    "Observed to be slow: a 15-second probe timed out; a 30-second retry succeeded at ~23 seconds (source-docs/DOCS_AUDIT.md A-70) — a separate blocking concern from data sensitivity if this is ever proposed for Live.",
+  ],
   related: ["peers", "countchannels"],
 });
 
@@ -54,9 +100,43 @@ export const peers = proxyOperation({
   summary: "Shows the peers registered on all nodes of the network.",
   source: "peers.md",
   queryParameters: [peerCountTenantParam],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an array, one object per peer (41 observed). Without format: the same 11 columns pipe-delimited, in the same order (source-docs/DOCS_AUDIT.md A-71).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-71",
+      schema: [
+        {
+          name: "[ ]",
+          location: "body",
+          type: "object",
+          required: true,
+          description: "One item per peer.",
+          children: [
+            { name: "node", location: "body", type: "string", required: true, description: "Node identifier." },
+            { name: "Name", location: "body", type: "string", required: true, description: "Peer name, observed as \"<number>/<number>\"." },
+            { name: "Host", location: "body", type: "string", required: true, description: "Peer host, an IP address." },
+            { name: "Dyn", location: "body", type: "string", required: true, description: "Whether the peer is dynamic. Observed single-letter values." },
+            { name: "Forcerport", location: "body", type: "string", required: true, description: "Force rport setting." },
+            { name: "Comedia", location: "body", type: "string", required: true, description: "Comedia setting." },
+            { name: "ACL", location: "body", type: "string", required: true, description: "ACL setting." },
+            { name: "Port", location: "body", type: "string", required: true, description: "Peer port." },
+            { name: "Status", location: "body", type: "string", required: true, description: "Registration status, e.g. \"OK (<n> ms)\"." },
+            { name: "Description", location: "body", type: "string", required: true, description: "Free-text description; often empty." },
+            { name: "Realtime", location: "body", type: "string", required: true, description: "Whether the peer is realtime-configured." },
+          ],
+        },
+      ],
+      example: [{ node: "srv02", Name: "201/201", Host: "10.0.0.1", Dyn: "D", Forcerport: "Yes", Comedia: "Yes", ACL: "N", Port: "5060", Status: "OK (10 ms)", Description: "", Realtime: "no" }],
+    },
+  ],
   notes: [
     "New in the 2026-09-25 source rebuild; the prior MiRTA-sourced audit documented a different reqtype, CHANSIPPEERS (chan_sip-specific, table-only). Whether PEERS supersedes, overlaps with, or is unrelated to CHANSIPPEERS is not stated by either current source.",
-    "No example and no response sample; the method is not stated.",
+    "Response observed by probe (source-docs/DOCS_AUDIT.md A-71).",
   ],
   related: ["countpeers"],
 });
@@ -112,7 +192,21 @@ export const virtualextList = proxyOperation({
   summary: "Lists the extensions under a virtual extension.",
   source: "virtualext.md",
   queryParameters: [virtualextTenantParam, virtualextNumberParam],
-  notes: ["Same list/add/del/clean action shape as QUEUE. No example and no response sample in either source."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without number, returns an explicit \"virtual extension number not specified\"-style error naming the missing parameter (source-docs/DOCS_AUDIT.md A-75). Success response with a real number is not documented.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-75",
+    },
+  ],
+  notes: [
+    "Same list/add/del/clean action shape as QUEUE.",
+    "Response observed by probe without a number value (source-docs/DOCS_AUDIT.md A-75); the success shape remains undocumented.",
+  ],
   related: ["virtualext-add", "virtualext-del", "virtualext-clean", "queue-list"],
 });
 

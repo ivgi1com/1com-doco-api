@@ -553,9 +553,11 @@ export const infoRecording = proxyOperation({
       source: "source-docs/proxy-api/info.md",
     },
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
     "info=playrecording takes the same parameters and asks the browser to play the recording instead of downloading it (Site line 155). info=inforecording returns the recording's metadata instead.",
     "One Site example omits tenant (a lookup by DIAL call id); the other sends it. Whether tenant is needed is not stated.",
+    "Observed (A-60): without id, this operation returns the plain-text error \"No id specified\" (both with and without format=json) rather than the binary response above. The binary shape itself remains unconfirmed — a real recording id would be needed.",
   ],
 });
 
@@ -581,7 +583,11 @@ export const infoPlayrecording = proxyOperation({
       source: "source-docs/proxy-api/info.md",
     },
   ],
-  notes: ["Site line 155: \"Based on your browser settings, you can force the browser to play the recording using the playrecording info parameter\" — the only difference from info=recording."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  notes: [
+    "Site line 155: \"Based on your browser settings, you can force the browser to play the recording using the playrecording info parameter\" — the only difference from info=recording.",
+    "Observed (A-60): without id, returns the same \"No id specified\" plain-text error as info=recording. The binary shape remains unconfirmed.",
+  ],
   related: ["info-recording", "info-inforecording"],
 });
 
@@ -597,8 +603,19 @@ export const infoInforecording = proxyOperation({
     q("id", "The call's unique id, or the originate id."),
     tenantParam,
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Observed (A-60): without id, the plain-text error \"No id specified\" (14 bytes), identical to info=recording/playrecording. Response shape with a real id is unknown.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-60",
+    },
+  ],
   notes: [
-    "Doc-only purpose line (Doc line 127): \"get the metadata associated to the recording for the call (unique id or originated id)\". No example and no response sample in either source.",
+    "Doc-only purpose line (Doc line 127): \"get the metadata associated to the recording for the call (unique id or originated id)\". No example or response sample in either source.",
   ],
   related: ["info-recording", "info-playrecording"],
 });
@@ -643,9 +660,28 @@ export const infoVoicemailtranscript = proxyOperation({
     q("id", "The voicemail_messages table id for this message."),
     tenantParam,
   ],
-  notes: ["Doc-only purpose line (Doc line 131). No example or response sample in either source."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Observed (A-61): an empty 200 body (0 bytes, text/plain) without id, for both the default and format=json requests. Response with a real id is unknown.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-61",
+    },
+  ],
+  notes: ["Doc-only purpose line (Doc line 131). No response sample in either source."],
   related: ["info-voicemail"],
 });
+
+const queueStatsFieldNames = [
+  "AGENTSAVAILABLE", "AGENTSPAUSED", "AGENTSFREE", "AGENTSONLINE", "CALLSINQUEUE",
+  "SERVICELEVEL", "FIRSTWAITING", "SECONDWAITING", "THIRDWAITING", "CALLSONLINE",
+  "TALKTIME", "HOLDTIME", "ANSWEREDCALLS", "CALLSRECEIVED", "REALANSWEREDCALLS",
+  "TRANSFEREDCALLS", "ABANDONEDCALLS", "TIMEDOUTCALLS", "QUEUECAR", "EXITWITHKEYCALLS",
+  "MAXHOLDTIME", "AVERAGETALKTIME", "AVERAGEHOLDTIME",
+];
 
 export const infoQueues = proxyOperation({
   id: "info-queues",
@@ -655,8 +691,24 @@ export const infoQueues = proxyOperation({
   title: "List queues",
   summary: "Returns the tenant's queues.",
   source: "info.md",
-  queryParameters: [tenantParam],
-  notes: ["Doc-only purpose line (Doc line 120): \"list of queues\". No example or response sample in either source."],
+  queryParameters: [
+    tenantParam,
+    q("format", "Output format. Observed (A-56): the default is one line of pipe-delimited `<id>: <label>` pairs with no header; format=json (undocumented) returns an object keyed by queue id.", { required: false, enum: ["json"] }),
+  ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an object keyed by queue id, each value the queue's name. Without format (or format=plain): one line of pipe-delimited `<id>: <label>` pairs, no header. Observed on a tenant with 38 queues.",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-56",
+      schema: [{ name: "{queue-id}", location: "body", type: "string", required: true, description: "Queue name, keyed by the queue's id." }],
+      example: { "281": "Sales", "282": "Support" },
+    },
+  ],
+  notes: ["Doc-only purpose line (Doc line 120): \"list of queues\". No vendor response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56)."],
   related: ["info-queue"],
 });
 
@@ -672,7 +724,28 @@ export const infoQueue = proxyOperation({
     q("id", "The queue's id."),
     tenantParam,
   ],
-  notes: ["Doc-only purpose line (Doc line 121): \"info about the queue based on id\". No example or response sample in either source."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "A single queue-statistics object, both as a pipe-delimited positional row (default) and with the same field names via format=json (A-56). Observed with no id supplied — whether id actually filters to one queue, or is ignored, is not confirmed.",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-56",
+      schema: queueStatsFieldNames.map((name): Parameter => ({
+        name,
+        location: "body",
+        type: "string",
+        required: true,
+        description: "Meaning not documented beyond the field name.",
+      })),
+      example: Object.fromEntries(queueStatsFieldNames.map((name) => [name, "0"])),
+    },
+  ],
+  notes: [
+    "Doc-only purpose line (Doc line 121): \"info about the queue based on id\". No vendor response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56), called without an id.",
+  ],
   related: ["info-queues"],
 });
 
@@ -688,8 +761,30 @@ export const infoAgentsconnected = proxyOperation({
     tenantParam,
     q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an object keyed by extension number, each value itself an object keyed by a queue id mapping to an integer (meaning not documented). Without format: one line of pipe-delimited `<number>:<state>` pairs. Observed without a queue filter (tenant-wide).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-57",
+      schema: [
+        {
+          name: "{extension}",
+          location: "body",
+          type: "object",
+          required: true,
+          description: "One entry per extension.",
+          children: [{ name: "{queue-id}", location: "body", type: "integer", required: true, description: "Meaning not documented." }],
+        },
+      ],
+      example: { "2015550101": { "1": 0 } },
+    },
+  ],
   notes: [
-    "Doc-only purpose line (Doc line 123): \"info about the agents in all or selected queue, but only if currently connected\". No example or response sample; presumed to share info=agents's response shape (source-docs/DOCS_AUDIT.md A-43), not confirmed.",
+    "Doc-only purpose line (Doc line 123): \"info about the agents in all or selected queue, but only if currently connected\". Response observed by probe (source-docs/DOCS_AUDIT.md A-57), not presumed from info=agents.",
   ],
   related: ["info-agents", "info-agentsdelay"],
 });
@@ -706,7 +801,29 @@ export const infoAgentsdelay = proxyOperation({
     tenantParam,
     q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
   ],
-  notes: ["Doc-only purpose line (Doc line 124): \"info about the agents delay in answering in all or selected queue\". No example or response sample in either source."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "With format=json (undocumented): an object keyed by queue id, each value itself an object keyed by agent number mapping to an integer (presumably a delay count or seconds; not documented). Without format: one line of pipe-delimited `<id>:<value>` pairs. Observed without a queue filter.",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-57",
+      schema: [
+        {
+          name: "{queue-id}",
+          location: "body",
+          type: "object",
+          required: true,
+          description: "One entry per queue.",
+          children: [{ name: "{agent}", location: "body", type: "integer", required: true, description: "Meaning not documented; presumed answer-delay related." }],
+        },
+      ],
+      example: { "281": { "2015550101": 0 } },
+    },
+  ],
+  notes: ["Doc-only purpose line (Doc line 124): \"info about the agents delay in answering in all or selected queue\". Response observed by probe (source-docs/DOCS_AUDIT.md A-57)."],
   related: ["info-agents", "info-agentsconnected"],
 });
 
@@ -719,7 +836,32 @@ export const infoOutdialed = proxyOperation({
   summary: "Returns info about calls dialed out by extensions.",
   source: "info.md",
   queryParameters: [tenantParam],
-  notes: ["Doc-only purpose line (Doc line 125). No example or response sample in either source; no filter parameters beyond tenant are documented."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without format: an empty 200 body. With format=json (undocumented): an object keyed by a device/extension identifier, each value { STATE }. Observed keys were not always numeric extension numbers — some were free-text device labels, unlike EXTENSIONS/AGENTS/DIDS's stable numeric or `<number>-<tenant>` key shapes (source-docs/DOCS_AUDIT.md A-58).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-58",
+      schema: [
+        {
+          name: "{device}",
+          location: "body",
+          type: "object",
+          required: true,
+          description: "One entry per device/extension identifier (not guaranteed numeric).",
+          children: [{ name: "STATE", location: "body", type: "string", required: true, description: "Device state. Observed value: NOT_INUSE." }],
+        },
+      ],
+      example: { "201": { STATE: "NOT_INUSE" } },
+    },
+  ],
+  notes: [
+    "Doc-only purpose line (Doc line 125). No filter parameters beyond tenant are documented.",
+    "This operation's json key space can include human-readable device labels, not just numeric extension identifiers (source-docs/DOCS_AUDIT.md A-58) — treat with extra caution before any future Live consideration, more like INFO CONFIG than like EXTENSIONS.",
+  ],
 });
 
 export const infoCall = proxyOperation({
@@ -734,7 +876,10 @@ export const infoCall = proxyOperation({
     q("id", "The call id or unique id returned by the originating request (e.g. DIAL's response, or CDR's uniqueid)."),
     tenantParam,
   ],
-  notes: ["Doc-only purpose line (Doc line 126): \"info about the call originated with the api using the returned id or unique id\". No example or response sample in either source."],
+  notes: [
+    "Doc-only purpose line (Doc line 126): \"info about the call originated with the api using the returned id or unique id\". No example or response sample in either source.",
+    "A structure-only probe without an id timed out (30s) rather than returning a response (source-docs/DOCS_AUDIT.md A-59); a real call/unique id would be needed to observe the response shape, and none was available.",
+  ],
 });
 
 export const infoConfig = proxyOperation({
@@ -746,9 +891,26 @@ export const infoConfig = proxyOperation({
   summary: "Returns info about the configured tenant.",
   source: "info.md",
   queryParameters: [tenantParam],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without format: a 7-field pipe-delimited positional row (the extra 4 fields' names/meanings are not established). With format=json (undocumented): only 3 named fields — a strict subset of the positional row, not a full mirror (source-docs/DOCS_AUDIT.md A-63).",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-63",
+      schema: [
+        { name: "maxchannels", location: "body", type: "string", required: true, description: "Maximum simultaneous channels, as a numeric string." },
+        { name: "maxextensions", location: "body", type: "string", required: true, description: "Maximum extensions, as a numeric string." },
+        { name: "maxdids", location: "body", type: "string", required: true, description: "Maximum DIDs, or -1 for unlimited (observed)." },
+      ],
+      example: { maxchannels: "50", maxextensions: "500", maxdids: "-1" },
+    },
+  ],
   notes: [
-    "Doc-only purpose line (Doc line 135): \"get info about configured tenant\". No example or response sample in either source.",
-    "May return configuration fields not meant for display (the tenant record observed alongside other operations, e.g. INFO DIDS's json form, includes credential-like fields) — treat any future probe of this operation with the same field-level caution as EXTENSIONS/DIDS/QUEUELOGS.",
+    "Doc-only purpose line (Doc line 135): \"get info about configured tenant\". Response observed by probe (source-docs/DOCS_AUDIT.md A-63).",
+    "May return configuration fields not meant for display beyond the 3 shown here (the tenant record observed alongside other operations, e.g. INFO DIDS's json form, includes credential-like fields) — treat any future full characterisation of the positional row with the same field-level caution as EXTENSIONS/DIDS/QUEUELOGS.",
   ],
 });
 
@@ -761,7 +923,19 @@ export const infoBalance = proxyOperation({
   summary: "Returns the tenant's available credit.",
   source: "info.md",
   queryParameters: [tenantParam],
-  notes: ["Doc-only purpose line (Doc line 149): \"get the credit available\". No example or response sample in either source."],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "A bare number (not wrapped in a JSON object or array), identically for the default and format=json requests (source-docs/DOCS_AUDIT.md A-65).",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-65",
+      example: "123.45",
+    },
+  ],
+  notes: ["Doc-only purpose line (Doc line 149): \"get the credit available\". Response observed by probe (source-docs/DOCS_AUDIT.md A-65)."],
 });
 
 export const infoExtstate = proxyOperation({
@@ -776,11 +950,25 @@ export const infoExtstate = proxyOperation({
     q("ext", "The extension number.", { example: "500" }),
     tenantParam,
   ],
-  responses: [],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "Without format (or format=plain): a 2-byte whitespace-only body. With format=json (undocumented): { UniqueID: a 2-letter string, LinkedID: a string up to 24 chars observed }. Confirms a partial finding from an earlier interrupted Phase 6 probe (source-docs/DOCS_AUDIT.md A-62); observed without an ext value supplied.",
+      format: "json",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-62",
+      schema: [
+        { name: "UniqueID", location: "body", type: "string", required: true, description: "A short 2-letter code. Meaning not documented." },
+        { name: "LinkedID", location: "body", type: "string", required: true, description: "A text value, up to 24 characters observed. Meaning not documented." },
+      ],
+      example: { UniqueID: "ab", LinkedID: "srv02-1531779475.48" },
+    },
+  ],
   notes: [
     "Doc purpose (Doc line 134): \"get the state of the extensions, including the number speaking with.\"",
     "Shares the Site's \"INFO - Flow\" section heading with info=FLOW, but is a distinct info value with its own ext parameter (FLOW uses id).",
-    "Response not documented by either source.",
   ],
   related: ["info-flow", "info-extensions"],
 });
@@ -797,8 +985,20 @@ export const infoFlow = proxyOperation({
     q("id", "The flow's id.", { example: "61" }),
     tenantParam,
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "A single plain-text state word (11 bytes observed), identically for the default and format=json requests. Observed with no id supplied (source-docs/DOCS_AUDIT.md A-66) — not established whether this is a real single-flow state, a default/first flow, or a fixed value when id is absent.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-66",
+      example: "NOT_INUSE",
+    },
+  ],
   notes: [
-    "Site-only (Site line 112); not in the Doc's info value list. Response not documented.",
+    "Site-only (Site line 112); not in the Doc's info value list.",
     "Compare FLOWS (all flows for a tenant) and SETFLOW (writes a flow's state).",
   ],
   related: ["flows", "setflow", "info-extstate"],
@@ -816,8 +1016,19 @@ export const infoVariable = proxyOperation({
     q("id", "The variable's id.", { example: "61" }),
     tenantParam,
   ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "An empty 200 body (0 bytes) without id, for both the default and format=json requests (source-docs/DOCS_AUDIT.md A-67). Response with a real id is unknown.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-67",
+    },
+  ],
   notes: [
-    "Site-only (Site line 116); not in the Doc's info value list. Response not documented.",
+    "Site-only (Site line 116); not in the Doc's info value list.",
     "The Site's own example uses the alternate DEMO.1com.com/1com host form in its visible link text, not just its href target (source-docs/unresolved.md U-12) — reproduced here with the portal's canonical host instead.",
   ],
 });
@@ -853,6 +1064,17 @@ export const infoCdrs = proxyOperation({
     q("template", "Name of a server-defined XML output template (configured under Configuration/Settings → XML Template). Only meaningful with format=xml.", { example: "Test_CSV" }),
     q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01" }),
     q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31" }),
+  ],
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  responses: [
+    {
+      status: 200,
+      description: "No CDR data was observed on the test tenant for any format: default, format=csv and format=xml all return an empty 200 body (0 bytes). format=json (undocumented) returns a single byte, `]` — a malformed/truncated empty-array artifact, the same pattern already seen on SIMPLECDRS and QUEUELOGS when they have no matching data (source-docs/DOCS_AUDIT.md A-64). The real column layout for csv/xml with data remains undocumented.",
+      format: "plain",
+      evidence: "observed-sanitized",
+      verified: true,
+      source: "source-docs/DOCS_AUDIT.md#a-64",
+    },
   ],
   notes: [
     "Response column names/order are not documented for either CSV variant. Site line 194: getting the CSV for a single tenant uses \"the tenant\" format; for multiple tenants it uses \"the Admin\" format — two different, undocumented column layouts.",
