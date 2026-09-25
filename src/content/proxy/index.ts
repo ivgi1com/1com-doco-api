@@ -1,4 +1,14 @@
 import type { ApiDefinition } from "../types";
+import {
+  agentCategory,
+  atxtransferCategory,
+  channelCategory,
+  channelsCategory,
+  countcallsCategory,
+  countchannelsCategory,
+  hangupCategory,
+  transferCategory,
+} from "./calls";
 import { cdrCategory } from "./cdr";
 import { dialCategory } from "./dial";
 import { infoCategory } from "./info";
@@ -20,5 +30,18 @@ export const proxyApi: ApiDefinition = {
   summary:
     "1com's HTTP API for MiRTA PBX (proxyapi.php). One URL; the reqtype query parameter (plus an action, info, object or subreqtype value) selects the operation. Operations are grouped by reqtype. Operations that change state are documented here but never sent from the Playground.",
   // INFO first (it holds the Phase 4–6 Live/Demo operations), then alphabetical.
-  categories: [infoCategory, cdrCategory, dialCategory, managedbCategory],
+  categories: [
+    infoCategory,
+    agentCategory,
+    atxtransferCategory,
+    cdrCategory,
+    channelCategory,
+    channelsCategory,
+    countcallsCategory,
+    countchannelsCategory,
+    dialCategory,
+    hangupCategory,
+    managedbCategory,
+    transferCategory,
+  ],
 };
