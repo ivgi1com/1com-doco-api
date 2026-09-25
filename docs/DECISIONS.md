@@ -761,3 +761,17 @@ User decisions:
   feedback widget, observability, request history.
 - Proposed category taxonomy and the `unclear` read/write list are shown
   to the user at the Stage 1 checkpoint before content authoring.
+
+## Phase 7 Stage 1 checkpoint (2026-09-25)
+
+Inventory: `source-docs/proxy-api/operations.json` — 110 operations (62
+read, 45 write, 2 unclear, 1 excluded). User decisions:
+- **Unclear** (`info-voicemail`, `voicemail-message` — retrieval may mark
+  a message read): Reference only; never probed; no Demo.
+- **Granularity**: one Reference page per operation (reqtype +
+  discriminator value), matching the existing `info-extensions` pattern.
+- **Taxonomy**: sidebar grouped **by reqtype** (category id = lowercase
+  reqtype, title = the reqtype) — user chose this over the proposed
+  14-group functional taxonomy. The 6 existing endpoints were regrouped
+  into `info` and `cdr`; category ids are not part of any URL.
+- **`cdr-update`**: excluded (only in the superseded MiRTA manual).

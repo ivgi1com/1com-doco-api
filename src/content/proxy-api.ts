@@ -118,7 +118,7 @@ const infoExtensions: Endpoint = {
   id: "info-extensions",
   api: "proxy",
   version: "legacy",
-  category: "extensions",
+  category: "info",
   status: "legacy",
   deprecation: {
     note:
@@ -230,7 +230,7 @@ const infoAgents: Endpoint = {
   id: "info-agents",
   api: "proxy",
   version: "legacy",
-  category: "queues",
+  category: "info",
   status: "legacy",
   deprecation: infoExtensions.deprecation,
   method: "GET",
@@ -366,7 +366,7 @@ const infoDids: Endpoint = {
   id: "info-dids",
   api: "proxy",
   version: "legacy",
-  category: "numbers",
+  category: "info",
   status: "legacy",
   deprecation: infoExtensions.deprecation,
   method: "GET",
@@ -487,7 +487,7 @@ const infoSimplecdrs: Endpoint = {
   id: "info-simplecdrs",
   api: "proxy",
   version: "legacy",
-  category: "cdr",
+  category: "info",
   status: "legacy",
   deprecation: infoExtensions.deprecation,
   method: "GET",
@@ -602,7 +602,7 @@ const infoQueuelogs: Endpoint = {
   id: "info-queuelogs",
   api: "proxy",
   version: "legacy",
-  category: "queues",
+  category: "info",
   status: "legacy",
   deprecation: infoExtensions.deprecation,
   method: "GET",
@@ -637,9 +637,8 @@ export const proxyApi: ApiDefinition = {
   summary:
     "1com's HTTP API for MiRTA PBX (proxyapi.php). Six read-only operations are documented here; the remaining reqtypes are audited in source-docs/proxy-api/ pending a later phase.",
   categories: [
-    { id: "extensions", title: "Extensions", endpoints: [infoExtensions] },
-    { id: "queues", title: "Queues", endpoints: [infoAgents, infoQueuelogs] },
-    { id: "cdr", title: "Call records", endpoints: [cdrGet, infoSimplecdrs] },
-    { id: "numbers", title: "Numbers", endpoints: [infoDids] },
+    // Grouped by reqtype (user decision, Phase 7 Stage 1): the source defines no categories.
+    { id: "info", title: "INFO", endpoints: [infoExtensions, infoAgents, infoDids, infoSimplecdrs, infoQueuelogs] },
+    { id: "cdr", title: "CDR", endpoints: [cdrGet] },
   ],
 };
