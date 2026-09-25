@@ -21,6 +21,13 @@ import {
 } from "./extensions";
 import { infoCategory } from "./info";
 import { managedbCategory } from "./managedb";
+import {
+  campaignCategory,
+  flowsCategory,
+  queueCategory,
+  queueresetCategory,
+  setflowCategory,
+} from "./queues";
 import { PROXY_BASE_URL } from "./shared";
 
 /**
@@ -43,6 +50,7 @@ export const proxyApi: ApiDefinition = {
     agentCategory,
     atxtransferCategory,
     blfsCategory,
+    campaignCategory,
     cdrCategory,
     channelCategory,
     channelsCategory,
@@ -50,10 +58,14 @@ export const proxyApi: ApiDefinition = {
     countchannelsCategory,
     countpeersCategory,
     dialCategory,
+    flowsCategory,
     hangupCategory,
     managedbCategory,
     peersCategory,
+    queueCategory,
+    queueresetCategory,
     rebootCategory,
+    setflowCategory,
     transferCategory,
     unregisterCategory,
     virtualextCategory,
