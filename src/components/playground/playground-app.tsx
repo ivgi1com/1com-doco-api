@@ -57,14 +57,14 @@ export function PlaygroundApp({
 
       <MobileSteps state={state} endpointPane={endpointPane} requestPane={requestPane} responsePane={responsePane} />
 
-      <div className="hidden min-h-0 flex-1 md:grid md:grid-cols-[14rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)_26rem]">
-        <div className="border-e border-border bg-surface-2 xl:sticky xl:top-[105px] xl:max-h-[calc(100dvh-105px)]">
+      <div className="hidden min-h-0 flex-1 md:grid md:grid-cols-[14rem_minmax(0,1fr)] lg:grid-cols-[13rem_minmax(0,1fr)_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="border-e border-border bg-surface-2 lg:sticky lg:top-[105px] lg:max-h-[calc(100dvh-105px)]">
           {endpointPane}
         </div>
-        <div className="min-w-0 divide-y divide-border overflow-y-auto border-e border-border xl:sticky xl:top-[105px] xl:max-h-[calc(100dvh-105px)] xl:divide-y-0 xl:border-e-0">
+        <div className="min-w-0 divide-y divide-border overflow-y-auto border-e border-border lg:sticky lg:top-[105px] lg:max-h-[calc(100dvh-105px)] lg:divide-y-0">
           {requestPane}
         </div>
-        <div className="min-w-0 border-t border-border md:col-span-2 xl:sticky xl:top-[105px] xl:max-h-[calc(100dvh-105px)] xl:col-span-1 xl:border-t-0">
+        <div className="min-w-0 border-t border-border md:col-span-2 lg:sticky lg:top-[105px] lg:col-span-1 lg:max-h-[calc(100dvh-105px)] lg:border-t-0">
           {responsePane}
         </div>
       </div>

@@ -205,7 +205,11 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
               {String(response.body)}
             </pre>
           ) : (
-            <JsonViewer data={response.body} maxHeight="24rem" filename={`${endpoint.id}-response.json`} />
+            // No inner height cap: the surrounding tab panel
+            // (`overflow-y-auto` above) is already the pane's one scroll
+            // container, sized to the full column height by the 50/50
+            // layout. A fixed inner cap here would waste that space.
+            <JsonViewer data={response.body} maxHeight="none" filename={`${endpoint.id}-response.json`} />
           ))}
         {activeTab === "headers" && (
           <dl dir="ltr" className="space-y-1 rounded-md border border-code-border bg-code-bg p-3 font-mono text-xs text-code-ink">
