@@ -559,8 +559,334 @@ export const infoRecording = proxyOperation({
   ],
 });
 
+export const infoPlayrecording = proxyOperation({
+  id: "info-playrecording",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "playrecording" },
+  title: "Play a call recording",
+  summary: "Same lookup as \"Get a call recording\", but asks the browser to play the recording inline instead of downloading it.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The call's unique id, or the originate id returned by DIAL.", { example: "srv02-1531779475.48" }),
+    tenantParam,
+  ],
+  responses: [
+    {
+      status: 200,
+      description: "The recording as binary audio, with response headers (not documented) intended to make the browser play it rather than download it.",
+      format: "binary",
+      evidence: "vendor",
+      verified: false,
+      source: "source-docs/proxy-api/info.md",
+    },
+  ],
+  notes: ["Site line 155: \"Based on your browser settings, you can force the browser to play the recording using the playrecording info parameter\" — the only difference from info=recording."],
+  related: ["info-recording", "info-inforecording"],
+});
+
+export const infoInforecording = proxyOperation({
+  id: "info-inforecording",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "inforecording" },
+  title: "Get a call recording's metadata",
+  summary: "Returns the metadata associated with a call's recording, without the audio itself.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The call's unique id, or the originate id."),
+    tenantParam,
+  ],
+  notes: [
+    "Doc-only purpose line (Doc line 127): \"get the metadata associated to the recording for the call (unique id or originated id)\". No example and no response sample in either source.",
+  ],
+  related: ["info-recording", "info-playrecording"],
+});
+
+export const infoVoicemail = proxyOperation({
+  id: "info-voicemail",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "voicemail" },
+  title: "Get a voicemail message",
+  summary: "Returns one voicemail message for a call, by the voicemail_messages table id.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The voicemail_messages table id for this message."),
+    tenantParam,
+  ],
+  responses: [
+    {
+      status: 200,
+      description: "Presumed to be the message audio (implied by VOICEMAIL's own action=message, which the source documents as binary); not confirmed for this INFO form.",
+      format: "binary",
+      evidence: "vendor",
+      verified: false,
+      source: "source-docs/proxy-api/info.md",
+    },
+  ],
+  notes: [
+    "Doc-only purpose line (Doc line 130). No example or response sample in either source.",
+    "Not probed and has no Demo fixture: the source does not say whether retrieving a message marks it read, and VOICEMAIL separately exposes markread/markunread actions — calling this to observe its response could silently change a real mailbox's state (user decision, Phase 7 Stage 1).",
+  ],
+});
+
+export const infoVoicemailtranscript = proxyOperation({
+  id: "info-voicemailtranscript",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "voicemailtranscript" },
+  title: "Get a voicemail message transcript",
+  summary: "Returns the transcript of one voicemail message, by the voicemail_messages table id.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The voicemail_messages table id for this message."),
+    tenantParam,
+  ],
+  notes: ["Doc-only purpose line (Doc line 131). No example or response sample in either source."],
+  related: ["info-voicemail"],
+});
+
+export const infoQueues = proxyOperation({
+  id: "info-queues",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "queues" },
+  title: "List queues",
+  summary: "Returns the tenant's queues.",
+  source: "info.md",
+  queryParameters: [tenantParam],
+  notes: ["Doc-only purpose line (Doc line 120): \"list of queues\". No example or response sample in either source."],
+  related: ["info-queue"],
+});
+
+export const infoQueue = proxyOperation({
+  id: "info-queue",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "queue" },
+  title: "Get a queue",
+  summary: "Returns one queue's info, by id.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The queue's id."),
+    tenantParam,
+  ],
+  notes: ["Doc-only purpose line (Doc line 121): \"info about the queue based on id\". No example or response sample in either source."],
+  related: ["info-queues"],
+});
+
+export const infoAgentsconnected = proxyOperation({
+  id: "info-agentsconnected",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "agentsconnected" },
+  title: "List currently connected queue agents",
+  summary: "Returns the agents in all or one queue who are currently connected (on a call), narrower than the plain agents list.",
+  source: "info.md",
+  queryParameters: [
+    tenantParam,
+    q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
+  ],
+  notes: [
+    "Doc-only purpose line (Doc line 123): \"info about the agents in all or selected queue, but only if currently connected\". No example or response sample; presumed to share info=agents's response shape (source-docs/DOCS_AUDIT.md A-43), not confirmed.",
+  ],
+  related: ["info-agents", "info-agentsdelay"],
+});
+
+export const infoAgentsdelay = proxyOperation({
+  id: "info-agentsdelay",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "agentsdelay" },
+  title: "List queue agents' answer delay",
+  summary: "Returns answer-delay info for the agents in all or one queue.",
+  source: "info.md",
+  queryParameters: [
+    tenantParam,
+    q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
+  ],
+  notes: ["Doc-only purpose line (Doc line 124): \"info about the agents delay in answering in all or selected queue\". No example or response sample in either source."],
+  related: ["info-agents", "info-agentsconnected"],
+});
+
+export const infoOutdialed = proxyOperation({
+  id: "info-outdialed",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "outdialed" },
+  title: "List calls dialed out by extensions",
+  summary: "Returns info about calls dialed out by extensions.",
+  source: "info.md",
+  queryParameters: [tenantParam],
+  notes: ["Doc-only purpose line (Doc line 125). No example or response sample in either source; no filter parameters beyond tenant are documented."],
+});
+
+export const infoCall = proxyOperation({
+  id: "info-call",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "call" },
+  title: "Get a call",
+  summary: "Returns info about a call originated through this API, by the id or unique id the originating call returned.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The call id or unique id returned by the originating request (e.g. DIAL's response, or CDR's uniqueid)."),
+    tenantParam,
+  ],
+  notes: ["Doc-only purpose line (Doc line 126): \"info about the call originated with the api using the returned id or unique id\". No example or response sample in either source."],
+});
+
+export const infoConfig = proxyOperation({
+  id: "info-config",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "config" },
+  title: "Get tenant configuration",
+  summary: "Returns info about the configured tenant.",
+  source: "info.md",
+  queryParameters: [tenantParam],
+  notes: [
+    "Doc-only purpose line (Doc line 135): \"get info about configured tenant\". No example or response sample in either source.",
+    "May return configuration fields not meant for display (the tenant record observed alongside other operations, e.g. INFO DIDS's json form, includes credential-like fields) — treat any future probe of this operation with the same field-level caution as EXTENSIONS/DIDS/QUEUELOGS.",
+  ],
+});
+
+export const infoBalance = proxyOperation({
+  id: "info-balance",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "balance" },
+  title: "Get tenant balance",
+  summary: "Returns the tenant's available credit.",
+  source: "info.md",
+  queryParameters: [tenantParam],
+  notes: ["Doc-only purpose line (Doc line 149): \"get the credit available\". No example or response sample in either source."],
+});
+
+export const infoExtstate = proxyOperation({
+  id: "info-extstate",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "EXTSTATE" },
+  title: "Get an extension's state",
+  summary: "Returns the state of one extension, including the number it is speaking with, if any.",
+  source: "info.md",
+  queryParameters: [
+    q("ext", "The extension number.", { example: "500" }),
+    tenantParam,
+  ],
+  responses: [],
+  notes: [
+    "Doc purpose (Doc line 134): \"get the state of the extensions, including the number speaking with.\"",
+    "Shares the Site's \"INFO - Flow\" section heading with info=FLOW, but is a distinct info value with its own ext parameter (FLOW uses id).",
+    "Response not documented by either source.",
+  ],
+  related: ["info-flow", "info-extensions"],
+});
+
+export const infoFlow = proxyOperation({
+  id: "info-flow",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "FLOW" },
+  title: "Get a flow's state",
+  summary: "Returns the state of one call flow.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The flow's id.", { example: "61" }),
+    tenantParam,
+  ],
+  notes: [
+    "Site-only (Site line 112); not in the Doc's info value list. Response not documented.",
+    "Compare FLOWS (all flows for a tenant) and SETFLOW (writes a flow's state).",
+  ],
+  related: ["flows", "setflow", "info-extstate"],
+});
+
+export const infoVariable = proxyOperation({
+  id: "info-variable",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "variable" },
+  title: "Get a variable's value",
+  summary: "Returns the value of one dial-plan variable.",
+  source: "info.md",
+  queryParameters: [
+    q("id", "The variable's id.", { example: "61" }),
+    tenantParam,
+  ],
+  notes: [
+    "Site-only (Site line 116); not in the Doc's info value list. Response not documented.",
+    "The Site's own example uses the alternate DEMO.1com.com/1com host form in its visible link text, not just its href target (source-docs/unresolved.md U-12) — reproduced here with the portal's canonical host instead.",
+  ],
+});
+
+const cdrsFormatParam: Parameter = {
+  name: "format",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  enum: ["csv", "xml"],
+  description:
+    "Output format (Doc line 137: csv, xml). The Site's own examples also show plain output with no format parameter at all.",
+  source: "source-docs/proxy-api/info.md",
+};
+
+export const infoCdrs = proxyOperation({
+  id: "info-cdrs",
+  category: "info",
+  operationClass: "read",
+  fixedQuery: { reqtype: "INFO", info: "CDRS" },
+  title: "List calls",
+  summary: "Returns call records (CDRs), optionally filtered by phone number, id, or date range.",
+  source: "info.md",
+  queryParameters: [
+    q("tenant", "Tenant code, or % for all tenants. The Site's all-tenant example uses a bare, non-percent-encoded %.", { example: "TENANTCODE" }),
+    q("id", "Filters to one call. Doc line 137 lists id, uniqueid, src, firstdst and direction together as \"further parameters available\", without individually documenting them."),
+    q("uniqueid", "Filters to one call by its unique id."),
+    q("src", "Filters by source number. Meaning not further documented."),
+    q("firstdst", "Filters by first destination. Meaning not further documented."),
+    q("direction", "Filters by call direction. Accepted values not documented."),
+    q("phone", "Filters across whoanswered, calleridnum and dialednum. Comma-separated for multiple values (Doc line 138)."),
+    cdrsFormatParam,
+    q("template", "Name of a server-defined XML output template (configured under Configuration/Settings → XML Template). Only meaningful with format=xml.", { example: "Test_CSV" }),
+    q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01" }),
+    q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31" }),
+  ],
+  notes: [
+    "Response column names/order are not documented for either CSV variant. Site line 194: getting the CSV for a single tenant uses \"the tenant\" format; for multiple tenants it uses \"the Admin\" format — two different, undocumented column layouts.",
+    "The plain (no-format) response shown in the Site's own examples is not reproduced here: its structure is not independently characterised, unlike SIMPLECDRS.",
+    "Compare SIMPLECDRS, a separate, simpler call-history source with its own (partially observed) shape.",
+  ],
+  related: ["info-simplecdrs", "cdr-get"],
+});
+
 export const infoCategory: Category = {
   id: "info",
   title: "INFO",
-  endpoints: [infoExtensions, infoAgents, infoDids, infoSimplecdrs, infoQueuelogs, infoRecording],
+  endpoints: [
+    infoExtensions,
+    infoAgents,
+    infoDids,
+    infoSimplecdrs,
+    infoQueuelogs,
+    infoRecording,
+    infoPlayrecording,
+    infoInforecording,
+    infoVoicemail,
+    infoVoicemailtranscript,
+    infoQueues,
+    infoQueue,
+    infoAgentsconnected,
+    infoAgentsdelay,
+    infoOutdialed,
+    infoCall,
+    infoConfig,
+    infoBalance,
+    infoExtstate,
+    infoFlow,
+    infoVariable,
+    infoCdrs,
+  ],
 };
