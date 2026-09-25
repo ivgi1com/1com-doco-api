@@ -477,3 +477,45 @@ Consequences:
 Status:
 Approved by user (2026-09-25). Phase 6 (Demo mode) has not started and is
 waiting for user approval to begin planning.
+
+---
+
+## 2026-09-25 — Phase 5 adjustment: more Live endpoints (pre-merge)
+
+Context:
+Before merging Phase 5, the user asked for (1) a roughly 50/50
+request/response Playground layout and (2) more Live endpoints, chosen by
+the user, without broadening the proxy generically. Plan:
+`C:\Users\ivgi-pc\.claude\plans\where-wi-stopped-delegated-willow.md`.
+
+Decisions (user, 2026-09-25):
+- The user asked for `AGENT/LISTQUEUES` and `CDR/GET`.
+  - LISTQUEUES returned an empty body in every case, controls included
+    (A-41), so it is **not added**. The user replaced it with
+    **`INFO info=agents`** (A-43), an operation the source names but never
+    exemplifies.
+- **CDR GET**:
+  - `field` is fixed to `userfield` (fixedQuery, never caller-set).
+  - `uniqueid` is pattern-checked.
+  - No `format` parameter.
+  - The raw userfield is shown as returned (A-42).
+- **INFO/agents**:
+  - `queue` is optional and digits only.
+  - `format` is plain/json.
+  - The JSON field allowlist is all 10 observed positions (`0,1,2,4-8,10,11`).
+- Response structure was obtained by a **structure-only probe**. It printed
+  names, types and counts, not values, and was run from a scratchpad script
+  that is not committed. The user supplied a key, `queue=3698` and a CDR
+  uniqueid for it.
+- Both endpoints appear in the Reference and the Playground, marked
+  `legacy`, `tested: true`, `verified: false`.
+
+Consequences:
+- `allowlist.ts` moves from two parallel constants to one
+  per-endpoint `LIVE_POLICIES` map. It adds `paramPatterns`, enforced in
+  `validate.ts`.
+- New content categories: Queues (`info-agents`) and Call records
+  (`cdr-get`).
+- The Live response viewer explains an empty 200, since both new endpoints
+  answer "not found" with HTTP 200.
+- The layout change (step 8) runs on Sonnet 5 after this checkpoint.

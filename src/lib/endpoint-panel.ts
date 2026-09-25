@@ -27,8 +27,10 @@ export async function buildPanelData(api: ApiDefinition, endpoint: Endpoint): Pr
   const responses = await Promise.all(
     endpoint.responses.map(async (r) => {
       if (r.example === undefined) return { status: r.status, code: null, html: null, evidence: r.evidence };
-      const code = JSON.stringify(r.example, null, 2);
-      return { status: r.status, code, html: await highlight(code, "json"), evidence: r.evidence };
+      // A plain-text response's example is the body itself, not a JSON string literal.
+      const text = r.format === "plain" && typeof r.example === "string";
+      const code = text ? (r.example as string) : JSON.stringify(r.example, null, 2);
+      return { status: r.status, code, html: await highlight(code, text ? "text" : "json"), evidence: r.evidence };
     }),
   );
   return { samples, responses };

@@ -6,9 +6,10 @@ import type { ApiDefinition, Authentication, Endpoint, Parameter, ResponseSpec }
  * Every parameter/response/error state follows the no-guessing rule: what
  * the source does not say is marked `"undocumented"`, never invented.
  *
- * Scope: one operation (INFO / EXTENSIONS) of the legacy MiRTA PBX
- * `proxyapi.php` reqtype catalogue. The remaining 38 reqtypes are audited
- * (source-docs/) but not implemented; see docs/phases/07-proxy-api-rollout.md.
+ * Scope: three operations of the legacy MiRTA PBX `proxyapi.php` reqtype
+ * catalogue: INFO / EXTENSIONS (Phase 4), INFO / agents and CDR / GET
+ * (Phase 5 adjustment, A-42/A-43). The rest are audited (source-docs/) but
+ * not implemented; see docs/phases/07-proxy-api-rollout.md.
  */
 
 const SOURCE_PAGE =
@@ -146,6 +147,165 @@ const infoExtensions: Endpoint = {
   related: [],
 };
 
+// --- INFO / agents (Phase 5 adjustment; user-supplied operation, A-43) ---
+
+const agentsQueueParam: Parameter = {
+  name: "queue",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  description:
+    "Queue identifier to list agents for. Not documented by the source for this operation (the operation itself is only named in the INFO purpose line). Observed (A-43): a nonexistent queue returns the JSON literal null; omitting it returned the same agents as the tenant's one queue on the test tenant.",
+  example: "281",
+  constraints: "Digits only (enforced by this portal's Live proxy).",
+  source: "source-docs/DOCS_AUDIT.md#a-43",
+};
+
+const agentsFormatParam: Parameter = {
+  ...formatParam,
+  description:
+    "Output format. Observed (A-43): the default is plain (`<agent>:<State>|` pairs on one line); json returns an object keyed by agent. xml and csv returned an empty body, so they are not offered.",
+};
+
+// Observed 2026-09-25 by a structure-only probe (A-43). Upstream returns
+// positional records: numeric string keys with 3 and 9 absent. Meanings are
+// not documented; descriptions state observed values only.
+const agentRecordSchema: Parameter[] = [
+  { name: "0", location: "body", type: "string", required: true, description: "Meaning not documented. Observed: \"0\"." },
+  { name: "1", location: "body", type: "string", required: true, description: "Meaning not documented. Observed: \"available\"." },
+  { name: "2", location: "body", type: "string", required: true, description: "Meaning not documented. Observed: \"UNAVAILABLE\" (resembles a device state)." },
+  ...["4", "5", "6", "7", "8"].map(
+    (name): Parameter => ({ name, location: "body", type: "string", required: true, description: "Meaning not documented. Observed: empty string." }),
+  ),
+  { name: "10", location: "body", type: "string", required: true, description: "Meaning not documented. Observed: equal to the agent key." },
+  { name: "11", location: "body", type: "string", required: true, description: "Meaning not documented. Observed: equal to the agent key." },
+];
+
+const agentExample = (key: string) => ({
+  "0": "0",
+  "1": "available",
+  "2": "UNAVAILABLE",
+  "4": "",
+  "5": "",
+  "6": "",
+  "7": "",
+  "8": "",
+  "10": key,
+  "11": key,
+});
+
+const infoAgentsResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "With format=json: a JSON object keyed by agent (observed shape `<extension>-<tenant>`), each value a positional record with numeric keys. A nonexistent queue returns null. Without format (or format=plain): one text line of `<agent>:<State>|` pairs, with no header row.",
+  format: "json",
+  // Structure observed by probe; example values are synthetic.
+  evidence: "observed-sanitized",
+  // Structure re-confirmed through the portal's Live proxy (2026-09-25).
+  verified: true,
+  source: "source-docs/DOCS_AUDIT.md#a-43",
+  schema: [
+    {
+      name: "{agent}",
+      location: "body",
+      type: "object",
+      required: true,
+      description: "One entry per agent, keyed by the agent identifier.",
+      children: agentRecordSchema,
+    },
+  ],
+  example: { "201-TENANTCODE": agentExample("201-TENANTCODE"), "300-TENANTCODE": agentExample("300-TENANTCODE") },
+};
+
+const infoAgents: Endpoint = {
+  id: "info-agents",
+  api: "proxy",
+  version: "legacy",
+  category: "queues",
+  status: "legacy",
+  deprecation: infoExtensions.deprecation,
+  method: "GET",
+  methodBasis: "inferred",
+  path: "/pbx/proxyapi.php",
+  fixedQuery: { reqtype: "INFO", info: "agents" },
+  title: "List queue agents",
+  summary: "Returns the agents of a queue with their current state.",
+  sourceUrl: SOURCE_PAGE,
+  verification: { documented: false, implemented: true, tested: true, verified: false },
+  authentication: auth,
+  headers: [],
+  pathParameters: [],
+  queryParameters: [tenantParam, agentsQueueParam, agentsFormatParam],
+  requestBody: null,
+  responses: [infoAgentsResponse],
+  errors: "undocumented",
+  notes: [
+    "Not exemplified by the vendor documentation: the INFO operation list names \"agents\" without an example. This operation was supplied by 1com and characterised by observation only (source-docs/DOCS_AUDIT.md A-43).",
+    "The info value is case-insensitive in observation (agents and AGENTS returned the same body).",
+    "Errors are not signalled by HTTP status: a nonexistent queue returns HTTP 200 with the body null.",
+    "Field meanings are not documented. Records use numeric keys; the Live proxy returns only the positions observed so far (0, 1, 2, 4–8, 10, 11).",
+  ],
+  related: [],
+};
+
+// --- CDR / GET (userfield) (Phase 5 adjustment, A-42) ---
+
+const uniqueidParam: Parameter = {
+  name: "uniqueid",
+  location: "query",
+  type: "string",
+  required: "undocumented",
+  description:
+    "Unique identifier of the call record (CDR). Format not documented; examples look like `srv02-1701011773.4670` (server prefix, epoch seconds, sequence).",
+  example: "srv02-1701011773.4670",
+  constraints: "Optional `<server>-` prefix, then `<digits>.<digits>` (enforced by this portal's Live proxy).",
+  source: `${SOURCE_PAGE}#bkmrk-cdr-%2F-get-the-userfi`,
+};
+
+const cdrGetResponse: ResponseSpec = {
+  status: 200,
+  description:
+    "The raw value of the CDR's userfield as text, with no wrapping or header (observed, A-42). The body is the same whatever format is requested; only the content type changes. A nonexistent, malformed or missing uniqueid returns HTTP 200 with an empty body.",
+  format: "plain",
+  evidence: "observed-sanitized",
+  // Structure re-confirmed through the portal's Live proxy (2026-09-25).
+  verified: true,
+  source: "source-docs/DOCS_AUDIT.md#a-42",
+  example: "example-userfield-value",
+};
+
+const cdrGet: Endpoint = {
+  id: "cdr-get",
+  api: "proxy",
+  version: "legacy",
+  category: "cdr",
+  status: "legacy",
+  deprecation: infoExtensions.deprecation,
+  method: "GET",
+  methodBasis: "inferred",
+  path: "/pbx/proxyapi.php",
+  fixedQuery: { reqtype: "CDR", action: "GET", field: "userfield" },
+  title: "Get a call's userfield",
+  summary: "Returns the userfield value of one call record (CDR).",
+  sourceUrl: `${SOURCE_PAGE}#bkmrk-cdr-%2F-get-the-userfi`,
+  verification: { documented: true, implemented: true, tested: true, verified: false },
+  authentication: auth,
+  headers: [],
+  pathParameters: [],
+  queryParameters: [tenantParam, uniqueidParam],
+  requestBody: null,
+  responses: [cdrGetResponse],
+  errors: "undocumented",
+  notes: [
+    "One operation of the legacy CDR reqtype (action=GET). Full audit: source-docs/proxy-api/cdr.yaml.",
+    "field is fixed to userfield in this portal: it is the only value the source shows, and other CDR columns (such as caller and callee numbers) are personal data.",
+    "The userfield is free-form data written by your own integration. The portal cannot tell what it contains, so Live mode shows it as returned.",
+    "Errors are not signalled by HTTP status: an unknown uniqueid returns HTTP 200 with an empty body (A-42).",
+    "CDR action=UPDATE exists in the same reqtype and is not offered here.",
+  ],
+  related: [],
+};
+
 export const proxyApi: ApiDefinition = {
   id: "proxy",
   name: "Proxy API",
@@ -153,6 +313,10 @@ export const proxyApi: ApiDefinition = {
   baseUrl: "https://pbx6webserver.1com.co.il",
   synthetic: false,
   summary:
-    "1com's legacy HTTP API for MiRTA PBX (proxyapi.php). One real endpoint is documented here as the Phase 4 vertical slice; the remaining reqtypes are audited in source-docs/ pending a later phase.",
-  categories: [{ id: "extensions", title: "Extensions", endpoints: [infoExtensions] }],
+    "1com's legacy HTTP API for MiRTA PBX (proxyapi.php). Three read-only operations are documented here; the remaining reqtypes are audited in source-docs/ pending a later phase.",
+  categories: [
+    { id: "extensions", title: "Extensions", endpoints: [infoExtensions] },
+    { id: "queues", title: "Queues", endpoints: [infoAgents] },
+    { id: "cdr", title: "Call records", endpoints: [cdrGet] },
+  ],
 };

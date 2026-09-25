@@ -360,6 +360,99 @@ test.describe("interactions", () => {
       expect(res.status()).toBe(403);
     });
 
+    // Phase 5 adjustment (A-42/A-43): two more allowlisted endpoints.
+    async function goLiveOn(page: Page, endpoint: string) {
+      await page.goto(`/en/playground?endpoint=${endpoint}`);
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
+    }
+
+    test("info-agents: allowlisted, sends only its own params, and renders the keyed positional records", async ({ page }) => {
+      let sent: { endpoint?: string; params?: Record<string, string> } = {};
+      await page.route("**/api/playground", (route) => {
+        sent = route.request().postDataJSON();
+        const record = { "0": "0", "1": "available", "2": "UNAVAILABLE", "10": "201-TENANTCODE", "11": "201-TENANTCODE" };
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            upstream: {
+              status: 200,
+              latencyMs: 12,
+              sizeBytes: 90,
+              contentType: "application/json",
+              headers: {},
+              bodyText: JSON.stringify({ "201-TENANTCODE": record }),
+              redactedCount: 0,
+              fieldsOmitted: 0,
+            },
+          }),
+        });
+      });
+      await goLiveOn(page, "proxy/info-agents");
+      await desktopPane(page).getByLabel("queue", { exact: true }).fill("281");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText('"UNAVAILABLE"')).toBeVisible();
+      expect(sent.endpoint).toBe("proxy/info-agents");
+      expect(Object.keys(sent.params ?? {}).every((k) => ["tenant", "queue", "format"].includes(k))).toBe(true);
+      expect(sent.params?.queue).toBe("281");
+    });
+
+    test("cdr-get: shows the raw userfield text, and explains an empty 200", async ({ page }) => {
+      let body = "customer-note-e2e";
+      await page.route("**/api/playground", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            upstream: {
+              status: 200,
+              latencyMs: 9,
+              sizeBytes: body.length,
+              contentType: "text/html; charset=UTF-8",
+              headers: {},
+              bodyText: body,
+              redactedCount: 0,
+              fieldsOmitted: 0,
+            },
+          }),
+        }),
+      );
+      await goLiveOn(page, "proxy/cdr-get");
+      // field is fixed to userfield: shown as a fixed parameter, never editable.
+      await expect(desktopPane(page).getByLabel("field", { exact: true })).toHaveCount(0);
+      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveCount(0);
+      await desktopPane(page).getByLabel("uniqueid", { exact: true }).fill("srv02-1701011773.4670");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("customer-note-e2e")).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText(/upstream returned an empty body/)).toHaveCount(0);
+
+      body = "";
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/upstream returned an empty body/)).toBeVisible({ timeout: 3000 });
+    });
+
+    // Real route, no mock: both are rejected by validation before any
+    // upstream fetch, so neither can reach the 1com host.
+    test("the real route rejects a CDR field override and a non-allowlisted operation", async ({ request, baseURL }) => {
+      const headers = { origin: baseURL!, "sec-fetch-site": "same-origin", "content-type": "application/json" };
+      const override = await request.post("/api/playground", {
+        headers,
+        data: { endpoint: "proxy/cdr-get", params: { uniqueid: "srv02-1.2", field: "src" }, credential: "x" },
+      });
+      expect(override.status()).toBe(400);
+      const listqueues = await request.post("/api/playground", {
+        headers,
+        data: { endpoint: "proxy/agent-listqueues", params: {}, credential: "x" },
+      });
+      expect(listqueues.status()).toBe(403);
+      expect((await listqueues.json()).error.code).toBe("endpoint_not_allowed");
+    });
+
     test("mobile: Live success is reachable through the step flow and the Request tab shows the masked key", async ({
       page,
     }) => {

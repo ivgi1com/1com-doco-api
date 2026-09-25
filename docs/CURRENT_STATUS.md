@@ -1,8 +1,30 @@
 # Current Status
 
 Current phase:
-**Phase 5 — Live Playground: COMPLETE AND APPROVED** (approved 2026-09-25,
-gate option B; stopped here, Phase 6 not started)
+**Phase 5 — Live Playground: pre-merge ADJUSTMENT IN PROGRESS** (Phase 5
+was approved 2026-09-25, gate B; the user then asked for adjustments before
+merging, so it returns to the approval gate when they are done. Phase 6 has not started.)
+
+## Phase 5 adjustment (in progress)
+
+- Done (Opus 5.5):
+  - Two more Live endpoints, `proxy/info-agents` and `proxy/cdr-get`, with
+    per-endpoint param patterns and JSON field allowlists (`LIVE_POLICIES`).
+  - Probe findings A-41..A-43.
+  - Content entries in both the Reference and the Playground.
+  - An empty-200 note in the Live response viewer.
+  - 55 new unit tests (166/166) and 3 new Playwright tests (104/104, fresh
+    build).
+  - Real-host verification through the portal, with the logs scanned.
+  - Security review; one low-risk hardening applied (reject `m`-flag
+    patterns).
+- Remaining (Sonnet 5):
+  - 50/50 request/response layout (`playground-app.tsx`).
+  - Full visual pass at 1440/1280/1024/768/390, in en and he, covering all
+    3 endpoints.
+  - Then the Phase 5 re-gate (A/B/C/D).
+- LISTQUEUES was not added: it returned no observable data (A-41).
+
 
 Current branch:
 `phase/live-playground` (from `main` @ `c99ef81`, which includes the

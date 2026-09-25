@@ -54,6 +54,8 @@ export function validateLiveRequest(input: unknown): ValidationResult {
     if (value.trim() === "") continue;
     const allowedValues = target.paramEnums.get(name);
     if (allowedValues && !allowedValues.has(value)) return invalid;
+    const pattern = target.paramPatterns.get(name);
+    if (pattern && !pattern.test(value)) return invalid;
     clean[name] = value;
   }
 

@@ -194,6 +194,11 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
             </p>
           </Callout>
         )}
+        {activeTab === "body" && isLive && response.format === "text" && String(response.body).trim() === "" && (
+          <Callout kind="note" className="mb-3">
+            <p>{t("upstreamEmpty")}</p>
+          </Callout>
+        )}
         {activeTab === "body" &&
           (isLive && response.format === "text" ? (
             <pre dir="ltr" className="whitespace-pre-wrap break-all rounded-md border border-code-border bg-code-bg p-3 font-mono text-xs text-code-ink">

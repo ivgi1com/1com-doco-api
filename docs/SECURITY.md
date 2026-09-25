@@ -85,10 +85,12 @@ How the requirements above are met by `src/server/playground/` and
 production API infrastructure. See `docs/DECISIONS.md` "Phase 5 planning"
 for why these choices were made.
 
-- **Allowed hosts/endpoints/methods**: `allowlist.ts` hard-codes exactly one
-  target (`proxy/info-extensions`, `GET`), resolved from the content model
-  and asserted against a fixed origin set at module load — not
-  env-configurable, so no deployment config can widen it.
+- **Allowed hosts/endpoints/methods**: `allowlist.ts#LIVE_POLICIES`
+  hard-codes exactly three targets (`proxy/info-extensions`,
+  `proxy/info-agents`, `proxy/cdr-get`; all `GET`), each resolved from the
+  content model and asserted against a fixed origin set at module load —
+  not env-configurable, so no deployment config can widen it. A unit test
+  pins the list to exactly these three.
 - **Request timeout / response-size ceiling / rate limit**: `config.ts`
   reads env vars with a safe default and a hard ceiling neither can exceed
   (e.g. timeout defaults to 10 s, capped at 30 s regardless of the env
@@ -168,7 +170,7 @@ Pipeline in `handler.ts`, applied to every upstream body before it leaves
 the server:
 
 1. `projectJsonFields` keeps only the target's JSON field allowlist
-   (`allowlist.ts#JSON_FIELD_ALLOWLIST`). Any JSON shape other than
+   (`allowlist.ts#LIVE_POLICIES[...].jsonFields`). Any JSON shape other than
    array-of-objects or object-of-objects is withheld entirely.
 2. `redactSensitive` replaces credential-like values
    (`pass|pwd|secret|token|2fa|otp|mfa|pin`) in JSON keys, XML
@@ -181,3 +183,46 @@ dropped (`redactedCount`, `fieldsOmitted`) and says so in the UI.
 `sizeBytes` is the upstream size, before sanitization. Verified against the
 real host: JSON returns exactly the 6 allowlisted fields (142 dropped); no
 non-empty password cell survives in plain output.
+
+### Phase 5 adjustment — two more Live endpoints (2026-09-25, Opus 5.5)
+
+Endpoints added by explicit user decision (`docs/DECISIONS.md` "Phase 5
+adjustment"); evidence in `source-docs/DOCS_AUDIT.md` A-41..A-43. The rule is
+unchanged: default deny, then an approved endpoint, then approved
+parameters, then server-side validation, and only then forward.
+
+- **Per-endpoint policy** (`allowlist.ts#LIVE_POLICIES`): JSON field
+  allowlist plus optional **parameter patterns**, enforced in `validate.ts`
+  after the generic limits (string, <=128 chars, no control chars) and enum
+  checks. Patterns are asserted at load to be whole-value (`^...$`, no
+  `m`/`g`/`y` flags) and to name only allowed params.
+- **`proxy/info-agents`** (`reqtype=INFO, info=agents` fixed): params
+  `tenant`, `queue` (`^\d+$`, optional), `format` (plain/json). JSON
+  records are positional (numeric keys), so name-based redaction cannot
+  match anything; the field allowlist (all 10 observed positions, user
+  decision) is the effective control. Any new upstream position is dropped.
+- **`proxy/cdr-get`** (`reqtype=CDR, action=GET, field=userfield` fixed):
+  params `tenant`, `uniqueid` (`^([A-Za-z0-9_]+-)?\d+\.\d+$`). `field`
+  cannot be set by the caller, so other CDR columns (caller/callee numbers)
+  are unreachable; `action=UPDATE` is unreachable the same way. `format` is
+  not offered (the body is the same whatever format is requested). The
+  JSON field allowlist is empty: a JSON-record userfield is cut to empty
+  records, and any other JSON shape is withheld.
+- **Verified against the real host through the portal** (`tenant=demo`):
+  expected bodies for both endpoints; a caller-set `field` and a malformed
+  `queue` rejected with 400; `agent-listqueues` rejected with 403; the
+  server log contains only the fixed telemetry fields (no key, tenant,
+  queue, uniqueid or URL).
+
+Accepted (user decisions, 2026-09-25):
+
+- **CDR userfield is shown raw.** It is free-form data written by the
+  tenant's own integration; the portal cannot know its content and does not
+  filter single-line text. Rendered as text only (React-escaped), never HTML.
+- **info-agents positions 4-8** were empty on the test tenant and their
+  meaning is undocumented; allowed by user decision.
+- **uniqueid enumeration**: a caller with a valid key could try uniqueids
+  to read userfields. It needs that tenant's key and is subject to the rate
+  limit; the upstream is authoritative for access.
+- **Tenant scoping is upstream's**: the portal does not check that `tenant`
+  belongs to the key (unchanged from U-08).

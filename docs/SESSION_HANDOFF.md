@@ -1,6 +1,30 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 5 approved, gate option B — stopped here; read this first)
+Last updated: 2026-09-25 (Phase 5 pre-merge adjustment in progress; read this first)
+
+## IN-PROGRESS checkpoint — Phase 5 adjustment (pre-merge)
+
+- Plan: `C:\Users\ivgi-pc\.claude\plans\where-wi-stopped-delegated-willow.md`
+  (approved). Steps 1–7 are done on Opus 5.5 and committed as a checkpoint
+  on `phase/live-playground`. See `docs/DECISIONS.md` "Phase 5 adjustment"
+  and `docs/SECURITY.md` "Phase 5 adjustment".
+- **Next (switch to Sonnet 5 first): step 8, the layout.** In
+  `src/components/playground/playground-app.tsx`, the grid becomes
+  `xl:grid-cols-[16rem_minmax(0,1fr)_minmax(0,1fr)]`, plus a new lg
+  3-column `lg:grid-cols-[13rem_minmax(0,1fr)_minmax(0,1fr)]`. Move the
+  sticky, max-height, col-span and border modifiers from `xl:` to `lg:`.
+  md and mobile stay unchanged. Also consider letting the JSON viewer fill
+  the column (`response-viewer.tsx` passes `maxHeight="24rem"`). No logic
+  changes.
+- Then step 9: `npm run check`, `npm run build`, full Playwright on a fresh
+  build, and a visual pass at 1440/1280/1024/768/390, in en and he,
+  covering all 3 endpoints and the empty-200 note. After that, step 10:
+  the Phase 5 re-gate (A/B/C/D).
+- :3000 is held by an older server from a previous session (PID 19940
+  when this was written). Playwright's `reuseExistingServer` would test
+  that stale build. Either stop it with the user's OK, or run the suite
+  with a temporary config on another port (don't commit that config).
+- Do not merge into `main` and do not start Phase 6.
 
 ## STOP checkpoint — Phase 5 approved and complete; next phase not started
 

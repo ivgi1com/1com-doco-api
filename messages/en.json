@@ -177,7 +177,8 @@
     "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page.",
     "redactedCount": "{count, plural, one {# credential-like value was} other {# credential-like values were}} redacted by the portal and never left the server.",
     "redactedWithheld": "The portal withheld this response: it contains a credential-like field that couldn't be redacted safely.",
-    "fieldsOmitted": "The portal shows only documented fields. {count, plural, one {# other field} other {# other fields}} in the upstream record {count, plural, one {was} other {were}} removed on the server."
+    "fieldsOmitted": "The portal shows only documented fields. {count, plural, one {# other field} other {# other fields}} in the upstream record {count, plural, one {was} other {were}} removed on the server.",
+    "upstreamEmpty": "The upstream returned an empty body. This API also answers HTTP 200 with an empty body when nothing matches, so check your parameters."
   },
   "json": {
     "expandAll": "Expand all",

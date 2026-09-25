@@ -372,3 +372,64 @@ A-40 — `INFO info=EXTENSIONS` default output is plain text, not JSON
   - The U-11 capture (object keyed by `ex_id`, 3 fields) matches **neither**
     real format. It may have been reshaped before it was supplied (unknown).
     The published response schema in `proxy-api.ts` is therefore unverified.
+
+## 8. Phase 5 adjustment — probes for additional Live endpoints (2026-09-25)
+
+Direct structure-only probes against `https://pbx6webserver.1com.co.il/pbx/proxyapi.php`,
+`tenant=demo`, user's own key, from a local script (not the portal, not
+committed). Only status, content type, sizes and character classes were
+recorded; no values.
+
+A-41 — `AGENT action=LISTQUEUES` returns an empty body in every case tested
+(OBSERVED; indistinguishable from failure)
+
+- Candidates: the demo tenant's 3 extensions, taken from `INFO/EXTENSIONS`
+  (`username`, format `<n>-demo`); each with `format=json`.
+- Observed for every call: HTTP 200, 0-byte body. Default and `format=plain`:
+  `text/html; charset=UTF-8`. `format=json`: `application/json`.
+- Controls also 0 bytes: a nonexistent extension (`99999-demo`), and no
+  `extension` at all. Adding `queue=3698` (documented only for PAUSE; user-
+  approved experiment) changed nothing.
+- So "not an agent", "invalid input" and "no data" cannot be told apart. No
+  response structure was observed; a JSON field allowlist cannot be derived.
+- Unknown: whether the demo tenant has any queue agents, whether the key has
+  permission for `AGENT`, and what a non-empty response looks like.
+
+A-42 — `CDR action=GET field=userfield` returns the raw field value as text,
+ignoring `format` (OBSERVED; not documented)
+
+- Real uniqueid (user-supplied, `pbx43-…` form): HTTP 200, 9-byte body, one
+  line, no delimiter, not JSON, for all three of default / `format=json` /
+  `format=plain`. Content type follows `format` (`application/json` for json,
+  `text/html; charset=UTF-8` otherwise), but the body is identical.
+- Nonexistent uniqueid, malformed uniqueid (`zzz`), and no uniqueid: HTTP 200,
+  0-byte body (identical to each other). A missing CDR is therefore an empty
+  200, not an error.
+- The body is the userfield content itself (free-form customer data), so the
+  body differs from every control. Its value was not recorded.
+- Consequence for the Live proxy: `projectJsonFields` passes non-JSON text
+  through unchanged, and `redactSensitive` has nothing to match on a
+  single undelimited line. The portal would show the raw userfield value.
+  `format` has no effect, so it should not be exposed for this operation.
+
+A-43 — `INFO info=agents` (user-supplied; not exemplified in the source,
+which only names "agents" in the INFO purpose line) returns a keyed object of
+positional records (OBSERVED)
+
+- Request (user-supplied): `tenant=demo&format=json&reqtype=INFO&info=agents&queue=3698`.
+- `format=json`: HTTP 200, `application/json`, 271 bytes. A JSON **object
+  keyed by agent id** (shape `<ext>-<tenant-ish suffix>`), 2 entries. Each
+  value is an object with **numeric string keys** `0,1,2,4,5,6,7,8,10,11`
+  (sparse: no `3`, no `9`), i.e. a PHP positional row. No field names.
+  Observed values (agent ids masked): `0`="0", `1`="available",
+  `2`="UNAVAILABLE", `4`–`8`="" (empty), `10` and `11` = the agent id.
+  Field meanings are not documented; the above are values only.
+- Default format ≡ `format=plain`: `text/html`, 40 bytes, one line,
+  `<agent-id>:<State>|<agent-id>:<State>|` (trailing `|`, no header row).
+- `info=AGENTS` (uppercase) returns the identical body (case-insensitive, cf. A-08).
+- No `queue` parameter: identical body to `queue=3698` on this tenant (either
+  the only queue, or `queue` is ignored when absent: not determinable here).
+- Nonexistent `queue=999999`: HTTP 200, body `null` (4 bytes). Not an error status.
+- `format=xml`, `format=csv`: HTTP 200, 0-byte body.
+- `AGENT action=LISTQUEUES` (A-41) is superseded by this operation for the
+  Live Playground, at the user's direction.
