@@ -283,3 +283,33 @@ describe("handleLiveRequest", () => {
     expect(lines.join("\n")).not.toContain(KEY);
   });
 });
+
+describe("credential-leak guards outside the proxy code", () => {
+  it("next.config does not enable Next's dev fetch logging (it would print the key-bearing upstream URL)", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const source = await readFile(new URL("../../next.config.ts", import.meta.url), "utf-8");
+    const code = source.replace(/\/\/.*$/gm, "");
+    expect(code).not.toMatch(/fetches/);
+  });
+
+  it("an aborted request body fails closed with a fixed code", async () => {
+    const body = new ReadableStream<Uint8Array>({
+      pull() {
+        throw new Error(`stream broke ${KEY}`);
+      },
+    });
+    const req = new Request(`${ORIGIN}/api/playground`, {
+      method: "POST",
+      headers: { host: "localhost:3000", origin: ORIGIN, "content-type": "application/json" },
+      body,
+      duplex: "half",
+    } as RequestInit);
+    const res = await handleLiveRequest(req, {
+      config: config(),
+      limiter: createMemoryRateLimiter({ limit: 100, windowMs: 60_000 }),
+      log: () => {},
+    });
+    expect(res.status).toBe(400);
+    expect(await res.text()).not.toContain(KEY);
+  });
+});

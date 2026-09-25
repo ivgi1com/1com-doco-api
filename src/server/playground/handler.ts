@@ -103,7 +103,13 @@ export async function handleLiveRequest(request: Request, deps: HandlerDeps): Pr
     return portalError("rate_limited", { "retry-after": String(limit.retryAfterSeconds) });
   }
 
-  const raw = await readBodyCapped(request, config.maxRequestBytes);
+  let raw: string | null;
+  try {
+    raw = await readBodyCapped(request, config.maxRequestBytes);
+  } catch {
+    // Client aborted mid-body or the stream errored; fail closed with a fixed code.
+    return portalError("invalid_request");
+  }
   if (raw === null) return portalError("payload_too_large");
 
   let parsed: unknown;

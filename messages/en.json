@@ -148,7 +148,7 @@
       "invalid_portal_response": "The portal returned an unexpected response."
     },
     "apiKey": "API key",
-    "apiKeyHelp": "Kept in this tab only. Never stored or logged.",
+    "apiKeyHelp": "Kept in this tab's session storage only, cleared when you switch to Demo or close the tab. Sent only to this portal's Live proxy; never logged.",
     "reveal": "Show key",
     "hide": "Hide key",
     "send": "Send request",

@@ -126,3 +126,38 @@ for why these choices were made.
   `liveProvider` and `demoProvider` as separate objects with no shared
   fallback path; a Live failure always renders as a Live failure
   (`kind: "portal-error"`), never Demo data.
+
+## Security review — Phase 5 (2026-09-25, Opus 5.5)
+
+Manual review of `main...phase/live-playground` (the `security-review`
+skill needs an `origin` remote, which this repo does not have). No high or
+medium findings. Fixed:
+
+- **Low — misleading credential copy**: the API-key help text said "Never
+  stored"; the key is kept in `sessionStorage` (Phase 2 design). Text now
+  says exactly that (en/he).
+- **Low (latent) — dev fetch logging**: Next's dev fetch logger prints
+  outbound URLs when `logging.fetches` is enabled (and, untruncated, on its
+  cache-warning path); the upstream URL carries the key. Not enabled today.
+  Guarded by a comment in `next.config.ts` and a unit test that fails if
+  `fetches` appears there.
+- **Low — unhandled body-read error**: a client aborting mid-body threw out
+  of the handler (generic 500, no leak). Now fails closed with
+  `invalid_request`; unit-tested.
+
+Accepted / open (not code defects in this phase):
+
+- **No Content-Security-Policy.** The key lives in `sessionStorage`, so any
+  future XSS could read it. Current HTML sinks (`dangerouslySetInnerHTML`)
+  render only server-generated shiki output from static content and the
+  constant theme script; upstream response data is rendered as text only.
+  A CSP belongs to the deployment/security-policy decision (needs user
+  approval per `CLAUDE.md` §11).
+- **Shared rate-limit bucket** when `PLAYGROUND_TRUSTED_IP_HEADER` is unset:
+  one caller can exhaust Live for everyone (availability, not
+  confidentiality). Resolve at deployment by setting the trusted header.
+- **Origin check compares against `Host`**: a reverse proxy that rewrites
+  `Host` will make legitimate requests fail closed (403). Deployment
+  concern.
+- **Credential in the upstream URL** (1com access logs): accepted in
+  planning; see "Implementation (Phase 5)".
