@@ -1,38 +1,86 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 5 pre-merge adjustment in progress; read this first)
+Last updated: 2026-09-25 (round 2 approved, gate B — committed, read this first)
 
-## IN-PROGRESS checkpoint — Phase 5 adjustment (pre-merge)
+## STOP checkpoint — Phase 5 adjustment round 2 (3 UX fixes) approved and complete; next phase not started
 
-- Plan: `C:\Users\ivgi-pc\.claude\plans\where-wi-stopped-delegated-willow.md`
-  (approved). Steps 1–7 are done on Opus 5.5 and committed as a checkpoint
-  on `phase/live-playground`. See `docs/DECISIONS.md` "Phase 5 adjustment"
-  and `docs/SECURITY.md` "Phase 5 adjustment".
-- **Next (switch to Sonnet 5 first): step 8, the layout.** In
-  `src/components/playground/playground-app.tsx`, the grid becomes
-  `xl:grid-cols-[16rem_minmax(0,1fr)_minmax(0,1fr)]`, plus a new lg
-  3-column `lg:grid-cols-[13rem_minmax(0,1fr)_minmax(0,1fr)]`. Move the
-  sticky, max-height, col-span and border modifiers from `xl:` to `lg:`.
-  md and mobile stay unchanged. Also consider letting the JSON viewer fill
-  the column (`response-viewer.tsx` passes `maxHeight="24rem"`). No logic
-  changes.
-- Then step 9: `npm run check`, `npm run build`, full Playwright on a fresh
-  build, and a visual pass at 1440/1280/1024/768/390, in en and he,
-  covering all 3 endpoints and the empty-200 note. After that, step 10:
-  the Phase 5 re-gate (A/B/C/D).
-- :3000 is held by an older server from a previous session (PID 19940
-  when this was written). Playwright's `reuseExistingServer` would test
-  that stale build. Either stop it with the user's OK, or run the suite
-  with a temporary config on another port (don't commit that config).
-- Do not merge into `main` and do not start Phase 6.
+Approved 2026-09-25, gate option B (approve, save, and stop). Committed on
+top of `f20c899` (see `git log` for the commit hash). Not merged into
+`main`, not tagged (no suggested milestone tag for a pre-merge adjustment
+round, consistent with round 1). Phase 6 (Demo mode) has not started: no
+planning, research, or implementation. Next session's first action is to
+wait for the user to say to begin Phase 6 planning, or to approve merging
+`phase/live-playground` into `main`.
 
-## STOP checkpoint — Phase 5 approved and complete; next phase not started
+**Working-tree changes (`git status`), all task-related, nothing unrelated
+mixed in:**
+- `src/components/playground/use-playground.ts` — Task 1: tenant + API key
+  now survive switching Live endpoints (a `sharedFieldsRef`, in-memory
+  only, restores the shared `tenant` field at both places that used to
+  reset it). Endpoint-specific fields still reset normally.
+- `src/components/json/json-viewer.tsx`, `src/components/playground/
+  response-viewer.tsx` — Task 2 (sticky response toolbar) **plus a
+  same-session bugfix**: the first attempt used CSS `position: sticky`
+  relative to `response-viewer.tsx`'s shared scroll container, and the
+  user reported real JSON content rendering behind/inside the toolbar. Root
+  cause and fix are written up in `docs/DECISIONS.md` "Phase 5 UX fixes" —
+  short version: replaced sticky positioning with a self-contained flex
+  column (non-sticky `shrink-0` header + its own `flex-1 overflow-y-auto`
+  content div, `data-testid="json-toolbar"` / `"json-content"`), so overlap
+  is structurally impossible rather than CSS-tuned away. Also carries Task
+  3 (a "cURL" label added next to the existing "GET" label in the Request
+  tab, in `response-viewer.tsx`).
+- `tests/e2e/smoke.spec.ts` — new/updated Playwright coverage for all of
+  the above, including a geometry assertion (`getBoundingClientRect`-based
+  `noOverlap()` check) that the JSON content never renders above the
+  toolbar's bottom edge, both at rest and mid-scroll.
+- `docs/CURRENT_STATUS.md` — updated at this checkpoint to describe the
+  true state below (its previous content, from before this round, said
+  the adjustment was "complete, at re-approval gate"; that framing is
+  superseded by this round's additional fixes and is no longer accurate).
+
+**Validation status (this round, complete):**
+- `npm run check` (typecheck + lint + 166/166 unit tests): clean.
+- `npm run build`: clean.
+- **Full Playwright suite re-run to completion on a fresh build**, via a
+  temporary `playwright.tmp-3100.config.ts` (port 3100, `reuseExistingServer:
+  false`; deleted again after the run — not committed). **108/108 passed**
+  (Chromium + WebKit), including the sticky-toolbar geometry test
+  post-restructure.
+- **Manual/visual browser pass done** via a throwaway Playwright-library
+  script (not committed) against the same fresh build on :3100, covering
+  all three tasks:
+  - Task 1 (tenant/key persist across endpoint switch): confirmed by
+    screenshot at desktop 1440×900, tablet 1024, en **and** he (RTL).
+  - Task 2 (no toolbar/content overlap while scrolling a 60-entry mock
+    response): confirmed by screenshot before/after scroll at desktop and
+    tablet, en and he — toolbar position unchanged, content scrolled
+    underneath, RTL layout intact.
+  - Task 3 (cURL label next to GET): confirmed present at every
+    locale/viewport combination tested (desktop, tablet, mobile; en, he).
+  - Zero console errors across all 8 locale/viewport combinations run
+    (en/he × desktop/tablet/mobile, one combo run twice).
+  - **Gap**: Task 1/2 were not captured on the mobile viewport (390×844)
+    by this manual script — the mobile step-flow UI uses different
+    selectors than the desktop grid and the script wasn't extended to
+    cover them. This is not a new risk: the automated Playwright suite's
+    own dedicated mobile test ("mobile: Live success is reachable through
+    the step flow...") exercises the same shared `use-playground.ts` /
+    `JsonViewer` code paths at 390×844 and passed; no mobile-only code
+    path exists for Tasks 1/2. If a fully manual mobile screenshot pass is
+    wanted before merge, it hasn't been done.
+- Secret scan of this round's diff: clean (checked again after adding the
+  validation script; no keys/tenants/tokens beyond the existing test
+  fixture `not-a-real-key-e2e-only` / `FAKE_KEY`).
+
+Do not merge into `main` and do not start Phase 6 without explicit
+approval.
+
+## STOP checkpoint — Phase 5 (original scope) approved and complete; next phase not started
 
 - Phase 5 approved 2026-09-25 (gate option B). Not merged into `main`, not
   tagged (no suggested tag for this phase). Phase 6 (Demo mode) has not
-  started: no planning, research or implementation. Next session's first
-  action is to wait for the user to say to begin Phase 6 planning, or to
-  approve merging `phase/live-playground` into `main`.
+  started: no planning, research or implementation.
 - Rotate the key pasted into chat on 2026-09-25 if not already done.
 
 ### Gate-time details (kept for history)

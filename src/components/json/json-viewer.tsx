@@ -108,8 +108,22 @@ export function JsonViewer({
   const raw = useMemo(() => JSON.stringify(data, null, 2), [data]);
 
   return (
-    <div dir="ltr" className={`overflow-hidden rounded-md border border-code-border bg-code-bg text-code-ink ${className}`}>
-      <div className="flex flex-wrap items-center gap-2 border-b border-code-border px-2 py-1.5">
+    // Flex column, not CSS `position: sticky`: the toolbar below is a plain,
+    // non-growing flex header and the content div is the one scrolling
+    // region. This makes overlap structurally impossible — sticky's
+    // "stuck" geometry depends on a shared scrolling ancestor's state
+    // (fragile when that ancestor also holds other content, e.g. the
+    // redaction callouts above this component), which is what previously
+    // let real JSON rows render behind the toolbar.
+    <div
+      dir="ltr"
+      className={`flex flex-col overflow-hidden rounded-md border border-code-border bg-code-bg text-code-ink ${className}`}
+      style={{ maxHeight }}
+    >
+      <div
+        data-testid="json-toolbar"
+        className="flex shrink-0 flex-wrap items-center gap-2 border-b border-code-border px-2 py-1.5"
+      >
         <div role="group" aria-label={t("tree")} className="flex items-center overflow-hidden rounded-md border border-code-border">
           <button
             type="button"
@@ -180,7 +194,7 @@ export function JsonViewer({
         </button>
       </div>
 
-      <div className="overflow-y-auto p-1.5" style={{ maxHeight }}>
+      <div data-testid="json-content" className="min-h-0 flex-1 overflow-y-auto p-1.5">
         {view === "tree" ? (
           <>
             {search.active && search.matched.size === 0 && (

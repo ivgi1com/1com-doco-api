@@ -519,3 +519,62 @@ Consequences:
 - The Live response viewer explains an empty 200, since both new endpoints
   answer "not found" with HTTP 200.
 - The layout change (step 8) runs on Sonnet 5 after this checkpoint.
+
+---
+
+## 2026-09-25 — Phase 5 UX fixes (pre-merge, approved gate B)
+
+Context:
+After the endpoints + 50/50 layout checkpoint (`f20c899`), the user asked
+for three targeted UX fixes before merge: (1) tenant + API key persist
+across a Live endpoint switch, (2) the JSON response toolbar stays visible
+over a long response, (3) a "cURL" label matching the existing "GET" label
+in the Request tab.
+
+Decision (Task 1 — shared Live-mode fields):
+`tenant` is tracked in an in-memory ref inside `usePlayground`
+(`use-playground.ts`), restored at both places that reset per-endpoint
+field state (an endpoint switch, and switching Demo→Live), mirroring why
+the API key already survived those resets. No sessionStorage, no new
+browser persistence — the user asked specifically for in-memory/session
+state, not long-term storage.
+
+Decision (Task 2 — sticky toolbar) and the bug it produced:
+The first implementation used CSS `position: sticky` on the toolbar,
+relative to `response-viewer.tsx`'s own scroll container. The user reported
+real JSON content rendering behind/inside the toolbar (e.g. `"11": "236"`
+visible inside the sticky region) and asked for the structure to be fixed,
+not the CSS symptom.
+
+Root cause: `position: sticky` pins an element relative to its nearest
+ancestor that establishes a scroll container. That ancestor
+(`response-viewer.tsx`'s shared tab-panel div) also holds sibling content
+above the JSON viewer (redaction/field-omission callouts) and is reused
+unmodified across every tab. Making the toolbar's "stuck" geometry depend
+on a shared ancestor it doesn't own is inherently fragile — it's the kind
+of cross-ancestor dependency that produces exactly this class of overlap.
+
+Fix: removed CSS sticky entirely. `JsonViewer` (`json-viewer.tsx`) is now a
+self-contained flex column: a plain, non-growing (`shrink-0`) header and a
+separate `flex-1 overflow-y-auto` content div that owns its own scrolling.
+Overlap becomes structurally impossible — the header and content are
+sibling flex items with independent box space, not a positioned element
+sharing an ancestor's scroll state. `response-viewer.tsx`'s call site
+passes `className="h-full"` so the viewer still fills the tall 50/50
+column, via the same proven `flex h-full flex-col` chain used for the
+layout fix. Both elements carry `data-testid` (`json-toolbar` /
+`json-content`) for precise test targeting, since the toolbar's own
+"Collapse all"/"Expand all" text collides with individual tree-row
+aria-labels that reuse the same translation strings.
+
+Decision (Task 3 — cURL label):
+A plain `<p>` with the exact same classes as the existing "GET" label,
+text "cURL" (untranslated — matches the existing precedent in
+`code-samples.ts`, a proper noun already rendered as a literal string
+elsewhere in this codebase).
+
+Status: implemented, fully validated (`npm run check`, `npm run build`,
+108/108 Playwright on a fresh build, manual visual pass en/he desktop +
+tablet, secret scan), approved 2026-09-25 (gate option B) — see
+`docs/SESSION_HANDOFF.md` for the full validation record and one noted gap
+(mobile viewport not separately screenshotted for Tasks 1/2).

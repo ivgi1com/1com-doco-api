@@ -297,6 +297,14 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText(/\$PROXY_API_KEY/).last()).toBeVisible();
       // The credential itself must never reach the rendered page, masked or not.
       await expect(page.getByText(FAKE_KEY)).toHaveCount(0);
+      // The GET request block and the cURL block each have their own label,
+      // in the same visual style (UX fix: cURL previously had none). Both
+      // "GET" (also the EndpointPicker/RequestBuilder method badges) and
+      // "cURL" (also the static Code-preview language tab) appear more than
+      // once in the DOM; this Request tab's own labels render last, same
+      // reasoning as the $PROXY_API_KEY match above.
+      await expect(desktopPane(page).getByText("GET", { exact: true }).last()).toBeVisible();
+      await expect(desktopPane(page).getByText("cURL", { exact: true }).last()).toBeVisible();
     });
 
     test("a portal rate-limit error shows a distinct message with the retry time, not Demo data", async ({ page }) => {
@@ -367,6 +375,108 @@ test.describe("interactions", () => {
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
     }
+
+    // UX fix: tenant + API key are shared Live-mode context and must survive
+    // switching endpoints via the sidebar (not a fresh page load); an
+    // endpoint-specific field (id) must still reset normally.
+    test("Live mode: tenant and API key survive an endpoint switch; endpoint-specific fields still reset", async ({
+      page,
+    }) => {
+      await goLiveOn(page, "proxy/info-extensions");
+      await desktopPane(page).getByLabel("tenant", { exact: true }).fill("MYTENANT");
+      await desktopPane(page).getByLabel("id", { exact: true }).fill("999");
+
+      await desktopPane(page).getByRole("button", { name: "List queue agents" }).click();
+      await expect(page).toHaveURL(/endpoint=proxy\/info-agents$/);
+      await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toHaveValue("MYTENANT");
+      await expect(desktopPane(page).getByLabel("API key")).toHaveValue(FAKE_KEY);
+      await expect(desktopPane(page).getByLabel("id", { exact: true })).toHaveCount(0);
+      // info-agents' own queue field shows its own documented default, not
+      // anything carried over from the previous endpoint.
+      await expect(desktopPane(page).getByLabel("queue", { exact: true })).toHaveValue("281");
+
+      await desktopPane(page).getByRole("button", { name: "List extensions" }).click();
+      await expect(page).toHaveURL(/endpoint=proxy\/info-extensions$/);
+      await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toHaveValue("MYTENANT");
+      await expect(desktopPane(page).getByLabel("API key")).toHaveValue(FAKE_KEY);
+      // id has no documented example: reset to empty, not the "999" from before.
+      await expect(desktopPane(page).getByLabel("id", { exact: true })).toHaveValue("");
+    });
+
+    // UX fix: the JSON toolbar (Tree/Raw, Expand/Collapse, search, Copy,
+    // Download) must stay visible while scrolling a long response, sticking
+    // to the response panel's own scroll area, not the browser viewport.
+    test("a long response keeps its toolbar visible and usable while scrolling", async ({ page }) => {
+      const agents = Object.fromEntries(
+        Array.from({ length: 60 }, (_, i) => [
+          `${200 + i}-TENANTCODE`,
+          { "0": "0", "1": "available", "2": "UNAVAILABLE", "10": `${200 + i}-TENANTCODE`, "11": `${200 + i}-TENANTCODE` },
+        ]),
+      );
+      await mockPlayground(page, {
+        ok: true,
+        upstream: {
+          status: 200,
+          latencyMs: 12,
+          sizeBytes: 4000,
+          contentType: "application/json",
+          headers: {},
+          bodyText: JSON.stringify(agents),
+        },
+      });
+      await goLiveOn(page, "proxy/info-agents");
+      await desktopPane(page).getByLabel("queue", { exact: true }).fill("281");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+
+      // Scoped to the JSON toolbar itself: individual tree nodes reuse the
+      // same "Collapse all"/"Expand all" strings as their own per-row
+      // aria-label, so an unscoped role query matches dozens of elements.
+      const toolbar = desktopPane(page).getByTestId("json-toolbar");
+      // JsonViewer owns its own scroll region (a flex header + scrollable
+      // content split, not CSS `position: sticky`) — this is the element
+      // that actually scrolls, not response-viewer's outer tab panel.
+      const content = desktopPane(page).getByTestId("json-content");
+      await expect(toolbar).toBeInViewport();
+
+      // The first JSON property must render fully below the toolbar, not
+      // behind/inside it — a direct geometry check, not just "is it on
+      // screen", since a z-index trick could pass toBeInViewport() alone.
+      const firstRow = content.getByText('"0"', { exact: true }).first();
+      const noOverlap = async () => {
+        const toolbarBox = await toolbar.boundingBox();
+        const rowBox = await firstRow.boundingBox();
+        expect(toolbarBox && rowBox && rowBox.y >= toolbarBox.y + toolbarBox.height - 1).toBe(true);
+      };
+      await noOverlap();
+
+      await content.evaluate((el) => el.scrollBy(0, 2000));
+      await expect(toolbar).toBeInViewport();
+      // The first entry (still in the DOM — scrolling never unmounts rows)
+      // must have scrolled fully out of view, not sit clipped behind the
+      // toolbar; and genuine internal scrolling actually happened (this is
+      // JsonViewer's own scroll region, not a no-op on some other element).
+      await expect(firstRow).not.toBeInViewport();
+      expect(await content.evaluate((el) => el.scrollTop)).toBeGreaterThan(1000);
+
+      await content.evaluate((el) => el.scrollTo(0, 0));
+      await expect(firstRow).toBeInViewport();
+      await noOverlap();
+
+      // Tree/Raw and Expand/Collapse keep working after scrolling.
+      await toolbar.getByRole("button", { name: "Raw" }).click();
+      await expect(content.getByText(/"200-TENANTCODE"/)).toBeVisible();
+      await toolbar.getByRole("button", { name: "Tree" }).click();
+      await toolbar.getByRole("button", { name: "Collapse all" }).click();
+      await expect(content.getByText('"UNAVAILABLE"')).toHaveCount(0);
+      await toolbar.getByRole("button", { name: "Expand all" }).click();
+      await expect(content.getByText('"UNAVAILABLE"').first()).toBeVisible();
+
+      // Search JSON still narrows the tree without disturbing the toolbar.
+      await toolbar.getByPlaceholder("Search JSON").fill("205-TENANTCODE");
+      await expect(content.getByText('"205-TENANTCODE"').first()).toBeVisible();
+      await noOverlap();
+    });
 
     test("info-agents: allowlisted, sends only its own params, and renders the keyed positional records", async ({ page }) => {
       let sent: { endpoint?: string; params?: Record<string, string> } = {};

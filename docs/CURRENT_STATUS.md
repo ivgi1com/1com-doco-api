@@ -1,29 +1,55 @@
 # Current Status
 
 Current phase:
-**Phase 5 — Live Playground: pre-merge ADJUSTMENT IN PROGRESS** (Phase 5
-was approved 2026-09-25, gate B; the user then asked for adjustments before
-merging, so it returns to the approval gate when they are done. Phase 6 has not started.)
+**Phase 5 — Live Playground: COMPLETE AND APPROVED, including both
+pre-merge adjustment rounds** (Phase 5 approved 2026-09-25, gate B. Two
+rounds of pre-merge adjustment followed, both approved gate B: round 1 —
+endpoints + layout; round 2 — 3 UX fixes, described below. Not merged into
+`main`. Phase 6 has not started.)
 
-## Phase 5 adjustment (in progress)
+## Phase 5 adjustment round 1 (committed: `d9994a1`, `f20c899`)
 
-- Done (Opus 5.5):
-  - Two more Live endpoints, `proxy/info-agents` and `proxy/cdr-get`, with
-    per-endpoint param patterns and JSON field allowlists (`LIVE_POLICIES`).
-  - Probe findings A-41..A-43.
-  - Content entries in both the Reference and the Playground.
-  - An empty-200 note in the Live response viewer.
-  - 55 new unit tests (166/166) and 3 new Playwright tests (104/104, fresh
-    build).
-  - Real-host verification through the portal, with the logs scanned.
-  - Security review; one low-risk hardening applied (reject `m`-flag
-    patterns).
-- Remaining (Sonnet 5):
-  - 50/50 request/response layout (`playground-app.tsx`).
-  - Full visual pass at 1440/1280/1024/768/390, in en and he, covering all
-    3 endpoints.
-  - Then the Phase 5 re-gate (A/B/C/D).
-- LISTQUEUES was not added: it returned no observable data (A-41).
+- Two more Live endpoints, `proxy/info-agents` and `proxy/cdr-get`, with
+  per-endpoint param patterns and JSON field allowlists (`LIVE_POLICIES`).
+  Probe findings A-41..A-43. LISTQUEUES was not added (no observable data,
+  A-41). Content entries in both the Reference and the Playground. An
+  empty-200 note in the Live response viewer. 55 new unit tests, 3 new
+  Playwright tests. Real-host verification through the portal, logs
+  scanned. Security review; one low-risk hardening applied.
+- 50/50 request/response layout at lg/xl (`playground-app.tsx`); a new lg
+  3-column breakpoint (1024-1279) that previously stacked. md/mobile
+  unchanged. Removed the JSON viewer's own fixed 24rem inner scroll cap.
+- Fully validated at the time: `npm run check` (166/166), `npm run build`,
+  104/104 Playwright, manual visual pass en/he, secret scan clean.
+
+## Phase 5 adjustment round 2 — 3 UX fixes (approved 2026-09-25, gate B)
+
+Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
+`docs/SESSION_HANDOFF.md`.
+
+- **Task 1** (`use-playground.ts`): tenant + API key now survive switching
+  Live endpoints; endpoint-specific fields still reset normally.
+- **Task 2** (`json-viewer.tsx`, `response-viewer.tsx`): the response
+  toolbar stays visible over a long response. First attempt used CSS
+  `position: sticky` and had a real bug — content rendered behind the
+  toolbar, reported and reproduced by the user. Fixed by replacing sticky
+  with a self-contained flex column (non-sticky header + its own scrolling
+  content div), which makes the overlap structurally impossible rather
+  than papering over it with CSS.
+- **Task 3** (`response-viewer.tsx`): a "cURL" label added next to the
+  existing "GET" label in the Request tab.
+- **Status**: implemented and fully validated. `npm run check` (166/166
+  unit tests) and `npm run build` clean. Full Playwright suite re-run to
+  completion on a fresh build (108/108, Chromium + WebKit, port 3100
+  since :3000 is held by an untouched stale process). Manual visual pass
+  via a throwaway screenshot script confirmed all three tasks at desktop
+  and tablet widths in both en and he (RTL); zero console errors across
+  every locale/viewport combination tested. One known gap: Tasks 1/2
+  weren't separately screenshotted at the mobile viewport (see
+  `docs/SESSION_HANDOFF.md` for why this is considered low-risk, not
+  unverified).
+- **Approved** 2026-09-25 (gate option B): approve, save, and stop. Phase 6
+  has not started; `phase/live-playground` remains unmerged into `main`.
 
 
 Current branch:

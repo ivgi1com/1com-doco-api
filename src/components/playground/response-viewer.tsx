@@ -73,6 +73,9 @@ function RequestTab({ response, endpoint }: { response: Extract<PlaygroundRespon
         </div>
       </div>
       <div>
+        {/* "cURL" is a proper noun, not translated — matches the existing
+            untranslated label in src/lib/code-samples.ts. */}
+        <p className="mb-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted">cURL</p>
         <div className="flex items-start gap-2 rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-ink">
           <span className="min-w-0 flex-1 break-all">{curl}</span>
           <CopyButton text={curl} label={t("copy")} tone="code" />
@@ -205,11 +208,11 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
               {String(response.body)}
             </pre>
           ) : (
-            // No inner height cap: the surrounding tab panel
-            // (`overflow-y-auto` above) is already the pane's one scroll
-            // container, sized to the full column height by the 50/50
-            // layout. A fixed inner cap here would waste that space.
-            <JsonViewer data={response.body} maxHeight="none" filename={`${endpoint.id}-response.json`} />
+            // h-full + maxHeight="none": JsonViewer fills this tab panel's
+            // own height (via its `flex h-full flex-col` ancestor chain)
+            // and owns its scrolling internally, rather than sharing this
+            // panel's scroll with the callouts above it.
+            <JsonViewer data={response.body} maxHeight="none" className="h-full" filename={`${endpoint.id}-response.json`} />
           ))}
         {activeTab === "headers" && (
           <dl dir="ltr" className="space-y-1 rounded-md border border-code-border bg-code-bg p-3 font-mono text-xs text-code-ink">

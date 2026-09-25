@@ -16,6 +16,13 @@ export function fieldKey(location: string, name: string) {
   return `${location}:${name}`;
 }
 
+/**
+ * Query fields treated as shared Live-mode session context (like the API
+ * key), not per-endpoint form state: once entered, they survive switching
+ * endpoints instead of resetting to the new endpoint's default example.
+ */
+const SHARED_QUERY_FIELDS = new Set([fieldKey("query", "tenant")]);
+
 function defaultFieldValues(endpoint: Endpoint): Record<string, string> {
   const values: Record<string, string> = {};
   for (const p of endpoint.pathParameters) values[fieldKey("path", p.name)] = String(p.example ?? "");
@@ -65,6 +72,9 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const abortRef = useRef<AbortController | undefined>(undefined);
   const endpointRef = useRef(endpoint);
+  // Last-entered value of each shared field, kept across the resets below
+  // (in-memory only — not sessionStorage; scoped to this hook instance).
+  const sharedFieldsRef = useRef<Record<string, string>>({});
   // Bumped whenever an in-flight send should be abandoned (endpoint change,
   // mode switch, unmount), so a late result can no-op instead of applying a
   // stale response for the wrong endpoint/mode.
@@ -77,16 +87,27 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     setSending(false);
   }, []);
 
+  // Applies the endpoint's own defaults, then restores any shared field
+  // (e.g. tenant) the user already entered, instead of the new endpoint's
+  // example value — mirrors why the API key already survives this reset.
+  const withSharedFields = useCallback((next: Record<string, string>) => {
+    for (const key of SHARED_QUERY_FIELDS) {
+      const shared = sharedFieldsRef.current[key];
+      if (shared && key in next) next[key] = shared;
+    }
+    return next;
+  }, []);
+
   // Reset per-request state when the selected endpoint changes.
   useEffect(() => {
     if (endpointRef.current.id === endpoint.id && endpointRef.current.api === endpoint.api) return;
     endpointRef.current = endpoint;
     abandonInFlightSend();
-    setFieldValues(defaultFieldValues(endpoint));
+    setFieldValues(withSharedFields(defaultFieldValues(endpoint)));
     setErrors({});
     setResponse(null);
     setSimulateError(false);
-  }, [endpoint, abandonInFlightSend]);
+  }, [endpoint, abandonInFlightSend, withSharedFields]);
 
   useEffect(
     () => () => {
@@ -98,6 +119,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
 
   const setField = useCallback((key: string, value: string) => {
     setFieldValues((prev) => ({ ...prev, [key]: value }));
+    if (SHARED_QUERY_FIELDS.has(key)) sharedFieldsRef.current[key] = value;
     setErrors((prev) => {
       if (!(key in prev)) return prev;
       const next = { ...prev };
@@ -124,7 +146,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     if (!pendingMode) return;
     abandonInFlightSend();
     if (pendingMode === "live") {
-      setFieldValues(defaultFieldValues(endpointRef.current));
+      setFieldValues(withSharedFields(defaultFieldValues(endpointRef.current)));
       setErrors({});
       setResponse(null);
       setSimulateError(false);
@@ -135,7 +157,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     }
     setMode(pendingMode);
     setPendingMode(null);
-  }, [pendingMode, setApiKey, abandonInFlightSend]);
+  }, [pendingMode, setApiKey, abandonInFlightSend, withSharedFields]);
 
   const validate = useCallback((): Record<string, string> => {
     const next: Record<string, string> = {};
