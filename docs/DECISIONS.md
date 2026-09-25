@@ -609,3 +609,43 @@ Decisions made by the user during planning (Opus 5.5):
   - DIDS without `tenant` (the all-tenants form) is not probed.
 
 Status: plan approved 2026-09-25; implementation on `phase/demo-mode`.
+
+## 2026-09-25 — Proxy API documentation baseline reset
+
+The user directed a reset of the Proxy API documentation before continuing
+Phase 6: **discard the MiRTA-sourced audit as authoritative** and rebuild
+`source-docs/proxy-api/` from 1com's own documentation. This voids the
+Phase 6 Step 1 probe (structure-only investigation of the 4 new INFO
+operations, in progress and blocked on a broken script) and the 7 Demo
+example selections recorded above — **both are suspended**, not decided
+differently; the user will re-supply the 7 examples once the rebuild is
+done, to be mapped against the new documentation before any
+implementation resumes.
+
+Decisions made by the user for the rebuild (this session, Sonnet 5 —
+documentation work, no architecture/security/credential handling):
+- **Source**: the 1com Site (`sites.google.com/1com.co.il/1com-api/בית`)
+  **and** its linked Google Doc (parameter reference), both authoritative.
+  Where they conflict, or are internally inconsistent, record both and
+  mark UNRESOLVED — no winner picked without a further user decision. Full
+  list of conflicts: `source-docs/DOCS_AUDIT.md` §10,
+  `source-docs/unresolved.md` U-12–U-16.
+- **Format**: Markdown per reqtype (`source-docs/proxy-api/<reqtype>.md`),
+  replacing the old YAML convention.
+- **Old files**: the 40 MiRTA-sourced `*.yaml` files and
+  `source-docs/inventory.json` were removed with `git rm` (recoverable
+  from git history, not deleted from disk permanently). The MiRTA raw
+  snapshot (`source-docs/raw/proxyapi-legacy.*`) is kept as historical
+  evidence — it still backs the observed Live-endpoint behavior in
+  `DOCS_AUDIT.md` §7–9, which is unaffected by this rebuild.
+- **Branch**: `docs/proxy-api-rebuild`, from `phase/demo-mode` @ `c802eb9`.
+  Documentation-only change; `src/` is not touched. Phase 6's own branch
+  and its WIP checkpoint commit are left as-is.
+- **Scope boundary**: re-mapping the 3 already-implemented Live endpoints
+  (`info-extensions`, `info-agents`, `cdr-get`) against the new source, and
+  re-specifying the 7 Demo examples, are explicitly deferred to a
+  follow-up step, not done as part of this rebuild.
+
+Status: rebuild complete on `docs/proxy-api-rebuild`, not merged. Phase 6
+(`phase/demo-mode`) is paused, not resumed, pending the user's re-supplied
+7 examples and a decision on how/whether to merge this branch first.

@@ -1,4 +1,16 @@
-# Documentation Audit — Proxy API (MiRTA PBX `proxyapi.php`)
+# Documentation Audit — Proxy API
+
+Status: **§1–6 below (the MiRTA-sourced audit) are superseded as of
+2026-09-25 — see §10.** The authoritative documentation source is now the
+1com Site + linked Doc, normalized in `proxy-api/*.md`
+(`proxy-api/README.md` for conventions, `raw/SOURCES.md` for the
+snapshot). §1–6 and their `proxy-api/*.yaml` files (now removed) are kept
+below only as a record of the earlier audit; do not treat their content
+as current. §7–9 (observed Live-endpoint behavior) remain **current and
+unaffected** — they describe real, tested requests, independent of which
+documentation source backs them.
+
+## Historical: Phase 3 audit (MiRTA PBX `proxyapi.php`, superseded 2026-09-25)
 
 Status: **Phase 3 audit complete (DOCUMENTED state only).** Nothing was
 implemented, called, tested, or verified. No live API requests were made
@@ -433,3 +445,92 @@ positional records (OBSERVED)
 - `format=xml`, `format=csv`: HTTP 200, 0-byte body.
 - `AGENT action=LISTQUEUES` (A-41) is superseded by this operation for the
   Live Playground, at the user's direction.
+
+## 10. 1com source rebuild (2026-09-25) — new source, old-vs-new conflicts, ambiguities
+
+The user directed a reset of the documentation baseline: discard §1–6's
+MiRTA-sourced normalization and rebuild from 1com's own documentation —
+the Site (`sites.google.com/1com.co.il/1com-api/בית`) plus its linked
+Google Doc (parameter reference for "missing operations"). Both are
+authoritative; where they disagree with each other or with themselves, no
+winner is picked here — see `unresolved.md` for the items needing a user
+decision. Full per-operation detail lives in `proxy-api/*.md`; this
+section is the audit-level summary.
+
+### 10.1 New-source completeness
+
+| Measure | Count |
+|---|---|
+| Reqtypes documented by the Site (examples) | ~19 (INFO, DIAL, HANGUP, AGENT, MEDIAFILE, QUEUE, VOICEMAIL, COUNTCALLS, PHONEBOOK, FAX, RESPONSEPATH, MANAGEDB with 9 objects) |
+| Reqtypes documented by the Doc (parameter lists) | 28 (see `proxy-api/README.md`'s list) |
+| Reqtypes documented by neither Site nor Doc, but present in either the old 40-file set or a currently-implemented Live endpoint | see 10.3 |
+| New reqtype not in the old 40-file set at all | 1 (`PEERS` — `proxy-api/peers.md`) |
+| Response samples in the new source | 3 (DIAL's call-id line; RESPONSEPATH GETLAST plain and its malformed XML variant) — same order of magnitude as the old source's 1 |
+| Stated parameter requiredness | still mostly absent; the Doc says "optional" for some params but leaves most `not stated` |
+
+### 10.2 Ambiguities carried into `unresolved.md` as new U-items
+
+Full text of each in `raw/SOURCES.md`'s "Known ambiguities" list and the
+per-file notes in `proxy-api/`. Summary:
+
+- Three different base-URL host forms appear across the same source
+  (`pbx6webserver.1com.co.il/pbx`, `demo.1com.com/1com`,
+  `devel.1com.com/1com`), with a `DEMO`/`DEVEL` tenant-placeholder
+  mismatch riding along with it. `_common.md`.
+- `format`'s accepted values conflict across the common-parameters block
+  (`json`/`plain`) and several per-operation notes (`csv`/`xml`/`json`).
+  `_common.md`.
+- The Doc duplicates a whole reqtype block (QUEUERESET…COUNTCALLS) with
+  a difference in RESPONSEPATH's params between the two copies (`rrid`/
+  `getid` in one, not the other). `responsepath.md`, `voicemail.md`.
+- HANGUP's and MEDIAFILE's Doc text run together with no line break.
+  `hangup.md`.
+- The RESPONSEPATH XML sample is malformed (mismatched closing tags) —
+  same defect class as the old source's one response sample, coincidentally.
+  `responsepath.md`.
+- `PAUSECAMPAIGN` listed twice in the destination-tag table, second time
+  described as "Unpause". `managedb.md`.
+- A destination tag spelled `VOICMEAIL`. `managedb.md`.
+- DIAL/SMS's `source|?exten` parameter name/meaning. `dial.md`, `sms.md`.
+- ManageDB "Update a routing profile" and "Updating a DID" examples have
+  no `tenant`, unlike every sibling ManageDB example. `managedb.md`.
+- AGENT's `action=LISTQUEUES` (Site) isn't in the Doc's `pause`/`unpause`
+  list. `agent.md`.
+- VOICEMAIL's `markread`/`markunread` actions (Site) aren't in the Doc's
+  `list`/`messages`/`message`/`delete` list. `voicemail.md`.
+- FAX's Site example uses `number=`; the Doc's parameter table names it
+  `dest_number=`. `fax.md`.
+
+### 10.3 Reqtypes absent from the new source
+
+**Genuinely undocumented by either new file** (not carried forward as
+`.md` files, per `proxy-api/README.md`'s "one file per reqtype either
+source documents" rule):
+
+| Reqtype | Old purpose (MiRTA source, for continuity only) | Relevance |
+|---|---|---|
+| `CDR` (standalone, `action=GET`/`UPDATE`) | Get/update one field on a CDR row | **Used by the already-implemented `cdr-get` Live endpoint.** Kept as `proxy-api/cdr-standalone.md`, explicitly marked historical-only. |
+| `AUTHTOKEN` | Generate/reset auth tokens | — |
+| `CHECKAUTH` | Validate a username/password | — |
+| `CHANSIPPEERS` | List chan_sip peers | New source's `PEERS` (10.1) may or may not be its successor — UNRESOLVED, see `peers.md`. |
+| `DND` | Get/set do-not-disturb | — |
+| `GETCURRENTCALLS` | Show current calls for a phone/tenant | — |
+| `GETWEBRTCAUTH` | Authenticate an extension for WebRTC | — |
+| `LICENSEDAYS` | Days before license expiration | — |
+| `SETTING` | Get/set tenant settings | — |
+| `USERGROUP` | Manage tenant/user group assignment | — |
+| `PHONEBOOKS` (plural) | Was already flagged in the old audit as not a real distinct reqtype (its section only ever documents `PHONEBOOK`, singular) | Confirmed again — not a real gap, just a recurring heading typo. No `.md` file. |
+
+Also absent: `info=EXTENSIONS` and `info=AGENTS` as documented `info`
+values (both already-implemented Live endpoints — `info.md`'s "Not
+confirmed by the new source" section, `proxy-api/README.md`'s "Live
+endpoints" section). Their prior documentation provenance (citing the
+now-removed `info.yaml`) is stale; their observed, tested behavior
+(A-40, A-43 above) is unaffected.
+
+### 10.4 Scope note
+
+Re-mapping the 3 already-implemented Live endpoints, and specifying the 7
+Demo Playground examples, against this rebuilt source is explicitly
+**out of scope** for this rebuild, per the user's request. `src/` was not
+touched.

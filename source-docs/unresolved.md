@@ -4,9 +4,11 @@ Status: 11 items recorded in Phase 3 (2026-09-24). U-01, U-03, U-06, U-07,
 U-09 and U-11 were decided in Phase 4 (2026-09-25); U-08 was decided in
 Phase 5 planning (2026-09-25); U-02 and U-04 were applied by default (not
 decided, reversible). U-05 was deferred in Phase 3. U-10 remains open.
-Nothing below has been silently resolved: every normalized file and the
-`proxy-api.ts` content keep `not_documented` / `"undocumented"` where these
-apply. Finding IDs (`A-nn`) refer to `DOCS_AUDIT.md`.
+U-12–U-16 were added 2026-09-25 during the 1com-source documentation
+rebuild (`DOCS_AUDIT.md` §10) and are all open. Nothing below has been
+silently resolved: every normalized file and the `proxy-api.ts` content
+keep `not_documented` / `"undocumented"` where these apply. Finding IDs
+(`A-nn`) refer to `DOCS_AUDIT.md`.
 
 Items marked **Blocks Phase 4** need a decision or input before the
 one-endpoint vertical slice can be built truthfully.
@@ -235,3 +237,94 @@ one-endpoint vertical slice can be built truthfully.
   `ex_id`, 3 fields) matches neither real format observed through the Live
   proxy. The reference docs are rewritten from the observed structure; the
   sample file is kept as history only.
+
+## U-12 — Base URL / host form — three conflicting forms in the same source
+
+- Source: `DOCS_AUDIT.md` §10.2, `proxy-api/_common.md`
+- Ambiguity: the 1com Site's visible example text always shows
+  `pbx6webserver.1com.co.il/pbx/proxyapi.php`, but its actual link targets
+  point at either `demo.1com.com/1com/proxyapi.php` or
+  `devel.1com.com/1com/proxyapi.php` — three hosts, no stated rule for
+  which applies when. The Site's own prose acknowledges "the URL on the
+  demo server is slightly different than on production servers" but never
+  states the production rule.
+- Why it matters: any portal code sample or Live-proxy allowlist entry
+  needs one canonical host; picking wrong breaks real requests silently.
+- Options: (1) ask 1com directly which host is current/canonical; (2) keep
+  `pbx6webserver.../pbx` (matches the already-verified Live-endpoint host
+  from Phase 5) and treat `demo`/`devel.1com.com` as environment-specific
+  aliases, undocumented further; (3) publish with the host left as a
+  placeholder until confirmed.
+- Recommendation: (2) — Phase 5's already-tested `info-extensions` request
+  used `pbx6webserver.1com.co.il/pbx` successfully, which is independent
+  evidence favoring that host for production use.
+- User decision: pending
+- Final status: open
+
+## U-13 — Tenant placeholder — `DEMO` vs `DEVEL`
+
+- Source: `DOCS_AUDIT.md` §10.2, `proxy-api/_common.md`
+- Ambiguity: same pattern as U-12 — visible example text uses
+  `tenant=DEMO`, link targets use `tenant=DEVEL`, for the same examples.
+- Why it matters: Demo-mode fixtures/documentation should not silently
+  pick one placeholder as if it were confirmed to be a real, usable demo
+  tenant.
+- Options: as U-12.
+- User decision: pending
+- Final status: open
+
+## U-14 — `format` accepted values conflict
+
+- Source: `DOCS_AUDIT.md` §10.2, `proxy-api/_common.md`
+- Ambiguity: the Doc's common-parameters block states `format` is `json`
+  or `plain`; several per-operation notes (in the same Doc, and in the
+  Site's own examples) show `csv`, `xml`, and operation-specific
+  combinations (`cdrs`: csv,xml; `simplecdrs`: csv,json).
+- Why it matters: a portal parameter picker or Live-proxy allowlist for
+  `format` needs the real per-operation accepted-value set, not the
+  generic (and apparently incomplete) common-parameters line.
+- Options: (1) treat `format`'s accepted values as per-operation, sourced
+  from each operation's own note, common block ignored; (2) ask 1com to
+  reconcile; (3) test empirically per already-implemented Live endpoint
+  (as Phase 5 already partly did for `info-extensions`, A-40).
+- Recommendation: (1), consistent with how the Live-proxy work already
+  treats `format` per-endpoint (`LIVE_POLICIES` in `src/server/playground/`).
+- User decision: pending
+- Final status: open
+
+## U-15 — `CDR` (standalone reqtype) has no documentation in the new source
+
+- Source: `DOCS_AUDIT.md` §10.3, `proxy-api/cdr-standalone.md`
+- Ambiguity: the already-implemented `cdr-get` Live endpoint
+  (`reqtype=CDR&action=GET`) is not documented by either the Site or the
+  Doc at all. Its only documentation provenance is the now-superseded
+  MiRTA source.
+- Why it matters: `src/content/proxy-api.ts`'s comments cite the removed
+  `info.yaml`/`_common.yaml` files by name for this endpoint; that
+  citation is now dangling. The endpoint's tested behavior is unaffected,
+  but its written justification needs a decision on what to cite going
+  forward.
+- Options: (1) cite the historical MiRTA evidence explicitly, kept for
+  this purpose (`source-docs/raw/proxyapi-legacy.*`); (2) treat it as
+  observed-only (`evidence: "observed"`), no source citation; (3) ask
+  1com whether `reqtype=CDR` is still current/supported.
+- Recommendation: deferred to whenever `cdr-get` is next touched — not
+  blocking this documentation rebuild.
+- User decision: pending
+- Final status: open
+
+## U-16 — `info=EXTENSIONS` / `info=AGENTS` absent from the new source's `info` value list
+
+- Source: `DOCS_AUDIT.md` §10.3, `proxy-api/info.md`
+- Ambiguity: both are already-implemented, tested Live endpoints, but
+  neither appears in the Doc's documented `info` value list (which does
+  list `agents`/`agentsconnected`/`agentsdelay` — different meaning,
+  queue-agent info, not "list of agents" for the AGENTS endpoint's
+  observed shape from A-43).
+- Why it matters: same class of issue as U-15 — documentation provenance,
+  not behavior. `proxy-api.ts`'s comments cite the removed `info.yaml`.
+- Options: as U-15 (cite historical MiRTA evidence, or observed-only, or
+  ask 1com to confirm/add these `info` values to their documentation).
+- Recommendation: deferred — not blocking this rebuild.
+- User decision: pending
+- Final status: open

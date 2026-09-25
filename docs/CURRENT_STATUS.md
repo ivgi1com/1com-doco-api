@@ -1,14 +1,29 @@
 # Current Status
 
-Current phase:
-**Phase 6 — Demo mode: IN PROGRESS** (started 2026-09-25 on branch
+Current work:
+**Proxy API documentation baseline reset — IN PROGRESS** (started
+2026-09-25 on branch `docs/proxy-api-rebuild`, from `phase/demo-mode` @
+`c802eb9`). The user directed discarding the MiRTA-sourced audit as
+authoritative and rebuilding `source-docs/proxy-api/` from 1com's own
+documentation (a Google Site + its linked Google Doc). This **suspends**
+Phase 6 below — its Step 1 probe and its 7 Demo example selections are
+voided, not decided differently; the user will re-supply the 7 examples
+against the rebuilt documentation. Full detail: `docs/DECISIONS.md`
+"Proxy API documentation baseline reset", `source-docs/DOCS_AUDIT.md`
+§10, `source-docs/unresolved.md` U-12–U-16. See `docs/SESSION_HANDOFF.md`.
+
+Paused phase (suspended by the rebuild above, not abandoned):
+**Phase 6 — Demo mode: PAUSED** (started 2026-09-25 on branch
 `phase/demo-mode`, from `main` @ `b37e51c`). Approved plan:
 `C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`. Scope and
-decisions are in `docs/DECISIONS.md` under "Phase 6 planning". Step 0 is
+decisions are in `docs/DECISIONS.md` under "Phase 6 planning" — **now
+superseded by the documentation reset**; the 7 examples it names will be
+re-supplied and re-mapped before any Phase 6 work resumes. Step 0 is
 done. Step 1 (a structure-only probe of INFO DIDS/SIMPLECDRS/EXTSTATE/
 QUEUELOGS) is incomplete: one partial run covered EXTSTATE only, and the
-probe script is currently broken (a SyntaxError). Stopped at user request.
-See `docs/SESSION_HANDOFF.md`.
+probe script is currently broken (a SyntaxError) — this is now moot for
+the DIDS/SIMPLECDRS/EXTSTATE/QUEUELOGS operations named in the old scope,
+since that scope itself needs re-deciding. See `docs/SESSION_HANDOFF.md`.
 
 Previous phase:
 **Phase 5 — Live Playground: COMPLETE AND APPROVED, including both
@@ -64,7 +79,9 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`phase/demo-mode` (from `main` @ `b37e51c`)
+`docs/proxy-api-rebuild` (from `phase/demo-mode` @ `c802eb9`, which is
+itself from `main` @ `b37e51c`). `phase/demo-mode` is untouched and still
+exists, paused.
 
 Earlier phase:
 **Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)

@@ -1,8 +1,42 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 6 started — read this first)
+Last updated: 2026-09-25 (Proxy API documentation reset — read this first)
 
-## IN PROGRESS — Phase 6 (Demo mode), Step 1 waiting on the user
+## STOP checkpoint — Proxy API documentation rebuild complete, waiting for the 7 examples
+
+- Branch `docs/proxy-api-rebuild`, from `phase/demo-mode` @ `c802eb9`.
+  Documentation-only; `src/` untouched. `phase/demo-mode` itself is
+  untouched and paused (see the superseded section below).
+- The user directed discarding the MiRTA-sourced audit as authoritative
+  and rebuilding `source-docs/proxy-api/` from 1com's own documentation:
+  the Site (`sites.google.com/1com.co.il/1com-api/בית`) + its linked
+  Google Doc. Full decision record: `docs/DECISIONS.md` "Proxy API
+  documentation baseline reset".
+- **Done**: evidence snapshot (`source-docs/raw/1com-site.html` +
+  `1com-site-extracted.txt` + `1com-doc.txt`, keys redacted, hashes in
+  `SOURCES.md`); 29 new `source-docs/proxy-api/<reqtype>.md` files +
+  `README.md` + `_common.md` + `cdr-standalone.md` (historical-only, see
+  below); the 40 old `*.yaml` files and `inventory.json` removed via
+  `git rm`; `DOCS_AUDIT.md` §10 (old-vs-new conflicts, ambiguities) and
+  `unresolved.md` U-12–U-16 added; `docs/CURRENT_STATUS.md` and
+  `docs/DECISIONS.md` updated.
+- **This voids Phase 6's Step 1 probe and its 7 Demo example selections**
+  — not decided differently, suspended. Phase 6's own branch
+  (`phase/demo-mode`) and its broken probe script are left exactly as
+  they were; nothing there needs fixing before the user re-supplies the 7
+  examples.
+- **Not done / deferred, per the user's explicit scope**: re-mapping the 3
+  already-implemented Live endpoints (`info-extensions`, `info-agents`,
+  `cdr-get`) against the new source (their `proxy-api.ts` comments still
+  cite the now-removed `info.yaml`/`cdr.yaml`/`_common.yaml` — stale, not
+  fixed, reported as a finding); deciding U-12–U-16 (base URL, tenant
+  placeholder, `format` conflict, CDR/EXTENSIONS/AGENTS documentation
+  gaps).
+- Next session's first action: the user provides the 7 Demo Playground
+  examples again; map each against `source-docs/proxy-api/*.md` before
+  any implementation. Do not resume Phase 6's old scope from memory.
+
+## Earlier IN-PROGRESS checkpoint — Phase 6 (Demo mode), Step 1 (superseded by the documentation reset above; kept for history)
 
 - Plan (approved 2026-09-25):
   `C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`.

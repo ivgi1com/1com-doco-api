@@ -1,0 +1,361 @@
+﻿הנחיות שימוש API + דוגמאות
+
+
+
+
+API URL Example:
+חיפוש ID של שיחה:
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=?????&key=???????&reqtype=INFO&info=cdrs&phone=????????/????????
+
+
+שליפת קובץ הקלטה:
+Recorded call URL:
+
+
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=?????&key=?????????&reqtype=INFO&info=recording&id=pbx6.1com.co.il-1482260315.2690122
+שליפת נתונים מלאים על שיחה:
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=TENANT&key=APIKEY&reqtype=INFO&info=CDRS&id=UNIQUEID&format=csv
+הקפצת חלון בשיחה נכנסת:
+
+
+מתבצע באמצעות CURL או סקריפט AGI בהתאם לדרישת התוכנה
+
+
+חיוג:
+
+
+
+
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?dest=$NUMBER&tenant=ophir&key=??????&reqtype=DIAL&account=source&source=???
+
+
+
+
+מקרא:Parameters:
+  reqtype - Request type
+  tenant  - Sometime optional if the Admin API key is used, otherwise provide the tenant code
+  key     - Use the Admin API key or the Tenant API key
+  format  - Optional, can be json or plain
+  callback - Optional, for cross domain script, the function to use as callback (requires format json)
+
+
+
+
+
+
+
+
+
+
+
+
+להלן פקודות נוספות הניתנות לשימוש 
+
+
+
+
+Request type (reqtype):
+COUNTPEERS - Return the number of peers on each node and the total
+           - Additional parameters:
+             tenant - optional if using the Admin API key,
+                      returns only peers from the selected tenant
+COUNTCHANNELS - Return the number of channels (total or on each node)
+           - Additional parameters:
+             nodename - optional, if you want only that node counted
+             tenant - optional if using the Admin API key,
+                      returns only channels from the selected tenant
+PEERS      - Show the peers registered on all nodes of the network
+           - Additional parameters:
+             tenant - optional if using the Admin API key,
+                      returns only peers from the selected tenant
+BLFS       - Get the BLF status, peers and flows
+             tenant - the tenant to report
+FLOWS      - Show the flow status
+             tenant - the tenant to report
+CHANNEL    - Show the channel details for the selected tenant
+             Additional parameters: 
+             channel - the channel to show info
+CHANNELS   - Show the channels for the selected tenant
+             Additional parameters: 
+             tenant - optional, show channels for the tenant
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?reqtype=CHANNELS&tenant=TENANTNAME&key=apikey
+	
+
+PHONEBOOK  - Manage phone books:
+             Additional parameters: 
+             tenant - select the tenant
+             phonebook - select the phone book by name
+             subreqtype - select the sub request type:
+                    query - perform a query
+                        field - name of the field
+                        value - value to search for (use % for partial searches)
+                    add - add a record
+                        values - a json encoded associative array with name of the fields and values
+                    delete - delete a record
+                        peid - peid value returned by search
+                    cleanall - delete all the records in the phonebook
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?reqtype=PHONEBOOK&phonebook=phonebookname&tenant=TENANTNAME&subreqtype=add&key=apikey
+
+
+json array:
+$data=array("name" => $phonenum,
+            "number" => $phonenum,
+
+
+
+
+	
+
+INFO       - Get info about system
+             Additional parameters: 
+             info - type of info: 
+                    queues (list of queues) 
+                    queue (info about the queue based on id) 
+                    agents (info about the agents in all or selected queue) 
+                    agentsconnected (info about the agents in all or selected queue, but only if currently connected) 
+                    agentsdelay (info about the agents delay in answering in all or selected queue) 
+                    outdialed (info about the calls dialed out by extensions) 
+                    call (info about the call originated with the api using the returned id or unique id) 
+                    inforecording (get the metadata associated to the recording for the call, you can use the unique id or the originated id)
+                    recording (get the recording for the call, you can use the unique id or the originated id)
+                    playrecording (play the recording for the call, you can use the unique id or the originated id)
+                    voicemail (get the voicemail message for the call, you can use the id of the voicemail_messages table)
+                    voicemailtranscript (get the voicemail message transcript for the call, you can use the id of the voicemail_messages table)
+                    dids (list of dids)
+                    extensions (list of extensions, including state)
+                    extstate (get the state of the extensions, including the number speaking with)
+                    config (get info about configured tenant)
+                    cdrs (get the list of calls, you can use wildcard % for the tenant code)
+                         Further parameters available: id, uniqueid, src, firstdst, direction, phone, format(csv,xml), template
+                         Phone is a special parameter filtering for whoanswered, calleridnum and dialednum
+                         You can filter for multiple parameter values using a comma separator
+                    simplecdrs (get the list of calls using the simple call history source, you can use wildcard % for the tenant code)
+                         Further parameters available: id,uniqueid,calleridnum,calleridname,disposition,direction,whoanswered,phone,format(csv,json)
+                         Phone is a special parameter filtering for whoanswered, calleridnum and dialednum
+                         You can filter for multiple parameter values using a comma separator
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?info=simplecdrs&reqtype=INFO&tenant=TENANTNAME&key=APIKEY&phone=0737966610&start=2021-06-28&end=2021-06-29
+	
+
+                    queuelogs (get the list of calls processed by queue)
+                    balance (get the credit available)
+             id - optional, id of object requested 
+             queue - optional, id of queue requested for agents info or queue logs 
+             start - optional, start date/time of the cdrs or queue logs returned 
+             end   - optional, end date/time of the cdrs or queue logs returned 
+AGENT        - Manipulate queue agent status
+               Additional parameters: 
+               tenant - name of the tenant
+               extension - agent username or extension number
+               queue - queue id
+               action - action to perform (pause, unpause)
+               pausereason - optional, pause reason to set
+
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=TENANT&key=??????&reqtype=AGENT&action=pause&queue=162&extension=823
+	
+
+ATXTRANSFER  - Attend transfer a channel
+            
+   Additional parameters: 
+               tenant - optional, tenant for the channel to transfer
+               channel - channel to transfer
+               dest - number to transfer the channel to
+CAMPAIGN     - Manage call campaign
+               Additional parameters: 
+               campaign - id for campaign, you need to get it on the URL for the editing campaign
+               tenant - optional, tenant for the campaign
+               action - action can be start, stop, pause, resume, addnumber, delnumber. Start and stop can affect only on-demand campaign
+               number - optional, the number to call when using the addnumber action
+               numberdescription - option, the number description when using the addnumber action
+
+
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=TENANT&key=??????&reqtype=CAMPAIGN&campaign=camIDnumber&action=addnumber&number=505050505&numberdescription=leadname
+	
+
+DIAL         - Dial a number and connect to another number
+               Additional parameters: 
+               tenant - tenant where to place the call
+               source|?exten - first number to dial - use ACCOUNT to use the number associated with the account chosen
+               dest|phone - number to connect
+               var - variables to set, will be prefixed tenant code
+               account - account name to simulate the call from - use SOURCE to use the account associated with the source number choosen
+               dialtimeout - dial timeout in seconds
+               timeout - max duration for the call in seconds
+               sourceclid - use this clid for dialing source number
+               destclid - use this clid for dialing dest number
+               recording - set the recording for the call, use: yes, no, yeschange or nochange)
+               server - you can ask to use a specific server to dial
+               autoanswer - you can require the source phone to auto answer setting this parameter to 'yes'
+
+
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?dest=$NUMBER&tenant=TENANTNAME&key=??????&reqtype=DIAL&account=source&source=???&sourceclid=07377777
+	
+
+FAX          - Manage Faxes
+               Additional parameters: 
+               action - Available actions
+                        send - send a fax
+               source_number - The number to send the fax from
+               dest_number - The number to send the fax to
+               quality - Optional fax quality ('204x98', '204x196' or '204x392'
+               pagesize - Optional page size ('a4', 'letter' or 'legal'
+               rotate - Optional rotation (empty for automatic, 'E' or 'W' for East/West rotation or 'no' for no rotation)
+               deleteaftersend - Optional, set to 'on' to delete the fax once sent
+               schedule - Optional, set the date/time for sending the fax
+               statusemail - Optional, set the email to send status updates
+               filename - The PDF for the fax to be sent
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?dest_number=$NUMBER&tenant=TENANTNAME&key=??????&reqtype=FAX&source_number=???&filename=FAX.pdf&action=send
+	
+
+HANGUP       - Hangup a channel
+               Additional parameters: 
+               tenant - optional, tenant for the channel to hangup
+               channel - channel to hangup
+               extension - optional, extension to hangupMEDIAFILE    - Manage media files
+               Additional parameters: 
+               action - Available actions
+                        getaudio - Download the audio
+               tenant - tenant to get audio from
+               objectid - media id
+
+
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?tenant=TENANT&key=??????&reqtype=HANGUP&extension=205
+	
+
+QUEUE        - Manage queue agents
+               tenant - tenant for the queue
+               number - queue number (alternatively use id). You can use NONE when applicable
+               id     - queue id (alternatively use number)
+               uniqid - optional, use this as unique id for the log record
+               extension - optional, number or extension username to add or delete. You can use NONE when applicable
+               action - Available actions
+                        list  - List queue agents
+                        add   - add an agent to the queue
+                        del   - del an agent from the queue
+                        clean - del all agents from the queue
+                        log   - create a custom log entry in the queue_log table
+               order  - optional, numeric order of the agent in the agent list
+               type   - optional, agent type (NF - Not Following, AD - Additional Destinations, NFR - Not Following with Ring, ADR - Additional Destinations with Ring)
+               event  - optional, custom log event to generate
+               data[1-5] - data1... data5 to populate custom log event (optional)
+QUEUERESET   - Reset statistics for a queue
+               Additional parameters: 
+               tenant - optional, tenant for the queue
+               queueid - queue id to reset
+REBOOT       - Reboot one or multiple peers
+               Additional parameters: 
+               peer - peername to reboot or ALL for all peers
+               tenant - optional, tenant for the peer to reboot
+RESPONSEPATH - Get info from response path object
+               tenant - tenant for the response path to query
+               id - response path id
+               rrid - response path response id or response path uniqueid
+               filter - optional available filters
+                        queue - Apply filter on queue id
+                        answer - Apply filter on answer extension
+                        uniqueid - Apply filter on unique id
+               filterdata - optional, the value to filter on
+               action - Available actions
+                        list - List all available responses
+                        getid - Get the details from the specified response path rrid
+                        getlast - Get the details from the latest one
+SETFLOW      - Set Flow status or variable
+               Additional parameters: 
+               number - flow number
+               state - optional state (INUSE, NOT_INUSE, UNAVAILABLE, RINGING)
+               value - optional value
+               tenant - optional, tenant for the flow to set
+SMS          - Send an SMS
+               Additional parameters: 
+               tenant - tenant where to place the call
+               source|?exten - the sender number - use ACCOUNT to use the number associated with the account chosen
+               dest - number to send the SMS to
+               account - account name to simulate the SMS from - use SOURCE to use the account associated with the source number chosen
+               destclid - use this clid for sending the SMS to the dest number
+               server - you can ask to use a specific server to dial
+               message - the message to be sent
+TRANSFER     - Transfer a channel
+               Additional parameters: 
+               tenant - optional, tenant for the channel to transfer
+               channel - channel to transfer
+               extrachannel - extra channel to transfer (optional)
+               dest - number to transfer the channel to
+UNREGISTER   - Unregister one or multiple peers
+               Additional parameters: 
+               peer - peername to unregister or ALL for all peers
+               tenant - optional, tenant for the peer to unregister
+VIRTUALEXT  -  Manage virtual extensions
+               tenant - tenant for the virtual extension
+               number - virtual extension number
+               extension - optional, number or extension username to add or delete
+               action - Available actions
+                        list - List extensions joined under the virtual extension
+                        add   - add an extension to the virtual extension
+                        del   - del an extension from the virtual extension
+                        clean - del all extensions from the virtual extension
+VOICEMAIL   -  Get info about voicemails
+               tenant - optional, tenant for the voicemails
+               mailbox - optional, show info about a specific mailbox
+               msgid - optional, message id
+               action - Available actions
+                        list - List available voicemails
+                        messages - List messages for mailbox specified
+                        message - Get the message binary for msgid specified
+                        delete - Delete the message for msgid specified
+COUNTCALLS  - Count the number of calls running
+QUEUERESET   - Reset statistics for a queue
+              Additional parameters: 
+              tenant - optional, tenant for the queue
+              queueid - queue id to reset
+REBOOT       - Reboot one or multiple peers
+              Additional parameters: 
+              peer - peername to reboot or ALL for all peers
+              tenant - optional, tenant for the peer to reboot
+RESPONSEPATH - Get info from response path object
+              tenant - tenant for the response path to query
+              id - response path id
+              filter - optional available filters
+                       queue - Apply filter on queue id
+                       answer - Apply filter on answer extension
+                       uniqueid - Apply filter on unique id
+              filterdata - optional, the value to filter on
+              action - Available actions
+                       list - List all available responses
+                       getlast - Get the details from the latest one
+SETFLOW      - Set Flow status or variable
+              Additional parameters: 
+              number - flow number
+              state - optional state (INUSE, NOT_INUSE, UNAVAILABLE, RINGING)
+              value - optional value
+              tenant - optional, tenant for the flow to set
+TRANSFER     - Transfer a channel
+              Additional parameters: 
+              tenant - optional, tenant for the channel to transfer
+              channel - channel to transfer
+              extrachannel - extra channel to transfer (optional)
+              dest - number to transfer the channel to
+VOICEMAIL   -  Get info about voicemails
+              tenant - optional, tenant for the voicemails
+              mailbox - optional, show info about a specific mailbox
+              msgid - optional, message id
+              action - Available actions
+                       list - List available voicemails
+                       messages - List messages for mailbox specified
+                       message - Get the message binary for msgid specified
+                       delete - Delete the message for msgid specified
+COUNTCALLS  - Count the number of calls running

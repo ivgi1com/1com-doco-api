@@ -1,0 +1,538 @@
+1com API
+Search this site
+Embedded Files
+Skip to main content
+Skip to navigation
+1com API
+1com API
+להלן מדריך API של 1COM הכולל דוגמאות לכל פעולה
+ניתן להתעדכן בפעולות חסרות גם במסמך זה
+INFO - SIMPLECDRS / Get the list of calls
+INFO - CDRS / Get the list of calls
+INFO - DIDS / Get the list of DIDs for one tenant
+INFO - DIDS / Get the list of DIDs for all tenants
+INFO - Flow / Get the state of a flow
+INFO - Flow / Get the state of a extension
+INFO - Variable / Get the value of a variable
+DIAL / Call an extension and then dial a number
+HANGUP / Hangup a call by extension
+AGENT / Pause agent from queue
+AGENT / Get info for agent in all the queues
+MEDIAFILE / Retrieve a media file by its ID
+QUEUE / Get the list of agents
+QUEUE / Add an agent to a queue
+VOICEMAIL
+Get all voicemails for a tenant
+Get info about voicemails in a mailbox
+Get the binary audio for a message
+Mark a message as read
+Mark a message as not read
+COUNTCALLS / Count the calls on a system
+RECORDINGS / Get or play a recording
+PHONEBOOKS
+Search for an entry
+Add an entry
+FAX
+Send a fax
+INFO
+Get the cdr for a tenant in CSV format
+Get the cdr for all tenants in CSV format
+Get the queue log for a tenant in CSV format
+Getting response paths results
+Getting the latest one for a given Response Path
+Getting the latest one for a given Response Path for agent 104-DEMO
+Getting the latest one for a given Response Path for agent 104-DEMO in xml format
+ManageDB
+ManageDB / Custom Destination Types
+Getting the custom destination type list
+ManageDB / Custom Destinations
+Getting the custom destination list
+Getting info for a custom destination
+Creating a custom destination
+Updating a custom destination
+ManageDB / Phones
+Getting the phones list
+Getting info for a phone
+Creating a phone
+Updating a phone
+Manage DB / media files
+Getting the media file list
+Getting info for a media file
+Getting the binary part of a media file
+Updating a media file
+Updating the binary part of a media file
+ManageDB / Hunt Lists
+Getting the hunt lists list
+Getting the hunt lists extension list
+Setting the hunt lists extension list
+ManageDB / Extensions
+Getting the extension list
+Updating the security for an extension
+Adding a SIP extension
+ManageDB / Conferences
+Creating a conference
+Update a routing profile
+ManageDB / DIDs
+Listing the DIDs for a tenant
+Getting more info for a DID
+Updating a DID
+ManageDB / Destinations
+Getting the destinations for a DID
+Getting the destinations for a Condition (true)
+Getting the destinations for a Condition (false)
+Replace the destinations for a DID
+ManageDB / IVRs
+Listing the IVRs for a tenant
+Getting more info for a IVR
+Getting the destinations for the IVR, including the media files
+ManageDB / Conditions
+Listing the Conditions for a tenant
+Listing the destinations for a Condition
+Getting info and more info for a Condition
+Replacing extended info for a Condition
+Proxyapi is the way to manage your PBX from external softwares. It allows easy access to calls, phone status and more. It allows also to create, delete and edit records, even if in a limited way.
+Proxyapi can be used by each tenant using an API key generated in the Configuration/Settings page. Two kinds of keys can be generated, one allowing Read/Write access and one allowing only read-only operations.
+The latest syntax for the operations can be retrieved by proxyapi itself, like for example: https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-2&reqtype=HELP
+Some usage example examples (please note the URL on the demo server is slightly different than on production servers - 1com/pbx):
+INFO - SIMPLECDRS / Get the list of calls
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=SIMPLECDRS&tenant=DEMO&calleridnum=103,104&start=2020-01-01&end=2020-12-31
+INFO - CDRS / Get the list of calls
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=CDRS&tenant=DEMO&phone=103,104&start=2019-12-01&end=2022-12-31
+If the amount of fields is too large and confusing, you can select the fields to return using a XML template defined in Configuration/Settings - XML Template and then use in the proxyapi request.
+Let`s name this XML template as Test_CSV
+{row_loop}{$uniqueid},{$ID},{$te_id},{$realsrc},{$lastdst},{$start},{$duration},{$answer},{$direction},{$direction},{$disposition}
+{/row_loop}
+You can use as
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=CDRS&tenant=DEMO&phone=103,104&start=2019-12-01&end=2022-12-31&format=xml&template=Test_CSV
+INFO - DIDS / Get the list of DIDs for one tenant
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=DIDS&tenant=DEMO
+INFO - DIDS / Get the list of DIDs for all tenants
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=DIDS
+INFO - Flow / Get the state of a flow
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=FLOW&id=61&tenant=DEMO
+INFO - Flow / Get the state of a extension
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=EXTSTATE&ext=500&tenant=DEMO
+INFO - Variable / Get the value of a variable
+https://DEMO.1com.com/1com/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=variable&id=61&tenant=DEMO
+DIAL / Call an extension and then dial a number
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=DIAL&source=402&dest=9922323232&tenant=DEMO&account=source
+This command returns a call id like:
+Success|Originate successfully queued|15a4cfe6429054|
+The call id can be used to retrieve the recording with
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=recording&id=15a4cfe6429054
+It will be contained in the "OriginateID" field in the cdr table
+You can provide variables to the dial plan, by using the var parameter like:
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=DIAL&source=402&dest=9922323232&tenant=DEMO&account=402-DEMO&var=callid%3D453131
+%3D is the URL encoded equivalent of =
+The variable will be available in the dial plan as "TENANTCODE-variable". In this example as DEMO-callid
+HANGUP / Hangup a call by extension
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=HANGUP&extension=103-DEMO&tenant=DEMO
+AGENT / Pause agent from queue
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=AGENT&action=PAUSE&queue=281&extension=104-DEMO&tenant=DEMO&pausereason=Breakfast
+AGENT / Get info for agent in all the queues
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=AGENT&action=LISTQUEUES&extension=104-DEMO&tenant=DEMO&format=json
+MEDIAFILE / Retrieve a media file by its ID
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MEDIAFILE&tenant=DEMO&id=19&action=GETAUDIO&objectid=3619
+QUEUE / Get the list of agents
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=QUEUE&tenant=DEMO&action=list&number=9200
+QUEUE / Add an agent to a queue
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=QUEUE&tenant=DEMO&action=add&number=9200&extension=103
+VOICEMAIL
+Get all voicemails for a tenant
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=VOICEMAIL&tenant=DEMO&action=list
+Get info about voicemails in a mailbox
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=VOICEMAIL&tenant=DEMO&mailbox=102&action=messages
+Get the binary audio for a message
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=VOICEMAIL&tenant=DEMO&mailbox=102&action=message&msgid=1475685709-00000004
+Mark a message as read
+https://DEMO.1com.com/1com/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=VOICEMAIL&tenant=DEMO&action=markread&msgid=1543267778-00000007
+Mark a message as not read
+https://DEMO.1com.com/1com/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=VOICEMAIL&tenant=DEMO&action=markunread&msgid=1543267778-00000007
+COUNTCALLS / Count the calls on a system
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=COUNTCALLS
+RECORDINGS / Get or play a recording
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=recording&id=srv02-1531779475.48&tenant=DEMO
+Based on your browser settings, you can force the browser to play the recording using the "playrecording" info parameter
+PHONEBOOKS
+Search for an entry
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=PHONEBOOK&subreqtype=query&tenant=DEMO&phonebook=Default&field=name&value=Ben
+Add an entry
+<?php
+$phonebook[`NAME`]="Ross";
+$phonebook[`PHONE1`]="3564732920";
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=PHONEBOOK&subreqtype=add&phonebook=Default&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "values=".urlencode(json_encode($phonebook)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+FAX
+Send a fax
+<?php
+$postfields = array(
+    `filename` => `@protected/FAXtestPage.pdf`
+                    );
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=FAX&action=send&number=99397654321&source_number=123412345&tenant=DEMO");
+curl_setopt($ch, CURLOPT_POST, 1 );
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$postResult = curl_exec($ch);
+if (curl_errno($ch)) {
+  print curl_error($ch);
+}
+curl_close($ch);
+INFO
+Get the cdr for a tenant in CSV format
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=CDRS&format=csv&tenant=DEMO&start=2017-01-01&end=2017-02-01
+Get the cdr for all tenants in CSV format
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=CDRS&format=csv&tenant=%&start=2017-01-01&end=2017-02-01
+Please note, when getting the CSV for a single tenant, the CSV format used is the tenant one, when getting the CSV for multiple tenants, the Admin format is used
+Get the queue log for a tenant in CSV format
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=INFO&info=QUEUELOGS&format=csv&tenant=DEMO&start=2017-10-01&end=2017-12-01
+Getting response paths results
+Getting the latest one for a given Response Path
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=RESPONSEPATH&tenant=DEMO&id=19&action=GETLAST
+It returns something like:
+UniqueID|Type|Type ID|Value|Type Name|Value Name
+srv02-1509806457.625|START|0|2017-11-04 15:41:01||
+srv02-1509806457.625|CALLERID|0|Susan <1132555678>||
+srv02-1509806457.625|VARIABLE|85|36985||
+srv02-1509806457.625|VARIABLE|144|56896||
+srv02-1509806457.625|QUEUE|281|||
+srv02-1509806457.625|ANSWER|0|105-DEMO||
+srv02-1509806457.625|HANGUP|0|||
+Getting the latest one for a given Response Path for agent 104-DEMO
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=RESPONSEPATH&tenant=DEMO&id=19&action=GETLAST&filter=ANSWER&filterdata=104-DEMO
+Getting the latest one for a given Response Path for agent 104-DEMO in xml format
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=RESPONSEPATH&tenant=DEMO&id=19&action=GETLAST&filter=ANSWER&filterdata=105-DEMO&format=xml
+Based on the xml format shown in the manual, it returns something like:
+<?xml version="1.0">
+<Result>
+<Agent>105-DEMO</Agent>
+<Status>NOT ACTIVE</Status>
+<Queue>supportQ</Queue>
+<ClientID>1234</MemberNumber>
+<OrderNumber>11223344</MemberNumber>
+<Caller>Manuel <7171345678></Caller>
+<VoiceFile>3619</VoiceFile>
+</Result>
+ManageDB
+Any ManageDB action requires an admin key
+ManageDB / Custom Destination Types
+Getting the custom destination type list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CUSTOMTYPES&tenant=DEMO&action=list
+ManageDB / Custom Destinations
+Getting the custom destination list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CUSTOM&tenant=DEMO&action=list
+Getting info for a custom destination
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CUSTOM&tenant=DEMO&action=get&objectid=67
+Creating a custom destination
+$config[`cu_name`]="Boss phone";
+$config[`cu_ct_id`]=1;
+$config[`cu_param1`]="3564732920";
+$config[`cu_param2`]="INCOMINGDID";
+$config[`cu_param3`]="30";
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=add&object=custom&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+Updating a custom destination
+$config[`cu_name`]="Boss private phone";
+$config[`cu_id`]=286;
+$config[`cu_param1`]="0636287454";
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=custom&tenant=DEMO&objectid=286";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+ManageDB / Phones
+Getting the phones list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=PHONE&action=list&tenant=DEMO
+Getting info for a phone
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=PHONE&action=get&objectid=182&tenant=DEMO
+Creating a phone
+$config[`ph_name`]="George Basement";
+$config[`ph_mac`]=`AA:BB:CC:DD:EE:FF:00:11`;
+$config[`ph_pm_id`]=5;
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=add&object=phones&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+Updating a phone
+$config[`ph_name`]="George Lower Basement";
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=phone&objectid=207&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+Manage DB / media files
+Getting the media file list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=MEDIAFILE&action=list&tenant=DEMO
+Getting info for a media file
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=MEDIAFILE&action=get&objectid=1063&tenant=DEMO
+Getting the binary part of a media file
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=MEDIAFILE&action=getbinary&objectid=1063&tenant=DEMO
+Updating a media file
+$config[`me_name`]="Beep";
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=mediafile&objectid=10&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+Updating the binary part of a media file
+<?php
+$postfields = array(
+    `filename` => `@audio.wav`
+                    );
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=MEDIAFILE&action=updatebinary&objectid=247&tenant=DEMO");
+curl_setopt($ch, CURLOPT_POST, 1 );
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$postResult = curl_exec($ch);
+if (curl_errno($ch)) {
+  print curl_error($ch);
+}
+curl_close($ch);
+ManageDB / Hunt Lists
+Getting the hunt lists list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=HUNTLIST&action=get&objectid=323&tenant=DEMO
+Getting the hunt lists extension list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=HUNTLIST&action=getextensions&objectid=323&tenant=DEMO
+Setting the hunt lists extension list
+<?php
+$destinations=array(`EXT-1701`,`EXT-1703`,`EXT-1705`,`CUSTOM-67`);
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=setextensions&object=huntlist&objectid=26&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($destinations)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+ManageDB / Extensions
+Getting the extension list
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=list&object=extension&tenant=DEMO
+Updating the security for an extension
+<?php
+$value[`ex_callallowed`]=`none`; 
+//$value[`ex_callallowed`]=`all`; 
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=extension&objectid=1695&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($value)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+Adding a SIP extension
+$config[`ex_number`]="1100";
+$config[`ex_name`]=`Test extension`;
+$config[`ex_tech`]=`SIP`;
+$config[`secret`]=`hackmeifyoucan`;
+$url = "https://DEMO.1com.com/1com/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=add&object=extension&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+ManageDB / Conferences
+Creating a conference
+<?php
+$config[`cr_number`]="887";
+$config[`cr_name`]=`Test conference`;
+$config[`pin`]=`5678`;
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=add&object=conference&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+Update a routing profile
+<?php
+$config[`rp_name`]=`Only National calls`;
+$url = "https://DEMO.1com.com/1com/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=routingprofile&objectid=275"; $resource = curl_init(); curl_setopt($resource, CURLOPT_URL, $url); curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1); curl_setopt($resource, CURLOPT_VERBOSE, true); curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config))); $data = curl_exec($resource); curl_close($resource);
+print_r($data); ?>
+ManageDB / DIDs
+Listing the DIDs for a tenant
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DID&action=LIST&tenant=DEMO
+Getting more info for a DID
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DID&action=GET&objectid=27699&tenant=DEMO
+Updating a DID
+<?php
+$config[`di_comment`]=`Test DID`;
+$config[`di_recording`]=`yes`;
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&action=update&object=did&objectid=27699";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+ManageDB / Destinations
+Getting the destinations for a DID
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=LIST&typesrc=DID&typeidsrc=27699&tenant=DEMO
+Getting the destinations for a Condition (true)
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=LIST&typesrc=CONDITION&typeidsrc=20&tenant=DEMO
+Getting the destinations for a Condition (false)
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=LIST&typesrc=NOTCONDITION&typeidsrc=20&tenant=DEMO
+Replace the destinations for a DID
+<?php
+$config[]=`PLAYBACK-60`;
+$config[]=`EXT-29379`;
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=replace&typesrc=DID&typeidsrc=27699&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+You can use all these tags, with the id of the object
+EXT 	- Dial an extension 	
+SMS 	- Send a SMS to an extension 	
+PLAYBACK 	- Play a media file 	
+RERECORD 	- Rerecord a media file 	
+CLEARRECORDING 	- Clear the media from a media file 	
+RERECORDSILENT 	- Rerecord a media file without playing an intro 	
+CONDITION 	- Follow to a condition 	
+VOICMEAIL 	- Call a voicemail 	
+IVR 	- Call an IVR 	
+DISA 	- Call a DISA 	
+PAGING 	- Call a Paging group 	
+HUNTLIST 	- Call a Huntlist 	
+FLOW 	- Call a Flow 	
+PARK 	- Park the call 	
+SPECIAL 	- Execute a special destination (check the sp_specials table for the 	id) 	
+MEETME 	- Join a conference 	
+QUEUE 	- Dial a Queue 	
+RESETQUEUESTATS 	- Reset the stats for a Queue 	
+STARTCAMPAIGN 	- Start a campaign 	
+REDIALNOTANSWEREDCAMPAIGN 	- Redial the calls not answered for a campaign 	
+STOPCAMPAIGN 	- Stop a campaign 	
+PAUSECAMPAIGN 	- Pause a campaign 	
+PAUSECAMPAIGN 	- Unpause a campaign 	
+REMOVEFROMCAMPAIGN 	- Remove called number from campaign 	
+REMOVECALLERFROMCAMPAIGN 	- Remove caller number from campaign 	
+ADDLATESTDIALEDOUTTOCAMPAIGN 	- Add latest dialed out number to campaign 	
+ADDLATESTDIALEDINTOCAMPAIGN 	- Add latest dialed in number to campaign 	
+ADDTODNCLIST 	- Add called number to Do Not Call list 	
+LOGINQUEUE 	- Login caller to Queue 	
+TOGGLELOGINQUEUE 	- Toggle Login/Logout caller to Queue 	
+LOGINADQUEUE 	- Login caller to Queue 	
+TOGGLELOGINADQUEUE 	- Toggle Login/Logout caller to Queue 	
+TOGGLEPAUSEQUEUE 	- Toggle Pause/Unpause caller to Queue 	
+LOGOUTALLAGENTSFROMQUEUE 	- Logout all agents from Queue 	
+LOGOUTQUEUE 	- Logout caller from Queue 	
+PAUSEQUEUE 	- Pause caller from Queue 	
+UNPAUSEQUEUE 	- Unpause caller from Queue 	
+PAUSEALLAGENTSINQUEUE 	- Pause all agents in Queue 	
+UNPAUSEALLAGENTSINQUEUE 	- Unpause all agents in Queue 	
+CUSTOM 	- Use a custom destination 	
+PHONEBOOK 	- Route by Phone Book using regex 	
+EXACTPHONEBOOK 	- Route by Phone Book not using regex 	
+SETUNCONDITIONALDID 	- Set unconditional forwarding for a DID 	
+ENABLEUNCONDITIONALDID 	- Enable the unconditional forwarding for a DID 	
+DISABLEUNCONDITIONALDID 	- Disable the unconditional forwarding for a DID 	
+TOGGLEUNCONDITIONALDID 	- Toggle the unconditional forwarding for a DID 	
+CLIDNAMEBYPHONEBOOK 	- Set Caller ID Name by Phone Book 	
+CALLERIDMOD 	- Alter Caller ID based on rule 	
+MUSICONHOLD 	- Set Music On Hold to 	
+RINGMUSICONHOLD 	- Ring extension using Music On Hold 	
+RESPONSEPATH 	- Start Response Path 	
+SAMENUMBERVM 	- Voicemail same number
+You can assign the destination for a condition (true) using the URL
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=replace&typesrc=CONDITION&typeidsrc=20&tenant=DEMO
+or condition (false) using the URL
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=replace&typesrc=NOTCONDITION&typeidsrc=20&tenant=DEMO
+For an IVR, you can assign the destination for a press 1 using the URL
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=DESTINATION&action=replace&typesrc=IVR_1&typeidsrc=3634&tenant=DEMO
+ManageDB / IVRs
+Listing the IVRs for a tenant
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=IVR&action=LIST&tenant=DEMO
+Getting more info for a IVR
+Take in mind, the iv_me_id field is not used and the media files are stored in the destination table
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=IVR&action=GET&tenant=DEMO&objectid=322
+Getting the destinations for the IVR, including the media files
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=IVR&action=GETDESTINATIONS&tenant=DEMO&objectid=3634
+Use the Destination call to replace values
+ManageDB / Conditions
+Listing the Conditions for a tenant
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CONDITION&action=LIST&tenant=DEMO
+Listing the destinations for a Condition
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CONDITION&action=GETDESTINATIONS&tenant=DEMO&objectid=20&format=json
+Getting info and more info for a Condition
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CONDITION&action=GET&tenant=DEMO&objectid=20&format=json
+This will give you the details of the condition, but in case for example of WEEKTIME condition or CALENDAR condition, you need to get the extended info like:
+https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CONDITION&action=GETEXTENDEDINFOS&tenant=DEMO&objectid=20&format=json
+Replacing extended info for a Condition
+<?php
+$config[0][`param1`]=`1`;
+$config[0][`param2`]=`8:00`;
+$config[0][`param3`]=`13:00`;
+$config[1][`param1`]=`1`;
+$config[1][`param2`]=`15:00`;
+$config[1][`param3`]=`19:00`;
+$config[2][`param1`]=`2`;
+$config[2][`param2`]=`8:00`;
+$config[2][`param3`]=`13:00`;
+$config[3][`param1`]=`2`;
+$config[3][`param2`]=`15:00`;
+$config[3][`param3`]=`19:00`;
+$url = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php?key=REDACTED-EXAMPLE-API-KEY-1&reqtype=MANAGEDB&object=CONDITION&action=replaceextendedinfos&objectid=20&tenant=DEMO";
+$resource = curl_init();
+curl_setopt($resource, CURLOPT_URL, $url);
+curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($resource, CURLOPT_VERBOSE, true);
+curl_setopt($resource, CURLOPT_POSTFIELDS, "jsondata=".urlencode(json_encode($config)));
+$data = curl_exec($resource);
+curl_close($resource);
+print_r($data);
+?>
+Report abuse
+Page details
+Page updated 
+Report abuse
