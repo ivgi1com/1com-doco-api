@@ -1,13 +1,24 @@
 # Current Status
 
 Current work:
-**Phase 7 — Proxy API rollout: IN PROGRESS (Stage 0 done).** Plan approved
-2026-09-25 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
-decisions in `docs/DECISIONS.md` "Phase 7 planning"). `main`
-fast-forwarded to `0cbd7ba` and tagged `v0.4-demo-approved` (user
-approved). Branch `phase/proxy-rollout` from `main`. Next: Stage 1
-(operation inventory + classification), then STOP to show the `unclear`
-list and category taxonomy.
+**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–3 done).** Plan
+approved 2026-09-25
+(`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
+decisions in `docs/DECISIONS.md` "Phase 7 planning", "Phase 7 Stage 1
+checkpoint", "Phase 7 Stage 3 complete"). `main` fast-forwarded to
+`0cbd7ba` and tagged `v0.4-demo-approved`. Branch `phase/proxy-rollout`.
+Stage 3 (Reference authoring) is complete: **all 109 non-excluded
+operations now have a Reference page** (`npm run rollout:status`:
+109/109, 0 broken links); `tests/unit/proxy-coverage.test.ts`'s
+`ROLLOUT_COMPLETE` flag is now `true`, enforcing full coverage going
+forward. `npm run check` 209/209, build clean (228 pre-rendered paths),
+full Playwright suite passing on a fresh production build (two runs,
+141/142 each — the one failure differed each time and passed in
+isolation, consistent with pre-existing test-infra flakiness, not a
+regression), visual pass at desktop/mobile × en/he with zero console
+errors and no overflow. Next: **STOP for the Stage 4 gate** — probing
+the read operations needs the user's TEST key/tenant in chat and a model
+switch to Opus 5.5 (credential handling).
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate

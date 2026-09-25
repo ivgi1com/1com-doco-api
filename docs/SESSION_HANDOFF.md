@@ -1,43 +1,67 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (Phase 7 — Proxy API rollout, Stage 0 done — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–3 done, STOP at the Stage 4 gate — read this first)
 
-## Phase 7 in progress — Stage 0 done
+## Phase 7 in progress — Stages 0–3 done, STOP before Stage 4
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
-  (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning";
-  `source-docs/unresolved.md` U-10, U-12, U-13, U-14 now decided.
+  (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
+  7 Stage 1 checkpoint", "Phase 7 Stage 3 complete".
 - `main` fast-forwarded to `0cbd7ba`, tagged `v0.4-demo-approved`. Work
-  branch `phase/proxy-rollout`. Not pushed.
-- Stage 1 done (not yet reviewed by the user): `source-docs/proxy-api/
-  operations.json` (110 operations, 1 excluded: `cdr-update`),
-  `tests/unit/proxy-coverage.test.ts` (strict coverage gated by
-  `ROLLOUT_COMPLETE`, flip at end of Stage 3), `scripts/rollout-status.ts`
-  (`npm run rollout:status` → `source-docs/ROLLOUT_STATUS.md`; `tsx` added
-  as devDependency). Portal status is derived from `src/content`, not
-  stored in the inventory (one source of truth). Stage 1 decisions made by
-  the user (DECISIONS.md "Phase 7 Stage 1 checkpoint"): unclear ops are
-  Reference-only, one page per operation, sidebar grouped by reqtype,
+  branch `phase/proxy-rollout`, not merged, not pushed.
+- **Stage 1**: `source-docs/proxy-api/operations.json` (110 operations, 1
+  excluded: `cdr-update`), `tests/unit/proxy-coverage.test.ts`,
+  `scripts/rollout-status.ts` (`npm run rollout:status` →
+  `source-docs/ROLLOUT_STATUS.md`; `tsx` added as devDependency). User
+  decisions (`DECISIONS.md` "Phase 7 Stage 1 checkpoint"): unclear ops
+  (`info-voicemail`, `voicemail-message`) are Reference-only, never
+  probed, no Demo; one page per operation; sidebar grouped by reqtype;
   `cdr-update` excluded.
-- Stage 2 done (Opus): `src/content/proxy-api.ts` split into
+- **Stage 2** (Opus): `src/content/proxy-api.ts` split into
   `src/content/proxy/` (`shared.ts` with `proxyOperation()`/`q()`/`b()`
-  and auth variants; `info.ts`, `cdr.ts`, `dial.ts`, `managedb.ts`,
-  `index.ts`). Model: `requestBodyEncoding`, `operationClass`, and an
-  array-valued `requestExample` (`docs/API_CONTENT_MODEL.md`). Code samples
-  cover POST form/multipart bodies and format-aware response reading.
-  Write operations are Reference-only in the UI and in the executor. Three
-  pilot operations validate it end to end: `dial`, `managedb-custom-add`,
-  `info-recording` (9/109 documented). Checks: `npm run check` 207/207,
-  build clean, Playwright **142/142** on a fresh production build (the 7
-  Phase 6 "pre-existing" failures do not reproduce there; they were
-  dev-server-only). Visual pass at desktop 1440 and iPhone 14, en and he:
-  no overflow and zero console errors, after fixing two issues it found
-  (write note below the fold; vendor badge wrapping).
-- Next: Stage 3, Reference authoring by reqtype batch — **switch to Sonnet
-  5**. Stage 2 (content split + model additions) is Opus; Stage 3 is
-  Sonnet.
-- Stage 4 probe: the user supplies a TEST key in chat when that stage
-  starts; never write it anywhere.
+  and auth variants; one module per reqtype family). Model:
+  `requestBodyEncoding`, `operationClass`, array-valued `requestExample`
+  (`docs/API_CONTENT_MODEL.md`). Code samples cover POST
+  form/multipart bodies and format-aware response reading. Write
+  operations are Reference-only in the UI and in the executor. Three
+  pilots: `dial`, `managedb-custom-add`, `info-recording`.
+- **Stage 3 — Reference authoring, COMPLETE** (Sonnet, 6 commits by
+  reqtype-family batch: INFO; call-control; extension/peer; queue/flow;
+  VOICEMAIL/FAX/MEDIAFILE/PHONEBOOK/RESPONSEPATH/SMS/HELP; MANAGEDB).
+  **All 109/109 non-excluded operations now have a Reference page**
+  (`npm run rollout:status`: 0 broken links). `ROLLOUT_COMPLETE` flipped
+  to `true` in `tests/unit/proxy-coverage.test.ts` — full coverage is now
+  enforced, not just tracked.
+  - **Two real bugs found and fixed while authoring, both now
+    permanently guarded by coverage-test assertions** (`DECISIONS.md`
+    "Phase 7 Stage 3 complete" has full detail): (1) two `ResponseSpec`
+    entries at the same HTTP status (RESPONSEPATH-GETLAST's plain + xml
+    samples, both 200) caused a React duplicate-key warning and made the
+    xml sample unreachable in the status selector — the response viewer
+    supports one example per status code; fixed by folding the xml
+    variant into a note. (2) `info-extensions`/`managedb-extension-list`
+    and `info-dids`/`managedb-did-list` shared an exact title — harmless
+    in the content model but a real endpoint-picker UX ambiguity and an
+    e2e-locator hazard (Playwright's default name match is substring);
+    fixed by appending "(ManageDB)" to both ManageDB titles, plus a
+    disambiguating regex on two pre-existing e2e locators.
+  - Full validation: `npm run check` 209/209, `npm run build` clean (228
+    pre-rendered paths), full Playwright suite **141/142 on two separate
+    fresh `build && start` runs** — a different single test failed each
+    time and passed cleanly in isolation (pre-existing test-infra
+    flakiness under parallel workers, not a regression). The Phase 6
+    dev-only 404-page quirk did **not** reproduce against either fresh
+    build, confirming that prior finding was dev-server-only. Visual
+    pass (desktop 1440 + iPhone 14, en + he) over a spread of new pages
+    including `responsepath-getlast`, `managedb-mediafile-updatebinary`,
+    `managedb-condition-replaceextendedinfos`: zero console errors, zero
+    horizontal overflow.
+- **Next: STOP for the Stage 4 gate.** Probing the read operations needs
+  **Opus 5.5** (credential handling) **and the user's TEST key/tenant in
+  chat** (Phase 6 Stage A method — never written to disk, repo, logs or
+  scratchpad; rotate afterward). Do not start Stage 4 without both.
+  ManageDB operations are excluded from probing permanently (no admin key
+  available, Stage 1 decision) unless the user says otherwise.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

@@ -12,11 +12,10 @@ import inventory from "../../source-docs/proxy-api/operations.json";
  *
  * - Every Proxy endpoint in src/content maps to exactly one inventory row,
  *   with the same reqtype + discriminator and category.
- * - Every non-excluded inventory row has an endpoint — enforced only once
- *   ROLLOUT_COMPLETE is true (set at the end of Phase 7 Stage 3, when
- *   Reference authoring is done). Until then the missing set is reported.
+ * - Every non-excluded inventory row has an endpoint — enforced now that
+ *   Stage 3 (Reference authoring) is complete (109/109, 2026-09-25).
  */
-const ROLLOUT_COMPLETE = false;
+const ROLLOUT_COMPLETE = true;
 
 interface OperationRow {
   id: string;
@@ -91,6 +90,20 @@ describe("content ↔ inventory", () => {
     for (const r of rows.filter((r) => r.class !== "read")) {
       expect(getDemoFixtures("proxy", r.id), `${r.id} has Demo fixtures`).toBeUndefined();
       expect(live.has(`proxy/${r.id}`), `${r.id} is Live-allowlisted`).toBe(false);
+    }
+  });
+
+  it("never gives two endpoints the same title", () => {
+    // Duplicate titles collide in the Playground's endpoint-picker button
+    // text and in e2e locators. Found: info-extensions/managedb-extension-list
+    // both "List extensions"; info-dids/managedb-did-list both "List DIDs".
+    const byTitle = new Map<string, string[]>();
+    for (const e of endpoints) {
+      if (!byTitle.has(e.title)) byTitle.set(e.title, []);
+      byTitle.get(e.title)!.push(e.id);
+    }
+    for (const [title, ids] of byTitle) {
+      expect(ids.length, `title "${title}" used by ${ids.join(", ")}`).toBe(1);
     }
   });
 

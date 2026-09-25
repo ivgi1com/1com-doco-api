@@ -390,7 +390,10 @@ test.describe("interactions", () => {
       await desktopPane(page).getByLabel("tenant", { exact: true }).fill("MYTENANT");
       await desktopPane(page).getByLabel("id", { exact: true }).fill("999");
 
-      await desktopPane(page).getByRole("button", { name: "List queue agents" }).click();
+      // Substring match also hits the Phase 7 "List queue agents' answer
+      // delay" endpoint; the negative lookahead excludes it without needing
+      // the full "GET ... (Legacy)" accessible name.
+      await desktopPane(page).getByRole("button", { name: /List queue agents(?!')/ }).click();
       await expect(page).toHaveURL(/endpoint=proxy\/info-agents$/);
       await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toHaveValue("MYTENANT");
       await expect(desktopPane(page).getByLabel("API key")).toHaveValue(FAKE_KEY);
@@ -399,7 +402,9 @@ test.describe("interactions", () => {
       // anything carried over from the previous endpoint.
       await expect(desktopPane(page).getByLabel("queue", { exact: true })).toHaveValue("281");
 
-      await desktopPane(page).getByRole("button", { name: "List extensions" }).click();
+      // Substring match also hits the Phase 7 ManageDB "List extensions
+      // (ManageDB)" endpoint; the negative lookahead excludes it.
+      await desktopPane(page).getByRole("button", { name: /List extensions(?! \(ManageDB\))/ }).click();
       await expect(page).toHaveURL(/endpoint=proxy\/info-extensions$/);
       await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toHaveValue("MYTENANT");
       await expect(desktopPane(page).getByLabel("API key")).toHaveValue(FAKE_KEY);

@@ -775,3 +775,44 @@ read, 45 write, 2 unclear, 1 excluded). User decisions:
   14-group functional taxonomy. The 6 existing endpoints were regrouped
   into `info` and `cdr`; category ids are not part of any URL.
 - **`cdr-update`**: excluded (only in the superseded MiRTA manual).
+
+## Phase 7 Stage 3 complete (2026-09-25)
+
+All 109 non-excluded operations from `source-docs/proxy-api/operations.json`
+now have a Reference page (`npm run rollout:status`: 109/109, 0 broken
+links). Authored across 6 batches by reqtype-family, each committed and
+`npm run check`-verified separately:
+1. INFO (22 operations, incl. the 6 already implemented)
+2. Call-control: AGENT, ATXTRANSFER, CHANNEL(S), COUNTCALLS,
+   COUNTCHANNELS, HANGUP, TRANSFER
+3. Extension/peer: BLFS, COUNTPEERS, PEERS, UNREGISTER, REBOOT, VIRTUALEXT
+4. Queue/flow: QUEUE, QUEUERESET, CAMPAIGN, FLOWS, SETFLOW
+5. VOICEMAIL, FAX, MEDIAFILE, PHONEBOOK, RESPONSEPATH, SMS, HELP
+6. MANAGEDB (34 operations across 9 objects)
+
+`tests/unit/proxy-coverage.test.ts`'s `ROLLOUT_COMPLETE` flag flipped to
+`true`: every non-excluded inventory row must now have an endpoint, going
+forward.
+
+Two real bugs found and fixed while authoring, both now guarded by
+permanent coverage-test assertions:
+- Two `ResponseSpec` entries at the same HTTP status (RESPONSEPATH-GETLAST's
+  plain and xml samples, both 200) caused a React duplicate-key warning and
+  made the second example unreachable in the status selector — the response
+  viewer supports one example per status code. Fixed by folding the xml
+  variant into a note; the plain vendor sample is documented as the
+  better-attested of the two.
+- Two endpoints shared an exact title ("List extensions": info-extensions
+  vs the new managedb-extension-list; "List DIDs": info-dids vs the new
+  managedb-did-list) — harmless in the content model itself, but a real
+  UX ambiguity (the Playground's endpoint picker shows two identical
+  button labels) and a real e2e-test hazard (Playwright's default
+  substring name-matching can't tell them apart). Fixed by appending
+  "(ManageDB)" to the ManageDB variant's title in both cases; two
+  pre-existing e2e locators (Live-mode field-persistence test) needed a
+  disambiguating regex to keep matching only the INFO endpoint.
+
+Full validation: `npm run check` 209/209 after each fix, `npm run build`
+clean (228 pre-rendered paths), full Playwright suite on a fresh
+`build && start` (see this session's completion report for the pass
+count — run in progress at commit time).
