@@ -1,6 +1,69 @@
 # Session Handoff
 
-Last updated: 2026-09-25 (round 2 approved, gate B — committed, read this first)
+Last updated: 2026-09-25 (Phase 6 started — read this first)
+
+## IN PROGRESS — Phase 6 (Demo mode), Step 1 waiting on the user
+
+- Plan (approved 2026-09-25):
+  `C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`.
+- Branch `phase/demo-mode`, from `main` @ `b37e51c`. The user
+  fast-forward merged `phase/live-playground` into `main` before this phase
+  started.
+- Scope: Demo covers 7 operations — the 3 existing ones plus INFO DIDS,
+  SIMPLECDRS, EXTSTATE and QUEUELOGS. The 4 new ones get Reference + Demo
+  only and are **not** Live. Demo behavior is driven by inputs and uses
+  observed behavior only; anything else shows "Not simulated". No error
+  scenarios are invented. Fixtures are new and synthetic. Full detail:
+  `docs/DECISIONS.md` "Phase 6 planning".
+- Step 1: `info.yaml` has no response samples for the 4 new operations, so
+  their structure comes from a structure-only probe. The script lives in the
+  session scratchpad and is not committed. The user runs it in their own
+  terminal with `PROXY_PROBE_KEY` set and pastes the output, so the key
+  never enters chat. Results go to `source-docs/DOCS_AUDIT.md` §9
+  (A-44..A-47).
+- Model: the probe runs on Opus. Steps 2–7 run on Sonnet 5, with a short
+  Opus Demo-isolation review before the gate.
+
+### STOP checkpoint — 2026-09-25, user-requested stop during Step 1
+
+- **Done**: Step 0 (the branch; status and decision docs). The probe script
+  was written and self-tested with fake data (no leaks).
+- **Partial probe run** (user's terminal, a real tenant that is *not*
+  `demo`; its name is deliberately not recorded anywhere). EXTSTATE only;
+  the pasted output ends after csv:
+  - `format=json`: `application/json`, 55 B, a record
+    `{UniqueID: 2 letters, LinkedID: text ≤64}`.
+  - Default and `plain`: `text/html`, a 2-byte whitespace-only body.
+  - `csv`: 0 bytes.
+  - `ext` was passed in the `<n>-<tenant>` form; the source example uses a
+    bare number.
+  - Not yet recorded in `DOCS_AUDIT.md`, because the run is incomplete.
+- **Blocker: the probe script is BROKEN.** A python heredoc edit turned
+  the `\r\n` escapes in the whitespace-body regex into literal newlines, so
+  `node --check` now fails with a SyntaxError. Because a parse error runs
+  nothing, no network call is made, but the script is unusable.
+  - File: session scratchpad
+    `...\7bce4a1f-...\scratchpad\probe-info.mjs`, plus the leak test
+    `probe-selftest.mjs`. Both are outside the repo.
+  - If a new session can't access that scratchpad, rewrite the script from
+    the approved plan (Step 1).
+- **Pending script improvements** (partially applied, unverified):
+  - text `shape` mask (letters → `a`, digits → `9`);
+  - short all-caps alpha values printed;
+  - whitespace-only bodies shown as a `\r\n` mask;
+  - an extra EXTSTATE call using the bare ext number;
+  - secrets scrubbed longest-first.
+- **Next task**: finish Step 1 (the probe), then Steps 2–7 of the plan.
+- **First action for the next session**:
+  1. Repair `probe-info.mjs` with the Edit tool, not python heredocs.
+  2. Run `node --check`.
+  3. Run `node probe-selftest.mjs`, then grep its output for the fake
+     secrets; a match means a leak.
+  4. Ask the user to re-run the full script in their own terminal and paste
+     all of the output, through the final "Done." line.
+
+
+## Earlier STOP checkpoint (historical; the "unmerged" statements below are superseded)
 
 ## STOP checkpoint — Phase 5 adjustment round 2 (3 UX fixes) approved and complete; next phase not started
 

@@ -1,11 +1,22 @@
 # Current Status
 
 Current phase:
+**Phase 6 — Demo mode: IN PROGRESS** (started 2026-09-25 on branch
+`phase/demo-mode`, from `main` @ `b37e51c`). Approved plan:
+`C:\Users\ivgi-pc\.claude\plans\start-phase-06-harmonic-cherny.md`. Scope and
+decisions are in `docs/DECISIONS.md` under "Phase 6 planning". Step 0 is
+done. Step 1 (a structure-only probe of INFO DIDS/SIMPLECDRS/EXTSTATE/
+QUEUELOGS) is incomplete: one partial run covered EXTSTATE only, and the
+probe script is currently broken (a SyntaxError). Stopped at user request.
+See `docs/SESSION_HANDOFF.md`.
+
+Previous phase:
 **Phase 5 — Live Playground: COMPLETE AND APPROVED, including both
 pre-merge adjustment rounds** (Phase 5 approved 2026-09-25, gate B. Two
 rounds of pre-merge adjustment followed, both approved gate B: round 1 —
-endpoints + layout; round 2 — 3 UX fixes, described below. Not merged into
-`main`. Phase 6 has not started.)
+endpoints + layout; round 2 — 3 UX fixes, described below. The user
+fast-forward merged `phase/live-playground` into `main` (`b37e51c`).
+No tag.)
 
 ## Phase 5 adjustment round 1 (committed: `d9994a1`, `f20c899`)
 
@@ -48,16 +59,14 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
   weren't separately screenshotted at the mobile viewport (see
   `docs/SESSION_HANDOFF.md` for why this is considered low-risk, not
   unverified).
-- **Approved** 2026-09-25 (gate option B): approve, save, and stop. Phase 6
-  has not started; `phase/live-playground` remains unmerged into `main`.
+- **Approved** 2026-09-25 (gate option B): approve, save, and stop. The
+  user then merged the branch into `main` (fast-forward, `b37e51c`).
 
 
 Current branch:
-`phase/live-playground` (from `main` @ `c99ef81`, which includes the
-approved Phase 4; `main` was fast-forwarded to `c99ef81` when this plan was
-approved, same precedent as Phase 4)
+`phase/demo-mode` (from `main` @ `b37e51c`)
 
-Previous phase:
+Earlier phase:
 **Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)
 
 Previous phases:
@@ -218,9 +227,7 @@ Previous phases:
   open; neither blocks Phase 4.
 
 Next phase:
-**Phase 6 — Demo mode** (`docs/phases/06-demo-mode.md`). Not started; waiting
-for explicit user approval to begin planning. `phase/live-playground` is not
-merged into `main` (needs separate approval). Sonnet 5 is appropriate for
-Phase 6.
+**Phase 7 — Proxy API rollout** (`docs/phases/07-proxy-api-rollout.md`).
+Not started.
 
 Resume: see `docs/SESSION_HANDOFF.md`.

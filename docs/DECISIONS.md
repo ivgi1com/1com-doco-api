@@ -578,3 +578,34 @@ Status: implemented, fully validated (`npm run check`, `npm run build`,
 tablet, secret scan), approved 2026-09-25 (gate option B) — see
 `docs/SESSION_HANDOFF.md` for the full validation record and one noted gap
 (mobile viewport not separately screenshotted for Tasks 1/2).
+
+## 2026-09-25 — Phase 6 planning (Demo mode)
+
+Decisions made by the user during planning (Opus 5.5):
+- **Scope**: Demo covers 7 Proxy operations: `info-extensions`,
+  `info-agents` and `cdr-get`, plus the new INFO `DIDS`, `SIMPLECDRS`,
+  `EXTSTATE` and `QUEUELOGS`.
+- **The 4 new operations get Reference + Demo only.** They are not Live;
+  `LIVE_POLICIES` is unchanged. SIMPLECDRS, QUEUELOGS and DIDS return call
+  records and phone numbers, so allowlisting them for Live needs its own
+  redaction design and security review (Phase 7).
+- **Behavior**: parameter values drive the Demo response, but only for
+  behavior that was actually observed (A-40..A-43, plus the probe results
+  for the new operations). Any other input shows "Not simulated", never
+  fabricated data. Preset chips fill the inputs for each observed scenario.
+- **Errors**: none are invented. No auth or validation error has been
+  observed; misses return 200 `null` or an empty 200. "Simulate error" is
+  hidden for endpoints that have Demo fixtures and kept for the Sample API.
+- **Fixtures**: a new, separate module tagged `synthetic`, with obviously
+  fake values (tenant `EXAMPLE`, never `demo`, which is a real tenant code;
+  fictional 555-01xx numbers). The Reference examples are unchanged, and the
+  Evidence rule still holds.
+- **Structure for the 4 new operations**: `info.yaml` and the vendor
+  snapshot have only request URLs for these operations (responses
+  `not_documented`), so their structure comes from a structure-only probe:
+  - The user runs the script with their own key (`PROXY_PROBE_KEY`), so the
+    key never enters chat.
+  - The script records no values.
+  - DIDS without `tenant` (the all-tenants form) is not probed.
+
+Status: plan approved 2026-09-25; implementation on `phase/demo-mode`.
