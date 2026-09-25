@@ -9,10 +9,15 @@ Last updated: 2026-09-25 (Phase 7 — Proxy API rollout, Stage 0 done — read t
   `source-docs/unresolved.md` U-10, U-12, U-13, U-14 now decided.
 - `main` fast-forwarded to `0cbd7ba`, tagged `v0.4-demo-approved`. Work
   branch `phase/proxy-rollout`. Not pushed.
-- Next: Stage 1 — `source-docs/proxy-api/operations.json`,
-  `tests/unit/proxy-coverage.test.ts`, `scripts/rollout-status.ts`; then
-  STOP for the user to review the `unclear` read/write list and category
-  taxonomy. Stage 2 (content split + model additions) is Opus; Stage 3 is
+- Stage 1 done (not yet reviewed by the user): `source-docs/proxy-api/
+  operations.json` (110 operations, 1 excluded: `cdr-update`),
+  `tests/unit/proxy-coverage.test.ts` (strict coverage gated by
+  `ROLLOUT_COMPLETE`, flip at end of Stage 3), `scripts/rollout-status.ts`
+  (`npm run rollout:status` → `source-docs/ROLLOUT_STATUS.md`; `tsx` added
+  as devDependency). Portal status is derived from `src/content`, not
+  stored in the inventory (one source of truth). STOP: waiting for the
+  user to review the `unclear` list, classification, page granularity,
+  and category taxonomy. Stage 2 (content split + model additions) is Opus; Stage 3 is
   Sonnet.
 - Stage 4 probe: the user supplies a TEST key in chat when that stage
   starts; never write it anywhere.
