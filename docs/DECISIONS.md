@@ -1344,3 +1344,37 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
 - **Approved 2026-09-26**, gate A. Not merged into `main`, not tagged,
   not pushed. Next: Phase 8B (OpenAPI Demo) planning, per
   `docs/phases/08B-openapi-demo.md`.
+
+## Phase 8B planning and probe decisions (2026-09-26)
+
+- **Plan:** `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md`
+  (Stages 1-5). **Mirror Phase 6 for OpenAPI:** a one-time masked,
+  structure-only probe of the OpenAPI GETs with a user-supplied
+  tenant-scoped TEST key, then synthetic fixtures from the observed
+  shapes. Overrides 8B §14 ("no real API calls") for read-only calls
+  only. Writes stay Reference-only (no write is ever sent, SEC-REQ-27).
+  AI Logs `format=csv` stays "Not simulated".
+- **Stage 1 done** (`f833747`): Request tab substitutes path values and
+  shows the masked header credential; "Simulate error" shown only for the
+  synthetic Sample API; two documented cases added (Extension State not
+  registered, AI Analysis unknown-uniqueid omitted); isolation tests.
+- **Stage 2 done** (`e73e8c5`): probe results stored masked in
+  `source-docs/observed/openapi/probe-2026-09-26.masked.json`.
+  `cdrs-list` not probed (docs: may repair CDR metadata). Key rotation
+  is an open action in `docs/SECURITY.md`.
+- **Doc vs observed — tenant errors:** omitting the tenant, or an
+  unknown tenant, returned 401 `invalid_api_key`, not the documented
+  `tenant_required` / `tenant_not_found`. User decision: **record both**
+  — the Reference keeps the documented codes plus an "observed on the
+  test PBX" note; Demo scenarios use the observed behavior; logged in
+  `source-docs/DOCS_AUDIT.md`.
+- **AI Logs:** `/ailogs` (and `/ailog`) returned 404 `not_found` on the
+  test PBX. User decision: **drop the AI Logs Demo fixture** and use the
+  Queue GETs instead (List queues / Get queue, whose observed response
+  includes `members` and `allowed_members`). The AI Logs Reference page
+  is unchanged apart from a note recording the 404.
+- **Error scenarios:** only on endpoints that have a success fixture —
+  404 `object_not_found` on get-by-ID and 401 `invalid_api_key`, with
+  the observed `{"error":{"code","message"}}` envelope. Error-only
+  endpoints (the global-key resources, 403 `admin_required`) get no
+  fixture, matching Proxy Stage 5.
