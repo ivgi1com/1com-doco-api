@@ -1,16 +1,15 @@
 # Current Status
 
 Current work:
-**Phase 8 — Open API rollout: IN PROGRESS. Stage 0 done; Stage 1 mostly
-done and saved as a WIP checkpoint (8 of 159 endpoints; the checks
-still need a final re-run). See `docs/SESSION_HANDOFF.md` STOP
-checkpoint.** Plan approved
-2026-09-26 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`;
-decisions in `docs/DECISIONS.md` "Phase 8 planning"). `main`
-fast-forwarded to `be23fb2` and tagged `v0.5-proxy-complete`. Branch
-`phase/open-api`. Scope: Reference pages for 128 operations, Demo for 3
-GETs, no Live. Next: Stage 1 (auth model, `src/content/openapi/`,
-inventory and coverage test, 3 pilots) on Opus.
+**Phase 8 — Open API rollout: IN PROGRESS. Stages 0–1 done; Stage 2
+(remaining 34 resources, Sonnet) not started.** Plan approved 2026-09-26
+(`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`; decisions
+in `docs/DECISIONS.md` "Phase 8 planning" and "Phase 8 Stage 1
+complete"). `main` fast-forwarded to `be23fb2` and tagged
+`v0.5-proxy-complete`. Branch `phase/open-api`, not pushed. Scope:
+Reference pages for 159 operations (OA-13; 8 done: Extension, Extension
+State, Dial), Demo for 3 GETs, no Live. Checks: `npm run check` 269/269,
+`npm run build` clean.
 
 Previous work (approved):
 **MiRTA OpenAPI documentation baseline: Stage C (security review +
@@ -212,8 +211,9 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`phase/proxy-rollout` (Phase 7, Stages 0–7 complete and APPROVED at gate A,
-2026-09-26; see the top of this file and `docs/SESSION_HANDOFF.md`). Not
+`phase/open-api` (Phase 8, see the top of this file). The Phase 7 note
+that follows is history: `phase/proxy-rollout`, Stages 0–7 APPROVED at
+gate A on 2026-09-26. Not
 merged into `main`, not tagged, not pushed. The `phase/demo-mode` @
 `0631a95` line this section used to show is stale history from before the
 Phase 6 approval and the Phase 7 branch — kept below only as

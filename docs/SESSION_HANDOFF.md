@@ -5,7 +5,19 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — STOP checkpoint (2026-09-26): Stage 1 mostly done, WIP commit, NOT final
+## Phase 8 — Stage 1 DONE (2026-09-26); Stage 2 next, on Sonnet
+
+- Close-out: `npm run check` 269/269 (lint covers `scripts/*.mjs`,
+  verified), `npm run build` clean. No fixes needed after the WIP
+  checkpoint, so the visual pass was not re-run.
+- The user confirmed the per-resource sidebar (37 groups). Recorded
+  together with the 159 count and the status-200 vendor-example
+  convention in `docs/DECISIONS.md` "Phase 8 Stage 1 complete".
+- **Next: Stage 2 on Sonnet 5.** Write the remaining 34 resources as
+  `openapiResource()` descriptors, transcribed only from
+  `source-docs/openapi/*.md`. Stage 2 has not started.
+
+## (Superseded by the entry above) Phase 8 — STOP checkpoint (2026-09-26): Stage 1 mostly done, WIP commit, NOT final
 
 - Branch `phase/open-api`. Stage 0 done (`4cd738f`). Stage 1 (Opus) work
   is saved in a WIP checkpoint commit on top of it, which is **not** a
