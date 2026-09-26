@@ -93,9 +93,25 @@ describe("resolveDemoCase", () => {
 });
 
 describe("getDemoFixtures", () => {
-  it("resolves each of the 4 implemented endpoints", () => {
+  it("resolves every fixtured endpoint", () => {
     for (const { apiId, endpointId } of FIXTURE_ENDPOINTS) {
       expect(getDemoFixtures(apiId, endpointId), `${apiId}/${endpointId}`).toBeDefined();
+    }
+  });
+
+  it("each scenario chip resolves to its own case, given the Playground's prefilled defaults", () => {
+    // A chip applies its preset on top of the fields' prefilled example
+    // values (use-playground.ts); with first-match resolution, an earlier
+    // catch-all case must not swallow a later, more specific one.
+    for (const { apiId, endpointId } of FIXTURE_ENDPOINTS) {
+      const endpoint = getEndpoint(apiId, endpointId)!;
+      const set = getDemoFixtures(apiId, endpointId)!;
+      const defaults = Object.fromEntries(
+        endpoint.queryParameters.filter((p) => p.example !== undefined).map((p) => [p.name, String(p.example)]),
+      );
+      for (const c of set.cases) {
+        expect(resolveDemoCase(set, { ...defaults, ...c.preset })?.id, `${apiId}/${endpointId} ${c.id}`).toBe(c.id);
+      }
     }
   });
 

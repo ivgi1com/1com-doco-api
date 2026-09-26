@@ -9,14 +9,12 @@ import { MethodBadge } from "@/components/ui/method-badge";
 import type { DemoFixtureSet } from "@/content/demo";
 import type { Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
+import { substitutePathParams } from "./executor";
 import { ParamField } from "./param-field";
 import { fieldKey, type PlaygroundState } from "./use-playground";
 
 function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
-  const path = endpoint.pathParameters.reduce((path, p) => {
-    const v = values[fieldKey("path", p.name)];
-    return v ? path.replaceAll(`{${p.name}}`, v) : path;
-  }, endpoint.path);
+  const path = substitutePathParams(endpoint, values);
   if (!endpoint.fixedQuery) return path;
   const fixed = Object.entries(endpoint.fixedQuery)
     .map(([k, v]) => `${k}=${v}`)
@@ -202,7 +200,7 @@ export function RequestBuilder({
       )}
 
       <div className="space-y-3 border-t border-border pt-4">
-        {mode === "demo" && !demoFixtures && (
+        {mode === "demo" && synthetic && !demoFixtures && (
           <label className="flex items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"

@@ -76,6 +76,12 @@ function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest;
           <span className="min-w-0 flex-1 break-all">{request.url}</span>
           <CopyButton text={request.url} label={t("copy")} tone="code" />
         </div>
+        {request.headers &&
+          Object.entries(request.headers).map(([name, value]) => (
+            <p key={name} className="mt-1 font-mono text-xs text-code-muted">
+              {name}: {value}
+            </p>
+          ))}
       </div>
       <div>
         {/* "cURL" is a proper noun, not translated — matches the existing

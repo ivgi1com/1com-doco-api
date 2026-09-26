@@ -19,6 +19,8 @@ import {
 export interface SanitizedRequest {
   method: string;
   url: string;
+  /** Request headers that carry the credential, masked (header-auth APIs only). */
+  headers?: Record<string, string>;
 }
 
 export type LiveErrorCode = PortalErrorCode | "portal_unreachable" | "invalid_portal_response";
@@ -97,22 +99,40 @@ export function liveQueryParams(endpoint: Endpoint, fieldValues: Record<string, 
   return params;
 }
 
+/** The endpoint path with each entered path-parameter value substituted; empty values keep their `{name}` placeholder. */
+export function substitutePathParams(endpoint: Endpoint, fieldValues: Record<string, string>): string {
+  return endpoint.pathParameters.reduce((path, p) => {
+    const v = fieldValues[`path:${p.name}`]?.trim();
+    return v ? path.replaceAll(`{${p.name}}`, v) : path;
+  }, endpoint.path);
+}
+
 /** Mirrors the server's upstream URL order (fixed selectors, params, credential), credential masked. */
 export function sanitizedRequest(api: ApiDefinition, endpoint: Endpoint, fieldValues: Record<string, string>): SanitizedRequest {
   const query = new URLSearchParams(endpoint.fixedQuery ?? {});
   for (const [k, v] of Object.entries(liveQueryParams(endpoint, fieldValues))) query.set(k, v);
   const auth = endpoint.authentication;
   let search = query.toString();
+  let headers: Record<string, string> | undefined;
   if (auth.location === "query" && auth.parameter) {
     search += `${search ? "&" : ""}${encodeURIComponent(auth.parameter)}=${MASK}`;
+  } else if (auth.parameter) {
+    headers = { [auth.parameter]: MASK };
+  } else {
+    headers = { Authorization: `Bearer ${MASK}` };
   }
-  return { method: endpoint.method, url: `${api.baseUrl}${endpoint.path}${search ? `?${search}` : ""}` };
+  const url = `${api.baseUrl}${substitutePathParams(endpoint, fieldValues)}${search ? `?${search}` : ""}`;
+  return { method: endpoint.method, url, ...(headers ? { headers } : {}) };
 }
 
 /** A copy-pasteable curl line for a sanitized request, credential swapped for its env var. */
 export function curlEquivalent(request: SanitizedRequest, envVar: string): string {
-  const url = request.url.split(MASK).join(`$${envVar}`);
-  return `curl "${url}"`;
+  const unmask = (s: string) => s.split(MASK).join(`$${envVar}`);
+  const method = request.method === "GET" ? "" : `-X ${request.method} `;
+  const headers = Object.entries(request.headers ?? {})
+    .map(([k, v]) => ` -H "${k}: ${unmask(v)}"`)
+    .join("");
+  return `curl ${method}"${unmask(request.url)}"${headers}`;
 }
 
 function parseBody(text: string): { format: "json" | "text"; body: unknown } {

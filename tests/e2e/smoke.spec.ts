@@ -764,6 +764,9 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
       await page.goto("/en/playground?endpoint=sample/list-call-records");
       await expect(desktopPane(page).getByText("Simulate error response")).toBeVisible();
+      // A real API endpoint without fixtures has no error example to simulate (8B).
+      await page.goto("/en/playground?endpoint=openapi/cdrs-list");
+      await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
     });
 
     test("Demo mode makes no network request, across a scenario-chip + Send flow", async ({ page }) => {
@@ -1010,6 +1013,36 @@ test.describe("interactions", () => {
       await desktopPane(page).getByLabel("format", { exact: true }).selectOption("csv");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
+    });
+
+    const documentedChips: { endpoint: string; chip: string; expect: RegExp }[] = [
+      { endpoint: "openapi/extensions-state-get", chip: "Not registered", expect: /Extension not registered/ },
+      { endpoint: "openapi/aianalysis-get", chip: "One of two unique IDs unknown", expect: /1700000000\.42/ },
+    ];
+
+    for (const { endpoint, chip, expect: body } of documentedChips) {
+      test(`${endpoint}: the "${chip}" chip resolves its documented case, with no network request (8B)`, async ({ page }) => {
+        let called = false;
+        await page.route("**/api/playground", (route) => {
+          called = true;
+          return route.abort();
+        });
+        await page.goto(`/en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: chip }).click();
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).locator("p", { hasText: "Scenario:" })).toContainText(chip, { timeout: 3000 });
+        await expect(desktopPane(page).getByTestId("json-content")).toContainText(body);
+        expect(called).toBe(false);
+      });
+    }
+
+    test("OpenAPI Request tab substitutes path values and masks the X-API-Key header (8B)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/extensions-state-get");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await desktopPane(page).getByRole("tab", { name: "Request" }).click();
+      await expect(desktopPane(page).getByText("X-API-Key: ••••")).toBeVisible();
+      await expect(desktopPane(page).getByText(/^curl ".*" -H "X-API-Key: \$OPENAPI_API_KEY"$/)).toBeVisible();
     });
 
     test("cdrs-list: a GET with no fixture shows Demo data not available, never a guess", async ({ page }) => {

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getEndpoint } from "@/content";
+import { getApi, getEndpoint } from "@/content";
+import { getDemoFixtures } from "@/content/demo";
 import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import {
@@ -17,6 +18,8 @@ const infoExtensions = getEndpoint("proxy", "info-extensions")!;
 const infoAgents = getEndpoint("proxy", "info-agents")!;
 const cdrGet = getEndpoint("proxy", "cdr-get")!;
 const listCalls = getEndpoint("sample", "list-call-records")!;
+const openapiApi = getApi("openapi")!;
+const campaignsGet = getEndpoint("openapi", "campaigns-get")!;
 
 const fieldValues = { "query:tenant": "ACME", "query:id": "", "query:number": "  " };
 
@@ -42,6 +45,22 @@ describe("sanitizedRequest", () => {
   it("never includes the actual credential, only the mask", () => {
     const r = sanitizedRequest(proxyApi, infoExtensions, fieldValues);
     expect(r.url).not.toContain(KEY);
+  });
+});
+
+describe("sanitizedRequest (header-auth REST API)", () => {
+  it("substitutes path parameters and shows the masked X-API-Key header, never the key", () => {
+    const r = sanitizedRequest(openapiApi, campaignsGet, { "path:ca_id": "44", "query:tenant": "TESTTENANT" });
+    expect(r.url).toBe(`${openapiApi.baseUrl}/campaigns/44?tenant=TESTTENANT`);
+    expect(r.headers).toEqual({ "X-API-Key": MASK });
+    expect(JSON.stringify(r)).not.toContain(KEY);
+    expect(curlEquivalent(r, "OPENAPI_API_KEY")).toBe(
+      `curl "${openapiApi.baseUrl}/campaigns/44?tenant=TESTTENANT" -H "X-API-Key: $OPENAPI_API_KEY"`,
+    );
+  });
+
+  it("keeps the placeholder for an empty path parameter", () => {
+    expect(sanitizedRequest(openapiApi, campaignsGet, {}).url).toBe(`${openapiApi.baseUrl}/campaigns/{ca_id}`);
   });
 });
 
@@ -142,6 +161,22 @@ describe("demoProvider", () => {
       { api: sampleApi, endpoint: listCalls, fieldValues: {}, credential: "", simulateError: false },
       new AbortController().signal,
     );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("never makes a network request for any OpenAPI endpoint, fixtured, fixture-less, or write", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const ids = ["extensions-state-get", "ailogs-list", "aianalysis-get", "cdrs-list", "campaigns-delete"];
+    for (const id of ids) {
+      const endpoint = getEndpoint("openapi", id)!;
+      const preset = getDemoFixtures("openapi", id)?.cases[0].preset ?? {};
+      const fieldValues = Object.fromEntries(Object.entries(preset).map(([k, v]) => [`query:${k}`, v]));
+      await demoProvider.execute(
+        { api: openapiApi, endpoint, fieldValues, credential: KEY, simulateError: false },
+        new AbortController().signal,
+      );
+    }
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
