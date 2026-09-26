@@ -1193,3 +1193,48 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
   Playground" and Phase 5 Live tenant/key persistence) reproduced the
   project's known "a different single test fails once under full-suite
   parallel load" flakiness class and passed cleanly when re-run alone.
+
+## Phase 8 Stage 5 complete (2026-09-26)
+
+- **New e2e coverage** (`tests/e2e/smoke.spec.ts`, "Open API rollout
+  (Phase 8)"): the sidebar API select switching Proxy → Open API; a
+  path-parameter endpoint's documented placeholder (`OBJECT_ID`)
+  carrying through to both the code sample and the Playground's
+  prefilled field; a write endpoint staying Reference-only on both the
+  Reference page and the Playground (mirroring the Proxy precedent); all
+  3 Demo fixtures resolving their documented scenario; the `format=csv`
+  and `cdrs-list` negative states. `requestPanel` (previously local to
+  the Proxy describe block) was hoisted to shared scope so both APIs'
+  tests reuse it.
+- **Two real bugs found while writing this coverage, both fixed, neither
+  a false alarm**:
+  1. A fixture's own `basis` prose (`ailogs-list`) literally contained
+     the substring "Not simulated" as descriptive text, which a blunt
+     `getByText("Not simulated")` assertion — the same pattern already
+     used by the pre-existing Proxy tests — matched even though the
+     actual resolved scenario was correct. Reworded the prose; no
+     assertion or product code changed.
+  2. Playwright's WebKit driver never fires `onChange` for this
+     React-controlled `<select>` via `selectOption`, confirmed directly
+     against a plain (non-mobile-emulated) WebKit instance, with the
+     identical call working on Chromium — a Playwright/WebKit
+     automation gap, not a product defect (real Safari/iOS users use
+     the native picker). The one affected test is skipped on
+     `browserName === "webkit"` with that reasoning recorded inline.
+- `source-docs/ROLLOUT_STATUS.md` (Proxy-only, generated) was stale
+  since Phase 8 Stage 0 closed U-17/opened U-18 in
+  `source-docs/unresolved.md`; regenerating it here is an unrelated,
+  accurate correction, not new Stage 5 work.
+- Validation: `npm run check` 277/277, `npm run build` clean, the full
+  Playwright suite fresh on a `build && start` — 160/162, 1 skipped
+  (the WebKit gap above), 1 failure (chromium-desktop, Phase 5 Live
+  tenant/key persistence, unrelated to this stage) confirmed to be the
+  project's known parallel-load flakiness class by passing cleanly
+  alone. A dedicated visual pass at desktop 1440, tablet 1024 and
+  mobile 390, in en and he, over 8 representative OpenAPI pages
+  (overview, path-param, global-only, write, nested-schema, rich-field,
+  the new guide, a Demo Playground page) — 48 page loads, zero console
+  errors, no overflow. A secret/PII scan of the full `main..HEAD` diff:
+  clean.
+- Phase 8 is now feature-complete pending Stage 6 (Opus cross-API
+  consistency and security review — the Phase 8 gate item).

@@ -60,7 +60,7 @@ const ailogsFixtures: DemoFixtureSet = {
     {
       id: "found-json",
       label: "AI logs found (JSON)",
-      basis: "ai-logs.md: the documented example response. CSV output's column order is documented as the same field order as JSON but not independently verified, so only the JSON case is fixtured (an explicit csv format falls through to Not simulated).",
+      basis: "ai-logs.md: the documented example response. CSV output's column order is documented as the same field order as JSON but not independently verified, so only the JSON case is fixtured; an explicit csv format isn't simulated.",
       when: {
         tenant: "*",
         start: "*",

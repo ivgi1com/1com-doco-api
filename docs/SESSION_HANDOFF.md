@@ -5,7 +5,37 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — Stage 4 DONE (2026-09-26); Stage 5 next, on Sonnet
+## Phase 8 — Stage 5 DONE (2026-09-26); Stage 6 next, on OPUS (gate item)
+
+- New e2e coverage in `tests/e2e/smoke.spec.ts` ("Open API rollout
+  (Phase 8)"): API-select switching, a path-param endpoint (`OBJECT_ID`
+  placeholder through both the code sample and the Playground field), a
+  write staying Reference-only (Reference page + Playground), all 3
+  Demo fixtures resolving, and 2 negative states
+  (`format=csv`→Not simulated, `cdrs-list`→unavailable). `requestPanel`
+  hoisted to shared scope for reuse across the Proxy and Open API
+  describe blocks.
+- **2 real issues found and fixed while writing this coverage, both
+  test/content-only, not product bugs**: a fixture's own `basis` prose
+  accidentally contained the literal string "Not simulated" (reworded);
+  Playwright's WebKit driver doesn't fire `onChange` for a
+  React-controlled `<select>` via `selectOption` (confirmed directly
+  against plain WebKit vs Chromium) — that one test is skipped on
+  `browserName === "webkit"` with the reasoning recorded inline. Full
+  detail: `docs/DECISIONS.md` "Phase 8 Stage 5 complete".
+- `source-docs/ROLLOUT_STATUS.md` (Proxy-only, generated) regenerated —
+  was stale since Stage 0 closed U-17/opened U-18.
+- Validation: `npm run check` 277/277, `npm run build` clean, full
+  Playwright suite fresh 160/162 (1 WebKit skip, 1 pre-existing-class
+  flake confirmed to pass alone), a visual pass at desktop/tablet/mobile
+  × en/he over 8 representative pages (48 loads, zero console errors,
+  no overflow), a secret scan of the full `main..HEAD` diff (clean).
+- **Phase 8 is now feature-complete.** Only Stage 6 remains: the Opus
+  cross-API consistency and security review — this is the Phase 8 gate
+  item, followed by the Phase Completion Report and the A/B/C/D
+  approval question. **Switch to Opus 5.5 before Stage 6.**
+
+## (Superseded by the entry above) Phase 8 — Stage 4 DONE (2026-09-26); Stage 5 next, on Sonnet
 
 - One new guide: "OpenAPI authentication and scope"
   (`src/content/guides/openapi-authentication.ts`, slug

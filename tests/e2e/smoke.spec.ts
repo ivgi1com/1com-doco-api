@@ -118,6 +118,17 @@ test.describe("interactions", () => {
   // its CSS-hidden mobile twin.
   const desktopPane = (page: Page) => page.locator(".md\\:grid");
 
+  // The Reference page's own request panel is mounted twice (desktop
+  // <aside>, mobile <details>); open and target whichever copy this
+  // viewport shows. Shared by the Proxy and Open API reference-page tests.
+  const requestPanel = async (page: Page) => {
+    if ((page.viewportSize()?.width ?? 0) < 768) {
+      await page.locator("summary", { hasText: "Request example" }).click();
+      return page.locator("details").first();
+    }
+    return page.locator("aside");
+  };
+
   test("playground: empty state, then Demo send shows loading then a response", async ({ page }) => {
     await page.goto("/en/playground?endpoint=sample/list-call-records");
     await expect(desktopPane(page).getByText("No response yet")).toBeVisible();
@@ -869,16 +880,6 @@ test.describe("interactions", () => {
 
   // Phase 7: write operations, form/multipart bodies, binary responses.
   test.describe("Proxy rollout (Phase 7)", () => {
-    // The request panel is mounted twice (desktop <aside>, mobile <details>);
-    // open and target whichever copy this viewport shows.
-    const requestPanel = async (page: Page) => {
-      if ((page.viewportSize()?.width ?? 0) < 768) {
-        await page.locator("summary", { hasText: "Request example" }).click();
-        return page.locator("details").first();
-      }
-      return page.locator("aside");
-    };
-
     test("a write operation is reference-only: warning callout, no Try link, vendor response sample", async ({ page }) => {
       await page.goto("/en/reference/proxy/dial");
       await expect(page.getByRole("heading", { name: "Place a call" })).toBeVisible();
@@ -915,6 +916,86 @@ test.describe("interactions", () => {
       const panel = await requestPanel(page);
       await expect(panel.getByText("Binary body (for example audio). Not shown here.")).toBeVisible();
       await expect(panel.getByText("--output response.bin")).toBeVisible();
+    });
+  });
+
+  // Phase 8 Stage 5: cross-API switching, a path-parameter endpoint, write
+  // blocking, and Demo fixtures, for the MiRTA OpenAPI rollout.
+  test.describe("Open API rollout (Phase 8)", () => {
+    // The desktop sidebar's own API select only renders past the `xl`
+    // breakpoint (sidebar-nav.tsx); a second copy lives in the mobile nav
+    // drawer (site-header.tsx, hidden until opened) — set the viewport
+    // explicitly so this test exercises the always-visible one regardless
+    // of which project (desktop/mobile) runs it. WebKit-only: this
+    // React-controlled <select>'s onChange (and hence the navigation) never
+    // fires from Playwright's WebKit `selectOption`, confirmed directly
+    // against a plain (non-mobile-emulated) WebKit instance and unrelated
+    // to this endpoint's content — the identical call works on Chromium.
+    // Real Safari/iOS users interacting with the native picker aren't
+    // affected; this is a Playwright/WebKit automation gap.
+    test("the sidebar API select switches from Proxy to Open API", async ({ page, browserName }) => {
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption — see comment above.");
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto("/en/reference/proxy");
+      await expect(page.getByRole("heading", { name: "Proxy" }).first()).toBeVisible();
+      await page.locator("aside").getByLabel("API").selectOption("openapi");
+      await expect(page).toHaveURL(/\/en\/reference\/openapi$/);
+      await expect(page.getByRole("heading", { name: "MiRTA OpenAPI" }).first()).toBeVisible();
+    });
+
+    test("a path-parameter endpoint documents its example placeholder and prefills it in the Playground", async ({ page }) => {
+      await page.goto("/en/reference/openapi/extensions-get");
+      await expect(page.getByRole("heading", { name: "Get extension" })).toBeVisible();
+      const panel = await requestPanel(page);
+      // The example value the code sample substitutes into the path.
+      await expect(panel.getByText(/\/extensions\/OBJECT_ID/)).toBeVisible();
+      await panel.getByRole("link", { name: "Try in Playground" }).click();
+      await expect(page).toHaveURL(/endpoint=openapi\/extensions-get/);
+      await expect(desktopPane(page).getByLabel("ex_id")).toHaveValue("OBJECT_ID");
+    });
+
+    test("a write operation is reference-only: warning callout, no Try link, no Send", async ({ page }) => {
+      await page.goto("/en/reference/openapi/dial");
+      await expect(page.getByRole("heading", { name: "Originate a call" })).toBeVisible();
+      await expect(page.getByText("Changes state — reference only")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
+      const panel = await requestPanel(page);
+      await expect(panel.getByTestId("reference-only")).toBeVisible();
+
+      await page.goto("/en/playground?endpoint=openapi/dial");
+      await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+      await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
+    });
+
+    const demoFixtures: { endpoint: string; label: string }[] = [
+      { endpoint: "openapi/extensions-state-get", label: "Registered, active channel" },
+      { endpoint: "openapi/ailogs-list", label: "AI logs found (JSON)" },
+      { endpoint: "openapi/aianalysis-get", label: "Analysis found (JSON)" },
+    ];
+
+    for (const { endpoint, label } of demoFixtures) {
+      test(`${endpoint}: default field values resolve its documented-example Demo scenario`, async ({ page }) => {
+        await page.goto(`/en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+        const scenarioLine = desktopPane(page).locator("p", { hasText: "Scenario:" });
+        await expect(scenarioLine).toBeVisible();
+        await expect(scenarioLine).toContainText(label);
+        await expect(desktopPane(page).getByText("Not simulated")).toHaveCount(0);
+      });
+    }
+
+    test("ailogs-list: an unfixtured format=csv shows Not simulated, not a guess", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/ailogs-list");
+      await desktopPane(page).getByLabel("format", { exact: true }).selectOption("csv");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
+    });
+
+    test("cdrs-list: a GET with no fixture shows Demo data not available, never a guess", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/cdrs-list");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
     });
   });
 });

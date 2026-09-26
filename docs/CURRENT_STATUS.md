@@ -1,25 +1,26 @@
 # Current Status
 
 Current work:
-**Phase 8 — Open API rollout: IN PROGRESS. Stages 0–4 done; Stage 5
-(full validation pass) not started.** Plan approved 2026-09-26
+**Phase 8 — Open API rollout: FEATURE-COMPLETE. Stages 0–5 done; Stage
+6 (Opus cross-API consistency and security review — the Phase 8 gate
+item) not started.** Plan approved 2026-09-26
 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`; decisions
 in `docs/DECISIONS.md` "Phase 8 planning", "Phase 8 Stage 1 complete",
-"Phase 8 Stage 3 complete", "Phase 8 Stage 4 complete"). `main`
-fast-forwarded to `be23fb2` and tagged `v0.5-proxy-complete`. Branch
-`phase/open-api`, not pushed. Scope: Reference pages for all 159
-operations (OA-13) complete — every one of the 37 resources has a
-Reference page; `ROLLOUT_COMPLETE = true` in
-`tests/unit/openapi-coverage.test.ts` enforces full coverage going
-forward. Demo fixtures added for the 3 approved GETs
-(`extensions-state-get`, `ailogs-list`, `aianalysis-get`); every other
-OpenAPI GET is "Demo data not available", every write stays
-Reference-only. One new guide, "OpenAPI authentication and scope". A
-real pre-existing layout bug was found and fixed while authoring it (a
-CSS grid missing a base column definition below the `xl` breakpoint,
-exposed by this guide's unusually long sample line). `npm run check`
-277/277, `npm run build` clean (546 endpoint pages), full Playwright
-suite 144/146 (2 pre-existing-class flakes, both passed alone).
+"Phase 8 Stage 3 complete", "Phase 8 Stage 4 complete", "Phase 8 Stage 5
+complete"). `main` fast-forwarded to `be23fb2` and tagged
+`v0.5-proxy-complete`. Branch `phase/open-api`, not pushed. Scope:
+Reference pages for all 159 operations (OA-13) complete —
+`ROLLOUT_COMPLETE = true` in `tests/unit/openapi-coverage.test.ts`.
+Demo fixtures for the 3 approved GETs; every write Reference-only. One
+guide, "OpenAPI authentication and scope" (a real pre-existing CSS grid
+bug found and fixed while authoring it). New e2e coverage: API
+switching, a path-param endpoint, write-blocking, the 3 Demo fixtures,
+2 negative states (2 real test-only issues found and fixed along the
+way, not product bugs — see "Phase 8 Stage 5 complete"). `npm run
+check` 277/277, `npm run build` clean (546 endpoint pages), full
+Playwright suite 160/162 (1 WebKit-only skip, 1 pre-existing-class
+flake confirmed to pass alone), a 48-page-load visual pass (3 viewports
+× 2 locales) and a secret scan, both clean.
 
 Previous work (approved):
 **MiRTA OpenAPI documentation baseline: Stage C (security review +
