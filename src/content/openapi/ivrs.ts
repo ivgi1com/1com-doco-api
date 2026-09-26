@@ -25,7 +25,7 @@ const [list, get, create, update, remove] = openapiResource({
     f("digit_timeout", "Maps to `iv_digittimeout`. Unit assumed seconds by naming convention, not stated.", { type: "integer" }),
     f(
       "destinations",
-      "Per-key call-flow destinations, one string or array per type, or a `destinations` object keyed by destination type. Digit keys `IVR_0`-`IVR_9` (aliases `ivr_<n>`/`key_<n>`/`<n>`), `IVR_STAR` (`star`), `IVR_SHARP` (`sharp`), `IVR_WRONG` (`wrong`), `IVR_TIMEOUT` (`timeout`), `IVR_HANGUP` (`hangup`), `IVR_FEATURE` (`feature`), `IVR_EXTENSION` (`extension`), `IVR_MEDIAFILE` (`mediafile`), `IVR_OPTIONSMEDIAFILE` (`optionsmediafile`), plus custom `CUSTOMIVR_<name>` destinations (e.g. `CUSTOMIVR_SUPPORT`) matched by name.",
+      "Per-key call-flow destinations, one string or array per type, or a `destinations` object keyed by destination type. Digit keys `IVR_0`-`IVR_9` (aliases `ivr_<n>`/`key_<n>`/`<n>`), `IVR_STAR` (`ivr_star`/`key_star`/`star`), `IVR_SHARP` (`ivr_sharp`/`key_sharp`/`sharp`), `IVR_WRONG` (`ivr_wrong`/`wrong`), `IVR_TIMEOUT` (`ivr_timeout`/`timeout`), `IVR_HANGUP` (`ivr_hangup`/`hangup`), `IVR_FEATURE` (`ivr_feature`/`feature`), `IVR_EXTENSION` (`ivr_extension`/`extension`), `IVR_MEDIAFILE` (`ivr_mediafile`/`mediafile`), `IVR_OPTIONSMEDIAFILE` (`ivr_optionsmediafile`/`optionsmediafile`), plus custom `CUSTOMIVR_<name>` destinations (e.g. `CUSTOMIVR_SUPPORT`, alias `customivr_support`) matched by name.",
       { type: "object" },
     ),
   ],

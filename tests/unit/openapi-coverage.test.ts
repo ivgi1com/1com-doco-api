@@ -216,6 +216,36 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
     expect(missing).toEqual([]);
   });
 
+  it("models every request-body key an official example uses (fields, aliases, or a documented numbered-key template)", () => {
+    // A key is covered if it's a modeled field's own name, mentioned as a
+    // backtick-quoted alias anywhere in the operation's field descriptions
+    // or notes, or matches a documented numbered-key template (the IVR
+    // digit-key / Condition / Custom Destination "not individually
+    // modeled" precedent, e.g. `condition[N]`, `ivr_<n>`).
+    const isCovered = (key: string, fieldNames: Set<string>, text: string): boolean => {
+      if (fieldNames.has(key)) return true;
+      if (text.includes(`\`${key}\``)) return true;
+      const m = key.match(/^([a-z_]+?)(\d+)$/i);
+      if (m) {
+        const base = m[1];
+        const templates = [`${base}[N]`, `${base}<n>`, `${base}_<n>`, `${base}<N>`];
+        if (templates.some((t) => text.includes(`\`${t}\``))) return true;
+      }
+      return false;
+    };
+    const missing: string[] = [];
+    for (const ex of exampleRows) {
+      if (!ex.body || Array.isArray(ex.body) || typeof ex.body !== "object") continue;
+      const e = byIdEp.get(ex.operationId)!;
+      const fieldNames = new Set((e.requestBody ?? []).map((p) => p.name));
+      const text = [...(e.requestBody ?? []).map((p) => p.description), ...(e.notes ?? [])].join(" ");
+      for (const k of Object.keys(ex.body as Record<string, unknown>)) {
+        if (!isCovered(k, fieldNames, text)) missing.push(`${ex.operationId}: ${k} (${ex.title})`);
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
   it("renders every example with the header credential and the portal base URL", () => {
     for (const ex of exampleRows) {
       const e = byIdEp.get(ex.operationId)!;

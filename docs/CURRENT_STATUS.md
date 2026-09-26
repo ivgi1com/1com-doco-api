@@ -11,8 +11,10 @@ missing/incomplete). **Four sub-phases were inserted before Stage 6:
 checkpoint, not at its gate, not approved):** 325 official named
 examples now in the Reference (`source-docs/openapi/examples.json`),
 CDR/Simple CDR response field tables rendered, 2 list filters added;
-remaining section audit and a full Playwright re-run are pending — see
-`docs/SESSION_HANDOFF.md`. Stage 6 (Opus
+section audit done (6 more alias/notes fixes, body-key coverage test),
+check/build/Playwright green. Still open: examples render collapsed
+(display mode undecided — ask the user) and literal backticks in
+notes/errors/example descriptions — see `docs/SESSION_HANDOFF.md`. Stage 6 (Opus
 cross-API consistency and security review — the Phase 8 gate item) is
 on hold until 8D passes.** Full detail: `docs/phases/08-open-api.md`
 "Pre-Stage-6 sub-phases", `docs/phases/08-substages-README.md`,

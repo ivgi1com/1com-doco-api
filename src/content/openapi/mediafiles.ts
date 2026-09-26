@@ -30,7 +30,7 @@ const [list, get, create, update, remove] = openapiResource({
     f("text", "TTS prompt text to synthesize. Not marked required, but required in practice for the TTS form. Maps to `me_text`."),
     f("engine", "TTS engine. Example value `\"azure\"`. Maps to `me_engine`."),
     f("language", "TTS language. Example value `\"en-US\"`. Maps to `me_language`."),
-    f("format", "Audio format for a binary upload, e.g. `\"wav\"`. Maps to the raw `format` column."),
+    f("format", "Audio format for a binary upload, e.g. `\"wav\"`. Maps to `me_format`."),
     f(
       "data_base64",
       "Base64-encoded audio for a binary upload. Not marked required, but required in practice for this form — replace any shortened example with the complete encoded file. Maps to `me_data`. Whether GET ever echoes this payload is unconfirmed.",

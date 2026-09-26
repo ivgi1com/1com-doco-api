@@ -31,7 +31,7 @@ const extensionFields: Parameter[] = [
   f("ve_virtualextensions", "Nested virtual-extension row. Its fields are not shown by the source.", { type: "object" }),
   f(
     "destinations",
-    "Call-forwarding destinations, keyed by destination type (`EXT-UNCONDITIONAL`, `EXT-NOANSWER`, `EXT-BUSY`, `EXT-OFFLINE`, `EXT-ONCONDITION`, `EXT-DIALBYNAME`, `EXT-ONLYALLOWCALL`, `EXT-DONOTCALL`). Each value is one destination string or an array, e.g. `VOICEMAIL-100`. Each type also has alias keys usable at the top level, e.g. `noanswer`, `busy`.",
+    "Call-forwarding destinations, keyed by destination type. Each value is one destination string or an array, e.g. `VOICEMAIL-100`. Each type also has alias keys usable at the top level: `EXT-UNCONDITIONAL` (`unconditional`), `EXT-NOANSWER` (`onnoanswer`, `noanswer`, `no_answer`), `EXT-BUSY` (`onbusy`, `busy`), `EXT-OFFLINE` (`onoffline`, `offline`), `EXT-ONCONDITION` (`oncondition`, `condition`), `EXT-DIALBYNAME` (`dialbyname`, `dial_by_name`), `EXT-ONLYALLOWCALL` (`onlyallowcall`, `only_allow_call`), `EXT-DONOTCALL` (`donotcall`, `do_not_call`).",
     { type: "object" },
   ),
 ];

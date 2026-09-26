@@ -19,7 +19,7 @@ const [list, get, create, update, remove] = openapiResource({
   idField: "pa_id",
   scope: "Tenant API key",
   tenantScoped: true,
-  aliases: ["/paging", "/pagings", "/intercom", "/intercoms"],
+  aliases: ["/paging", "/pagings", "/paginggroup", "/intercom", "/intercoms"],
   fields: [
     f("name", "Maps to `pa_name`.", { required: true, example: "Demo Paging Group" }),
     f("number", "Maps to `pa_number`.", { required: true, example: "830" }),

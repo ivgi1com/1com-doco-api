@@ -1,10 +1,70 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 8A — OpenAPI API Reference completeness:
-IN PROGRESS, WIP checkpoint committed, NOT at its STOP gate, NOT
-approved — read this first)
+Last updated: 2026-09-26 ~17:45 (Phase 8A — OpenAPI API Reference
+completeness: IN PROGRESS, second WIP checkpoint, NOT at its STOP gate,
+NOT approved — read this first)
 
-## Phase 8A — STOP checkpoint (2026-09-26): WIP, not finished, not approved
+## Phase 8A — second STOP checkpoint (2026-09-26 ~17:45): WIP, not finished, not approved
+
+- Branch `phase/open-api`. This session's work is committed as a WIP
+  checkpoint on top of `634f58b`. Not pushed.
+- **Done this session (Sonnet 5):**
+  - Remaining raw-page sections audited against the app: Accepted
+    Field Aliases, Destination Fields, path aliases, all 12 "Important
+    Notes"/"Notes" sections, Simple CDR Template Variables, auth-token
+    Supported Identities, dial Compatibility Notes, extension-state
+    Response.
+  - 6 content gaps fixed:
+    - `mediafiles.ts`: `format` now maps to `me_format`.
+    - `extensions.ts`: the full `EXT-*` destination alias table
+      (`onnoanswer`, `onbusy`, ... were missing).
+    - `ivrs.ts`: the `ivr_*` / `key_*` / `customivr_support` aliases.
+    - `customdestinations.ts`: the bare `randomdestination` /
+      `random_destination` aliases.
+    - `paginggroups.ts`: path alias `/paginggroup`.
+    - `reporting.ts`: the Simple CDR `start`/`end` rule "applied when
+      neither `id` nor `uniqueid` is supplied".
+  - New unit test in `tests/unit/openapi-coverage.test.ts`: every
+    request-body key used by an official example is a modeled field, a
+    documented alias, or a documented numbered template
+    (`condition[N]`, `ivr_<n>`).
+- **Validation:**
+  - `npm run check`: 285/285.
+  - `npm run build`: clean, 576 pages.
+  - Full Playwright suite (fresh build): 162 passed, 1 WebKit skip,
+    1 failure. The failure was the known "tenant and API key survive an
+    endpoint switch" flake; it passed when re-run alone. The 8A CDR e2e
+    test passed.
+  - Throwaway visual pass: 10 OpenAPI pages × desktop/mobile × en/he,
+    zero console errors, no overflow.
+  - Secret scan of the diff: clean.
+- **My earlier 8A gate report was premature. 8A is NOT finished.**
+  The user checked the official Campaign page's "Delete Campaign"
+  example against the app and found two open problems:
+  - **(a) Examples are collapsed.** The example exists on
+    `campaigns-delete` and its content matches, but every example
+    renders as a collapsed `<details>`
+    (`src/components/reference/endpoint-view.tsx` ~l.270), so only the
+    title shows. Display mode is **undecided**: the user rejected my
+    question (always expanded / expand when ≤3 / first expanded). Ask
+    again. Do not pick one silently.
+  - **(b) Literal backticks render as text.** Notes, error
+    descriptions, example descriptions and response descriptions use
+    `ContentText` instead of `InlineMarkup` (endpoint-view.tsx ~l.245,
+    ~l.283, ~l.322, ~l.336). Example: "Documented path aliases:
+    \`/campaign\`." on campaigns-delete. This is a real, visible defect.
+    Check first whether Proxy pages are affected too.
+- **Model:** the 8A work ran on Sonnet 5, and the user switched to Opus
+  5.5 at the stop. 8A routes to Sonnet.
+- **Environment:** the dev server started this session was stopped, and
+  port 3000 is free.
+- **Exact next task:** resolve (a) with the user, then fix (a) and (b).
+  Then re-run `npm run check`, `npm run build`, the Examples/Notes e2e
+  checks and a visual pass, and present the 8A gate.
+- **First action next session:** `git status`, `git log -2`, then ask
+  the user the Examples display question.
+
+## (Superseded by the entry above) Phase 8A — STOP checkpoint (2026-09-26): WIP, not finished, not approved
 
 - Branch `phase/open-api`, WIP checkpoint commit on top of `1f4c0df`
   holding all 8A work so far. Not pushed.

@@ -139,8 +139,10 @@ const simplecdr = openapiOperation({
   }),
   queryParameters: [
     wildcardTenant("query one tenant by code/name or use a `%` SQL-style wildcard across tenants"),
-    q("start", "Start date/time filter. Defaults to today 00:00:00.", { example: "2026-01-01 00:00:00" }),
-    q("end", "End date/time filter. Defaults to today 23:59:59.", { example: "2026-01-01 23:59:59" }),
+    q("start", "Start date/time filter. Defaults to today 00:00:00. Applied when neither `id` nor `uniqueid` is supplied.", {
+      example: "2026-01-01 00:00:00",
+    }),
+    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same rule as `start`.", { example: "2026-01-01 23:59:59" }),
     q("id", "Comma-separated simple-CDR row IDs. A path segment also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
     q("calleridnum", "Comma-separated caller ID numbers."),
