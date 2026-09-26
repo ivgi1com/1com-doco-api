@@ -25,6 +25,11 @@ import { queueCategory } from "./queues";
 import { routingprofileCategory } from "./routingprofiles";
 import { settingCategory } from "./settings";
 import { shortnumberCategory } from "./shortnumbers";
+import { tenantCategory } from "./tenants";
+import { tenantvariableCategory } from "./tenantvariables";
+import { userCategory } from "./users";
+import { userprofileCategory } from "./userprofiles";
+import { voicemailCategory } from "./voicemails";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
 import { OPENAPI_BASE_URL } from "./shared";
@@ -59,6 +64,7 @@ const categories: Category[] = [
   mediafileCategory,
   musiconholdCategory,
   paginggroupCategory,
+  voicemailCategory,
   // Numbers & dialing
   calleridblacklistCategory,
   didCategory,
@@ -75,8 +81,12 @@ const categories: Category[] = [
   // System / admin
   cronjobCategory,
   settingCategory,
+  tenantvariableCategory,
   providerCategory,
   routingprofileCategory,
+  tenantCategory,
+  userprofileCategory,
+  userCategory,
   // Actions
   dialCategory,
   authTokenCategory,

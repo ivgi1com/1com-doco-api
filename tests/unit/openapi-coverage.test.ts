@@ -15,7 +15,7 @@ import inventory from "../../source-docs/openapi/operations.json";
  * ROLLOUT_COMPLETE flips to true once Stage 2 has authored every resource;
  * until then missing operations are reported, not failed.
  */
-const ROLLOUT_COMPLETE = false;
+const ROLLOUT_COMPLETE = true;
 
 /** Stage 3 decision (docs/DECISIONS.md "Phase 8 planning"): the only OpenAPI endpoints allowed Demo fixtures. */
 const DEMO_ALLOWED = new Set(["extensions-state-get", "ailogs-list", "aianalysis-get"]);
