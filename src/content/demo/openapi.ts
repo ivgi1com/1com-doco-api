@@ -35,16 +35,23 @@ import type { DemoFixtureSet } from "./types";
  *   `extensions-state-get` is excluded: its `tenant` is documented as
  *   required, a different, unprobed situation.
  * - **AI Analysis**: `invalid_api_key` via the documented `key` query
- *   parameter (unique to this endpoint), `uniqueid_required` (400) when
- *   `uniqueid` is omitted, and an empty-array result for a uniqueid with
- *   no analysis (OA-14, OA-18).
+ *   parameter (unique to this endpoint), and an empty-array result for a
+ *   uniqueid with no analysis (OA-14, OA-18).
  * - **Simple CDR list**: an empty-array result for a filter matching no
  *   calls (OA-18).
- * Every get-by-ID endpoint's observed 404 `object_not_found` (OA-16) is
- * NOT fixtured: the id that selects it is a path parameter, and
- * `DemoCase.when` only matches query parameters (types.ts) — the same
- * limitation the Stage 4 Queue work hit and the user chose to skip
- * rather than extend the matcher.
+ * Two observed error scenarios are NOT fixtured, both for the same reason
+ * — the real Playground blocks `Send` before the Demo resolver ever runs
+ * (`use-playground.ts`'s `validate()`: a documented `required: true`
+ * query/body field left empty sets a client-side error and returns early):
+ * - every get-by-ID endpoint's observed 404 `object_not_found` (OA-16),
+ *   whose id is a required *path* parameter (never empty in the UI, and
+ *   `DemoCase.when` only matches query parameters anyway, types.ts) — the
+ *   same limitation the Stage 4 Queue work hit and the user chose to skip
+ *   rather than extend the matcher;
+ * - AI Analysis's observed 400 `uniqueid_required`, whose `uniqueid` is a
+ *   required *query* parameter — found and removed during this session's
+ *   own Stage 5 visual validation (rule 6): the field can never actually
+ *   be emptied through Send, so the case was unreachable dead data.
  */
 
 const TENANT = "TESTTENANT";
@@ -3000,19 +3007,6 @@ const aianalysisFixtures: DemoFixtureSet = {
         format: "json",
         contentType: "application/json",
         body: { error: { code: "invalid_api_key", message: "The supplied key does not match the tenant or global API key." } },
-      },
-    },
-    {
-      id: "uniqueid-required-json",
-      label: "Unique ID missing",
-      basis: "Observed on the test PBX: a request without `uniqueid` returned HTTP 400 `uniqueid_required` in the `{\"error\":{\"code\",\"message\"}}` envelope (source-docs/DOCS_AUDIT.md OA-14, OA-18). The message text is the project's DOCUMENTED convention for this envelope, not the probe's own masked text.",
-      when: { tenant: "*", uniqueid: [""], key: "*" },
-      preset: { tenant: TENANT, uniqueid: "" },
-      response: {
-        status: 400,
-        format: "json",
-        contentType: "application/json",
-        body: { error: { code: "uniqueid_required", message: "The request did not include a usable uniqueid value." } },
       },
     },
     {

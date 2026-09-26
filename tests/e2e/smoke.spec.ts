@@ -1038,6 +1038,20 @@ test.describe("interactions", () => {
       });
     }
 
+    test('openapi/simplecdrs-list: the "No matching calls" chip resolves an empty array, with no network request (8B Stage 4)', async ({ page }) => {
+      let called = false;
+      await page.route("**/api/playground", (route) => {
+        called = true;
+        return route.abort();
+      });
+      await page.goto("/en/playground?endpoint=openapi/simplecdrs-list");
+      await desktopPane(page).getByRole("button", { name: "No matching calls" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).locator("p", { hasText: "Scenario:" })).toContainText("No matching calls");
+      expect(called).toBe(false);
+    });
+
     test("OpenAPI Request tab substitutes path values and masks the X-API-Key header (8B)", async ({ page }) => {
       await page.goto("/en/playground?endpoint=openapi/extensions-state-get");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
