@@ -641,10 +641,35 @@ test.describe("interactions", () => {
     // resolveDemoCase by hand: this is the scenario Send resolves to with no
     // field changed, i.e. the fixture set actually covers the endpoint's own
     // stated defaults.
+    //
+    // Stage 7 remediation discovery (finding 1's format=json fix):
+    // info-extensions/-agents/-dids' shared `format` parameter got a
+    // documented `example: "json"` (previously undocumented/unset), which
+    // the Playground now pre-fills on load. That flips their own default
+    // resolution from the "plain" fixture case to the "JSON" one — the
+    // labels below were still "(plain)" and this loop's old assertion
+    // (`getByText(label).last()`) didn't catch it: with the default no
+    // longer matching "plain", the label text appears only once (the
+    // unclicked chip button), so `.last()` on a single match trivially
+    // passed without checking the *response* named that scenario at all.
+    // Fixed here two ways: the labels now say what the default actually
+    // resolves to, and the assertion is scoped to the response's own
+    // "Scenario: <label>" line (`<p>`, response-viewer.tsx) instead of any
+    // occurrence of the label text.
     const defaultResolves: { endpoint: string; label: string }[] = [
-      { endpoint: "proxy/info-extensions", label: "Extension list (plain)" },
-      { endpoint: "proxy/info-agents", label: "Queue agents (plain)" },
-      { endpoint: "proxy/info-dids", label: "DID list (plain)" },
+      { endpoint: "proxy/info-extensions", label: "Extension list (JSON)" },
+      { endpoint: "proxy/info-agents", label: "Queue agents (JSON)" },
+      { endpoint: "proxy/info-dids", label: "DID list (JSON)" },
+      // info-simplecdrs and info-queuelogs went through the same format=json
+      // fix but never had a "plain" default to begin with (info-simplecdrs's
+      // default/plain shape is undocumented, A-54; info-queuelogs never
+      // offered one at all) — their defaults now match their richest JSON
+      // case for the same reason. This *replaces* those two endpoints'
+      // former dedicated "unset-format default is Not simulated" tests,
+      // which no longer describe reachable behavior (see the superseded
+      // notes further below for why).
+      { endpoint: "proxy/info-simplecdrs", label: "Calls, unfiltered (JSON)" },
+      { endpoint: "proxy/info-queuelogs", label: "Abandoned call (JSON)" },
     ];
 
     for (const { endpoint, label } of defaultResolves) {
@@ -652,41 +677,58 @@ test.describe("interactions", () => {
         await page.goto(`/en/playground?endpoint=${endpoint}`);
         await desktopPane(page).getByRole("button", { name: "Send request" }).click();
         await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
-        await expect(desktopPane(page).getByText("Scenario:")).toBeVisible();
-        // `label` also names the scenario chip button itself; `.last()` reaches
-        // the response's own "Scenario: <label>" line, matching the pattern
-        // used elsewhere in this block (e.g. line 669, 657).
-        await expect(desktopPane(page).getByText(label).last()).toBeVisible();
+        // Scoped to the response's own "Scenario: <label>" line (a single
+        // <p>, response-viewer.tsx), not just any element containing the
+        // label text — the label also names the (always-rendered, unclicked)
+        // scenario chip button, which must not satisfy this assertion.
+        const scenarioLine = desktopPane(page).locator("p", { hasText: "Scenario:" });
+        await expect(scenarioLine).toBeVisible();
+        await expect(scenarioLine).toContainText(label);
         await expect(desktopPane(page).getByText("Not simulated")).toHaveCount(0);
       });
     }
 
-    // info-simplecdrs' default/plain format is deliberately not offered
-    // (A-54), so its default field values (format unset) match no case —
-    // the one fixture-backed endpoint whose *default* Send is Not simulated,
-    // exercising that path without contriving a param combination by hand.
-    test("info-simplecdrs: the unset-format default is Not simulated; a scenario chip resolves it", async ({ page }) => {
+    // Superseded note (Stage 7 remediation): this endpoint used to have its
+    // own "the unset-format default is Not simulated" test, exercising the
+    // one input combination (format left at its pre-Stage-7 unset state)
+    // that no fixture case covered. Stage 7 finding 1 gave `format` a
+    // documented example ("json"), which the Playground now pre-fills on
+    // load — so that combination can no longer occur, and every reachable
+    // combination (phone: empty/matched/anything else, format: json/csv;
+    // `format`'s own <select> only offers those two values — its blank
+    // placeholder option is `disabled` and cannot be chosen through the
+    // UI) is covered by a fixture. "Not simulated" is therefore not
+    // reachable for this endpoint via the real Playground UI at all
+    // (unlike info-extstate's Stage 5 bug, this is a real behavior change
+    // from the Stage 7 fix, not a bug — the default now matches
+    // `defaultResolves` above instead). This test now covers what's still
+    // meaningful: scenario chips still switch between the endpoint's
+    // distinct fixture cases (json/csv, matched/unmatched).
+    test("info-simplecdrs: scenario chips switch between the JSON and CSV fixture cases", async ({ page }) => {
       await page.goto("/en/playground?endpoint=proxy/info-simplecdrs");
-      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
-      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
-      await expect(
-        desktopPane(page).getByText(
-          "This exact combination of parameters was never observed on the real API, so Demo mode won't guess a response. Try one of the scenario chips, or switch to Live.",
-        ),
-      ).toBeVisible();
-      // Not simulated still shows the equivalent request line, never a fabricated body.
-      // `.first()` reaches the endpoint-path <code> element; the same substring
-      // also appears in the full-URL and curl-command lines below it.
-      await expect(
-        desktopPane(page).getByText(/reqtype=INFO&info=SIMPLECDRS/).first(),
-      ).toBeVisible();
-      await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
 
-      await desktopPane(page).getByRole("button", { name: "Calls, unfiltered (JSON)" }).click();
-      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
+      await desktopPane(page).getByRole("button", { name: "Calls, phone match (JSON)" }).click();
+      await expect(desktopPane(page).getByLabel("phone", { exact: true })).toHaveValue("5550101001");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
-      await expect(desktopPane(page).getByText("Calls, unfiltered (JSON)").last()).toBeVisible();
+      await expect(desktopPane(page).getByText("Calls, phone match (JSON)").last()).toBeVisible();
+      // "Demo Caller One" also appears twice in the tree (sc_calleridname
+      // plus its positional-key duplicate, A-49) — `.first()` is enough to
+      // confirm the matched record rendered.
+      await expect(desktopPane(page).getByTestId("json-content").getByText("Demo Caller One").first()).toBeVisible();
+      await expect(desktopPane(page).getByTestId("json-content").getByText("Demo Caller Two")).toHaveCount(0);
+
+      await desktopPane(page).getByRole("button", { name: "Calls, no match (JSON, empty)" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText(/size: 0 B/)).toBeVisible();
+
+      await desktopPane(page).getByRole("button", { name: "Calls, unfiltered (CSV)" }).click();
+      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("csv");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Calls, unfiltered (CSV)").last()).toBeVisible();
+      await expect(desktopPane(page).getByText(/sc_te_id,tenantcode/)).toBeVisible();
     });
 
     test("a scenario chip fills the endpoint's own query fields, then Send reflects that exact scenario", async ({
@@ -741,17 +783,28 @@ test.describe("interactions", () => {
       ).toBeVisible();
     });
 
+    // Stage 7 remediation: label updated from "(plain)" to "(JSON)" — see
+    // the defaultResolves comment above for why info-agents' default
+    // resolution changed. `.first()` here relies on the response's own
+    // "Scenario: <label>" line matching before the (separately-mounted,
+    // CSS-hidden-at-this-viewport) desktop chip button does; that only
+    // holds when the label text genuinely matches what the response
+    // resolved to, which is what broke silently before this fix.
     test("mobile: a Demo scenario resolves through the step flow", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto("/en/playground?endpoint=proxy/info-agents");
       await page.getByRole("button", { name: "Send request" }).first().click();
       await page.getByRole("tab", { name: "Response" }).click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
-      await expect(page.getByText("Queue agents (plain)").first()).toBeVisible();
+      await expect(page.getByText("Queue agents (JSON)").first()).toBeVisible();
     });
 
     // Scenario labels are English-only by content-language decision (Phase 4,
     // demo/types.ts DemoCase.label); the surrounding chrome is Hebrew.
+    // Stage 7 remediation: the resolved-default assertion now targets "DID
+    // list (JSON)" (see the defaultResolves comment above); the chip
+    // assertion below intentionally keeps checking for the "(plain)" chip,
+    // which still exists as a non-default scenario option.
     test("he: scenario labels and the response stay English while the surrounding UI is Hebrew", async ({ page }) => {
       await page.goto("/he/playground?endpoint=proxy/info-dids");
       // Mobile step-flow and desktop grid are both mounted (CSS-hidden, not
@@ -764,31 +817,40 @@ test.describe("interactions", () => {
       await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
       await expect(page.getByText("תרחיש:").first()).toBeVisible(); // "Scenario:" label
-      await expect(page.getByText("DID list (plain)").last()).toBeVisible();
+      // Scoped to the response's own scenario line, not any occurrence of
+      // the label text (the chip button above is a second, always-rendered
+      // match) — same fix as the defaultResolves loop.
+      const scenarioLine = desktopPane(page).locator("p", { hasText: "תרחיש:" });
+      await expect(scenarioLine).toContainText("DID list (JSON)");
     });
 
-    test("he: Not simulated renders translated, resolved by the same English-labelled scenario chip", async ({
-      page,
-    }) => {
+    // Superseded note (Stage 7 remediation): see the "scenario chips switch"
+    // test above — default Send now resolves "Calls, unfiltered (JSON)"
+    // directly (covered for he by the "scenario labels...stay English"
+    // test above, using info-dids), so there is no longer a "Not simulated"
+    // state to exercise here. This test now covers a chip switch instead
+    // (matched → no-match), still verifying Hebrew chrome around an
+    // English-labelled scenario.
+    test("he: a scenario chip switch stays English-labelled while the surrounding UI is Hebrew", async ({ page }) => {
       await page.goto("/he/playground?endpoint=proxy/info-simplecdrs");
-      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
-      await expect(page.getByText("לא מדומה").first()).toBeVisible({ timeout: 3000 }); // "Not simulated"
-      await page.getByRole("button", { name: "Calls, unfiltered (JSON)" }).first().click();
+      await page.getByRole("button", { name: "Calls, phone match (JSON)" }).first().click();
       await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText("תרחיש:").first()).toBeVisible(); // "Scenario:" label
+      await expect(page.getByText("Calls, phone match (JSON)").last()).toBeVisible();
     });
 
-    // info-queuelogs (A-50): one observed record, so only its observed
-    // outcomes are simulated; the default (format unset) is Not simulated.
-    test("info-queuelogs: default is Not simulated; the abandoned-call chip resolves the observed record", async ({
+    // Superseded note (Stage 7 remediation): info-queuelogs's `format` param
+    // also gained a documented example ("json"), same as info-simplecdrs
+    // above — its default Send now resolves "Abandoned call (JSON)"
+    // directly (covered by the `defaultResolves` loop above), so the old
+    // "default is Not simulated" premise no longer holds. This test now
+    // covers what's still meaningful: the resolved default response's own
+    // content (the observed record's disposition field).
+    test("info-queuelogs: the default-resolved abandoned-call scenario has the observed record's content", async ({
       page,
     }) => {
       await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
-      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
-      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
-
-      await desktopPane(page).getByRole("button", { name: "Abandoned call (JSON)" }).click();
-      await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText("Abandoned call (JSON)").last()).toBeVisible();

@@ -30,7 +30,7 @@ export const blfs = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "With format=json (undocumented): an array, one object per BLF entry (518 observed on the test tenant). Without format: the same 4 values pipe-delimited (one bare positional duplicate key, then the 3 named fields).",
+      description: "With format=json (undocumented): an array, one object per BLF entry (518 observed on the test tenant). Without format: the same 3 fields pipe-delimited, each repeated under both a bare positional key and its name (6 values per line, not 4 — see A-72).",
       format: "json",
       evidence: "observed-sanitized",
       verified: true,
@@ -43,14 +43,16 @@ export const blfs = proxyOperation({
           required: true,
           description: "One item per BLF entry.",
           children: [
-            { name: "0", location: "body", type: "string", required: true, description: "Bare positional duplicate of st_timestamp." },
+            { name: "0", location: "body", type: "string", required: true, description: "Bare positional duplicate of st_extension." },
             { name: "st_extension", location: "body", type: "string", required: true, description: "Extension identifier." },
+            { name: "1", location: "body", type: "string", required: true, description: "Bare positional duplicate of st_state." },
             { name: "st_state", location: "body", type: "string", required: true, description: "State value. Full value set not documented." },
+            { name: "2", location: "body", type: "string", required: true, description: "Bare positional duplicate of st_timestamp." },
             { name: "st_timestamp", location: "body", type: "string", required: true, description: "Timestamp, \"YYYY-MM-DD HH:MM:SS\"." },
           ],
         },
       ],
-      example: [{ "0": "2026-01-15 09:30:00", st_extension: "201", st_state: "NOT_INUSE", st_timestamp: "2026-01-15 09:30:00" }],
+      example: [{ "0": "201", st_extension: "201", "1": "NOT_INUSE", st_state: "NOT_INUSE", "2": "2026-01-15 09:30:00", st_timestamp: "2026-01-15 09:30:00" }],
     },
   ],
   notes: [
@@ -205,7 +207,7 @@ export const virtualextList = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Without number, returns an explicit \"virtual extension number not specified\"-style error naming the missing parameter (source-docs/DOCS_AUDIT.md A-75). Success response with a real number is not documented.",
+      description: "Success response with a real number is not documented. Without number (A-75): an explicit \"virtual extension number not specified\"-style error naming the missing parameter.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,

@@ -47,14 +47,24 @@ times in a row afterward. The dev-only 404 `<script>` warning was attempted
 but not resolved — the predicted one-line fix doesn't work (deeper Next.js
 dev-mode behavior); the `next/script` cleanup was kept anyway (harmless),
 warning stays open. `npm run check` 245/245, build clean.
-Stage 7 review (Opus) is done: Live boundary, write blocking, secrets and
-guide rendering all passed; 4 findings to fix (one closed as a review
-counting error, not a real bug — see below). **Remediation (Sonnet) is
-IN PROGRESS, interrupted mid-fix — working tree is currently dirty, not
-committed, `npm run check` not re-run since the last edit.** Full detail
-and the exact resume point: `docs/SESSION_HANDOFF.md` "Stage 7 — review
-DONE, remediation IN PROGRESS". Do not start Stage 7's final checks or the
-Phase Completion Report until remediation is finished and green again.
+Stage 7 review (Opus) and remediation (Sonnet) are both COMPLETE. Live
+boundary, write blocking, secrets and guide rendering all passed review;
+all 4 findings resolved (one closed as a review counting error, not a real
+bug). A genuine regression from finding 1's own fix (3 endpoints' Demo
+default silently switched from "plain" to "JSON", breaking 5 e2e
+assumptions undetected by a locator weakness) was found and fixed this
+session, along with directly confirming the BLFS/FLOWS positional-key
+counts (previously inferred) from the raw probe capture. Full detail:
+`docs/SESSION_HANDOFF.md` "Phase 7 — Stages 0–7 done, at the completion
+gate", `docs/DECISIONS.md` "Stage 7 remediation completion".
+Final checks: `npm run check` 250/250, `npm run build` clean,
+`npm run rollout:status` 109/109 pages, 0 broken links, 18 Demo fixture
+sets, full Playwright (146 tests × 2 projects) clean on 2 of 3 fresh-build
+runs (1 unrelated pre-existing-class flake, passed alone), a 90-page-load
+visual/console pass at 3 viewports × 2 locales over the newly-touched
+pages, and a clean secret scan. **Phase 7 is at its completion gate,
+waiting for the user's A/B/C/D decision** — see the Phase Completion
+Report presented this session.
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate

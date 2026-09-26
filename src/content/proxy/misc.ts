@@ -96,7 +96,7 @@ export const phonebookQuery = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Without field/value, returns an explicit \"Wrong or missing phonebook or id\"-style error naming the missing parameters (source-docs/DOCS_AUDIT.md A-75). Success response with a real search is not documented.",
+      description: "Success response with a real search is not documented. Without field/value (A-75): an explicit \"Wrong or missing phonebook or id\"-style error naming the missing parameters.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -191,7 +191,7 @@ export const responsepathList = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "An empty 200 body (0 bytes), with no error text, observed on the test tenant regardless of parameters or format (source-docs/DOCS_AUDIT.md A-76). Consistent with the source's own lack of a response sample.",
+      description: "Success response not documented, consistent with the source's own lack of a response sample. An empty 200 body (0 bytes), with no error text, was observed on the test tenant regardless of parameters or format (A-76).",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -222,7 +222,7 @@ export const responsepathGetid = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "An empty 200 body (0 bytes), with no error text, observed on the test tenant regardless of parameters (source-docs/DOCS_AUDIT.md A-76).",
+      description: "Success response not documented. An empty 200 body (0 bytes), with no error text, was observed on the test tenant regardless of parameters (A-76).",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,

@@ -874,23 +874,50 @@ A-71 — `PEERS` (OBSERVED)
 
 A-72 — `BLFS` (OBSERVED)
 
-- `format=json` gives the full field list: one bare positional duplicate
-  key (a timestamp, matching a field also named elsewhere) plus
-  `st_extension`, `st_state`, `st_timestamp` — 518 records observed on this
-  tenant. Default is the same 4 values pipe-delimited, in the same
-  positional-then-named order already seen elsewhere (SIMPLECDRS,
-  QUEUELOGS): each record repeats its own field values under both a bare
-  positional key and its name.
+- `format=json` gives the full field list: `st_extension`, `st_state`,
+  `st_timestamp` — 518 records observed on this tenant. The default
+  pipe-delimited line repeats each of these 3 fields under **both** a bare
+  positional key and its name (6 values per line, not 4): position `0`
+  mirrors `st_extension`, `1` mirrors `st_state`, `2` mirrors
+  `st_timestamp` — the same positional-then-named pattern seen elsewhere
+  (SIMPLECDRS, QUEUELOGS).
+  - **Confirmed directly, not just inferred**, during Stage 7 remediation:
+    the raw probe capture's default-format line splits into exactly 7
+    pipe-delimited tokens (`fieldsLine1: 7`) — 3 positional/named pairs (6
+    tokens) plus the expected trailing empty token from the line's closing
+    `|`. This is a closed match to BLFS's 3 named fields; no positional key
+    is left unaccounted for.
+  - The `format=json` masked shape originally looked like a single
+    positional key (`"<9>"`) because the Stage 4 probe's shape-summarizer
+    collapses every single-digit-shaped key into one bucket — a masking
+    artifact of the probe script, not evidence that only one positional
+    key exists at runtime. The default-line token count above is
+    unaffected by that bug and is the basis for the corrected count.
 
 A-73 — `FLOWS` (OBSERVED)
 
-- `format=json` gives the full field list: `fl_id`, `fl_te_id`, `fl_name`,
-  `fl_comment`, `fl_number`, `fl_value`, `fl_value_for_unavailable`,
-  `fl_value_for_inuse`, `fl_value_for_notinuse`, `fl_value_for_ringing`,
-  `fl_variable_name`, `fl_monitor_type`, `fl_monitor_type_id`,
-  `fl_monitor_parameter`, `st_extension`, `st_state`, `st_timestamp`,
-  `st_peername`, plus two bare positional duplicate keys — 5 flow records
-  observed on this tenant. Default is the same fields pipe-delimited.
+- `format=json` gives the full field list, in this order: `fl_id`,
+  `fl_te_id`, `fl_name`, `fl_comment`, `fl_number`, `fl_value`,
+  `fl_value_for_unavailable`, `fl_value_for_inuse`,
+  `fl_value_for_notinuse`, `fl_value_for_ringing`, `fl_variable_name`,
+  `fl_monitor_type`, `fl_monitor_type_id`, `fl_monitor_parameter`,
+  `st_extension`, `st_state`, `st_timestamp`, `st_peername` — 18 named
+  fields, 5 flow records observed on this tenant. The default pipe-
+  delimited line repeats every one of these 18 fields under both a bare
+  positional key and its name (positional key `<n>` mirrors the named
+  field at index `<n>` in the order above: `0`→`fl_id` … `17`→`st_peername`).
+  - **Confirmed directly, not just inferred**, during Stage 7 remediation:
+    the raw probe capture's default-format line splits into exactly 37
+    pipe-delimited tokens (`fieldsLine1: 37`) — 18 positional/named pairs
+    (36 tokens) plus the expected trailing empty token. This is a closed
+    match to all 18 named fields; no positional key is left over and none
+    is missing.
+  - The `format=json` masked shape's two colliding buckets (one
+    single-digit-shaped key, one double-digit-shaped key) are exactly what
+    18 positional keys would produce under the same probe shape-summarizer
+    bug (indices `0`-`9` collapse to the single-digit bucket, `10`-`17` to
+    the double-digit bucket) — consistent with, not contradicting, the
+    18-key count above.
 
 A-74 — `MEDIAFILE GETAUDIO` / `VOICEMAIL messages` (OBSERVED — no data)
 
@@ -951,3 +978,39 @@ gain Reference-only response documentation (`evidence: "observed-sanitized"`,
 Playground. `ManageDB` and the two `unclear` operations
 (`info-voicemail`, `voicemail-message`) remain excluded from probing, per
 the Stage 1 decision.
+
+### 12.2 Stage 7 finding 4 — error/empty-only responses relabelled (2026-09-26)
+
+The Stage 7 review found that several of §12's operations had their only
+observation (a missing-parameter error, or an empty/no-data body) written
+into `responses[0].description` as if it were the operation's normal
+success result. Fixed by rewriting each description to lead with "Success
+response not documented" (or the operation's own equivalent phrasing) and
+present the observed error/empty body explicitly as the no-parameter case,
+never as the success shape. Status stays 200 in every case (the response
+viewer supports one example per status code, per the Stage 3
+RESPONSEPATH-GETLAST precedent).
+
+**Exactly 13 operations qualified**, guarded by
+`tests/unit/proxy-coverage.test.ts` ("never presents an error/empty-body
+probe observation as the endpoint's success response"):
+`info-inforecording` (A-60), `info-voicemailtranscript` (A-61), `info-cdrs`
+(A-64), `info-variable` (A-67), `agent-listqueues` (A-68), `countcalls`
+(A-69), `countchannels` (A-69), `voicemail-messages` (A-74),
+`phonebook-query` (A-75), `virtualext-list` (A-75), `queue-list` (A-75),
+`responsepath-list` (A-76), `responsepath-getid` (A-76).
+
+**Deliberately excluded**, on inspection of what each actually observed:
+- `channel` (A-69) and `help` (A-69) each returned genuine non-empty,
+  non-error data for one input alongside a separate error for another
+  (e.g. `help` returns a real ~24 KB syntax page when `tenant` is
+  supplied, and only errors when it's omitted) — their descriptions
+  already qualify the data as unconfirmed ("plausibly...not confirmed")
+  without presenting it as guaranteed success, so finding 4 doesn't apply
+  to them the way it applies to a pure error/empty case.
+- `info-recording`, `info-playrecording`, `mediafile-getaudio` (A-60,
+  A-74) and `responsepath-getlast` (A-76) already keep their
+  vendor-sourced response and fold the observed no-id/no-data error into
+  a `notes` entry instead of a second same-status response — the pattern
+  finding 4 asks for, already applied to these four during Stage 3/Stage
+  4 authoring, before the review ran.

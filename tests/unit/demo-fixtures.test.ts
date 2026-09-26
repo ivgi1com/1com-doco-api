@@ -197,6 +197,60 @@ describe("fixture schema conformance (bodies match the documented response schem
   });
 });
 
+describe("blfs/flows fixtures (A-72, A-73): positional keys mirror named fields", () => {
+  it("blfs JSON case: each record has st_extension/st_state/st_timestamp plus their 3 positional duplicates (A-72)", () => {
+    const named = ["st_extension", "st_state", "st_timestamp"];
+    const positional = Array.from({ length: 3 }, (_, i) => String(i));
+    const expected = [...named, ...positional].sort();
+    const set = fixtureSetFor("blfs");
+    const demoCase = set.cases.find((c) => c.id === "list-json")!;
+    const body = demoCase.response.body as Array<Record<string, unknown>>;
+    expect(body.length).toBeGreaterThan(0);
+    for (const record of body) {
+      expect(Object.keys(record).sort(), "blfs record keys").toEqual(expected);
+      named.forEach((key, i) => {
+        expect(record[String(i)], `positional "${i}" mirrors ${key}`).toBe(record[key]);
+      });
+    }
+  });
+
+  it("flows JSON case: each record has all 18 named fl_*/st_* fields plus their 18 positional duplicates (A-73)", () => {
+    const named = [
+      "fl_id",
+      "fl_te_id",
+      "fl_name",
+      "fl_comment",
+      "fl_number",
+      "fl_value",
+      "fl_value_for_unavailable",
+      "fl_value_for_inuse",
+      "fl_value_for_notinuse",
+      "fl_value_for_ringing",
+      "fl_variable_name",
+      "fl_monitor_type",
+      "fl_monitor_type_id",
+      "fl_monitor_parameter",
+      "st_extension",
+      "st_state",
+      "st_timestamp",
+      "st_peername",
+    ];
+    expect(named).toHaveLength(18);
+    const positional = Array.from({ length: 18 }, (_, i) => String(i));
+    const expected = [...named, ...positional].sort();
+    const set = fixtureSetFor("flows");
+    const demoCase = set.cases.find((c) => c.id === "list-json")!;
+    const body = demoCase.response.body as Array<Record<string, unknown>>;
+    expect(body.length).toBeGreaterThan(0);
+    for (const record of body) {
+      expect(Object.keys(record).sort(), "flows record keys").toEqual(expected);
+      named.forEach((key, i) => {
+        expect(record[String(i)], `positional "${i}" mirrors ${key}`).toBe(record[key]);
+      });
+    }
+  });
+});
+
 describe("info-queuelogs fixtures (A-50, A-55)", () => {
   const set = fixtureSetFor("info-queuelogs");
   const abandoned = set.cases.find((c) => c.id === "abandoned-json")!;

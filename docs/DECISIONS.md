@@ -883,3 +883,77 @@ render no raw HTML. Findings and user decisions:
   itself a miscount made during that review — only 3 prose mentions of
   "24" needed fixing (`demo/proxy.ts`, `DOCS_AUDIT.md` A-56 ×2), not the
   array.
+
+### Stage 7 remediation completion (2026-09-26, Sonnet 5)
+
+Resumed the interrupted remediation (the prior amendment above was written
+mid-fix, before a commit). Two resume-time corrections and one new
+regression, all found and fixed this session:
+
+- **Handoff/status said the working tree was dirty with 7 uncommitted
+  files; it was not** — those edits were already committed
+  (`9faecc2`), tree was clean at resume. No recovery needed; both docs
+  corrected.
+- **Finding 2 evidence upgraded from inferred to directly confirmed.**
+  The prior amendment's BLFS/FLOWS key counts were inferred from the
+  JSON-format masked shapes' collision pattern. This session instead
+  read the *default-format* line's own token count straight from the
+  Stage 4 probe transcript (`fieldsLine1`): BLFS = 7 (3 positional/named
+  pairs + trailing separator), FLOWS = 37 (18 pairs + trailing
+  separator) — a direct count, not an inference from a masking bug's
+  side effect. Same conclusion (BLFS 0-2, FLOWS 0-17), stronger evidence.
+  Applied to `source-docs/DOCS_AUDIT.md` A-72/A-73,
+  `src/content/proxy/{extensions,queues}.ts` schemas/examples,
+  `src/content/demo/proxy.ts`'s FLOWS fixture (BLFS's fixture was already
+  correct — done before the interruption), and two new
+  `tests/unit/demo-fixtures.test.ts` mirror-check tests.
+- **New regression found and fixed: finding 1's `format=json` example
+  fix silently broke 3 endpoints' "default resolves to plain" Demo/e2e
+  assumption**, undetected until this session because the affected
+  Playwright assertions used a `.getByText(label).last()` pattern that
+  degrades to a false pass when only one match exists (the always-
+  rendered scenario-chip button) instead of two (the button plus the
+  response's own "Scenario:" line). `info-extensions`/`info-agents`/
+  `info-dids`' shared `format` parameter gained `example: "json"` — the
+  Playground now pre-fills `format=json` on load, which resolves their
+  richer JSON fixture case by default instead of the plain one their
+  tests assumed. Same root cause independently affected
+  `info-simplecdrs`/`info-queuelogs` (their `format` example was also
+  added, and their old dedicated "unset-format default is Not
+  simulated" tests assumed a state the enum `<select>`'s disabled blank
+  placeholder no longer lets a user reach at all). Fixed: `defaultResolves`
+  labels corrected to what actually resolves now; the assertion itself
+  fixed to scope to the response's own `<p>Scenario: …</p>` line
+  (`response-viewer.tsx`) instead of any element containing the label
+  text; the two simplecdrs/queuelogs "Not simulated" tests replaced with
+  scenario-chip-switching tests (that state is no longer reachable
+  through the real UI for either endpoint — every reachable `format` ×
+  filter combination is now covered by a fixture). Full detail:
+  `tests/e2e/smoke.spec.ts` "Demo Mode (Phase 6)" block comments.
+- **Finding 4 (error/empty-only responses), done.** Exactly 13 operations'
+  `responses[0].description` rewritten to lead with "Success response not
+  documented" (or the operation's own equivalent phrasing) instead of
+  presenting the observed missing-parameter error or empty body as the
+  normal result. Two operations named in the review's own A-69 group
+  (`channel`, `help`) were excluded on inspection: both returned genuine
+  non-empty, non-error data for one input case, so their existing
+  "plausibly...not confirmed" framing was already honest and finding 4
+  doesn't apply. Full list, exclusions and reasoning:
+  `source-docs/DOCS_AUDIT.md` §12.2. Guarded by a new
+  `tests/unit/proxy-coverage.test.ts` test asserting all 13 exist, are
+  status 200, and lead with "Success response".
+- **Stage 7 final checks, all green**: `npm run check` (250/250 unit
+  tests), `npm run build` clean, `npm run rollout:status` (109/109
+  Reference pages, 0 broken links), full Playwright suite (146 tests,
+  both projects) run 3 times on a fresh `build && start` — clean twice,
+  one single unrelated test (`Live mode: tenant and API key survive an
+  endpoint switch`) failed once under parallel load and passed
+  deterministically in isolation, consistent with the same
+  known/pre-existing "a different single test under parallel load" class
+  of flakiness recorded since Phase 5/Stage 3 (not this endpoint, not
+  introduced this session). A manual visual/console-error pass (desktop
+  1440, tablet 1024, mobile 390 × en/he — 90 page loads) over the 13
+  relabeled Reference pages plus the BLFS/FLOWS Demo Playground pages:
+  zero console errors, zero horizontal overflow, and the new response
+  text/positional keys spot-checked to actually render as intended. A
+  secret scan of the full `main..HEAD` diff and the working tree: clean.

@@ -611,7 +611,7 @@ export const infoInforecording = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Observed (A-60): without id, the plain-text error \"No id specified\" (14 bytes), identical to info=recording/playrecording. Response shape with a real id is unknown.",
+      description: "Success response not documented — response shape with a real id is unknown. Without id (A-60): the plain-text error \"No id specified\" (14 bytes), identical to info=recording/playrecording.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -668,7 +668,7 @@ export const infoVoicemailtranscript = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Observed (A-61): an empty 200 body (0 bytes, text/plain) without id, for both the default and format=json requests. Response with a real id is unknown.",
+      description: "Success response not documented — response with a real id is unknown. Without id (A-61): an empty 200 body (0 bytes, text/plain), for both the default and format=json requests.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -1034,7 +1034,7 @@ export const infoVariable = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "An empty 200 body (0 bytes) without id, for both the default and format=json requests (source-docs/DOCS_AUDIT.md A-67). Response with a real id is unknown.",
+      description: "Success response not documented — response with a real id is unknown. Without id (A-67): an empty 200 body (0 bytes), for both the default and format=json requests.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -1083,7 +1083,7 @@ export const infoCdrs = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "No CDR data was observed on the test tenant for any format: default, format=csv and format=xml all return an empty 200 body (0 bytes). format=json (undocumented) returns a single byte, `]` — a malformed/truncated empty-array artifact, the same pattern already seen on SIMPLECDRS and QUEUELOGS when they have no matching data (source-docs/DOCS_AUDIT.md A-64). The real column layout for csv/xml with data remains undocumented.",
+      description: "Success response not documented — the real column layout for csv/xml with data remains undocumented. No CDR data was observed on the test tenant (A-64): default, format=csv and format=xml all return an empty 200 body (0 bytes); format=json (undocumented) returns a single byte, `]` — a malformed/truncated empty-array artifact, the same pattern already seen on SIMPLECDRS and QUEUELOGS when they have no matching data.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,

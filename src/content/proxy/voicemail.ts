@@ -139,7 +139,7 @@ export const voicemailMessages = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "An empty 200 body (0 bytes) without mailbox, for both the default and format=json requests (source-docs/DOCS_AUDIT.md A-74). Response with a real mailbox is unknown.",
+      description: "Success response not documented — response with a real mailbox is unknown. Without mailbox (A-74): an empty 200 body (0 bytes), for both the default and format=json requests.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,

@@ -1,8 +1,10 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–6 done, STOP at the Stage 7 gate — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–7 done, all
+Stage 7 checks green — at the Phase 7 completion gate, waiting for the
+user's A/B/C/D decision — read this first)
 
-## Phase 7 in progress — Stages 0–6 done, STOP before Stage 7 (final review)
+## Phase 7 — Stages 0–7 done, at the completion gate
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
   (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
@@ -196,103 +198,61 @@ Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–6 done, STOP
     a fresh `build && start` this stage: 142/142 clean every time**
     (previously the standing bar was "141/142, a different failure each
     run" — now clean, consistent with the hydration-race fixes above).
-- **Stage 7 — review DONE (Opus), remediation IN PROGRESS (Sonnet),
-  interrupted mid-step-2 — STOP checkpoint, session ended without
-  finishing.** Findings and user decisions:
-  `docs/DECISIONS.md` "Phase 7 Stage 7 review". Live boundary, write
-  blocking, secrets and guide rendering all passed review.
-  **Working tree is dirty right now** — 7 files, all this remediation, none
-  committed: `source-docs/DOCS_AUDIT.md`, `src/content/demo/proxy.ts`,
-  `src/content/proxy/{calls,extensions,info,queues,voicemail}.ts`.
-  `npm run check` has **not** been re-run since the edits below; do that
-  first thing next session, before trusting anything is green.
-
-  1. **format=json samples — DONE, verified.** Every Proxy endpoint whose
-     `responses[0].format === "json"` (18: info-extensions, -agents, -dids,
-     -simplecdrs, -queuelogs, -queues, -queue, -agentsconnected,
-     -agentsdelay, -outdialed, -config, -extstate, blfs, channel,
-     countpeers, flows, peers, voicemail-list) now has a `format` query
-     parameter with `example: "json"` (added where missing). Verified with
-     a throwaway script: 0 endpoints left where the JS sample calls
-     `response.json()` without `"format": "json"` in its own params.
-     `src/content/demo/proxy.ts`'s 11 affected `when`/`preset` pairs
-     updated to include `format: ["json"]` / `format: "json"` — **this
-     part passed** `npm run check` (245/245) right after being done, before
-     the BLFS/FLOWS edits below started.
-     - **Still not done from this step**: the e2e tests that assert
-       "default is Not simulated" (info-simplecdrs, info-queuelogs) and
-       any Live test assuming a plain default for
-       info-extensions/info-agents were **not checked or updated** — the
-       plan said to; got skipped once step 2 started. Check these before
-       running Playwright.
-     - The unit-test guard (proxy-coverage.test.ts: every JSON-primary
-       Proxy endpoint has a `format` param with example "json"; no
-       query-auth JS sample parses JSON without requesting it) was **not
-       added** — the fix was verified with a throwaway script instead, not
-       a committed test. Add it.
-     - `LIVE_POLICIES` was not touched (confirmed).
-  2. **BLFS/FLOWS positional keys — IN PROGRESS, interrupted.** Original
-     Stage 4 review claim ("BLFS 1 key, FLOWS 2 keys, exact count
-     unconfirmed") was superseded by a closer re-analysis this session,
-     cross-checking the JSON masked shapes against the **default/plain**
-     probe lines independently (a separate data channel the digit-masking
-     bug doesn't corrupt the same way): BLFS's plain line shows exactly 3
-     interleaved positional/named pairs (matching its 3 named fields
-     st_extension/st_state/st_timestamp exactly — a closed, fully
-     corroborated 1:1 mirror, keys `0`..`2`). FLOWS's plain line shows at
-     least 4 interleaved pairs before the probe's own capture truncation,
-     and the JSON shape's two colliding buckets (one single-digit, one
-     double-digit) are exactly consistent with all 18 named fields having
-     a positional twin (indices 0-9 single-digit, 10-17 double-digit —
-     explains both buckets with no leftover). Conclusion: BLFS keys `0-2`,
-     FLOWS keys `0-17`, each mirroring its named field at that index, same
-     pattern as SIMPLECDRS/QUEUELOGS. This reasoning is not yet written
-     into `source-docs/DOCS_AUDIT.md` A-72/A-73 — **do that first**, so it
-     isn't lost, before touching code again.
-     - **Done**: `src/content/demo/proxy.ts`'s BLFS fixture body updated to
-       3 positional keys (`"0"`/`"1"`/`"2"` mirroring st_extension/
-       st_state/st_timestamp).
-     - **Not done**: `src/content/demo/proxy.ts`'s FLOWS fixture body
-       (still has only 2 positional keys, `"0"`/`"1"` — needs all 18,
-       `"0"`..`"17"`, one per named field in the order already listed in
-       its own schema comment). `src/content/proxy/extensions.ts`'s `blfs`
-       response schema (still documents only 1 positional key, named
-       "Bare positional duplicate of st_timestamp" — needs 3, one per
-       named field). `src/content/proxy/queues.ts`'s `flows` response
-       schema (still documents only 2 positional keys — needs 18). The
-       `source-docs/DOCS_AUDIT.md` A-72/A-73 text amendment above. A new
-       `tests/unit/demo-fixtures.test.ts` check (like SIMPLECDRS's) that
-       each positional key's value equals its mirrored named field's value,
-       for both BLFS and FLOWS.
-  3. **Queue stats field count — turned out to be a review mistake, not a
-     real bug; closed.** Re-counting both the original probe evidence and
-     `queueStatsFieldNames` in `info.ts` found the array already has 23
-     unique entries (not 24) — the Stage 7 review's "24" claim was a
-     counting error made during that review, not something wrong in the
-     code. Only the prose describing it was wrong: fixed 3 mentions of
-     "24" to "23" (`src/content/demo/proxy.ts`'s basis string,
-     `source-docs/DOCS_AUDIT.md` A-56 twice). **No further action needed
-     here** — don't "re-fix" the array itself.
-  4. **Error-only responses — NOT STARTED.** For the 13 endpoints whose
-     only Stage 4 observation was a missing-parameter error or an empty
-     body, change the response `description` to lead with "Success
-     response not documented." and describe the observed error/empty body
-     as the no-parameter case. Keep status 200 (one response per status
-     code — the response viewer only supports one example per status,
-     per the Stage 3 RESPONSEPATH-GETLAST precedent).
-  5. Then the Stage 7 checks: `npm run check`, `npm run build`, full
-     Playwright on a fresh `build && start`, the visual pass (desktop 1440,
-     tablet 1024, mobile 390; en and he) over one page per category plus a
-     write page, a binary page, a Demo read and the guides, and a secret
-     scan. Then the Phase Completion Report and the A/B/C/D gate question.
-
-  **Exact next action**: finish step 2 (write the A-72/A-73 amendment
-  first, then the 3 remaining code edits + the new test), re-run
-  `npm run check`, then do step 1's two skipped e2e checks, then step 4,
-  then step 5. Do not commit anything from this stage until `npm run
-  check` is green again — the working tree right now is a known-good
-  state only up through the format=json fix; the BLFS/FLOWS edit is
-  mid-flight.
+- **Stage 7 — review (Opus) and remediation (Sonnet), COMPLETE.** Findings
+  and full detail: `docs/DECISIONS.md` "Phase 7 Stage 7 review", its
+  interrupted-session amendment, and "Stage 7 remediation completion".
+  Live boundary, write blocking, secrets and guide rendering all passed
+  review. All 4 findings resolved (finding 3 turned out to be a review
+  counting error, not a real bug — closed with no code change).
+  1. **format=json samples**: 18 Proxy endpoints' `format` query parameter
+     now has `example: "json"`, matching their JSON-primary documented
+     response; a new `proxy-coverage.test.ts` guard enforces it going
+     forward.
+  2. **BLFS/FLOWS positional keys**: BLFS has 3 (`0`-`2`), FLOWS has 18
+     (`0`-`17`), each mirroring its named field at that index — confirmed
+     directly from the Stage 4 probe's raw default-line token count
+     (`source-docs/DOCS_AUDIT.md` A-72/A-73), not just inferred from the
+     JSON masker's collision bug. Applied to the content model, the Demo
+     fixtures, and two new unit tests.
+  3. Queue-stats field count: closed, not a real bug (the array already
+     had the correct 23 entries; only 3 stray "24" mentions in prose were
+     wrong).
+  4. **Error-only responses**: exactly 13 operations' response descriptions
+     rewritten to lead with "Success response not documented" instead of
+     presenting an observed error/empty body as the normal result. Full
+     list and the two operations deliberately excluded (`channel`, `help`
+     — each returned genuine non-error data too):
+     `source-docs/DOCS_AUDIT.md` §12.2.
+  - **A real regression was also found and fixed this session**, not in
+    the original review or remediation spec: finding 1's format=json fix
+    silently flipped 3 endpoints' (`info-extensions`/`-agents`/`-dids`)
+    Demo default resolution from their "plain" fixture case to their
+    "JSON" one, which broke the "default resolves to plain" assumption in
+    5 e2e tests (undetected by them due to a separate, now-fixed locator
+    weakness — see `docs/DECISIONS.md` for the full mechanism). Fixed:
+    labels/assertions corrected in `tests/e2e/smoke.spec.ts`; the two
+    `info-simplecdrs`/`info-queuelogs` "unset-format default is Not
+    simulated" tests were replaced with scenario-chip-switching tests,
+    since that state is no longer reachable through the real Playground
+    UI for either endpoint (their `format` `<select>`'s blank placeholder
+    is `disabled`, and every reachable format value is now covered by a
+    fixture).
+  - **Final checks, all green**: `npm run check` (250/250 unit tests),
+    `npm run build` clean, `npm run rollout:status` (109/109 Reference
+    pages, 0 broken links, 18 Demo fixture sets), full Playwright suite
+    (146 tests, both projects) run 3 times on a fresh `build && start` —
+    clean twice, one unrelated test failed once under parallel load and
+    passed deterministically alone (the known pre-existing
+    "different-test-each-run-under-load" flakiness class, not this
+    endpoint, not introduced this session). A manual visual/console-error
+    pass (desktop 1440, tablet 1024, mobile 390 × en/he — 90 page loads)
+    over the 13 relabeled Reference pages plus the BLFS/FLOWS Demo
+    Playground pages: zero console errors, zero overflow, new text and
+    positional keys spot-checked as actually rendering. Secret scan of
+    the full `main..HEAD` diff and the working tree: clean.
+  - **Not committed yet** — this is the Phase Completion Report state;
+    commit happens on the user's A or B choice below, per `CLAUDE.md`'s
+    gate procedure.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

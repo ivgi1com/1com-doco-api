@@ -64,7 +64,7 @@ export const agentListqueues = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Without extension, both format variants return the plain-text error \"No extension specified\" (source-docs/DOCS_AUDIT.md A-68). This refines an earlier probe's \"no observable data\" finding (A-41) into a concrete parameter-validation error; the real success response remains undocumented.",
+      description: "Success response not documented. Without extension (A-68, refining A-41's earlier \"no observable data\" finding): both format variants return the plain-text error \"No extension specified\".",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -183,7 +183,7 @@ export const countcalls = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "With tenant supplied: an empty 200 body (0 bytes) — plausibly \"no calls in progress\" on the test tenant, not confirmed. Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCHANNELS/HELP (source-docs/DOCS_AUDIT.md A-69).",
+      description: "Success response not documented (A-69). With tenant supplied: an empty 200 body (0 bytes) — plausibly \"no calls in progress\" on the test tenant, not confirmed. Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCHANNELS/HELP.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -213,7 +213,7 @@ export const countchannels = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/HELP. With tenant (but no nodename): \"Wrong or missing tenant\" instead — a different error from the other three, suggesting this operation actually wants nodename and/or an Admin key rather than a tenant key (source-docs/DOCS_AUDIT.md A-69). Neither variant was resolved to a success response.",
+      description: "Success response not documented — neither observed variant resolved to one (A-69). Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/HELP. With tenant (but no nodename): \"Wrong or missing tenant\" instead — a different error from the other three, suggesting this operation actually wants nodename and/or an Admin key rather than a tenant key.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,

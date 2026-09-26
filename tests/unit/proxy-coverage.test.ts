@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { getApi, listEndpoints } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
 import { listLiveTargetIds } from "@/server/playground/allowlist";
+import { buildSample } from "@/lib/code-samples";
 import inventory from "../../source-docs/proxy-api/operations.json";
 
 /**
@@ -125,6 +126,78 @@ describe("content ↔ inventory", () => {
     const missing = rows.filter((r) => !r.excluded && !have.has(r.id)).map((r) => r.id);
     if (ROLLOUT_COMPLETE) expect(missing).toEqual([]);
     else expect(missing.length).toBeLessThanOrEqual(rows.length);
+  });
+
+  it("never parses a JSON-primary response without a sample that requests format=json (Stage 7 finding 1)", () => {
+    // buildQueryAuthSample picks response.json()/print(response.json()) from
+    // responses[0].format, independent of what query parameters the sample
+    // actually sends. If the primary documented response is json but no
+    // query parameter (fixed or example) sends format=json, the generated
+    // JS/Python samples parse a body the request never asked for — Stage 7
+    // review finding 1.
+    for (const e of endpoints) {
+      if (e.responses[0]?.format !== "json") continue;
+      const sendsJsonFormat =
+        e.fixedQuery?.format === "json" ||
+        e.queryParameters.some((p) => p.name === "format" && p.example === "json");
+      expect(sendsJsonFormat, `${e.id}: primary response is json but no sample requests format=json`).toBe(true);
+    }
+  });
+
+  it("JS/Python samples never call response.json() without format=json in their own params", () => {
+    const baseUrl = "https://pbx6webserver.1com.co.il/pbx/proxyapi.php";
+    const requestsJsonFormat = /"format":\s*"json"/;
+    for (const e of endpoints) {
+      if (e.authentication.location !== "query") continue; // header-auth (Sample API) is out of scope here
+      const js = buildSample(e, baseUrl, "javascript");
+      const py = buildSample(e, baseUrl, "python");
+      if (js.includes("await response.json()")) {
+        expect(js, `${e.id}: JS sample parses response.json() without format=json in its own query params`).toMatch(requestsJsonFormat);
+      }
+      if (py.includes("print(response.json())")) {
+        expect(py, `${e.id}: Python sample parses response.json() without format=json in its own query params`).toMatch(requestsJsonFormat);
+      }
+    }
+  });
+
+  it("never presents an error/empty-body probe observation as the endpoint's success response (Stage 7 finding 4)", () => {
+    // These 13 operations' only Stage 4 observation was a missing-parameter
+    // error or an empty/no-data body — none has a confirmed success
+    // response. Excluded on purpose (source-docs/DOCS_AUDIT.md, Stage 7
+    // remediation note): `channel` and `help` each returned *some*
+    // non-empty, non-error data alongside a separate error case, so their
+    // description doesn't claim a confirmed success either, but isn't pure
+    // error/empty; `info-recording`, `info-playrecording`,
+    // `mediafile-getaudio` and `responsepath-getlast` already keep a
+    // vendor-sourced response and fold the observed error/empty case into
+    // a note instead of the response itself.
+    const errorOrEmptyOnly = [
+      "info-inforecording",
+      "info-voicemailtranscript",
+      "info-cdrs",
+      "info-variable",
+      "agent-listqueues",
+      "countcalls",
+      "countchannels",
+      "voicemail-messages",
+      "phonebook-query",
+      "virtualext-list",
+      "queue-list",
+      "responsepath-list",
+      "responsepath-getid",
+    ];
+    expect(errorOrEmptyOnly).toHaveLength(13);
+    for (const id of errorOrEmptyOnly) {
+      const endpoint = endpoints.find((e) => e.id === id);
+      expect(endpoint, `${id}: not found in the Proxy content model`).toBeDefined();
+      const response = endpoint!.responses[0];
+      expect(response, `${id}: expected a responses[0] entry`).toBeDefined();
+      expect(response!.status).toBe(200);
+      expect(
+        response!.description,
+        `${id}: response description should lead with "Success response" rather than present the observed error/empty body as if it were one`,
+      ).toMatch(/^Success response/);
+    }
   });
 });
 
