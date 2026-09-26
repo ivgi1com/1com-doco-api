@@ -21,8 +21,10 @@ pages). `npm run check` 285/285, `npm run build` clean, Playwright
 `docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
 **Phase 8B (OpenAPI Demo) IN PROGRESS:** Stage 1 (Demo fixes and
 documented cases) and Stage 2 (masked OpenAPI GET probe) done; Stage 3
-(record findings, observed Reference responses) partially started,
-`src/content/observed.ts` written but not wired or verified — see
+(observed Reference responses wired via `src/content/observed.ts`,
+`DOCS_AUDIT.md` §14 OA-14..OA-18, SECURITY.md probe observations) done —
+`npm run check` 295/295, build clean. Stage 4 not started; its scope
+must be re-confirmed (the plan file was overwritten) — see
 `docs/SESSION_HANDOFF.md`. TEST key rotation pending. Stage 6 (Opus cross-API consistency and security
 review — the Phase 8 gate item) is on hold until 8D passes.** Full
 detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",

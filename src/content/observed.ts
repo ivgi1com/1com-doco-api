@@ -62,7 +62,7 @@ const OBSERVED_NOTES: Record<string, string[]> = {
     "Observed on the test PBX: a request without `uniqueid` returned HTTP 400 `uniqueid_required`; a request whose unique IDs have no analysis returned HTTP 200 with an empty array `[]` (the source does not show the all-miss case).",
   ],
   "extensions-state-get": [
-    "Observed on the test PBX: an unknown extension number returned HTTP 404 in the `{\"error\": {\"code\", \"message\"}}` envelope. A registered extension with no active call returned the documented 8 keys with the caller fields empty.",
+    "Observed on the test PBX: an unknown extension number returned HTTP 404 in the `{\"error\": {\"code\", \"message\"}}` envelope. An existing extension returned the documented 8 keys; `UniqueID` and `LinkedID` were non-empty and the other six were empty strings.",
   ],
   "ailogs-list": [
     "Observed on the test PBX: `/ailogs` and the `/ailog` alias both returned HTTP 404 `not_found`, so AI Logs appears not to be available on that installation (source-docs/DOCS_AUDIT.md OA-17). The documented response below is from the official page only.",
@@ -71,7 +71,7 @@ const OBSERVED_NOTES: Record<string, string[]> = {
     "Observed on the test PBX: a JSON array of the 12 documented fields, every value a string (numbers included). A filter with no matching calls returned HTTP 200 with `[]`.",
   ],
   "phonebookentries-list": [
-    "Observed on the test PBX: listing without `phonebook_id` did not answer within 20 seconds; with `phonebook_id` it returned promptly.",
+    "Observed on the test PBX: listing without `phonebook_id` did not answer before the probe's timeout; with `phonebook_id` it returned a JSON array (source-docs/DOCS_AUDIT.md OA-18).",
   ],
   "tenantvariables-list": ["Observed on the test PBX: HTTP 200 with an empty array `[]` (no variables on the test tenant)."],
 };
@@ -173,7 +173,7 @@ function exampleScalar(name: string, s: string): unknown {
   if (type === "boolean") return false;
   if (type === "array") return [];
   if (hint?.startsWith("empty")) return "";
-  if (SECRET_NAME.test(name) && !/validity|locked/i.test(name)) return "SYNTHETIC_SECRET";
+  if (SECRET_NAME.test(name) && !/validity|locked|meid$/i.test(name)) return "SYNTHETIC_SECRET";
   if (hint === "date-time string") return "2026-01-01 09:00:00";
   if (hint === "date string") return "2026-01-01";
   if (hint === "decimal string") return "0.00";
@@ -200,6 +200,8 @@ function exampleOf(s: Shape | Shape[], name = ""): unknown {
 
 // --- public API ---
 
+const GENERIC_FIELDS = ["id", "name", "object", "related"];
+
 function observedResponse(endpoint: Endpoint, r: ProbeResult): ResponseSpec {
   const body = r.body as Shape;
   const isList = isArrayShape(body);
@@ -210,12 +212,11 @@ function observedResponse(endpoint: Endpoint, r: ProbeResult): ResponseSpec {
     : isList
       ? "a top-level JSON array, one object per record, with no pagination wrapper"
       : "a single JSON object";
-  const generic =
-    endpoint.id.endsWith("-get") || endpoint.id === "extensions-get-by-number"
-      ? " Besides the source columns, single-object reads add generic `id`, `name`, `object` and `related` fields."
-      : isList
-        ? " Besides the source columns, each row adds generic `id` and `name` fields."
-        : "";
+  const keys = new Set(rows.flatMap((row) => (typeof row === "object" ? Object.keys(row) : [])));
+  const genericKeys = GENERIC_FIELDS.filter((k) => keys.has(k)).map((k) => `\`${k}\``);
+  const generic = genericKeys.length
+    ? ` Besides the source columns, ${isList ? "each row" : "the object"} carries generic ${genericKeys.join(", ")} field${genericKeys.length > 1 ? "s" : ""}.`
+    : "";
   return {
     status: 200,
     description: `Observed on the test PBX (${PROBE_DATE}, one masked structure-only probe): HTTP 200 with ${envelope}.${generic} Field names and value types are observed; the example values are synthetic placeholders, and fields whose meaning the source does not document stay undocumented.`,

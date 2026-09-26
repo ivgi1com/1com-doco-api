@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { EndpointView } from "@/components/reference/endpoint-view";
 import { apis, getApi, getEndpoint, listEndpoints } from "@/content";
+import { withObserved } from "@/content/observed";
 import { routing } from "@/i18n/routing";
 import { buildPanelData } from "@/lib/endpoint-panel";
 
@@ -26,8 +27,9 @@ export default async function EndpointPage({ params }: PageProps<"/[locale]/refe
   const { locale, api: apiId, endpoint: endpointId } = await params;
   setRequestLocale(locale);
   const api = getApi(apiId);
-  const endpoint = getEndpoint(apiId, endpointId);
-  if (!api || !endpoint) notFound();
+  const documented = getEndpoint(apiId, endpointId);
+  if (!api || !documented) notFound();
+  const endpoint = withObserved(apiId, documented);
 
   const panel = await buildPanelData(api, endpoint);
   return <EndpointView api={api} endpoint={endpoint} panel={panel} />;

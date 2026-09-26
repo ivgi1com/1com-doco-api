@@ -1,9 +1,78 @@
 # Session Handoff
 
 Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: IN PROGRESS, Stage 3
-partially started, STOP checkpoint — read this first)
+DONE, STOP — Stage 4 not started; read this first)
 
-## Phase 8B — STOP checkpoint (2026-09-26): Stages 1-2 done, Stage 3 just started
+## Phase 8B — Stage 3 DONE (2026-09-26, Opus 5.5); STOP, Stage 4 not started
+
+- Branch `phase/open-api`, Stage 3 commit on top of `6a42faa`. Not pushed.
+- **Done:**
+  - `withObserved` is wired into
+    `src/app/[locale]/reference/[api]/[endpoint]/page.tsx`, which passes
+    the merged endpoint to `buildPanelData` and `EndpointView`. It runs
+    server-side only.
+  - `src/content/observed.ts` accuracy fixes, each checked against the
+    masked probe file:
+    - The generic-field sentence is now derived from the observed keys.
+      The old fixed wording was wrong for Simple CDR (none), Extension
+      (no `object`) and Phone Book Entry (no `name`).
+    - The Extension State note no longer claims "registered" or "caller
+      fields empty": `UniqueID`/`LinkedID` were non-empty.
+    - The Phone Book note no longer claims "20 seconds"; the duration is
+      not recorded.
+    - `*meid` fields (media-file IDs such as `cr_pinenteredmeid`) are no
+      longer masked as `SYNTHETIC_SECRET`.
+  - New `tests/unit/observed.test.ts` (6 tests):
+    - probed ids are documented GETs;
+    - an observed 200 is added only when no 2xx is documented, and
+      documented responses are kept;
+    - every masked field path, nested ones included, is in the schema;
+    - examples contain no probe markers and every secret-named field is
+      `SYNTHETIC_SECRET`;
+    - Proxy and unprobed endpoints are returned unchanged;
+    - every cited OA-nn exists in DOCS_AUDIT.
+  - `source-docs/DOCS_AUDIT.md` §14:
+    - OA-14: general conventions;
+    - OA-15: tenant errors CONFLICT;
+    - OA-16: `object_not_found` undocumented;
+    - OA-17: AI Logs 404;
+    - OA-18: endpoint-specific findings, including Media File not
+      returning `me_data` but returning undocumented
+      `me_voiceapiusername`/`me_voiceapihost`.
+  - `docs/SECURITY.md` "Phase 8B probe observations" (no label changes):
+    - confirmed exposures: SEC-REQ-19 `pa_pin`, SEC-REQ-20
+      `related.meetme.pin`/`adminpin`, SEC-REQ-22 `ds_pin`;
+    - partly observed: SEC-REQ-26 (`ph_mac` yes, passwords not
+      returned), SEC-REQ-15 (no `password`; `email` returned) and
+      SEC-REQ-18;
+    - still unresolved: SEC-REQ-03 (virtual extension only).
+- **Validation:**
+  - `npm run check`: 295/295.
+  - `npm run build`: clean, 576 pages.
+  - Throwaway Playwright pass against `next start` (fresh build): 8
+    pages (7 OpenAPI plus 1 Proxy) at desktop and mobile in en, plus
+    mobile he (all 8) and desktop he (1). 25 loads: zero console errors,
+    no overflow, no probe markers rendered, and observed content present
+    only on OpenAPI pages.
+  - Screenshots checked.
+  - Secret scan of the diff: clean.
+  - Full Playwright suite: not run (8B gate item).
+- **Discrepancy to resolve before Stage 4:** the approved 8B plan file
+  `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md` was
+  **overwritten** by the Stage 3 resume plan. The original Stage 4–5
+  text is gone. What survives is "Stage 4 (fixtures)" and the fixture
+  decisions in `docs/DECISIONS.md` "Phase 8B planning and probe
+  decisions": Queue GETs replace AI Logs; error chips only where a
+  success fixture exists. Stage 5's content is not recorded anywhere
+  found. **Ask the user to confirm the Stage 4–5 scope before starting.**
+- **Environment:** the port 3100 server is stopped and the port is free.
+- **Model:** Stage 3 ran on Opus 5.5 at the user's choice. Stages 4–5
+  route to **Sonnet 5**.
+- **First action next session:** `git status`, `git log -2`, then ask
+  the user for the Stage 4–5 scope (see the discrepancy above). Do not
+  start Stage 4 without approval.
+
+## (Superseded by the entry above) Phase 8B — STOP checkpoint (2026-09-26): Stages 1-2 done, Stage 3 just started
 
 - Branch `phase/open-api`. Plan (approved):
   `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md` (Stages 1-5).

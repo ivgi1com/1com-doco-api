@@ -485,6 +485,18 @@ Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/open
 
 Both are raw, free-form fields with no documented meaning. In Asterisk MOH configuration, `application` can name an external program the server runs. That is domain knowledge, not documented MiRTA behavior. Before Live: establish their semantics from the spec or the vendor. Writes are excluded by SEC-REQ-27; a read would expose the configured value.
 
+### Phase 8B probe observations (2026-09-26)
+
+These come from a single masked, structure-only probe on one test PBX (`source-docs/DOCS_AUDIT.md` §14; `source-docs/observed/openapi/probe-2026-09-26.masked.json`). Only field names and value-type classes were stored, so "populated" means a non-empty value was present; the value itself was never recorded. No label changes. Every entry below stays open. The Reference examples built from this probe (`src/content/observed.ts`) show `SYNTHETIC_SECRET` or a synthetic placeholder for these fields, never an observed value.
+
+- **SEC-REQ-19 (confirmed exposure):** `pa_pin` is returned, populated, by both the Paging Group list and the single read.
+- **SEC-REQ-20 (confirmed exposure):** the Conference Room single read returns `related.meetme.pin` and `related.meetme.adminpin`, both populated. List rows did not include `related`.
+- **SEC-REQ-22 (confirmed exposure):** `ds_pin` is returned, populated, by both the DISA list and the single read.
+- **SEC-REQ-26 (partly observed):** `ph_mac` is returned, populated, by the list and the single read. `ph_password` and `ph_http_password` were **not** returned; `ph_http_user` was returned, empty. One observation doesn't prove the passwords are always excluded.
+- **SEC-REQ-15 (partly observed):** the Voicemail list and single read returned no `password` field. They did return `email` (populated, PII) and `imapuser` (null). As with SEC-REQ-26, this is one observation, not proof of exclusion.
+- **SEC-REQ-18 (partly observed):** the Media File single read did **not** return `me_data`. It did return `me_voiceapiusername` and `me_voiceapihost`, which no official page documents. Their names suggest a TTS-service account, so review them before any Live read.
+- **SEC-REQ-03 (still unresolved):** the probed extension was a virtual extension. Its single read carries the technology row under `tech_details.virtualextension` (`ve_securitypin` present, empty). No SIP/PJSIP row was observed, so whether a GET returns the technology secret remains UNKNOWN. `ex_email` and the other `ex_*email` fields are returned (empty on this extension).
+
 ## Open action items
 
 ### Phase 8B OpenAPI probe key rotation (2026-09-26, not yet done)
