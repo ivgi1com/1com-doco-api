@@ -1,6 +1,8 @@
 import type { ApiDefinition, Category } from "../types";
+import { authTokenCategory } from "./auth-token";
 import { dialCategory } from "./dial";
 import { extensionCategory } from "./extensions";
+import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
 import { OPENAPI_BASE_URL } from "./shared";
 
 /**
@@ -12,10 +14,16 @@ import { OPENAPI_BASE_URL } from "./shared";
  * tests/unit/openapi-coverage.test.ts.
  */
 const categories: Category[] = [
+  // Reporting
+  cdrCategory,
+  simplecdrCategory,
+  aianalysisCategory,
+  ailogsCategory,
   // Extensions
   extensionCategory,
   // Actions
   dialCategory,
+  authTokenCategory,
 ];
 
 export const openapiApi: ApiDefinition = {
