@@ -1,8 +1,85 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–7 done,
-**APPROVED (gate A)** — next phase not started, waiting for its own plan
-review — read this first)
+Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
+[resource transcription] done, checkpoint committed, **not reviewed or
+approved** — Stage C [security review] and the completion report are
+next, on Opus — read this first)
+
+## MiRTA OpenAPI documentation baseline — Stage B done, awaiting Stage C (Opus)
+
+- **Task, not a numbered phase**: a docs-only baseline requested directly
+  by the user (not part of the Phase 7/8 sequence), governed by the
+  permanent rules in `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md`. Full
+  plan: `C:\Users\ivgi-pc\.claude\plans\keen-swinging-origami.md`.
+- **Branch**: `docs/openapi-baseline`, created off `phase/proxy-rollout`
+  @ `3612586` (Phase 7's approval commit). **Not merged, not pushed, no
+  tag.** Working tree clean at `HEAD`.
+- **Commits on this branch** (newest first):
+  - `fade01f` — Stage B: all 37 resource docs + `SEC-REQ-05`..`26`.
+  - `ebe3f5b` — official snapshots (38 pages), `_common.md` rebuilt,
+    Extension/Extension State pilots, wrapper retired as a source.
+  - `a3d8046` — Stage A scaffold checkpoint (superseded content, kept
+    for history).
+- **What exists now** (`source-docs/openapi/`):
+  - `README.md` — coverage index, all 38 official pages accounted for
+    (37 resources + Overview), generated from `resources.json`.
+  - `_common.md` — base URL/spec URLs, auth (3 transports, 4 key kinds),
+    `global=1` scope, CRUD conventions, full error-code table — all
+    cited to `source-docs/raw/mirta-openapi/overview-and-examples.md`.
+  - 37 per-resource files, one per official page, using the template in
+    `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md` §15.
+  - `resources.json` — machine-readable mirror of the coverage index.
+  - `source-docs/raw/mirta-openapi/` — all 38 official pages (HTML +
+    Markdown export), fetched 2026-09-26, session-token redacted,
+    hashes in `source-docs/raw/SOURCES.md`.
+- **Coverage**: 38/38 official pages accounted for. 5 resources fully
+  `DOCUMENTED` (Extension State, Dial, Auth Token, AI Analysis, AI Logs
+  — each has a worked response example). The other 32 are `PARTIAL`:
+  every field/method/alias is documented, but **no response schema
+  exists on any official page for them** — deliberately left `UNKNOWN`
+  rather than guessed. 0 `CONFLICT`, 0 unprocessed.
+- **Authority decision** (`docs/DECISIONS.md`): official MiRTA pages/spec
+  are authoritative for OpenAPI (unlike Proxy, where 1com's own docs
+  outrank MiRTA — 1com publishes no OpenAPI docs). The former local
+  wrapper `docs/mirta-openapi-claude-reference.md` was retired from the
+  tree by the user (commit `a3d8046`); every distinctive claim in it was
+  checked against the official pages before removal (only `global=yes`
+  vs the official `global=1` was wrong); it survives only in Git history
+  (`git show 5395552:docs/mirta-openapi-claude-reference.md`) and is
+  **not cited as evidence anywhere** in the active docs.
+- **Security**: 22 new `SEC-REQ-05`..`SEC-REQ-26` entries in
+  `docs/SECURITY.md`, one per resource with a real finding (a
+  create/update that writes a secret, or a response that exposes
+  sensitive content). Three are categorical Live/Demo exclusions, not
+  ordinary allowlist cases: Auth Token (mints login credentials), Dial
+  (places a real call), DISA (a PIN that grants outbound dialing).
+  Every `SEC-REQ-*` cited from a resource file is defined in
+  `SECURITY.md` and vice versa (verified by diff).
+- **Validation done this session**: all 38 pages cross-checked against
+  the chapter index (no gaps/extras); every resource has a path and
+  method set; `git diff --stat -- src tests messages scripts
+  package*.json` is empty (zero application-code change); a secret/PII
+  scan of the full diff and raw snapshots found nothing beyond the
+  project's synthetic conventions (`pbx.example.com`, `TEST_API_KEY`,
+  `TESTTENANT`, `555-01xx`, `example.com`); `npm run check` passes
+  250/250. **Not run this session** (out of scope for docs-only work):
+  `npm run build`, Playwright.
+- **Explicitly NOT done yet** (reserved for Opus, per the plan's model
+  routing — do not start on Sonnet):
+  - the cross-resource security review (consistency of the `SEC-REQ`
+    judgments, anything missed);
+  - the second-pass documentation-quality audit
+    (`docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md` §12);
+  - the 24-item completion report (§14) and the STOP gate — completion
+    is explicitly **not** approval, per the instructions' own rule.
+- **Next session's first action**: confirm the model is Opus 5.5, then
+  run the Stage C security/consistency review and the second-pass audit
+  described above, then present the §14 completion report and wait —
+  do not proceed to choosing Demo/Live candidates or any Phase 8
+  implementation planning without a separate user go-ahead.
+- **Carried, unrelated to this task**: the Stage 4 Proxy TEST API key is
+  still not rotated (`docs/SECURITY.md` "Open action items"). Phase 7 is
+  approved and sits below, unaffected by this branch.
 
 ## Phase 7 — Stages 0–7 done, APPROVED (gate A)
 

@@ -1,6 +1,22 @@
 # Current Status
 
 Current work:
+**MiRTA OpenAPI documentation baseline: Stage B (resource transcription)
+done, checkpoint committed, NOT reviewed or approved.** A docs-only task
+requested directly by the user, governed by
+`docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md`. Branch
+`docs/openapi-baseline` off `phase/proxy-rollout` @ `3612586`, HEAD at
+`fade01f`, working tree clean. All 38 official MiRTA OpenAPI pages (37
+resources + Overview) are documented in `source-docs/openapi/`: 5 fully
+`DOCUMENTED`, 32 `PARTIAL` (no response schema on the official pages —
+left `UNKNOWN`, not guessed), 0 `CONFLICT`, 0 unprocessed. 22 new
+`SEC-REQ-05`..`26` entries added to `docs/SECURITY.md`. Zero application-
+code changes; `npm run check` 250/250. **Next: the Stage C
+cross-resource security review, the second-pass documentation audit, and
+the §14 completion report — reserved for Opus, not started.** Full
+detail: `docs/SESSION_HANDOFF.md` (read this first).
+
+Earlier work (unaffected, unrelated to the above):
 **Phase 7 — Proxy API rollout: APPROVED (gate A), Stages 0–7 done.** Plan
 approved 2026-09-25
 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
