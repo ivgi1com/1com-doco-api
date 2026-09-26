@@ -1,5 +1,11 @@
 import type { ApiDefinition, Category } from "../types";
 import { authTokenCategory } from "./auth-token";
+import { calleridblacklistCategory } from "./calleridblacklists";
+import { campaignCategory } from "./campaigns";
+import { campaignnumberCategory } from "./campaignnumbers";
+import { conditionCategory } from "./conditions";
+import { conferenceroomCategory } from "./conferencerooms";
+import { cronjobCategory } from "./cronjobs";
 import { dialCategory } from "./dial";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
@@ -21,6 +27,17 @@ const categories: Category[] = [
   ailogsCategory,
   // Extensions
   extensionCategory,
+  // Campaigns
+  campaignCategory,
+  campaignnumberCategory,
+  // Call routing
+  conditionCategory,
+  // Media & conferencing
+  conferenceroomCategory,
+  // Numbers & dialing
+  calleridblacklistCategory,
+  // System / admin
+  cronjobCategory,
   // Actions
   dialCategory,
   authTokenCategory,
