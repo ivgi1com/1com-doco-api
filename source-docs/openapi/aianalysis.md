@@ -104,6 +104,9 @@ Returns transcript, AI-generated summary, and sentiment-analysis data for record
 ```
 
 - **Envelope: a top-level JSON array**, one object per matched `uniqueid` (DOCUMENTED — the only reporting endpoint on this page whose envelope is explicit).
+- "Unknown unique IDs are omitted from the response"; rows are returned only for IDs with recording metadata or transcript segments in the selected tenant scope (`:110`).
+- Multiple recording rows for one `uniqueid`: top-level `transcript`/`summary`/sentiment text are "combined without duplicate text"; `recordings[]` keeps the per-recording values (`:111`).
+- "Older installations may return fewer populated fields until their database upgrades are complete" (`:113`) — field presence is install-dependent.
 - HTTP status: UNKNOWN.
 
 ```bash
@@ -141,7 +144,7 @@ Not a Live candidate under the standard allowlist pattern — see Security Notes
 ## Unknowns
 
 - HTTP status codes.
-- Behavior when `uniqueid` matches nothing for one of several comma-separated values (partial array vs error).
+- Response when *no* requested `uniqueid` matches (empty array vs error) — unmatched IDs are documented as omitted (`:110`), but the all-miss case is not shown.
 - `sentiment_details`'s actual JSON shape (AI-processor-dependent).
 - Whether pagination applies when many unique IDs are requested at once.
 

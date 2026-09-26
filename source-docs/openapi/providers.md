@@ -111,10 +111,10 @@ UNKNOWN — no GET example shown for this object either.
 
 ## Security Notes
 
-- **`ps_auths`/`sipfriends` realtime rows hold the trunk's SIP registration secret** (`password` in the create/PATCH examples).
+- **`password` (create/PATCH examples) is the trunk's registration secret.** The page says SIP providers "manage the related sipfriends realtime row" (`:21`); where the PJSIP secret is stored (e.g. `ps_auths`) is not stated.
 - **`sms_password` → `pr_smspassword`** is a second, distinct secret (SMS gateway credential).
-- If GET ever returns these nested realtime rows (as Extension's GET does for its own technology data — see `extensions.md`), this would leak trunk and SMS credentials.
-- → **SEC-REQ-14**: BLOCK LIVE. Given the pattern already confirmed on Extension (GET returns nested technology/auth data), assume Provider's GET does the same until proven otherwise — do not treat the absence of an explicit response example as absence of risk.
+- If GET ever returns these nested realtime rows, this would leak trunk and SMS credentials. Extension's single-object GET is documented to "include related technology data" (`extension.md:42`), though its exact fields are also unknown; Provider's page says nothing about GET contents.
+- → **SEC-REQ-14**: BLOCK LIVE. By analogy with Extension, assume Provider's GET may return realtime/auth data until a response schema proves otherwise — do not treat the absence of an explicit response example as absence of risk.
 
 ## Demo Considerations
 

@@ -5,7 +5,32 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## MiRTA OpenAPI documentation baseline — Stage B done, awaiting Stage C (Opus)
+## MiRTA OpenAPI documentation baseline — Stage C done, AT THE REVIEW GATE (not approved)
+
+- **Stage C done 2026-09-26 (Opus 5.5)**, committed as a checkpoint on
+  `docs/openapi-baseline`. This is **not** approval; the §14 completion
+  report was presented and the user's A/B/C/D gate choice is pending.
+- Second-pass audit (3 parallel read-only agents plus Opus verification
+  of every reported item): 29/37 resource files clean; 8 resource files
+  plus `_common.md` had 15 local defects, all fixed (1 wrong alias, 3
+  invented descriptions, 5 omitted official notes, 6 count/citation/
+  format/revision fixes). Index 38/38, snapshot
+  hashes 38/38 match, 0 CONFLICT.
+- Security review: rationale overstating evidence was corrected in SEC-REQ-14/20/26
+  (no label change). User decisions: SEC-REQ-27 (no OpenAPI write in
+  Live by default), SEC-REQ-28 (tenant isolation; no global key in Live),
+  SEC-REQ-19 Paging Group → BLOCK LIVE, SEC-REQ-29 (Custom Destination)
+  and SEC-REQ-30 (MOH `application`) new REVIEW REQUIRED. Full record:
+  `docs/DECISIONS.md` "Stage C security review decisions",
+  `source-docs/DOCS_AUDIT.md` §13.2.
+- Validation: docs-only diff (`src tests messages scripts package*.json`
+  untouched), SEC-REQ parity 03–30 both directions, labels consistent
+  across files/README/resources.json, secret/PII scan clean, `npm run
+  check` 250/250.
+- **Next:** wait for the gate choice. Do not start Demo/Live candidate
+  selection or Phase 8 planning without explicit approval.
+
+## (Superseded by Stage C above) Stage B done, awaiting Stage C (Opus)
 
 - **Task, not a numbered phase**: a docs-only baseline requested directly
   by the user (not part of the Phase 7/8 sequence), governed by the

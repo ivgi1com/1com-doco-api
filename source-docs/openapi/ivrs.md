@@ -63,7 +63,7 @@ Standard patterns; response UNKNOWN.
 
 ## Aliases / Accepted Values
 
-**Destination fields**, one string or an array, for every DTMF key plus special conditions (`:21`, condensed — 19 destination types total, each documented individually on the page with its own PATCH example, `:89-407`):
+**Destination fields**, one string or an array, for every DTMF key plus special conditions (`:21`, condensed — 20 destination types in the table, incl. the `CUSTOMIVR_SUPPORT` example, each documented individually on the page with its own PATCH example, `:89-407`):
 
 | Destination type | Accepted aliases |
 |---|---|
@@ -77,13 +77,13 @@ Standard patterns; response UNKNOWN.
 | `IVR_EXTENSION` | `ivr_extension`, `extension` |
 | `IVR_MEDIAFILE` | `ivr_mediafile`, `mediafile` |
 | `IVR_OPTIONSMEDIAFILE` | `ivr_optionsmediafile`, `optionsmediafile` |
-| `CUSTOMIVR_<name>` (e.g. `CUSTOMIVR_SUPPORT`) | `customivr_<name>` | "Custom IVR destination names matching CUSTOMIVR_* are also accepted" (`:25`) |
+| `CUSTOMIVR_<name>` (e.g. `CUSTOMIVR_SUPPORT`) | `customivr_<name>` — "Custom IVR destination names matching CUSTOMIVR_* are also accepted" (`:25`) |
 
 Same alias-key-or-`destinations`-object pattern as Extension.
 
 ## Request Schema
 
-Field table above; 19 destination types as described.
+Field table above; 20 destination types as described.
 
 ## Response Schema
 

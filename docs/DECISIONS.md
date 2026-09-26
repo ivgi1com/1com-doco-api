@@ -1046,3 +1046,26 @@ supersedes it (OA-07).
 **Status:** Stage A (scaffold) is done. Stage B (ingesting the official
 pages and spec) is waiting on user inputs (`source-docs/unresolved.md`
 U-18, U-19).
+
+## MiRTA OpenAPI baseline — Stage C security review decisions (2026-09-26)
+
+User decisions from the Stage C cross-resource security review (Opus 5.5).
+Documentation only; nothing is implemented or Live-enabled.
+
+- **SEC-REQ-27 (new, cross-cutting):** no OpenAPI write (POST/PATCH/PUT/
+  DELETE) is Live-enabled by default. Each one needs its own security
+  decision, matching the Proxy precedent.
+- **SEC-REQ-28 (new, cross-cutting):** OpenAPI Live uses tenant-scoped
+  keys only. The server enforces the tenant. No global key, `global=1`,
+  `%` wildcard or omitted tenant. Global-key-only resources are excluded
+  from Live.
+- **SEC-REQ-19 (Paging Group) raised to BLOCK LIVE.** Rule now applied
+  consistently: a write of a credential/PIN plus an undocumented GET means
+  BLOCK LIVE.
+- **SEC-REQ-29 (Custom Destination `extended_infos`) and SEC-REQ-30 (Music
+  On Hold `application`/`streamengine`) added as REVIEW REQUIRED.** Both
+  resources move from UNKNOWN. The MOH entry is worded as undocumented
+  semantics, not asserted behavior.
+
+Factual corrections from the same review are logged in
+`source-docs/DOCS_AUDIT.md` §13.2 (OA-11, OA-12).

@@ -388,11 +388,12 @@
       "httpOperations": null,
       "processed": true,
       "docStatus": "PARTIAL",
-      "securityReview": "UNKNOWN",
+      "securityReview": "REVIEW REQUIRED",
       "file": "source-docs/openapi/customdestinations.md",
       "unresolved": [
         "response schema",
-        "cu_ct_id enum"
+        "cu_ct_id enum",
+        "SEC-REQ-29"
       ]
     },
     {
@@ -574,10 +575,11 @@
       "httpOperations": null,
       "processed": true,
       "docStatus": "PARTIAL",
-      "securityReview": "UNKNOWN",
+      "securityReview": "REVIEW REQUIRED",
       "file": "source-docs/openapi/musiconholds.md",
       "unresolved": [
-        "response schema"
+        "response schema",
+        "SEC-REQ-30"
       ]
     },
     {
@@ -600,7 +602,7 @@
       "httpOperations": null,
       "processed": true,
       "docStatus": "PARTIAL",
-      "securityReview": "REVIEW REQUIRED",
+      "securityReview": "BLOCK LIVE",
       "file": "source-docs/openapi/paginggroups.md",
       "unresolved": [
         "response schema",

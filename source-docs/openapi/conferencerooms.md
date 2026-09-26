@@ -13,7 +13,7 @@ A conference room (Asterisk `meetme`) with a join PIN and separate admin PIN, pl
 
 ## Official Sources
 
-- https://manual.mirtapbx.com/books/api/page/conference-room (rev unspecified in extract; updated per SOURCES.md). Snapshot: `source-docs/raw/mirta-openapi/conference-room.md`. Line citations below refer to it.
+- https://manual.mirtapbx.com/books/api/page/conference-room (rev #18, updated 2026-07-03). Snapshot: `source-docs/raw/mirta-openapi/conference-room.md`. Line citations below refer to it.
 
 ## Endpoint
 
@@ -52,7 +52,7 @@ Tenant-scoped; tenant keys require `tenant=`; writes need a writable key (`:3`).
 | `rate_id` → `cr_rrid` | no | | DOCUMENTED `:15` |
 | `startdate` → `starttime` (raw) | no | | DOCUMENTED `:15` |
 | `enddate` → `endtime` (raw) | no | | DOCUMENTED `:15` |
-| `request_pin_mediafile_id` → `cr_requestpinmeid` | no | media file played to request the PIN | DOCUMENTED `:15` |
+| `request_pin_mediafile_id` → `cr_requestpinmeid` | no | media file ID (purpose not described on the page) | DOCUMENTED `:15` |
 | `meetme` (nested object) | no | see below | DOCUMENTED `:53-58` |
 
 **Nested `meetme` object** (not in the top-level alias table; documented only via example, `:53-58`, `:72-75`):
@@ -99,7 +99,7 @@ UNKNOWN — no GET example on the page.
 
 ## Security Notes
 
-- **`meetme.pin` and `meetme.adminpin` are join/admin credentials for the conference room.** The admin PIN grants moderator control (mute/kick/lock) over a live conference — a significant privilege if leaked.
+- **`meetme.pin` and `meetme.adminpin` are join/admin credentials for the conference room.** The page does not describe what `adminpin` (or `adminopts`, example `"AaT"`) permits; by name it grants administrator access to a live conference, so treat a leak as a privilege exposure.
 - These are directly analogous to Extension's technology secret and Voicemail's mailbox password — a third confirmed pattern of "create/update writes a real secret" in this API.
 - → **SEC-REQ-20**: BLOCK LIVE. Assume GET returns the `meetme` object (including PINs) until proven otherwise, following the same precautionary logic as Extension/Provider — this API has now shown that nested related-object data is a recurring documented behavior even where GET examples are missing.
 

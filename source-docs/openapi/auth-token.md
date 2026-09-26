@@ -131,7 +131,9 @@ Both documented in full above. No pagination, no arrays, no nesting.
 
 - **This is a credential-issuance endpoint.** A generated token substitutes for a user's login password (`:3`).
 - "Only the generated token value is returned. MiRTA PBX stores a SHA-256 hash of the token" (`:73`) — the plaintext token is not retrievable afterward, but the API response itself carries it once.
+- "A single-use token is cleared after a successful login" (`:74`).
 - Generating a new token replaces any previous token for that identity (`:75`) — a side effect on unrelated sessions.
+- Scope limit: "This endpoint manages login tokens only. It does not create or rotate OpenAPI API keys" (`:76`).
 - This is unlike every other resource: instead of exposing existing PBX data, it **mints a working credential**.
 - → **SEC-REQ-05**: this operation must never be reachable from Demo or Live. It is a write-and-credential-mint action, categorically excluded from browser-facing exposure, not merely allowlist-gated.
 

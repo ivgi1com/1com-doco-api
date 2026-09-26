@@ -5,7 +5,7 @@
 - Evidence: DOCUMENTED (official page). Response schema UNKNOWN.
 - Scope: Tenant, or Global with `global=1`
 - Access: Mixed (read and write)
-- Security review: **UNKNOWN** (pending schema; no obvious credential fields)
+- Security review: **REVIEW REQUIRED** (SEC-REQ-30)
 
 ## Purpose
 
@@ -96,7 +96,9 @@ UNKNOWN — no GET example on the page.
 
 ## Security Notes
 
-No credential- or PII-shaped field documented. Status held at UNKNOWN pending schema confirmation.
+- No credential- or PII-shaped field documented.
+- `application` (and `streamengine`) are raw, free-form fields that the page lists (`:15`) without saying what they mean. In Asterisk music-on-hold configuration, `application` can name an external program the server runs. That is domain knowledge, **not** documented MiRTA behavior. If it applies here, writing this field could affect the PBX host, not just the PBX configuration.
+- → **SEC-REQ-30**: REVIEW REQUIRED. Establish the semantics of `application`/`streamengine` (spec or vendor confirmation) before Live. Writes are already excluded by SEC-REQ-27; a read would expose the configured value.
 
 ## Demo Considerations
 
@@ -104,12 +106,13 @@ Not fixturable yet: no response shape documented.
 
 ## Live Considerations
 
-Plausible read candidate once a response schema exists.
+A possible read candidate once a response schema exists and SEC-REQ-30 is resolved. `global=1` is excluded from Live by SEC-REQ-28.
 
 ## Unknowns
 
 - GET response shape.
 - Full `mode` enum (only `"playlist"` observed).
+- Meaning of `application` and `streamengine` (SEC-REQ-30).
 - Relationship between `default: true` and the `global=1` scope (is "default" per-tenant or per-global-set?).
 
 ## Conflicts

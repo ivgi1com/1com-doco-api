@@ -9,7 +9,7 @@
 
 ## Purpose
 
-A physical desk phone's auto-provisioning record: MAC address, model, config filename, and HTTP credentials for fetching its config file (`provisioningphones.md:3` → source `provisioning-phone.md:3`).
+A phone provisioning record: MAC address, model, filename, a password, and an HTTP user/password pair (`:3`, `:15`). The page does not describe what the HTTP credentials authenticate.
 
 ## Official Sources
 
@@ -52,7 +52,7 @@ Tenant-scoped; tenant keys require `tenant=`; writes need a writable key (`:3`).
 | `password` → `ph_password` | no | **secret** (device provisioning password) | DOCUMENTED `:15` |
 | `filename` → `ph_filename` | no | e.g. `"demo-001122334455.cfg"` | DOCUMENTED `:15`, `:49` |
 | `http_user` → `ph_http_user` | no | | DOCUMENTED `:15`, `:63` |
-| `http_password` → `ph_http_password` | no | **secret** (HTTP basic auth for config fetch) | DOCUMENTED `:15`, `:64` |
+| `http_password` → `ph_http_password` | no | **secret** (purpose not described; name implies HTTP authentication) | DOCUMENTED `:15`, `:64` |
 
 ```bash
 curl -X POST -H "X-API-Key: TEST_API_KEY" -H "Content-Type: application/json" \
@@ -82,10 +82,10 @@ UNKNOWN — no GET example on the page.
 
 ## Security Notes
 
-- **Two distinct secrets are writable here**: `ph_password` (device provisioning password) and `ph_http_password` (HTTP basic auth for the config-file fetch).
+- **Two distinct secrets are writable here**: `ph_password` and `ph_http_password` (with `ph_http_user`). The page does not describe either one's purpose; both are credential-shaped by name, and the example uses `"change-this-password"` (`:64`).
 - `ph_mac` is a hardware identifier — a lower-sensitivity but still device-identifying field.
 - This follows the same pattern already confirmed on Extension, Provider, Voicemail, Conference Room: **objects whose create/update writes real secrets, with GET behavior unconfirmed but presumptively risky**.
-- → **SEC-REQ-26**: BLOCK LIVE. Assume GET may echo `ph_password`/`ph_http_password` until proven otherwise — a phone auto-provisioning system commonly needs to serve back its own config including credentials, which increases (not decreases) the odds that a GET here returns them in some form.
+- → **SEC-REQ-26**: BLOCK LIVE. Assume GET may echo `ph_password`/`ph_http_password` until a response schema proves otherwise (no GET example exists).
 
 ## Demo Considerations
 

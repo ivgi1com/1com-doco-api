@@ -69,7 +69,7 @@ Standard patterns; response UNKNOWN; delete has only a prose reference-check cau
 
 **Field aliases** (`:15`): `name`→`fullname`, `number`→`mailbox`.
 
-**Destination fields**, one string or an array (`:19`):
+**Destination fields**, one string or an array (`:19`, table `:21`):
 
 | Destination type | Accepted aliases |
 |---|---|

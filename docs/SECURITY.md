@@ -383,7 +383,7 @@ Controls privilege/authorization assignment for Users; a write vulnerability has
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/providers.md`.
 
-Create/update writes two distinct secrets directly: the trunk SIP/PJSIP registration password and `pr_smspassword` (SMS gateway credential). Following the confirmed pattern on Extension (nested technology-row GET exposure), assume GET may echo these until proven otherwise.
+Create/update writes two distinct secrets directly: the trunk SIP/PJSIP registration password and `pr_smspassword` (SMS gateway credential). No GET example exists. By analogy with Extension (whose single-object GET is documented to include technology data, where the secret is stored — SEC-REQ-03; the exact returned fields are still unknown there too), assume GET may echo these until a response schema proves otherwise.
 
 ### SEC-REQ-15 — OpenAPI Voicemail (BLOCK LIVE, open)
 
@@ -409,17 +409,17 @@ Recorded 2026-09-26. Evidence: `source-docs/openapi/mediafiles.md`.
 
 Create accepts a base64 audio payload (`data_base64`→`me_data`). Whether GET returns this payload is unconfirmed; if so, both a bandwidth and content-sensitivity concern. Confirm before Live.
 
-### SEC-REQ-19 — OpenAPI Paging Group `pa_pin` (REVIEW REQUIRED, open)
+### SEC-REQ-19 — OpenAPI Paging Group `pa_pin` (BLOCK LIVE, open)
 
-Recorded 2026-09-26. Evidence: `source-docs/openapi/paginggroups.md`.
+Recorded 2026-09-26. Evidence: `source-docs/openapi/paginggroups.md`. Raised from REVIEW REQUIRED to BLOCK LIVE in the Stage C review (user decision, 2026-09-26) for consistency.
 
-Create/update writes an intercom access PIN (`pin`→`pa_pin`) directly. Confirm it is excluded from any GET response before Live.
+Create/update writes a PIN (`pin`→`pa_pin`) directly; the page doesn't describe what it protects. No GET example exists. It follows the same rule as SEC-REQ-14/15/20/26: a write of a credential/PIN plus an undocumented GET means BLOCK LIVE until a response schema shows the PIN is excluded.
 
 ### SEC-REQ-20 — OpenAPI Conference Room `meetme` PINs (BLOCK LIVE, open)
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/conferencerooms.md`.
 
-Create/update writes a nested `meetme` object containing a join PIN and a separate admin/moderator PIN directly. The admin PIN grants moderator control (mute/kick/lock) over a live conference. Assume GET returns the `meetme` object until proven otherwise, consistent with the confirmed Extension/Provider pattern.
+Create/update writes a nested `meetme` object containing `pin` and a separate `adminpin` directly. The page does not describe what `adminpin` permits; by name it grants administrator access to a live conference. No GET example exists; assume GET returns the `meetme` object until a response schema proves otherwise (same precaution as SEC-REQ-03/14).
 
 ### SEC-REQ-21 — OpenAPI Tenant Variable (REVIEW REQUIRED, open)
 
@@ -443,7 +443,7 @@ Writing `state` (e.g. `ACTIVE`) starts/stops real automated outbound dialing —
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/campaignnumbers.md`.
 
-Target phone numbers and per-number call-outcome fields (`billsec`, `lastattempt`, `attempts`), comparable sensitivity to CDR (SEC-REQ-07). Confirm response schema before Live.
+Target phone numbers and per-number call-outcome fields (`billsec`, `lastattempt`, `attempts`) — customer PII plus call-outcome metadata, but no credential, PIN or billing-cost field (unlike CDR, SEC-REQ-07). Confirm response schema before Live.
 
 ### SEC-REQ-25 — OpenAPI Phone Book Entry (REVIEW REQUIRED, open)
 
@@ -455,7 +455,35 @@ Holds real contact PII (name, phone, email) via a flexible values/fields/details
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/provisioningphones.md`.
 
-Create/update writes two distinct secrets directly: a device provisioning password and an HTTP basic-auth password used to serve the phone's own config file. A provisioning system commonly needs to serve back its own credentials, which increases (not decreases) the odds a GET here would echo them. Assume so until proven otherwise.
+Create/update writes two credential-shaped fields directly: `ph_password` and `ph_http_password` (with `ph_http_user`). The page does not describe what either authenticates. No GET example exists; assume GET may echo both until a response schema proves otherwise.
+
+### SEC-REQ-27 — OpenAPI writes excluded from Live by default (cross-cutting, BLOCK LIVE, open)
+
+Recorded 2026-09-26 (Stage C review, user decision). Applies to every OpenAPI resource.
+
+Every OpenAPI `POST`, `PATCH`, `PUT` and `DELETE` stays out of the Live Playground, and out of any Demo path that could send a request. This matches the Proxy precedent, where writes are Reference-only in the UI and in the executor. Enabling any single write operation needs its own explicit security decision; it is not part of the read-allowlist checklist. This rule also covers write-side risks that don't warrant a per-resource entry of their own: Cron Job and Flow (they change call routing), Feature Code and Short Number (dialing behavior), Campaign state (SEC-REQ-23), and Music On Hold `application` (SEC-REQ-30). Documentation and code samples for writes are unaffected.
+
+### SEC-REQ-28 — OpenAPI tenant isolation for Live (cross-cutting, BLOCK LIVE, open)
+
+Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/openapi/_common.md` §2–3; `overview-and-examples.md:18` (a global key "can list tenant-scoped objects across tenants when no tenant parameter is supplied").
+
+Any future OpenAPI Live path must:
+1. Use a tenant-scoped key only, read-only where the operation allows. Never a global key.
+2. Have the server set and enforce `tenant`. The browser never picks a tenant outside the caller's own.
+3. Reject `global=1`, `%` tenant wildcards, and any omitted-tenant request (the cross-tenant search that AI Logs and the reporting pages document).
+4. Exclude global-key-only resources (Tenant, User, User Profile, Routing Profile, Provider, Auth Token) from Live entirely.
+
+### SEC-REQ-29 — OpenAPI Custom Destination `extended_infos` (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/openapi/customdestinations.md`.
+
+`extended_infos` (`ce_name`/`ce_value`) is an unenumerated key/value store. Its valid names depend on a `cu_ct_id` type whose enumeration isn't documented. It is the same risk class as SEC-REQ-17/21. Before Live: enumerate the custom types and their extended names, then allowlist by name, not just by field.
+
+### SEC-REQ-30 — OpenAPI Music On Hold `application`/`streamengine` (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/openapi/musiconholds.md`, `music-on-hold.md:15`.
+
+Both are raw, free-form fields with no documented meaning. In Asterisk MOH configuration, `application` can name an external program the server runs. That is domain knowledge, not documented MiRTA behavior. Before Live: establish their semantics from the spec or the vendor. Writes are excluded by SEC-REQ-27; a read would expose the configured value.
 
 ## Open action items
 

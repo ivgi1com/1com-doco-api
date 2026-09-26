@@ -5,11 +5,11 @@
 - Evidence: DOCUMENTED (official page). Response schema UNKNOWN.
 - Scope: Tenant, or Global with `global=1`
 - Access: Mixed (read and write)
-- Security review: **UNKNOWN** (pending schema; no obvious credential fields)
+- Security review: **REVIEW REQUIRED** (SEC-REQ-29)
 
 ## Purpose
 
-A configurable call-flow destination object (privacy handling, callback, channel splitting, random/weighted routing) that can be tenant-scoped or shared globally (`customdestinations.md:3` → source `custom-destination.md:3`).
+A configurable call-flow destination object that can be tenant-scoped or shared globally (`:3`). Its documented destination types cover privacy handling, callback, channel splitting and random destinations (`:21`); which `cu_ct_id` type enables which behavior is not documented.
 
 ## Official Sources
 
@@ -48,7 +48,7 @@ A configurable call-flow destination object (privacy handling, callback, channel
 | Field | Required | Notes | Evidence |
 |---|---:|---|---|
 | `name` → `cu_name` | **yes** | | DOCUMENTED `:7`, `:15` |
-| `type_id`/`custom_type_id` → `cu_ct_id` | **yes** | two aliases; selects the custom-destination type (e.g. privacy, callback, split, random) | DOCUMENTED `:7`, `:15` |
+| `type_id`/`custom_type_id` → `cu_ct_id` | **yes** | two aliases; custom-destination type ID (enumeration UNKNOWN, see below) | DOCUMENTED `:7`, `:15` |
 
 ```bash
 curl -X POST -H "X-API-Key: TEST_API_KEY" -H "Content-Type: application/json" \
@@ -110,7 +110,10 @@ UNKNOWN — no GET example on the page.
 
 ## Security Notes
 
-No credential- or PII-shaped field documented. `PRIVACY-DONTCALL`/`PRIVACY-TORTURE` are call-treatment behaviors (not data exposure). Status held at UNKNOWN pending schema confirmation, not because a specific risk was found. The `global=1` list (shared across all tenants) does raise a cross-tenant visibility question once a response schema exists — note for the final review.
+- No named credential- or PII-shaped field is documented. `PRIVACY-DONTCALL`/`PRIVACY-TORTURE` are call-treatment destinations, not data exposure.
+- `extended_infos` (`ce_name`/`ce_value`) is an unenumerated key/value store whose valid names depend on an undocumented `cu_ct_id` type. This is the same risk class as Setting (SEC-REQ-17) and Tenant Variable (SEC-REQ-21): what a value holds can't be assessed generically.
+- → **SEC-REQ-29**: REVIEW REQUIRED. Enumerate the custom types and their extended names before Live, then allowlist by name.
+- The `global=1` list, shared across tenants, falls under SEC-REQ-28 (tenant isolation).
 
 ## Demo Considerations
 
@@ -118,7 +121,7 @@ Not fixturable yet: no response shape documented, and `cu_ct_id`'s type enumerat
 
 ## Live Considerations
 
-Plausible read candidate once a response schema exists; the `global=1` cross-tenant listing needs its own scope decision separate from a per-tenant read.
+A possible read candidate once a response schema exists and SEC-REQ-29 is resolved. `global=1` is excluded from Live by SEC-REQ-28.
 
 ## Unknowns
 

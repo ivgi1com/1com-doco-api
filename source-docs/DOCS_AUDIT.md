@@ -1133,3 +1133,25 @@ OA-10 — Extension `realextensions` maps to `virtual_items` (**wrapper imprecis
 - `extension.md:15` gives the source field as `virtual_items`.
 
 **Coverage and security:** `openapi/README.md` (coverage index) and `openapi/resources.json` (counts).
+
+### 13.2 Stage C second-pass audit (2026-09-26)
+
+Every resource file re-compared against its snapshot, plus `_common.md` against the Overview, the index against the chapter page, and all snapshot hashes against `raw/SOURCES.md` (38/38 match). The defects below were in local docs written during Stage B, not in the official pages. All are fixed.
+
+OA-11 — Local transcription defects (fixed)
+- `mediafiles.md`: `format` mapped to `format`; official is `me_format` (`media-file.md:15`). **Wrong.**
+- `customdestinations.md`: "weighted" routing, and a link between `cu_ct_id` values and behaviors. Neither is on the page. **Invented**; now UNKNOWN.
+- `conferencerooms.md`: `request_pin_mediafile_id` given a purpose the page doesn't state. **Invented.** Revision now given as #18.
+- `ivrs.md`: 19 destination types → 20 (`ivr.md:21` includes `CUSTOMIVR_SUPPORT`); broken table row fixed.
+- `auth-token.md`: added the omitted `:74` (a single-use token is cleared after login) and `:76` (doesn't manage API keys).
+- `aianalysis.md`: added the omitted `:110` (unknown IDs omitted), `:111` (multi-recording merge) and `:113` (older installs return fewer fields). One Unknown narrowed.
+- Citation fixes: `voicemails.md`, `paginggroups.md` (destination table is `:21`, sentence `:19`), and `_common.md` (`read_only_api_key` is also in ov:42).
+
+OA-12 — Security rationale overstated the evidence (fixed)
+- SEC-REQ-14 and SEC-REQ-20 called Extension's GET secret exposure a "confirmed pattern". The page documents that GET includes technology data (`extension.md:42`), not which fields. Now worded as an analogy.
+- SEC-REQ-20: "admin PIN grants mute/kick/lock" isn't on the page (Asterisk domain knowledge). Now: purpose not described.
+- SEC-REQ-26 / `provisioningphones.md`: "HTTP basic auth for config fetch" and "provisioning systems commonly serve back credentials" were inference. Now: purpose not described.
+- None of these changes any label. Each still rests on a documented write of a credential-shaped field plus an undocumented GET.
+- `openapi/README.md` said anything other than PASS gets a SEC-REQ, which contradicts 13 `UNKNOWN` resources that have none. Rule corrected, and a `W:<line>` legend added.
+
+Security-label changes from the same review (user decisions, `docs/DECISIONS.md`): SEC-REQ-27 and SEC-REQ-28 are new cross-cutting rules; Paging Group is raised to BLOCK LIVE; Custom Destination (SEC-REQ-29) and Music On Hold (SEC-REQ-30) move from UNKNOWN to REVIEW REQUIRED.

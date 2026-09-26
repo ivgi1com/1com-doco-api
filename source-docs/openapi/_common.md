@@ -85,7 +85,7 @@ Cross-resource behavior of `openapi.php`. Rules: `docs/OPENAPI_DOCUMENTATION_INS
 | `missing_api_key` | No API key was supplied in the query string, `X-API-Key`, or bearer token. | ov:42; 35 resource pages |
 | `invalid_api_key` | The supplied key does not match the tenant or global API key. | ov:42; 35 pages |
 | `tenant_required` | A tenant code is required for tenant-scoped writes or tenant-key reads. | 34 resource pages. **Not** in ov:42's list, which says "include", so that list is not exhaustive (OA-09) |
-| `read_only_api_key` | The key can read data but cannot create, update, or delete objects. | 31 pages |
+| `read_only_api_key` | The key can read data but cannot create, update, or delete objects. | ov:42; 31 pages |
 | `missing_required_field` | A required create field is missing. | ov:42; 30 pages |
 | `tenant_not_found` | The tenant parameter did not match any visible tenant. | ov:42; `ai-analysis.md`, `ai-logs.md` |
 | `method_not_allowed` | The endpoint is read-only and only supports GET. | ov:42; CDR, Simple CDR, AI Analysis, AI Logs |
@@ -112,3 +112,5 @@ Real-PBX testing, security review, and Demo vs Live all follow the instructions 
 - No call without explicit authorization and a test key/tenant.
 - No mutation (POST/PATCH/PUT/DELETE, Dial, token generation/reset) without per-task approval.
 - Browser-facing Live responses use a default-deny field allowlist. The Proxy `QUEUELOGS` lesson applies: values can also appear under numeric/positional duplicate keys.
+- No OpenAPI write is Live-enabled by default (`docs/SECURITY.md` SEC-REQ-27).
+- Live uses tenant-scoped keys only. No global key, `global=1`, `%` wildcard or omitted tenant (SEC-REQ-28).

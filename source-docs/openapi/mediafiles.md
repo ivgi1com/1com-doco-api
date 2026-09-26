@@ -65,7 +65,7 @@ curl -X POST -H "X-API-Key: TEST_API_KEY" -H "Content-Type: application/json" \
 
 | Field | Required | Notes | Evidence |
 |---|---:|---|---|
-| `format` → `format` (raw, no `me_` prefix per alias table) | no | e.g. `"wav"` | DOCUMENTED `:15`, `:99` |
+| `format` → `me_format` | no | e.g. `"wav"` | DOCUMENTED `:15`, `:99` |
 | `data_base64` → `me_data` | no (required in practice for this form) | base64-encoded audio | DOCUMENTED `:15`, `:100` |
 
 ```bash

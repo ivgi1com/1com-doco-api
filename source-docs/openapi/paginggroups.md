@@ -5,11 +5,11 @@
 - Evidence: DOCUMENTED (official page). Response schema UNKNOWN.
 - Scope: Tenant
 - Access: Mixed (read and write)
-- Security review: **REVIEW REQUIRED** (SEC-REQ-19)
+- Security review: **BLOCK LIVE** (SEC-REQ-19; raised from REVIEW REQUIRED in the Stage C review for consistency)
 
 ## Purpose
 
-An intercom/paging group: a set of extensions that can be paged together, with an optional PIN (`paginggroups.md:3` → source `paging-group.md:3`).
+An intercom/paging group: a set of extensions that can be paged together, with an optional PIN (`:3`, `:15`).
 
 ## Official Sources
 
@@ -66,7 +66,7 @@ Standard patterns; response UNKNOWN.
 
 ## Aliases / Accepted Values
 
-**Destination fields**, one string or an array (`:21`):
+**Destination fields**, one string or an array (`:19`, table `:21`):
 
 | Destination type | Accepted aliases |
 |---|---|
@@ -84,8 +84,8 @@ UNKNOWN — no GET example on the page.
 
 ## Security Notes
 
-- **`pin` → `pa_pin`** is an access-control PIN for joining the intercom/paging session.
-- → **SEC-REQ-19**: REVIEW REQUIRED. Confirm whether GET returns `pa_pin` in the clear before any Live exposure.
+- **`pin` → `pa_pin`** is a credential-shaped field written directly (example `"1234"`, `:54`). The page does not describe what it protects.
+- → **SEC-REQ-19**: BLOCK LIVE. It follows the same rule as Voicemail, Conference Room, Provider and Provisioning Phone: a write of a credential/PIN plus an undocumented GET means BLOCK LIVE until a response schema shows `pa_pin` is excluded.
 
 ## Demo Considerations
 

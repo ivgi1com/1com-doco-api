@@ -17,6 +17,7 @@ An evidence-based engineering reference for MiRTA PBX `openapi.php`. It is docum
 3. **The retired wrapper** (`git show 5395552:docs/mirta-openapi-claude-reference.md`).
    - Structure only; never evidence.
    - Its claims were checked against the official pages. Corrections are logged as `OA-` items in `../DOCS_AUDIT.md` §13.
+   - `W:<line>` in a resource file's Conflicts section is a line in that retired file at commit `5395552`. These notes record the cross-check only; they are not evidence.
 - **Conflict rules:**
   - Official beats the wrapper.
   - Two official sources disagreeing is `CONFLICT`, recorded with both references. No winner is picked.
@@ -40,7 +41,8 @@ An evidence-based engineering reference for MiRTA PBX `openapi.php`. It is docum
   - `PARTIAL`: the page is processed, but a contract element (typically the response shape) is not established.
   - `UNKNOWN`: the page is not processed yet, or the page establishes nothing usable.
   - `CONFLICT`: official sources disagree.
-- **Security review:** `PASS` / `REVIEW REQUIRED` / `BLOCK LIVE` / `UNKNOWN` (instructions §8). Anything other than PASS gets a `SEC-REQ-0n` in `docs/SECURITY.md`.
+- **Security review:** `PASS` / `REVIEW REQUIRED` / `BLOCK LIVE` / `UNKNOWN` (instructions §8). `REVIEW REQUIRED` and `BLOCK LIVE` each have a `SEC-REQ-nn` in `docs/SECURITY.md`. `UNKNOWN` means no sensitive field is documented but the response schema is unconfirmed; it gets no `SEC-REQ` of its own and is not a PASS.
+  - Two cross-cutting rules apply to every resource regardless of its label: **SEC-REQ-27** (no OpenAPI write in Live by default) and **SEC-REQ-28** (tenant isolation; no global key in Live).
 - **Methods = "not yet processed":** the Overview may name the path, but the page's own operations have not been transcribed. CRUD is never inferred.
 
 ## Coverage index
@@ -75,15 +77,15 @@ An evidence-based engineering reference for MiRTA PBX `openapi.php`. It is docum
 | 12 | [Provider](https://manual.mirtapbx.com/books/api/page/provider) | resource | `/providers` | GET, POST, PATCH, DELETE | Global API key | PARTIAL | BLOCK LIVE | `providers.md` | response schema, SEC-REQ-14 |
 | 13 | [Voicemail](https://manual.mirtapbx.com/books/api/page/voicemail) | resource | `/voicemails` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | BLOCK LIVE | `voicemails.md` | response schema, SEC-REQ-15 |
 | 14 | [IVR](https://manual.mirtapbx.com/books/api/page/ivr) | resource | `/ivrs` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | UNKNOWN | `ivrs.md` | response schema |
-| 15 | [Custom Destination](https://manual.mirtapbx.com/books/api/page/custom-destination) | resource | `/customdestinations` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | UNKNOWN | `customdestinations.md` | response schema, cu_ct_id enum |
+| 15 | [Custom Destination](https://manual.mirtapbx.com/books/api/page/custom-destination) | resource | `/customdestinations` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | REVIEW REQUIRED | `customdestinations.md` | response schema, cu_ct_id enum, SEC-REQ-29 |
 | 16 | [Condition](https://manual.mirtapbx.com/books/api/page/condition) | resource | `/conditions` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | UNKNOWN | `conditions.md` | response schema |
 | 17 | [Hunt List](https://manual.mirtapbx.com/books/api/page/hunt-list) | resource | `/huntlists` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | UNKNOWN | `huntlists.md` | response schema |
 | 18 | [DID](https://manual.mirtapbx.com/books/api/page/did) | resource | `/dids` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | REVIEW REQUIRED | `dids.md` | response schema, SEC-REQ-16 |
 | 19 | [Queue](https://manual.mirtapbx.com/books/api/page/queue) | resource | `/queues` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | UNKNOWN | `queues.md` | response schema |
 | 20 | [Setting](https://manual.mirtapbx.com/books/api/page/setting) | resource | `/settings` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | REVIEW REQUIRED | `settings.md` | response schema, SEC-REQ-17 |
 | 21 | [Media File](https://manual.mirtapbx.com/books/api/page/media-file) | resource | `/mediafiles` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | REVIEW REQUIRED | `mediafiles.md` | response schema, SEC-REQ-18 |
-| 22 | [Music On Hold](https://manual.mirtapbx.com/books/api/page/music-on-hold) | resource | `/musiconholds` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | UNKNOWN | `musiconholds.md` | response schema |
-| 23 | [Paging Group](https://manual.mirtapbx.com/books/api/page/paging-group) | resource | `/paginggroups` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | REVIEW REQUIRED | `paginggroups.md` | response schema, SEC-REQ-19 |
+| 22 | [Music On Hold](https://manual.mirtapbx.com/books/api/page/music-on-hold) | resource | `/musiconholds` | GET, POST, PATCH, DELETE | Tenant API key or global key with global=1 | PARTIAL | REVIEW REQUIRED | `musiconholds.md` | response schema, SEC-REQ-30 |
+| 23 | [Paging Group](https://manual.mirtapbx.com/books/api/page/paging-group) | resource | `/paginggroups` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | BLOCK LIVE | `paginggroups.md` | response schema, SEC-REQ-19 |
 | 24 | [Conference Room](https://manual.mirtapbx.com/books/api/page/conference-room) | resource | `/conferencerooms` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | BLOCK LIVE | `conferencerooms.md` | response schema, SEC-REQ-20 |
 | 25 | [Flow](https://manual.mirtapbx.com/books/api/page/flow) | resource | `/flows` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | UNKNOWN | `flows.md` | response schema |
 | 26 | [Tenant Variable](https://manual.mirtapbx.com/books/api/page/tenant-variable) | resource | `/tenantvariables` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | REVIEW REQUIRED | `tenantvariables.md` | response schema, SEC-REQ-21 |
