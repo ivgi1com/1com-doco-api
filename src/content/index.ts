@@ -1,9 +1,13 @@
+import { openapiApi } from "./openapi";
 import { proxyApi } from "./proxy";
 import { sampleApi } from "./sample-api";
 import type { ApiDefinition, Endpoint } from "./types";
 
-/** Proxy API first (real content, Phase 4); Sample API stays as prototype/design reference. */
-export const apis: ApiDefinition[] = [proxyApi, sampleApi];
+/**
+ * Proxy API first (real content, Phase 4; `apis[0]` is the default), then
+ * MiRTA OpenAPI (Phase 8). The Sample API stays as prototype/design reference.
+ */
+export const apis: ApiDefinition[] = [proxyApi, openapiApi, sampleApi];
 
 export function getApi(apiId: string): ApiDefinition | undefined {
   return apis.find((api) => api.id === apiId);

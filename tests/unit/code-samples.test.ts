@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { openapiApi } from "@/content/openapi";
 import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import { getEndpoint } from "@/content";
 import type { Endpoint } from "@/content/types";
 import {
   API_KEY_ENV,
+  authEnvVar,
   buildSample,
   exampleQuery,
   resolvePath,
@@ -203,5 +205,42 @@ describe("buildSample: query-parameter auth (Proxy API)", () => {
     const sample = buildSample(listCalls, sampleApi.baseUrl, "curl");
     expect(sample).toContain('-H "Authorization: Bearer $SAMPLE_API_KEY"');
     expect(sample).not.toContain("-G");
+  });
+});
+
+describe("buildSample: named-header auth (MiRTA OpenAPI)", () => {
+  const baseUrl = openapiApi.baseUrl;
+  const extList = getEndpoint("openapi", "extensions-list")!;
+  const extUpdate = getEndpoint("openapi", "extensions-update")!;
+  const extDelete = getEndpoint("openapi", "extensions-delete")!;
+
+  it("sends the key in the X-API-Key header, not as Bearer or a query parameter", () => {
+    const curl = buildSample(extList, baseUrl, "curl");
+    expect(curl).toContain(`curl -X GET "${baseUrl}/extensions?tenant=TESTTENANT"`);
+    expect(curl).toContain('-H "X-API-Key: $OPENAPI_API_KEY"');
+    expect(curl).not.toContain("Bearer");
+    expect(curl).not.toContain("key=");
+    expect(buildSample(extList, baseUrl, "javascript")).toContain('"X-API-Key": process.env.OPENAPI_API_KEY,');
+    expect(buildSample(extList, baseUrl, "python")).toContain(`headers={"X-API-Key": os.environ['OPENAPI_API_KEY']},`);
+  });
+
+  it("resolves the path parameter and sends a JSON body for PATCH", () => {
+    const curl = buildSample(extUpdate, baseUrl, "curl");
+    expect(curl).toContain(`curl -X PATCH "${baseUrl}/extensions/OBJECT_ID?tenant=TESTTENANT"`);
+    expect(curl).toContain('-H "Content-Type: application/json"');
+    expect(curl).toContain(`-d '{"name":"Demo User - Desk"`);
+    expect(buildSample(extUpdate, baseUrl, "python")).toContain("requests.patch(");
+  });
+
+  it("sends no body for DELETE", () => {
+    const curl = buildSample(extDelete, baseUrl, "curl");
+    expect(curl).toContain("curl -X DELETE");
+    expect(curl).not.toContain("-d '");
+  });
+
+  it("keeps the Sample API on its own env var and the Proxy API on PROXY_API_KEY", () => {
+    expect(authEnvVar(listCalls)).toBe(API_KEY_ENV);
+    expect(authEnvVar(infoExtensions)).toBe("PROXY_API_KEY");
+    expect(authEnvVar(extList)).toBe("OPENAPI_API_KEY");
   });
 });

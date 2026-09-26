@@ -22,7 +22,7 @@ export const PROXY_PATH = "/pbx/proxyapi.php";
 
 export const legacyDeprecation: Deprecation = {
   note:
-    "The vendor documentation for proxyapi.php recommends the OpenAPI endpoint for new integrations. OpenAPI-based Proxy API documentation is not yet available in this portal.",
+    "The vendor documentation for proxyapi.php recommends the OpenAPI endpoint for new integrations. See the MiRTA OpenAPI reference in this portal; the two APIs are separate and their operations do not map one to one.",
 };
 
 /** U-09: decided for info-extensions (tenant key, read-only suffices); applied unchanged to the Phase 4–6 operations. */

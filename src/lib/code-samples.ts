@@ -11,10 +11,25 @@ export const sampleLanguages: { id: SampleLanguage; label: string; shiki: string
 /** Placeholder, never a realistic-looking secret (MASTER.md "Code blocks"). */
 export const API_KEY_ENV = "SAMPLE_API_KEY";
 
-/** Env var name for an endpoint's credential. Header-auth endpoints keep the original constant. */
+/**
+ * Env var name for an endpoint's credential: `<API>_API_KEY` whenever the
+ * API names its credential parameter (query `key`, header `X-API-Key`).
+ * Bearer-token endpoints with no named parameter (the Sample API) keep the
+ * original constant.
+ */
 export function authEnvVar(endpoint: Endpoint): string {
-  if (endpoint.authentication.location === "query") return `${endpoint.api.toUpperCase()}_API_KEY`;
+  const { location, parameter } = endpoint.authentication;
+  if (location === "query" || parameter) return `${endpoint.api.toUpperCase()}_API_KEY`;
   return API_KEY_ENV;
+}
+
+/**
+ * The header a header-auth endpoint sends its key in: the named parameter
+ * (e.g. `X-API-Key: <key>`) or, when none is named, `Authorization: Bearer <key>`.
+ */
+function authHeader(endpoint: Endpoint): { name: string; bearer: boolean } {
+  const { parameter } = endpoint.authentication;
+  return parameter ? { name: parameter, bearer: false } : { name: "Authorization", bearer: true };
 }
 
 /**
@@ -69,12 +84,14 @@ export function buildSample(
   if (queryAuth) return buildQueryAuthSample(endpoint, `${baseUrl}${path}`, envVar, language);
 
   const url = `${baseUrl}${path}${exampleQuery(endpoint)}`;
+  const header = authHeader(endpoint);
+  const prefix = header.bearer ? "Bearer " : "";
 
   switch (language) {
     case "curl": {
       const lines = [
         `curl -X ${endpoint.method} "${url}"`,
-        `  -H "Authorization: Bearer $${envVar}"`,
+        `  -H "${header.name}: ${prefix}$${envVar}"`,
       ];
       if (body) {
         lines.push(`  -H "Content-Type: application/json"`);
@@ -86,7 +103,9 @@ export function buildSample(
       const opts = [
         `  method: "${endpoint.method}",`,
         `  headers: {`,
-        `    Authorization: \`Bearer \${process.env.${envVar}}\`,`,
+        header.bearer
+          ? `    Authorization: \`Bearer \${process.env.${envVar}}\`,`
+          : `    ${JSON.stringify(header.name)}: process.env.${envVar},`,
         ...(body ? [`    "Content-Type": "application/json",`] : []),
         `  },`,
         ...(body ? [`  body: JSON.stringify(${body.replace(/\n/g, "\n  ")}),`] : []),
@@ -100,7 +119,9 @@ export function buildSample(
     case "python": {
       const args = [
         `    "${url}",`,
-        `    headers={"Authorization": f"Bearer {os.environ['${envVar}']}"},`,
+        header.bearer
+          ? `    headers={"Authorization": f"Bearer {os.environ['${envVar}']}"},`
+          : `    headers={${JSON.stringify(header.name)}: os.environ['${envVar}']},`,
         ...(body ? [`    json=${pythonLiteral(endpoint.requestExample)},`] : []),
         `    timeout=10,`,
       ];

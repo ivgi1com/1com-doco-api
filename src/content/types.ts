@@ -63,14 +63,19 @@ export interface Authentication {
   description: string;
   /** Where the credential travels. Code samples follow this; defaults to header. */
   location?: "header" | "query";
-  /** Header or query-parameter name carrying the credential, e.g. "key". */
+  /**
+   * Header or query-parameter name carrying the credential, e.g. "key" or
+   * "X-API-Key". With header auth and no parameter, samples send
+   * `Authorization: Bearer`.
+   */
   parameter?: string;
   /** Key scope needed for this endpoint, e.g. "Tenant key (read-only is sufficient)". */
   scope?: string;
 }
 
 export interface ErrorSpec {
-  status: number;
+  /** `"undocumented"`: the source names the error code but not its HTTP status. */
+  status: number | "undocumented";
   code: string;
   description: string;
 }

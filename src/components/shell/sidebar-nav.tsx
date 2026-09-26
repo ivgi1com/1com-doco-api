@@ -12,14 +12,11 @@ import { NavLink } from "./nav-link";
 const itemClass =
   "flex min-h-8 items-center gap-2 rounded-md px-2 py-1 text-sm text-ink-muted transition-colors duration-150 hover:bg-surface-2 hover:text-ink aria-[current]:bg-accent-tint aria-[current]:font-semibold aria-[current]:text-accent";
 
-const plannedApis = ["Open API"];
-
 /** Reads the api id from the current path (`/reference/<api>/...`) so the
  * sidebar and mobile drawer always show the API being viewed, not always
  * the first one. Falls back to the first API when not under `/reference`. */
 export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
   const t = useTranslations("nav");
-  const th = useTranslations("home");
   const pathname = usePathname();
   const router = useRouter();
   const detectedId = /^\/reference\/([^/]+)/.exec(pathname)?.[1];
@@ -27,7 +24,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-[1fr_auto] gap-2">
+      <div className="grid gap-2">
         <label className="sr-only" htmlFor={`${idPrefix}-api-${api.id}`}>
           {t("api")}
         </label>
@@ -40,11 +37,6 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
           {apis.map((a) => (
             <option key={a.id} value={a.id}>
               {a.name}
-            </option>
-          ))}
-          {plannedApis.map((name) => (
-            <option key={name} disabled>
-              {name} ({th("comingLater")})
             </option>
           ))}
         </select>

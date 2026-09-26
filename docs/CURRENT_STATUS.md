@@ -1,7 +1,10 @@
 # Current Status
 
 Current work:
-**Phase 8 — Open API rollout: IN PROGRESS (Stage 0 done).** Plan approved
+**Phase 8 — Open API rollout: IN PROGRESS. Stage 0 done; Stage 1 mostly
+done and saved as a WIP checkpoint (8 of 159 endpoints; the checks
+still need a final re-run). See `docs/SESSION_HANDOFF.md` STOP
+checkpoint.** Plan approved
 2026-09-26 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`;
 decisions in `docs/DECISIONS.md` "Phase 8 planning"). `main`
 fast-forwarded to `be23fb2` and tagged `v0.5-proxy-complete`. Branch

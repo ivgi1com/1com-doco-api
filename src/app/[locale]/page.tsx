@@ -4,8 +4,6 @@ import { apis } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
 
-const plannedApis = ["Open API"];
-
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -62,17 +60,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       <div aria-label={t("apisLabel")} className="flex flex-wrap items-center gap-2 border-t border-border pt-6">
         <span className="text-xs font-semibold text-ink-muted">{tn("api")}</span>
-        <span className="rounded-sm border border-accent/40 bg-accent-tint px-2 py-0.5 text-xs font-semibold text-accent">
-          {api.name}
-        </span>
-        {plannedApis.map((name) => (
-          <span
-            key={name}
-            className="rounded-sm border border-border px-2 py-0.5 text-xs text-ink-muted"
-          >
-            {name} · {t("comingLater")}
-          </span>
-        ))}
+        {apis
+          .filter((a) => !a.synthetic)
+          .map((a) => (
+            <Link
+              key={a.id}
+              href={`/reference/${a.id}`}
+              className="rounded-sm border border-accent/40 bg-accent-tint px-2 py-0.5 text-xs font-semibold text-accent hover:border-accent"
+            >
+              {a.name}
+            </Link>
+          ))}
       </div>
     </div>
   );

@@ -26,7 +26,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-function statusInk(status: number) {
+function statusInk(status: number | "undocumented") {
+  if (status === "undocumented") return "text-ink-muted";
   if (status < 300) return "text-success-ink";
   if (status < 500) return "text-warning-ink";
   return "text-danger-ink";
@@ -134,7 +135,9 @@ export function EndpointView({
             {endpoint.methodBasis === "inferred" && (
               <p className="text-xs text-ink-muted">{t("methodInferredNote")}</p>
             )}
-            <ContentText className="max-w-[70ch] text-md text-ink-muted">{endpoint.summary}</ContentText>
+            <ContentText className="max-w-[70ch] text-md text-ink-muted">
+              <InlineMarkup text={endpoint.summary} />
+            </ContentText>
             {endpoint.operationClass === "write" && (
               <Callout kind="warning" title={t("writeOperationTitle")}>
                 <p>{t("writeOperationBody")}</p>
@@ -169,7 +172,12 @@ export function EndpointView({
               )}
               {endpoint.authentication.location === "query" && endpoint.authentication.parameter && (
                 <p className="mt-2 text-xs text-ink-muted">
-                  {t("authInQuery", { parameter: endpoint.authentication.parameter })}
+                  <InlineMarkup text={t("authInQuery", { parameter: endpoint.authentication.parameter })} />
+                </p>
+              )}
+              {endpoint.authentication.location === "header" && endpoint.authentication.parameter && (
+                <p className="mt-2 text-xs text-ink-muted">
+                  <InlineMarkup text={t("authInHeader", { parameter: endpoint.authentication.parameter })} />
                 </p>
               )}
             </div>
@@ -268,7 +276,14 @@ export function EndpointView({
                   {endpoint.errors.map((e) => (
                     <tr key={e.code} className="border-b border-border max-sm:grid max-sm:grid-cols-[auto_1fr] max-sm:gap-x-3 max-sm:py-2.5">
                       <td dir="ltr" className={`px-3 py-2.5 text-start font-mono font-semibold tabular max-sm:p-0 ${statusInk(e.status)}`}>
-                        {e.status}
+                        {e.status === "undocumented" ? (
+                          <span title={t("statusUndocumentedLabel")}>
+                            <span aria-hidden>{t("statusUndocumented")}</span>
+                            <span className="sr-only">{t("statusUndocumentedLabel")}</span>
+                          </span>
+                        ) : (
+                          e.status
+                        )}
                       </td>
                       <td className="px-3 py-2.5 max-sm:p-0">
                         <code className="prose-code">{e.code}</code>
