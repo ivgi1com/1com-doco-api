@@ -13,6 +13,12 @@ import { disaCategory } from "./disas";
 import { featurecodeCategory } from "./featurecodes";
 import { flowCategory } from "./flows";
 import { huntlistCategory } from "./huntlists";
+import { ivrCategory } from "./ivrs";
+import { mediafileCategory } from "./mediafiles";
+import { musiconholdCategory } from "./musiconholds";
+import { paginggroupCategory } from "./paginggroups";
+import { phonebookCategory } from "./phonebooks";
+import { phonebookentryCategory } from "./phonebookentries";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
 import { OPENAPI_BASE_URL } from "./shared";
@@ -41,13 +47,20 @@ const categories: Category[] = [
   flowCategory,
   huntlistCategory,
   customdestinationCategory,
+  ivrCategory,
   // Media & conferencing
   conferenceroomCategory,
+  mediafileCategory,
+  musiconholdCategory,
+  paginggroupCategory,
   // Numbers & dialing
   calleridblacklistCategory,
   didCategory,
   disaCategory,
   featurecodeCategory,
+  // Phone books & provisioning
+  phonebookCategory,
+  phonebookentryCategory,
   // System / admin
   cronjobCategory,
   // Actions
