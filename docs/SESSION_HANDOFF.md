@@ -5,11 +5,14 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## MiRTA OpenAPI documentation baseline — Stage C done, AT THE REVIEW GATE (not approved)
+## MiRTA OpenAPI documentation baseline — APPROVED (gate A)
 
-- **Stage C done 2026-09-26 (Opus 5.5)**, committed as a checkpoint on
-  `docs/openapi-baseline`. This is **not** approval; the §14 completion
-  report was presented and the user's A/B/C/D gate choice is pending.
+- **Approved 2026-09-26, gate A** (approve, save, and continue to
+  planning). Stage C checkpoint `f1c61a3`; approval recorded in its own
+  commit on top. Branch `docs/openapi-baseline`, not merged, not pushed,
+  not tagged. Next: Phase 8 (`docs/phases/08-open-api.md`) enters PLAN
+  MODE; no implementation until that plan is separately approved.
+- **Stage C done 2026-09-26 (Opus 5.5).**
 - Second-pass audit (3 parallel read-only agents plus Opus verification
   of every reported item): 29/37 resource files clean; 8 resource files
   plus `_common.md` had 15 local defects, all fixed (1 wrong alias, 3
@@ -27,8 +30,8 @@ next, on Opus — read this first)
   untouched), SEC-REQ parity 03–30 both directions, labels consistent
   across files/README/resources.json, secret/PII scan clean, `npm run
   check` 250/250.
-- **Next:** wait for the gate choice. Do not start Demo/Live candidate
-  selection or Phase 8 planning without explicit approval.
+- **Next:** Phase 8 planning (plan mode). Do not implement anything,
+  or select Demo/Live candidates, until the Phase 8 plan is approved.
 
 ## (Superseded by Stage C above) Stage B done, awaiting Stage C (Opus)
 

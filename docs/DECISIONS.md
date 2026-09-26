@@ -1069,3 +1069,15 @@ Documentation only; nothing is implemented or Live-enabled.
 
 Factual corrections from the same review are logged in
 `source-docs/DOCS_AUDIT.md` §13.2 (OA-11, OA-12).
+
+## MiRTA OpenAPI documentation baseline approved (gate A, 2026-09-26)
+
+- The user approved the baseline (Stages A–C, final checkpoint `f1c61a3`)
+  at gate A: approve, save, and continue to planning the next phase.
+- Not merged into `main`, not pushed, not tagged; none requested, and
+  the suggested tag list has no docs-baseline tag.
+- Carried open items: 32 response schemas are UNKNOWN pending the PBX
+  OpenAPI JSON (U-18) or authorized read-only observation; whether 1com's
+  PBX serves `openapi.php` is unverified (U-17); SEC-REQ-03..30 are open;
+  the Phase 7 Stage 4 Proxy TEST key is still not rotated.
+- Next: Phase 8 (`docs/phases/08-open-api.md`), planning only.

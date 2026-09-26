@@ -2,8 +2,10 @@
 
 Current work:
 **MiRTA OpenAPI documentation baseline: Stage C (security review +
-second-pass audit) done, checkpoint committed, §14 completion report
-presented — AT THE REVIEW GATE, NOT APPROVED.** Stage C (Opus): 15
+second-pass audit) done — APPROVED 2026-09-26 (gate A: approve, save,
+and continue to planning the next phase).** Not merged, not pushed, not
+tagged (none requested). Next: Phase 8 (`docs/phases/08-open-api.md`)
+planning only — no implementation until its plan is separately approved. Stage C (Opus): 15
 local transcription defects fixed (OA-11) plus evidence-overstatement
 wording in 3 SEC-REQs and a README rule (OA-12), `DOCS_AUDIT.md` §13.2; 4 user security decisions applied (SEC-REQ-27 writes out
 of Live, SEC-REQ-28 tenant isolation, SEC-REQ-19 → BLOCK LIVE,
