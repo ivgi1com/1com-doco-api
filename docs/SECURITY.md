@@ -487,6 +487,17 @@ Both are raw, free-form fields with no documented meaning. In Asterisk MOH confi
 
 ## Open action items
 
+### Phase 8B OpenAPI probe key rotation (2026-09-26, not yet done)
+
+The Phase 8B Stage 2 probe (masked, structure-only, GET-only) used a
+user-supplied tenant-scoped TEST OpenAPI key, passed only as a process
+environment variable to a throwaway scratchpad script. The key was
+shared in the chat transcript (same method as Phase 6/7). Only masked
+shapes were stored (`source-docs/observed/openapi/probe-2026-09-26.masked.json`,
+verified to contain neither the key nor the tenant). **Rotate this key.**
+Whether the key was read-only was not confirmed; the script only ever
+issued GET requests.
+
 ### Stage 4 TEST API key rotation (2026-09-26, not yet done)
 
 The Phase 7 Stage 4 probe (35 read operations) used a user-supplied TEST
