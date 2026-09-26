@@ -2,10 +2,11 @@ import { authentication } from "./authentication";
 import { callHistory } from "./call-history";
 import { gettingStarted } from "./getting-started";
 import { managedbWrites } from "./managedb-writes";
+import { openapiAuthentication } from "./openapi-authentication";
 import type { Guide } from "./types";
 
 /** Guide registry, in sidebar order. Each guide is a content module (types.ts). */
-export const guides: Guide[] = [gettingStarted, authentication, callHistory, managedbWrites];
+export const guides: Guide[] = [gettingStarted, authentication, callHistory, managedbWrites, openapiAuthentication];
 
 export function getGuide(slug: string) {
   return guides.find((g) => g.slug === slug);

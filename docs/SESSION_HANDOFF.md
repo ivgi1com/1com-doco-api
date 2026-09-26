@@ -5,7 +5,39 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — Stage 3 DONE (2026-09-26); Stage 4 next, on Sonnet
+## Phase 8 — Stage 4 DONE (2026-09-26); Stage 5 next, on Sonnet
+
+- One new guide: "OpenAPI authentication and scope"
+  (`src/content/guides/openapi-authentication.ts`, slug
+  `openapi-authentication`), built only from
+  `source-docs/openapi/_common.md`. Registered in
+  `src/content/guides/index.ts`.
+- **A real, pre-existing layout bug found and fixed**: the guide page's
+  grid (`src/app/[locale]/guides/[slug]/page.tsx`) had no base column
+  definition below `xl`, so a CSS grid's default `min-width: auto` let
+  a long single content line stretch the whole mobile page instead of
+  scrolling inside its own code block. The 3 existing Proxy guides
+  never triggered it (their sample lines are shorter); this guide's
+  OpenAPI base-URL sample did. Fixed with Tailwind's `grid-cols-1` base
+  class. Also fixed in the new guide's own content: several
+  slash-joined inline-code runs (no wrap opportunity) switched to
+  comma-separated lists. Full detail: `docs/DECISIONS.md` "Phase 8
+  Stage 4 complete".
+- Validation: `npm run check` 277/277, `npm run build` clean, a
+  Playwright pass over the new guide (desktop/mobile, en/he) — before/
+  after the two fixes, confirming both were real and both are now
+  resolved — plus a regression check of the 3 existing guides (mobile,
+  unchanged). Full Playwright suite: 144/146 (2 chromium-desktop
+  failures, both unrelated to this stage, reproduced the project's
+  known parallel-load flake class and passed alone).
+- **Next: Stage 5 on Sonnet** — full validation pass per the plan:
+  `npm run check`, `npm run build`, the full Playwright suite (already
+  clean above, but re-run fresh per the plan's own step), new e2e tests
+  (API switcher, an OpenAPI page with a path param, a Reference-only
+  write, the 3 Demo fixtures, a GET without a fixture), a visual pass
+  at 3 viewports × 2 locales, and a secret scan of the diff.
+
+## (Superseded by the entry above) Phase 8 — Stage 3 DONE (2026-09-26); Stage 4 next, on Sonnet
 
 - Close-out (continuing from the STOP checkpoint below): `npm run
   check` 272/272, `npm run build` clean (546 endpoint pages).

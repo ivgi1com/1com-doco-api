@@ -31,7 +31,7 @@ export default async function GuidePage({ params }: PageProps<"/[locale]/guides/
 
   return (
     <div className="mx-auto w-full max-w-[84rem] px-4 pb-16 pt-8 sm:px-6 lg:px-10">
-      <div className="grid gap-x-10 gap-y-8 xl:grid-cols-[minmax(0,1fr)_16rem]">
+      <div className="grid grid-cols-1 gap-x-10 gap-y-8 xl:grid-cols-[minmax(0,1fr)_16rem]">
         <article lang="en" dir="auto" className="min-w-0 max-w-[70ch] space-y-8">
           <header className="space-y-3">
             <div className="space-y-2">

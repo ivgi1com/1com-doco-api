@@ -1149,3 +1149,47 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
   scenario resolution, the 3 negative states above (Not simulated, Demo
   data not available, Reference-only/Send-blocked), zero console errors,
   no overflow.
+
+## Phase 8 Stage 4 complete (2026-09-26)
+
+- **One new guide**: "OpenAPI authentication and scope"
+  (`src/content/guides/openapi-authentication.ts`, slug
+  `openapi-authentication` — distinct from the Proxy API's own
+  `authentication` slug), built only from `source-docs/openapi/_common.md`.
+  Covers the 4 key kinds and where the key travels, tenant vs `global=1`
+  scope (including the 6 global-key-only and 8 `global=1`-capable
+  resources), the common error codes, and why no OpenAPI operation is
+  Live yet (SEC-REQ-27/28).
+- **A real, pre-existing layout bug was found and fixed while authoring**,
+  not by reading code but by driving the built page with Playwright at
+  mobile width: `src/app/[locale]/guides/[slug]/page.tsx`'s two-column
+  grid (`xl:grid-cols-[minmax(0,1fr)_16rem]`) had no base column
+  definition below the `xl` breakpoint, so a CSS grid's default
+  `min-width: auto` let a sufficiently long single line of content stretch
+  the whole page instead of scrolling inside its own code block. The 3
+  existing Proxy guides never triggered it — their sample code lines are
+  short enough to fit. OpenAPI's own base URL
+  (`pbx6webserver.1com.co.il/pbx/openapi.php`) plus a query string is
+  long enough that this guide's own `sample` block did. Fixed by adding
+  Tailwind's `grid-cols-1` base class (`repeat(1, minmax(0, 1fr))`),
+  giving the single-column track the same shrink protection the `xl:`
+  variant already had. Re-verified: the 3 existing guides still render
+  identically (byte-identical `scrollWidth === clientWidth` at mobile).
+- **A second, content-only bug in the new guide itself**: several inline
+  `` `code` `` spans were joined by a bare `/` with no surrounding space
+  (e.g. `` `admin_required`/`missing_user` ``), which the browser cannot
+  break a line on, so a long run of them overflowed at mobile width the
+  same way. Fixed by switching to `, `-separated lists, matching how
+  every other multi-value alias list in this project's content is
+  written.
+- Validation: `npm run check` 277/277, `npm run build` clean, a
+  Playwright pass over the new guide (desktop 1440 + mobile 390, en +
+  he) confirming every section, the sample code block, and the endpoint
+  links, zero console errors, no overflow (both before-fix failures
+  reproduced and then confirmed fixed); a regression check of the 3
+  existing guides at mobile width (unchanged); the full Playwright suite
+  (146 tests × 2 desktop + mobile-safari) — 144/146 clean, 2 failures
+  (both chromium-desktop, both unrelated to this stage: Proxy "Try in
+  Playground" and Phase 5 Live tenant/key persistence) reproduced the
+  project's known "a different single test fails once under full-suite
+  parallel load" flakiness class and passed cleanly when re-run alone.
