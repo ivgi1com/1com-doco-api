@@ -1,10 +1,84 @@
 # Session Handoff
 
-Last updated: 2026-09-26 ~17:55 (Phase 8A — OpenAPI API Reference
-completeness: APPROVED, gate A. Phase 8B — OpenAPI Demo: planning next,
-switch to Opus 5.5 first — read this first)
+Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: IN PROGRESS, Stage 3
+partially started, STOP checkpoint — read this first)
 
-## Phase 8A — APPROVED (2026-09-26 ~17:55, gate A: approve, save, continue to planning 8B)
+## Phase 8B — STOP checkpoint (2026-09-26): Stages 1-2 done, Stage 3 just started
+
+- Branch `phase/open-api`. Plan (approved):
+  `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md` (Stages 1-5).
+  Decisions: `docs/DECISIONS.md` "Phase 8B planning and probe decisions".
+  Not pushed.
+- **Stage 1 done** (`f833747`):
+  - Request tab substitutes path values and shows the masked
+    `X-API-Key` header.
+  - "Simulate error" is shown only for the synthetic Sample API.
+  - Two documented Demo cases were added: Extension State "Not
+    registered", AI Analysis "One of two unique IDs unknown".
+  - Isolation tests were added.
+  - Validation: `npm run check` 289/289; targeted Playwright 31 passed
+    (plus the fixed Request-tab test, 2/2).
+- **Stage 2 done** (`e73e8c5`):
+  - Masked, structure-only GET probe (57 calls, 7 error checks and a
+    follow-up), stored in
+    `source-docs/observed/openapi/probe-2026-09-26.masked.json`
+    (verified to contain no key or tenant).
+  - `cdrs-list` was not probed. The user did not answer whether to probe
+    it; skipped because of a possible side effect.
+  - **The TEST key the user shared in chat must be rotated.** This is an
+    open action in `docs/SECURITY.md`.
+- **Decisions after the probe** (`16731db`):
+  - Tenant errors: record both the documented codes and the observed
+    behavior (401 `invalid_api_key`).
+  - Drop the AI Logs Demo fixture (the endpoint returns 404 on the test
+    PBX) and use the Queue GETs instead.
+  - Error chips only on endpoints that have a success fixture.
+- **Stage 3 partial (uncommitted until this checkpoint):**
+  - `src/content/observed.ts` is written but **not wired and not
+    type-checked or tested**. It is a server-side accessor
+    (`withObserved`, `observedOperationIds`) that turns the masked
+    shapes into observed 200 responses (schema, synthetic placeholder
+    example, `evidence: "observed-sanitized"`, `tested: true`) and
+    per-endpoint observed notes. It follows the 8A examples.ts pattern
+    so the client sidebar bundle doesn't ship the schemas. Its notes
+    cite DOCS_AUDIT OA-15/16/17, which **do not exist yet**.
+  - Still to do in Stage 3:
+    - Wire `withObserved` into
+      `src/app/[locale]/reference/[api]/[endpoint]/page.tsx` (pass the
+      merged endpoint to `buildPanelData` and `EndpointView`).
+    - Unit tests: probed ids gain an observed 200 when no documented 2xx
+      exists; no secret-shaped example values; every masked field
+      appears in the schema.
+    - Write `source-docs/DOCS_AUDIT.md` §14 (OA-14.. findings).
+      - General:
+        - error envelope `{"error":{"code","message"}}` (401/403/404/400);
+        - lists are top-level arrays with extra `id`/`name`;
+        - gets add `id`/`name`/`object`/`related`;
+        - most numerics are returned as strings;
+        - no pagination (campaignnumbers returned 5251 rows).
+      - OA-15: the tenant error mismatch.
+      - OA-16: `object_not_found` is undocumented.
+      - OA-17: ailogs returns 404.
+      - Endpoint-specific:
+        - extension list keys `id`/`number`/`name`/`tech`;
+        - aianalysis all-miss returns `[]`;
+        - Simple CDR no-match returns `[]`;
+        - phonebookentries without a filter timed out;
+        - tenantvariables returned empty.
+    - `docs/SECURITY.md`: observations confirming SEC-REQ-19 (`pa_pin`),
+      20 (meetme `pin`/`adminpin` on conference get), 22 (`ds_pin`),
+      26 (`ph_mac`) and 15 (voicemail email). SEC-REQ-03 is still
+      unresolved: the probed extension was VIRTUAL, so no SIP/PJSIP
+      secret was observed.
+    - Run `npm run check`, then commit, then **stop** (the user asked to
+      do Stage 3 and stop).
+- **Model:** the user kept Opus 5.5 for Stages 1-3. The plan routes
+  Stages 3-5 to Sonnet 5.
+- **First action next session:** `git status`, `git log -3`, then
+  `npx tsc --noEmit` to check `src/content/observed.ts`, then continue
+  the Stage 3 items above.
+
+## (Superseded by the entry above) Phase 8A — APPROVED (2026-09-26 ~17:55, gate A: approve, save, continue to planning 8B)
 
 - Branch `phase/open-api`. Approved on top of the two WIP checkpoints
   below (`634f58b`, then this session's alias/notes-audit checkpoint),

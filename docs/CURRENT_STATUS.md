@@ -19,9 +19,11 @@ pages). `npm run check` 285/285, `npm run build` clean, Playwright
 162/164 (1 known flake confirmed to pass alone, 1 WebKit skip), a
 40-load visual pass and a secret scan, all clean. Full detail:
 `docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
-**Next: Phase 8B (OpenAPI Demo) planning — switch to Opus 5.5 first**
-(8B's scope question is a Demo-architecture decision, not routine
-implementation). Stage 6 (Opus cross-API consistency and security
+**Phase 8B (OpenAPI Demo) IN PROGRESS:** Stage 1 (Demo fixes and
+documented cases) and Stage 2 (masked OpenAPI GET probe) done; Stage 3
+(record findings, observed Reference responses) partially started,
+`src/content/observed.ts` written but not wired or verified — see
+`docs/SESSION_HANDOFF.md`. TEST key rotation pending. Stage 6 (Opus cross-API consistency and security
 review — the Phase 8 gate item) is on hold until 8D passes.** Full
 detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",
 `docs/phases/08-substages-README.md`, `docs/DECISIONS.md` "Phase 8
