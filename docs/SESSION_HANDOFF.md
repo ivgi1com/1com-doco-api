@@ -5,7 +5,38 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — Stage 1 DONE (2026-09-26); Stage 2 next, on Sonnet
+## Phase 8 — Stage 2 DONE (2026-09-26); Stage 3 next, on Sonnet
+
+- All 34 remaining resources authored (159/159 operations total), in 5
+  commits by category batch, each with `npm run check` green:
+  Reporting + Auth Token; then config objects in batches of 6, 6, 6, 6,
+  and a final batch of 5 (Tenant, Tenant Variable, User Profile, User,
+  Voicemail). Every field, alias, error code, and security note is
+  transcribed only from `source-docs/openapi/*.md` — no invented
+  behavior.
+- `tests/unit/openapi-coverage.test.ts`: `ROLLOUT_COMPLETE` flipped to
+  `true`. Every inventory operation now resolves to exactly one
+  endpoint; the coverage/consistency assertions (unique titles, header
+  auth everywhere, no Live policy, no undocumented error status, no
+  duplicate response status, code samples resolve every path param)
+  all pass across the full 159-operation set.
+- Global-key-only resources (`tenantScoped: false`, per SEC-REQ-28 §4):
+  Tenant, User, User Profile, Routing Profile, Provider, Auth Token —
+  none accepts a `tenant` parameter, matching the Overview's own list.
+- Final validation: `npm run check` 269/269, `npm run build` clean (546
+  endpoint pages: 109 Proxy + 159 OpenAPI × 2 locales, plus Sample), a
+  Playwright console-error pass over 8 representative new pages
+  (desktop 1440 + mobile 390, including nested-schema and object-field
+  pages) — zero console errors. Full Playwright suite and the he-locale
+  visual pass are deferred to Stage 5 per the plan.
+- **Next: Stage 3 on Sonnet** — generalize the Demo fixture registry to
+  merge fixture sets per API, then add fixtures for the 3 approved GETs
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`) in
+  `src/content/demo/openapi.ts`, derived only from the documented
+  vendor examples with synthetic values. Every other OpenAPI GET shows
+  "Demo data not available"; writes stay Reference-only.
+
+## (Superseded by the entry above) Phase 8 — Stage 1 DONE (2026-09-26); Stage 2 next, on Sonnet
 
 - Close-out: `npm run check` 269/269 (lint covers `scripts/*.mjs`,
   verified), `npm run build` clean. No fixes needed after the WIP
