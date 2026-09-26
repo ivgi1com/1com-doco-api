@@ -6,7 +6,13 @@ import { campaignnumberCategory } from "./campaignnumbers";
 import { conditionCategory } from "./conditions";
 import { conferenceroomCategory } from "./conferencerooms";
 import { cronjobCategory } from "./cronjobs";
+import { customdestinationCategory } from "./customdestinations";
 import { dialCategory } from "./dial";
+import { didCategory } from "./dids";
+import { disaCategory } from "./disas";
+import { featurecodeCategory } from "./featurecodes";
+import { flowCategory } from "./flows";
+import { huntlistCategory } from "./huntlists";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
 import { OPENAPI_BASE_URL } from "./shared";
@@ -32,10 +38,16 @@ const categories: Category[] = [
   campaignnumberCategory,
   // Call routing
   conditionCategory,
+  flowCategory,
+  huntlistCategory,
+  customdestinationCategory,
   // Media & conferencing
   conferenceroomCategory,
   // Numbers & dialing
   calleridblacklistCategory,
+  didCategory,
+  disaCategory,
+  featurecodeCategory,
   // System / admin
   cronjobCategory,
   // Actions
