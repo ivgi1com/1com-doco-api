@@ -355,8 +355,14 @@ one-endpoint vertical slice can be built truthfully.
   3. Defer until implementation planning.
 - Recommendation: 1 or 2 before implementation planning. Not blocking the
   documentation baseline.
-- User decision: pending
-- Final status: open
+- User decision (2026-09-26, Phase 8 planning): option 1. The user
+  confirmed that `https://pbx6webserver.1com.co.il/pbx/openapi.php` serves
+  MiRTA OpenAPI. This is the base URL for Phase 8 Reference pages and code
+  samples.
+- Final status: closed on the user's confirmation, **not** by a real call.
+  No OpenAPI request has been made, so every OpenAPI endpoint keeps
+  `verification.tested: false`. The PBX version and which resources are
+  enabled on 1com's install remain unknown (U-18).
 
 ## U-18 — Which OpenAPI spec is the reference, and at what version?
 

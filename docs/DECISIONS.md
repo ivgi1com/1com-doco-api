@@ -1081,3 +1081,23 @@ Factual corrections from the same review are logged in
   PBX serves `openapi.php` is unverified (U-17); SEC-REQ-03..30 are open;
   the Phase 7 Stage 4 Proxy TEST key is still not rotated.
 - Next: Phase 8 (`docs/phases/08-open-api.md`), planning only.
+
+## Phase 8 planning — Open API rollout (2026-09-26)
+
+Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
+(Stages 0–6). User decisions:
+
+- **Input:** the approved docs baseline (`source-docs/openapi/`). No
+  OpenAPI JSON spec is available (U-18); a spec importer is a later task.
+- **Scope:** Reference pages for all 128 operations. Demo only for
+  `extensions-state`, `ailogs` and `aianalysis` GETs, the only resources
+  with a documented response and no categorical exclusion. No Live
+  (SEC-REQ-27/28; nothing tested).
+- **Base URL:** `https://pbx6webserver.1com.co.il/pbx/openapi.php`.
+  U-17 is closed on the user's confirmation; `tested` stays false.
+- **Branching:** `main` fast-forwarded to `be23fb2` (Phase 7 plus the
+  OpenAPI docs baseline) and tagged `v0.5-proxy-complete`. Work branch
+  `phase/open-api` from `main`. Not pushed.
+- **Model routing:** Stage 1 (auth model, content helper, inventory) is
+  Opus; Stages 2–5 are Sonnet; Stage 6 (cross-API consistency and
+  security review) is Opus.

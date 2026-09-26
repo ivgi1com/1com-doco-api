@@ -1,6 +1,15 @@
 # Current Status
 
 Current work:
+**Phase 8 — Open API rollout: IN PROGRESS (Stage 0 done).** Plan approved
+2026-09-26 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`;
+decisions in `docs/DECISIONS.md` "Phase 8 planning"). `main`
+fast-forwarded to `be23fb2` and tagged `v0.5-proxy-complete`. Branch
+`phase/open-api`. Scope: Reference pages for 128 operations, Demo for 3
+GETs, no Live. Next: Stage 1 (auth model, `src/content/openapi/`,
+inventory and coverage test, 3 pilots) on Opus.
+
+Previous work (approved):
 **MiRTA OpenAPI documentation baseline: Stage C (security review +
 second-pass audit) done — APPROVED 2026-09-26 (gate A: approve, save,
 and continue to planning the next phase).** Not merged, not pushed, not

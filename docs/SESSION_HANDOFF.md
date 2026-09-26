@@ -5,6 +5,22 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
+## Phase 8 — Open API rollout: Stage 0 done, Stage 1 next (Opus)
+
+- Plan: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
+  (Stages 0–6). Decisions: `docs/DECISIONS.md` "Phase 8 planning".
+- Stage 0: `main` fast-forwarded `0cbd7ba`→`be23fb2`, tagged
+  `v0.5-proxy-complete`, branch `phase/open-api` created. U-17 closed on
+  the user's confirmation (base URL
+  `https://pbx6webserver.1com.co.il/pbx/openapi.php`; nothing tested).
+- Next: Stage 1 on Opus. It covers:
+  - header-auth parameter support in `code-samples.ts` and a per-API env var;
+  - `src/content/openapi/` (`shared.ts`, the `openapiResource()` helper, `index.ts`);
+  - `source-docs/openapi/operations.json` and `tests/unit/openapi-coverage.test.ts`;
+  - the pilots `extensions-state`, `extensions` and `dial`;
+  - removing "Open API" from the `plannedApis` lists.
+- Stages 2–5 run on Sonnet; Stage 6 (review) on Opus. No Live, no push.
+
 ## MiRTA OpenAPI documentation baseline — APPROVED (gate A)
 
 - **Approved 2026-09-26, gate A** (approve, save, and continue to
