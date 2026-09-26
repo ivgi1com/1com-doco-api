@@ -20,13 +20,22 @@ pages). `npm run check` 285/285, `npm run build` clean, Playwright
 40-load visual pass and a secret scan, all clean. Full detail:
 `docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
 **Phase 8B (OpenAPI Demo) IN PROGRESS:** Stage 1 (Demo fixes and
-documented cases) and Stage 2 (masked OpenAPI GET probe) done; Stage 3
+documented cases), Stage 2 (masked OpenAPI GET probe), and Stage 3
 (observed Reference responses wired via `src/content/observed.ts`,
-`DOCS_AUDIT.md` §14 OA-14..OA-18, SECURITY.md probe observations) done —
-`npm run check` 295/295, build clean. Stage 4 not started; its scope
-must be re-confirmed (the plan file was overwritten) — see
-`docs/SESSION_HANDOFF.md`. TEST key rotation pending. Stage 6 (Opus cross-API consistency and security
-review — the Phase 8 gate item) is on hold until 8D passes.** Full
+`DOCS_AUDIT.md` §14 OA-14..OA-18, SECURITY.md probe observations) done.
+**Stage 4 (Demo fixtures for every probed GET with genuine data, 52
+endpoints total) and Stage 5's OpenAPI coverage report
+(`source-docs/OPENAPI_DEMO_STATUS.md`) are implemented and committed as
+a WIP checkpoint (`2de5888`), but Stage 5's validation checklist
+(full Playwright, a visual pass, an explicit secret scan) is not
+finished — not yet at the Phase 8B gate.** After a PC crash mid-session
+lost the running handoff, this scope was recovered from the raw session
+transcripts and reconfirmed with the user; see `docs/SESSION_HANDOFF.md`
+"Phase 8B — Stage 4 + Stage 5 coverage report" for full detail, including
+2 real bugs found and fixed while validating. `npm run check` 348/348,
+build clean (576 pages). TEST key rotation still pending. Stage 6 (Opus
+cross-API consistency and security review — the Phase 8 gate item) is on
+hold until 8D passes.** Full
 detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",
 `docs/phases/08-substages-README.md`, `docs/DECISIONS.md` "Phase 8
 pre-Stage-6 sub-phases inserted". This supersedes the "FEATURE-COMPLETE"
