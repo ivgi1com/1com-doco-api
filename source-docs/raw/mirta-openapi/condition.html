@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en-GB"
+      dir="ltr"
+      class="">
+<head>
+    <title>Condition | MiRTA PBX</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="token" content="REDACTED-SESSION-CSRF-TOKEN">
+    <meta name="base-url" content="https://manual.mirtapbx.com">
+    <meta name="theme-color" content="#206ea7"/>
+
+    <!-- Social Cards Meta -->
+    <meta property="og:title" content="Condition | MiRTA PBX">
+    <meta property="og:url" content="https://manual.mirtapbx.com/books/api/page/condition">
+        <meta property="og:description" content="The Condition object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. T...">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://manual.mirtapbx.com/dist/styles.css?version=v26.05">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="256x256" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/mirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/nmDmirtapbxfavicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/nmDmirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/Hu6mirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/myHmirtapbxfavicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://manual.mirtapbx.com/uploads/images/system/2026-06/Wutmirtapbxfavicon.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="https://manual.mirtapbx.com/manifest.json" crossorigin="use-credentials">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- OpenSearch -->
+    <link rel="search" type="application/opensearchdescription+xml" title="MiRTA PBX" href="https://manual.mirtapbx.com/opensearch.xml">
+
+    <!-- Custom Styles & Head Content -->
+    <style>
+    :root {
+        --color-primary: #206ea7;
+        --color-primary-light: rgba(32,110,167,0.15);
+        --color-link: #206ea7;
+        --color-bookshelf: #a94747;
+        --color-book: #077b70;
+        --color-chapter: #af4d0d;
+        --color-page: #206ea7;
+        --color-page-draft: #7e50b1;
+    }
+    :root.dark-mode {
+        --color-primary: #195785;
+        --color-primary-light: rgba(32,110,167,0.15);
+        --color-link: #429fe3;
+        --color-bookshelf: #ff5454;
+        --color-book: #389f60;
+        --color-chapter: #ee7a2d;
+        --color-page: #429fe3;
+        --color-page-draft: #a66ce8;
+    }
+</style>
+    <!-- Start: custom user content -->
+
+
+<!-- End: custom user content -->
+
+    
+    <!-- Translations for JS -->
+    </head>
+<body
+          class=" tri-layout ">
+
+        <a class="px-m py-s skip-to-content-link print-hidden" href="#main-content">Skip to main content</a>    <div component="notification"
+     option:notification:type="success"
+     option:notification:auto-hide="true"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification pos"
+     role="alert">
+    <svg class="svg-icon" data-icon="check-circle" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>
+
+<div component="notification"
+     option:notification:type="warning"
+     option:notification:auto-hide="false"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification warning"
+     role="alert">
+    <svg class="svg-icon" data-icon="info" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 17h2v-6h-2zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8M11 9h2V7h-2z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>
+
+<div component="notification"
+     option:notification:type="error"
+     option:notification:auto-hide="false"
+     option:notification:show="false"
+     style="display: none;"
+     class="notification neg"
+     role="alert">
+    <svg class="svg-icon" data-icon="danger" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27zM12 17.3c-.72 0-1.3-.58-1.3-1.3s.58-1.3 1.3-1.3 1.3.58 1.3 1.3-.58 1.3-1.3 1.3m1-4.3h-2V7h2z"/><path fill="none" d="M0 0h24v24H0z"/></svg> <span></span><div class="dismiss"><svg class="svg-icon" data-icon="close" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+</div>    <header id="header" component="header-mobile-toggle" class="primary-background px-xl grid print-hidden">
+    <div class="flex-container-row justify-space-between gap-s items-center">
+        <a href="https://manual.mirtapbx.com" data-shortcut="home_view" class="logo">
+            <img class="logo-image" src="https://manual.mirtapbx.com/uploads/images/system/2026-06/smalllogo.png" alt="Logo">
+                <span class="logo-text">MiRTA PBX</span>
+    </a>        <div class="hide-over-l py-s">
+            <button type="button"
+                    refs="header-mobile-toggle@toggle"
+                    title="Expand Header Menu"
+                    aria-expanded="false"
+                    class="mobile-menu-toggle"><svg class="svg-icon" data-icon="more" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"/></svg></button>
+        </div>
+    </div>
+
+    <div class="flex-container-column items-center justify-center hide-under-l">
+            <form component="global-search" action="https://manual.mirtapbx.com/search" method="GET" class="search-box" role="search" tabindex="0">
+    <button id="header-search-box-button"
+            refs="global-search@button"
+            type="submit"
+            aria-label="Search"
+            tabindex="-1"><svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg></button>
+    <input id="header-search-box-input"
+           refs="global-search@input"
+           type="text"
+           name="term"
+           data-shortcut="global_search"
+           autocomplete="off"
+           aria-label="Search" placeholder="Search"
+           value="">
+    <div refs="global-search@suggestions" class="global-search-suggestions card">
+        <div refs="global-search@loading" class="text-center px-m global-search-loading"><div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div></div>
+        <div refs="global-search@suggestion-results" class="px-m"></div>
+        <button class="text-button card-footer-link" type="submit">View All</button>
+    </div>
+</form>        </div>
+
+    <nav refs="header-mobile-toggle@menu" class="header-links">
+        <div class="links text-center">
+            <a class="hide-over-l" href="https://manual.mirtapbx.com/search"><svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>Search</a>
+            <a href="https://manual.mirtapbx.com/shelves"
+           data-shortcut="shelves_view"><svg class="svg-icon" data-icon="bookshelf" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path fill="none" d="M1.088 2.566h17.42v17.42H1.088z"/><path d="M4 20.058h15.892V22H4z"/><path fill="none" d="M2.902 1.477h17.42v17.42H2.903z"/><path d="M6.658 3.643V18h-2.38V3.643zm4.668 0V18H8.947V3.643zm3.396.213 5.613 13.214-2.19.93-5.613-13.214z"/></svg>Shelves</a>
+        <a href="https://manual.mirtapbx.com/books" data-shortcut="books_view"><svg class="svg-icon" data-icon="books" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19.252 1.708H8.663a1.77 1.77 0 0 0-1.765 1.764v14.12c0 .97.794 1.764 1.765 1.764h10.59a1.77 1.77 0 0 0 1.764-1.765V3.472a1.77 1.77 0 0 0-1.765-1.764M8.663 3.472h4.412v7.06L10.87 9.208l-2.206 1.324z"/><path fill="none" d="M30.61 3.203h24v24h-24z"/><path d="M2.966 6.61v14c0 1.1.9 2 2 2h14v-2h-14v-14z"/></svg>Books</a>
+        
+        <a href="https://manual.mirtapbx.com/login"><svg class="svg-icon" data-icon="login" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M21 3.01H3c-1.1 0-2 .9-2 2V9h2V4.99h18v14.03H3V15H1v4.01c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98v-14a2 2 0 0 0-2-2M11 16l4-4-4-4v3H1v2h10z"/></svg>Log in</a>
+        </div>
+            </nav>
+</header>
+
+    <div id="content" components="tri-layout" class="block">
+        
+    <div class="tri-layout-mobile-tabs print-hidden">
+        <div class="grid half no-break no-gap">
+            <button type="button"
+                    refs="tri-layout@tab"
+                    data-tab="info"
+                    aria-label="Tab: Show Secondary Information"
+                    class="tri-layout-mobile-tab px-m py-m text-link">
+                Info
+            </button>
+            <button type="button"
+                    refs="tri-layout@tab"
+                    data-tab="content"
+                    aria-label="Tab: Show Primary Content"
+                    aria-selected="true"
+                    class="tri-layout-mobile-tab px-m py-m text-link active">
+                Content
+            </button>
+        </div>
+    </div>
+
+    <div refs="tri-layout@container" class="tri-layout-container"  >
+
+        <div class="tri-layout-sides print-hidden">
+            <div refs="tri-layout@sidebar-scroll-container" class="tri-layout-sides-content">
+                <div class="tri-layout-right print-hidden">
+                    <aside refs="tri-layout@sidebar-scroll-container" class="tri-layout-right-contents">
+                            <div id="page-details" class="entity-details mb-xl">
+    <h5>Details</h5>
+    <div class="blended-links">
+        <div class="entity-meta">
+    
+            <a href="https://manual.mirtapbx.com/books/api/page/condition/revisions" class="entity-meta-item">
+            <svg class="svg-icon" data-icon="history" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8z"/></svg>Revision #18
+        </a>
+    
+    
+            <div class="entity-meta-item">
+            <svg class="svg-icon" data-icon="star" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <div>
+                Created <span title="2026-06-06 07:32:08 UTC">3 months ago</span> by <a href='https://manual.mirtapbx.com/user/admin'>Admin</a>
+            </div>
+        </div>
+    
+            <div class="entity-meta-item">
+            <svg class="svg-icon" data-icon="edit" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <div>
+                Updated <span title="2026-07-03 15:49:07 UTC">2 months ago</span> by <a href='https://manual.mirtapbx.com/user/admin'>Admin</a>
+            </div>
+        </div>
+    
+    
+    </div>
+        
+        
+        
+            </div>
+</div>    <div id="actions" class="actions mb-xl">
+    <h5>Actions</h5>
+
+    <div class="icon-list text-link">
+
+        
+                                            <a href="https://manual.mirtapbx.com/books/api/page/condition/revisions" data-shortcut="revisions" class="icon-list-item">
+                <span><svg class="svg-icon" data-icon="history" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8z"/></svg></span>
+                <span>Revisions</span>
+            </a>
+                        
+        <hr class="primary-background"/>
+
+                                    <div component="dropdown"
+     class="dropdown-container"
+     id="export-menu">
+
+    <button refs="dropdown@toggle"
+         class="icon-list-item text-link"
+         aria-haspopup="true"
+         aria-expanded="false"
+         aria-label="Export"
+         data-shortcut="export">
+        <span><svg class="svg-icon" data-icon="export" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3z"/></svg></span>
+        <span>Export</span>
+    </button>
+
+    <ul refs="dropdown@menu" class="wide dropdown-menu" role="menu">
+        <li><a href="https://manual.mirtapbx.com/books/api/page/condition/export/html" target="_blank" role="menuitem" class="label-item"><span>Contained Web File</span><span>.html</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/condition/export/pdf" target="_blank" role="menuitem" class="label-item"><span>PDF File</span><span>.pdf</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/condition/export/plaintext" target="_blank" role="menuitem" class="label-item"><span>Plain Text File</span><span>.txt</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/condition/export/markdown" target="_blank" role="menuitem" class="label-item"><span>Markdown File</span><span>.md</span></a></li>
+        <li><a href="https://manual.mirtapbx.com/books/api/page/condition/export/zip" target="_blank" role="menuitem" class="label-item"><span>Portable ZIP</span><span>.zip</span></a></li>
+    </ul>
+
+</div>
+            </div>
+
+</div>                    </aside>
+                </div>
+
+                <div class="tri-layout-left print-hidden" id="sidebar">
+                    <aside refs="tri-layout@sidebar-scroll-container" class="tri-layout-left-contents">
+                                    <nav id="page-navigation" class="mb-xl" aria-label="Page Navigation">
+        <h5>Page Navigation</h5>
+        <div class="body">
+            <ul class="sidebar-page-nav menu">
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-object-summary" class="text-limit-lines-1 block">Object Summary</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-endpoint-patterns" class="text-limit-lines-1 block">Endpoint Patterns</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-accepted-field-alias" class="text-limit-lines-1 block">Accepted Field Aliases</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-destination-fields" class="text-limit-lines-1 block">Destination Fields</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-examples" class="text-limit-lines-1 block">Examples</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-list-conditions" class="text-limit-lines-1 block">List Conditions</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-get-condition" class="text-limit-lines-1 block">Get Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-create-condition" class="text-limit-lines-1 block">Create Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-edit-condition" class="text-limit-lines-1 block">Edit Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-delete-condition" class="text-limit-lines-1 block">Delete Condition</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-destinatio" class="text-limit-lines-1 block">Condition Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-destinatio-1" class="text-limit-lines-1 block">Condition Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-1-destinat" class="text-limit-lines-1 block">Condition 1 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-2-destinat" class="text-limit-lines-1 block">Condition 2 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-3-destinat" class="text-limit-lines-1 block">Condition 3 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-4-destinat" class="text-limit-lines-1 block">Condition 4 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-5-destinat" class="text-limit-lines-1 block">Condition 5 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-6-destinat" class="text-limit-lines-1 block">Condition 6 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-7-destinat" class="text-limit-lines-1 block">Condition 7 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-8-destinat" class="text-limit-lines-1 block">Condition 8 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-9-destinat" class="text-limit-lines-1 block">Condition 9 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-10-destina" class="text-limit-lines-1 block">Condition 10 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-11-destina" class="text-limit-lines-1 block">Condition 11 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-12-destina" class="text-limit-lines-1 block">Condition 12 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-13-destina" class="text-limit-lines-1 block">Condition 13 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-14-destina" class="text-limit-lines-1 block">Condition 14 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-15-destina" class="text-limit-lines-1 block">Condition 15 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-16-destina" class="text-limit-lines-1 block">Condition 16 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-17-destina" class="text-limit-lines-1 block">Condition 17 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-18-destina" class="text-limit-lines-1 block">Condition 18 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-19-destina" class="text-limit-lines-1 block">Condition 19 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-20-destina" class="text-limit-lines-1 block">Condition 20 Destination</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h2">
+                        <a href="#bkmrk-condition-extended-r" class="text-limit-lines-1 block">Condition Extended Rows</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                                    <li class="page-nav-item h1">
+                        <a href="#bkmrk-common-errors" class="text-limit-lines-1 block">Common Errors</a>
+                        <div class="link-background sidebar-page-nav-bullet"></div>
+                    </li>
+                            </ul>
+        </div>
+    </nav>
+    <nav id="book-tree"
+     class="book-tree mb-xl"
+     aria-label="Book Navigation">
+
+    <h5>Book Navigation</h5>
+
+    <ul class="sidebar-page-list mt-xs menu entity-list">
+                    <li class="list-item-book book">
+                <a href="https://manual.mirtapbx.com/books/api"
+   class="book   entity-list-item"
+   data-entity-type="book"
+   data-entity-id="801">
+    <span role="presentation" class="icon text-book"><svg class="svg-icon" data-icon="book" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2M6 4h5v8l-2.5-1.5L6 12z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">API</h4>
+            
+    </div>
+</a>            </li>
+        
+                    <li class="list-item-chapter chapter ">
+                <a href="https://manual.mirtapbx.com/books/api/chapter/openapi"
+   class="chapter   entity-list-item"
+   data-entity-type="chapter"
+   data-entity-id="1641">
+    <span role="presentation" class="icon text-chapter"><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">OpenAPI</h4>
+            
+    </div>
+</a>
+                                    <div class="entity-list-item no-hover">
+                        <span role="presentation" class="icon text-chapter"></span>
+                        <div class="content">
+                            <div component="chapter-contents" class="chapter-child-menu">
+    <button type="button"
+            refs="chapter-contents@toggle"
+            aria-expanded="true"
+            class="text-muted chapter-contents-toggle  open ">
+        <svg class="svg-icon" data-icon="caret-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 17.5l5-5-5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> <svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg> <span>38 Pages</span>
+    </button>
+    <ul refs="chapter-contents@list"
+        class="chapter-contents-list sub-menu inset-list  open "         style="display: block;"         role="menu">
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/overview-and-examples"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1245">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Overview and Examples</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/extension-state"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1985">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Extension State</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/auth-token"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1913">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Auth Token</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/dial"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1989">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Dial</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/cdr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1757">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">CDR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/simple-cdr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1761">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Simple CDR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/extension"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1649">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Extension</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/tenant"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1653">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Tenant</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/user"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1657">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">User</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/user-profile"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1661">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">User Profile</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/routing-profile"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1665">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Routing Profile</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/provider"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1909">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Provider</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/voicemail"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1669">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Voicemail</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ivr"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1673">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">IVR</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/custom-destination"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1677">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Custom Destination</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/condition"
+   class="page  selected entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1681">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Condition</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/hunt-list"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1685">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Hunt List</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/did"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1689">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">DID</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/queue"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1693">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Queue</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/setting"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1697">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Setting</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/media-file"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1701">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Media File</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/music-on-hold"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1705">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Music On Hold</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/paging-group"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1709">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Paging Group</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/conference-room"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1713">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Conference Room</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/flow"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1717">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Flow</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/tenant-variable"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1721">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Tenant Variable</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/disa"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1725">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">DISA</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/caller-id-blacklist"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1729">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Caller ID Blacklist</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/campaign"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1733">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Campaign</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/campaign-number"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1737">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Campaign Number</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/cron-job"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1741">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Cron Job</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/feature-code"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1745">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Feature Code</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/short-number"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1749">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Short Number</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/phone-book"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1977">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Phone Book</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/phone-book-entry"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1981">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Phone Book Entry</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/provisioning-phone"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1753">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Provisioning Phone</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ai-analysis"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1969">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">AI Analysis</h4>
+            
+    </div>
+</a>            </li>
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/ai-logs"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="2013">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">AI Logs</h4>
+            
+    </div>
+</a>            </li>
+            </ul>
+</div>                        </div>
+                    </div>
+
+                
+            </li>
+                    <li class="list-item-chapter chapter ">
+                <a href="https://manual.mirtapbx.com/books/api/chapter/proxyapi-old"
+   class="chapter   entity-list-item"
+   data-entity-type="chapter"
+   data-entity-id="1645">
+    <span role="presentation" class="icon text-chapter"><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">ProxyAPI (old)</h4>
+            
+    </div>
+</a>
+                                    <div class="entity-list-item no-hover">
+                        <span role="presentation" class="icon text-chapter"></span>
+                        <div class="content">
+                            <div component="chapter-contents" class="chapter-child-menu">
+    <button type="button"
+            refs="chapter-contents@toggle"
+            aria-expanded="false"
+            class="text-muted chapter-contents-toggle ">
+        <svg class="svg-icon" data-icon="caret-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 17.5l5-5-5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg> <svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg> <span>1 Page</span>
+    </button>
+    <ul refs="chapter-contents@list"
+        class="chapter-contents-list sub-menu inset-list "         role="menu">
+                    <li class="list-item-page " role="presentation">
+                <a href="https://manual.mirtapbx.com/books/api/page/old-proxyapi-legacy-proxy-api-reference-and-examples"
+   class="page   entity-list-item"
+   data-entity-type="page"
+   data-entity-id="1237">
+    <span role="presentation" class="icon text-page"><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+    <div class="content">
+            <h4 class="entity-list-item-name break-text">Old ProxyAPI Legacy proxy API reference and examples.</h4>
+            
+    </div>
+</a>            </li>
+            </ul>
+</div>                        </div>
+                    </div>
+
+                
+            </li>
+            </ul>
+</nav>                    </aside>
+                </div>
+            </div>
+        </div>
+
+        <div class=" tri-layout-middle">
+            <div id="main-content" class="tri-layout-middle-contents">
+                
+    <div class="mb-m print-hidden">
+        <nav class="breadcrumbs text-center" aria-label="Breadcrumb">
+    
+    
+            <a href="https://manual.mirtapbx.com/books" class="text-book icon-list-item outline-hover">
+            <span><svg class="svg-icon" data-icon="books" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19.252 1.708H8.663a1.77 1.77 0 0 0-1.765 1.764v14.12c0 .97.794 1.764 1.765 1.764h10.59a1.77 1.77 0 0 0 1.764-1.765V3.472a1.77 1.77 0 0 0-1.765-1.764M8.663 3.472h4.412v7.06L10.87 9.208l-2.206 1.324z"/><path fill="none" d="M30.61 3.203h24v24h-24z"/><path d="M2.966 6.61v14c0 1.1.9 2 2 2h14v-2h-14v-14z"/></svg></span>
+            <span>Books</span>
+        </a>
+            
+    
+    
+            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=book&entity_id=801"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for book">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api" class="text-book icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="book" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2M6 4h5v8l-2.5-1.5L6 12z"/></svg></span>
+                <span>
+                    API
+                </span>
+            </a>
+                            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=chapter&entity_id=1641"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for chapter">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api/chapter/openapi" class="text-chapter icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="chapter" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z"/></svg></span>
+                <span>
+                    OpenAPI
+                </span>
+            </a>
+                            
+                
+                                    <div components="dropdown dropdown-search"
+     option:dropdown-search:url="/search/entity/siblings?entity_type=page&entity_id=1681"
+     option:dropdown-search:local-search-selector=".entity-list-item"
+     class="dropdown-search">
+    <button class="dropdown-search-toggle-breadcrumb"
+            refs="dropdown@toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Navigate siblings for page">
+        <div role="presentation" class="separator"><svg class="svg-icon" data-icon="chevron-right" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </button>
+    <div refs="dropdown@menu" class="dropdown-search-dropdown card">
+        <div class="dropdown-search-search">
+            <svg class="svg-icon" data-icon="search" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/><path fill="none" d="M0 0h24v24H0z"/></svg>            <input refs="dropdown-search@searchInput"
+                   aria-label="Search"
+                   autocomplete="off"
+                   placeholder="Search"
+                   type="text">
+        </div>
+        <div refs="dropdown-search@loading">
+            <div class="loading-container">
+    <div></div>
+    <div></div>
+    <div></div>
+    </div>        </div>
+        <div refs="dropdown-search@listContainer" class="dropdown-search-list px-m" tabindex="-1" role="list"></div>
+    </div>
+</div>                        <a href="https://manual.mirtapbx.com/books/api/page/condition" class="text-page icon-list-item outline-hover">
+                <span><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+                <span>
+                    Condition
+                </span>
+            </a>
+                    </nav>    </div>
+
+    <main class="content-wrap card">
+        <div component="page-display"
+             option:page-display:page-id="1681"
+             class="page-content clearfix">
+            <div dir="auto">
+
+    <h1 class="break-text" id="bkmrk-page-title">Condition</h1>
+
+    <div style="clear:left;"></div>
+
+            <p id="bkmrk-the-condition-object">The <strong>Condition</strong> object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Tenant API keys must include <code>tenant=CANISTRACCI</code>; writes require a writable API key.</p>
+
+<h2 id="bkmrk-object-summary">Object Summary</h2>
+
+<table id="bkmrk-propertyvalueobjectc"><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Object</td><td><code>condition</code></td></tr><tr><td>Primary path</td><td><code>/conditions</code></td></tr><tr><td>ID field</td><td><code>co_id</code></td></tr><tr><td>Label field</td><td><code>co_name</code></td></tr><tr><td>Primary source table</td><td><code>co_conditions</code></td></tr><tr><td>Required on create</td><td><code>co_type</code></td></tr><tr><td>Path aliases</td><td><code>/conditions</code></td></tr></tbody></table>
+
+<h2 id="bkmrk-endpoint-patterns">Endpoint Patterns</h2>
+
+<table id="bkmrk-actionexample-patter"><thead><tr><th>Action</th><th>Example pattern</th></tr></thead><tbody><tr><td>List</td><td><code>GET https://pbx.example.com/pbx/openapi.php/conditions?tenant=CANISTRACCI</code></td></tr><tr><td>Get by ID</td><td><code>GET https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI</code></td></tr><tr><td>Create</td><td><code>POST https://pbx.example.com/pbx/openapi.php/conditions?tenant=CANISTRACCI</code></td></tr><tr><td>Update</td><td><code>PATCH https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI</code></td></tr><tr><td>Delete</td><td><code>DELETE https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI</code></td></tr></tbody></table>
+
+<h2 id="bkmrk-accepted-field-alias">Accepted Field Aliases</h2>
+
+<table id="bkmrk-request-fieldsource-"><thead><tr><th>Request field</th><th>Source field</th></tr></thead><tbody><tr><td><code>name</code></td><td><code>co_name</code></td></tr><tr><td><code>type</code></td><td><code>co_type</code></td></tr><tr><td><code>timezone</code></td><td><code>co_timezone</code></td></tr></tbody></table>
+
+<h2 id="bkmrk-destination-fields">Destination Fields</h2>
+
+<p id="bkmrk-destination-fields-a">Destination fields accept one destination string or an array of destination strings such as <code>EXT-100</code>, <code>VOICEMAIL-100</code>, or another supported destination type and ID pair.</p>
+
+<table id="bkmrk-destination-typeacce"><thead><tr><th>Destination type</th><th>Accepted aliases</th></tr></thead><tbody><tr><td><code>CONDITION</code></td><td><code>condition</code>, <code>true</code>, <code>yes</code>, <code>destination</code></td></tr><tr><td><code>NOTCONDITION</code></td><td><code>notcondition</code>, <code>false</code>, <code>no</code>, <code>notdestination</code></td></tr><tr><td><code>CONDITION1</code></td><td><code>condition1</code>, <code>destination1</code>, <code>destinationmvv1</code></td></tr><tr><td><code>CONDITION2</code></td><td><code>condition2</code>, <code>destination2</code>, <code>destinationmvv2</code></td></tr><tr><td><code>CONDITION3</code></td><td><code>condition3</code>, <code>destination3</code>, <code>destinationmvv3</code></td></tr><tr><td><code>CONDITION4</code></td><td><code>condition4</code>, <code>destination4</code>, <code>destinationmvv4</code></td></tr><tr><td><code>CONDITION5</code></td><td><code>condition5</code>, <code>destination5</code>, <code>destinationmvv5</code></td></tr><tr><td><code>CONDITION6</code></td><td><code>condition6</code>, <code>destination6</code>, <code>destinationmvv6</code></td></tr><tr><td><code>CONDITION7</code></td><td><code>condition7</code>, <code>destination7</code>, <code>destinationmvv7</code></td></tr><tr><td><code>CONDITION8</code></td><td><code>condition8</code>, <code>destination8</code>, <code>destinationmvv8</code></td></tr><tr><td><code>CONDITION9</code></td><td><code>condition9</code>, <code>destination9</code>, <code>destinationmvv9</code></td></tr><tr><td><code>CONDITION10</code></td><td><code>condition10</code>, <code>destination10</code>, <code>destinationmvv10</code></td></tr><tr><td><code>CONDITION11</code></td><td><code>condition11</code>, <code>destination11</code>, <code>destinationmvv11</code></td></tr><tr><td><code>CONDITION12</code></td><td><code>condition12</code>, <code>destination12</code>, <code>destinationmvv12</code></td></tr><tr><td><code>CONDITION13</code></td><td><code>condition13</code>, <code>destination13</code>, <code>destinationmvv13</code></td></tr><tr><td><code>CONDITION14</code></td><td><code>condition14</code>, <code>destination14</code>, <code>destinationmvv14</code></td></tr><tr><td><code>CONDITION15</code></td><td><code>condition15</code>, <code>destination15</code>, <code>destinationmvv15</code></td></tr><tr><td><code>CONDITION16</code></td><td><code>condition16</code>, <code>destination16</code>, <code>destinationmvv16</code></td></tr><tr><td><code>CONDITION17</code></td><td><code>condition17</code>, <code>destination17</code>, <code>destinationmvv17</code></td></tr><tr><td><code>CONDITION18</code></td><td><code>condition18</code>, <code>destination18</code>, <code>destinationmvv18</code></td></tr><tr><td><code>CONDITION19</code></td><td><code>condition19</code>, <code>destination19</code>, <code>destinationmvv19</code></td></tr><tr><td><code>CONDITION20</code></td><td><code>condition20</code>, <code>destination20</code>, <code>destinationmvv20</code></td></tr></tbody></table>
+
+<h2 id="bkmrk-examples">Examples</h2>
+
+<h3 id="bkmrk-list-conditions">List Conditions</h3>
+<p id="bkmrk-returns-the-conditio">Returns the conditions visible to the key and scope.</p>
+<pre id="bkmrk-curl--h-%22x-api-key%3A-"><code>curl -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/conditions?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-get-condition">Get Condition</h3>
+<p id="bkmrk-reads-one-object-by-">Reads one object by its internal ID.</p>
+<pre id="bkmrk-curl--h-%22x-api-key%3A--1"><code>curl -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-create-condition">Create Condition</h3>
+<p id="bkmrk-creates-a-new-object">Creates a new object. Use the short aliases shown above or the source field names.</p>
+<pre id="bkmrk-curl--x-post-%5C--h-%22x"><code>curl -X POST \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "name": "Docs API Office Hours",
+  "type": "WEEKTIME",
+  "timezone": "Europe/Rome"
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-edit-condition">Edit Condition</h3>
+<p id="bkmrk-updates-only-the-sup">Updates only the supplied fields.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "timezone": "UTC"
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-delete-condition">Delete Condition</h3>
+<p id="bkmrk-deletes-the-object.-">Deletes the object. Check references before deleting configuration used by routing or reporting.</p>
+<pre id="bkmrk-curl--x-delete-%5C--h-"><code>curl -X DELETE \
+  -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-destinatio">Condition Destination</h3>
+<p id="bkmrk-updates-the-conditio">Updates the <code>CONDITION</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-1"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-destinatio-1">Condition Destination</h3>
+<p id="bkmrk-updates-the-notcondi">Updates the <code>NOTCONDITION</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-2"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "notcondition": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-1-destinat">Condition 1 Destination</h3>
+<p id="bkmrk-updates-the-conditio-1">Updates the <code>CONDITION1</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-3"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition1": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-2-destinat">Condition 2 Destination</h3>
+<p id="bkmrk-updates-the-conditio-2">Updates the <code>CONDITION2</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-4"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition2": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-3-destinat">Condition 3 Destination</h3>
+<p id="bkmrk-updates-the-conditio-3">Updates the <code>CONDITION3</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-5"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition3": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-4-destinat">Condition 4 Destination</h3>
+<p id="bkmrk-updates-the-conditio-4">Updates the <code>CONDITION4</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-6"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition4": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-5-destinat">Condition 5 Destination</h3>
+<p id="bkmrk-updates-the-conditio-5">Updates the <code>CONDITION5</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-7"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition5": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-6-destinat">Condition 6 Destination</h3>
+<p id="bkmrk-updates-the-conditio-6">Updates the <code>CONDITION6</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-8"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition6": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-7-destinat">Condition 7 Destination</h3>
+<p id="bkmrk-updates-the-conditio-7">Updates the <code>CONDITION7</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-9"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition7": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-8-destinat">Condition 8 Destination</h3>
+<p id="bkmrk-updates-the-conditio-8">Updates the <code>CONDITION8</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-10"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition8": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-9-destinat">Condition 9 Destination</h3>
+<p id="bkmrk-updates-the-conditio-9">Updates the <code>CONDITION9</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-11"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition9": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-10-destina">Condition 10 Destination</h3>
+<p id="bkmrk-updates-the-conditio-10">Updates the <code>CONDITION10</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-12"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition10": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-11-destina">Condition 11 Destination</h3>
+<p id="bkmrk-updates-the-conditio-11">Updates the <code>CONDITION11</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-13"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition11": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-12-destina">Condition 12 Destination</h3>
+<p id="bkmrk-updates-the-conditio-12">Updates the <code>CONDITION12</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-14"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition12": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-13-destina">Condition 13 Destination</h3>
+<p id="bkmrk-updates-the-conditio-13">Updates the <code>CONDITION13</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-15"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition13": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-14-destina">Condition 14 Destination</h3>
+<p id="bkmrk-updates-the-conditio-14">Updates the <code>CONDITION14</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-16"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition14": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-15-destina">Condition 15 Destination</h3>
+<p id="bkmrk-updates-the-conditio-15">Updates the <code>CONDITION15</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-17"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition15": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-16-destina">Condition 16 Destination</h3>
+<p id="bkmrk-updates-the-conditio-16">Updates the <code>CONDITION16</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-18"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition16": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-17-destina">Condition 17 Destination</h3>
+<p id="bkmrk-updates-the-conditio-17">Updates the <code>CONDITION17</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-19"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition17": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-18-destina">Condition 18 Destination</h3>
+<p id="bkmrk-updates-the-conditio-18">Updates the <code>CONDITION18</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-20"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition18": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-19-destina">Condition 19 Destination</h3>
+<p id="bkmrk-updates-the-conditio-19">Updates the <code>CONDITION19</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-21"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition19": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-20-destina">Condition 20 Destination</h3>
+<p id="bkmrk-updates-the-conditio-20">Updates the <code>CONDITION20</code> destination. The same value can also be sent inside a <code>destinations</code> object.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-22"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "condition20": [
+    "EXT-100"
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h3 id="bkmrk-condition-extended-r">Condition Extended Rows</h3>
+<p id="bkmrk-supplies-the-extende">Supplies the extended rows used by condition types that require additional values.</p>
+<pre id="bkmrk-curl--x-patch-%5C--h-%22-23"><code>curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "extended_infos": [
+    {
+      "ce_type": "weekday",
+      "ce_value": "mon-fri"
+    },
+    {
+      "ce_type": "hours",
+      "ce_value": "09:00-18:00"
+    }
+  ]
+}' \
+  "https://pbx.example.com/pbx/openapi.php/conditions/OBJECT_ID?tenant=CANISTRACCI"</code></pre>
+
+<h2 id="bkmrk-common-errors">Common Errors</h2>
+
+<table id="bkmrk-errormeaningmissing_"><thead><tr><th>Error</th><th>Meaning</th></tr></thead><tbody><tr><td><code>missing_api_key</code></td><td>No API key was supplied in the query string, <code>X-API-Key</code>, or bearer token.</td></tr><tr><td><code>invalid_api_key</code></td><td>The supplied key does not match the tenant or global API key.</td></tr><tr><td><code>tenant_required</code></td><td>A tenant code is required for tenant-scoped writes or tenant-key reads.</td></tr><tr><td><code>read_only_api_key</code></td><td>The key can read data but cannot create, update, or delete objects.</td></tr><tr><td><code>missing_required_field</code></td><td>A required create field is missing.</td></tr></tbody></table>
+    </div>        </div>
+        <div component="pointer"
+      option:pointer:page-id="1681">
+    <div id="pointer"
+         refs="pointer@pointer"
+         tabindex="-1"
+         aria-label="Page Section Options"
+         class="pointer-container">
+        <div class="pointer flex-container-row items-center justify-space-between gap-xs p-xs anim" >
+            <div refs="pointer@mode-section" class="flex flex-container-row items-center gap-xs">
+                <button refs="pointer@mode-toggle"
+                        title="Permalink mode, Press to show include tag"
+                        class="text-button icon px-xs"><svg class="svg-icon" data-icon="link" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5"/></svg></button>
+                <div class="input-group flex flex-container-row items-center">
+                    <input refs="pointer@link-input" aria-label="Page Section Permalink" readonly="readonly" type="text" id="pointer-url" placeholder="url">
+                    <button refs="pointer@link-button" class="button outline icon px-xs" type="button" title="Copy Link"><svg class="svg-icon" data-icon="copy" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></button>
+                </div>
+            </div>
+            <div refs="pointer@mode-section" hidden class="flex flex-container-row items-center gap-xs">
+                <button refs="pointer@mode-toggle"
+                        title="Include tag mode, Press to show permalink"
+                        class="text-button icon px-xs"><svg class="svg-icon" data-icon="include" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 .5h24v24H0z"/><path d="m12 16.5 4-4h-3v-9h-2v9H8zm9-13h-6v1.99h6v14.03H3V5.49h6V3.5H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-14c0-1.1-.9-2-2-2"/></svg></button>
+                <div class="input-group flex flex-container-row items-center">
+                    <input refs="pointer@include-input" aria-label="Page Section Include Tag" readonly="readonly" type="text" id="pointer-include" placeholder="include">
+                    <button refs="pointer@include-button" class="button outline icon px-xs" type="button" title="Copy Link"><svg class="svg-icon" data-icon="copy" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></button>
+                </div>
+            </div>
+            <div>
+                                            </div>
+        </div>
+    </div>
+
+    <button refs="pointer@section-mode-button" class="screen-reader-only">Enter section select mode</button>
+</div>
+    </main>
+
+    <div id="sibling-navigation" class="grid half collapse-xs items-center mb-m px-m no-row-gap fade-in-when-active print-hidden">
+    <div>
+                    <a href="https://manual.mirtapbx.com/books/api/page/custom-destination" data-shortcut="previous" class="outline-hover no-link-style block rounded">
+                <div class="px-m pt-xs text-muted">Previous</div>
+                <div class="inline-block">
+                    <div class="icon-list-item no-hover">
+                        <span class="text-page "><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+                        <span>Custom Destination</span>
+                    </div>
+                </div>
+            </a>
+            </div>
+    <div>
+                    <a href="https://manual.mirtapbx.com/books/api/page/hunt-list" data-shortcut="next" class="outline-hover no-link-style block rounded text-xs-right">
+                <div class="px-m pt-xs text-muted text-xs-right">Next</div>
+                <div class="inline block">
+                    <div class="icon-list-item no-hover">
+                        <span class="text-page "><svg class="svg-icon" data-icon="page" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg></span>
+                        <span>Hunt List</span>
+                    </div>
+                </div>
+            </a>
+            </div>
+</div>
+            <div class="comments-container mb-l print-hidden">
+            <section components="page-comments tabs"
+         option:page-comments:page-id="1681"
+         option:page-comments:created-text="Comment added"
+         option:page-comments:count-text=":count Comment Thread|:count Comment Threads"
+         option:page-comments:archived-count-text=":count Archived"
+         option:page-comments:wysiwyg-text-direction="ltr"
+         class="comments-list tab-container"
+         aria-label="Comments">
+
+    <div refs="page-comments@comment-count-bar" class="flex-container-row items-center">
+        <div role="tablist" class="flex">
+            <button type="button"
+                    role="tab"
+                    id="comment-tab-active"
+                    aria-controls="comment-tab-panel-active"
+                    refs="page-comments@active-tab"
+                    aria-selected="true">0 Comment Threads</button>
+            <button type="button"
+                    role="tab"
+                    id="comment-tab-archived"
+                    aria-controls="comment-tab-panel-archived"
+                    refs="page-comments@archived-tab"
+                    aria-selected="false">0 Archived</button>
+        </div>
+            </div>
+
+    <div id="comment-tab-panel-active"
+         refs="page-comments@active-container"
+         tabindex="0"
+         role="tabpanel"
+         aria-labelledby="comment-tab-active"
+         class="comment-container no-outline">
+        <div refs="page-comments@comment-container">
+                    </div>
+
+        <p class="text-center text-muted italic empty-state">No comments to display</p>
+
+            </div>
+
+    <div refs="page-comments@archive-container"
+         id="comment-tab-panel-archived"
+         tabindex="0"
+         role="tabpanel"
+         aria-labelledby="comment-tab-archived"
+         hidden="hidden"
+         class="comment-container no-outline">
+                    <p class="text-center text-muted italic empty-state">No comments to display</p>
+    </div>
+
+    
+</section>            <div class="clearfix"></div>
+        </div>
+                </div>
+        </div>
+    </div>
+
+    </div>
+
+    
+    <div component="back-to-top" class="back-to-top print-hidden">
+        <div class="inner">
+            <svg class="svg-icon" data-icon="chevron-up" role="presentation"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/><path fill="none" d="M0 0h24v24H0z"/></svg> <span>Back to top</span>
+        </div>
+    </div>
+
+            <script src="https://manual.mirtapbx.com/dist/app.js?version=v26.05" type="module" nonce="8AjEpeDgHtjqFWNIm49ivXya"></script>
+        
+    </body>
+</html>

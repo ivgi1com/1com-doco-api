@@ -1097,3 +1097,39 @@ only):
   "normally tenant…").
 
 Everything else is UNKNOWN. Full index: `openapi/README.md`.
+
+### 13.1 After the official page snapshot (2026-09-26)
+
+All 38 official pages were captured (`raw/SOURCES.md`; the page list is unchanged since 2026-09-24).
+
+**Housekeeping:**
+- The user retired the wrapper from the tree (commit `a3d8046`). It is cited as `git show 5395552:docs/mirta-openapi-claude-reference.md` ("W:<line>").
+- The permanent rules are now `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md`.
+
+**Status of earlier items:**
+- **OA-01 — resolved.** The official base is `/pbx/openapi.php`: `overview-and-examples.md:10-13` and every resource-page example. The wrapper's `/openapi.php/…` form without `/pbx` (W:31-35) was wrong.
+- **OA-02 — resolved.**
+  - The Overview's objects table (`overview-and-examples.md:38`) gives an official primary path for 36 resources.
+  - The Extension State page gives the 37th (`/extensions/state`).
+  - **All 37 of the wrapper's matrix plurals match the official paths exactly.** The vague catalog-level wording (W:92-120) was only imprecise.
+- **OA-03, OA-04:** stand as records of the wrapper's provenance. They no longer matter, since every claim is now checked against official pages.
+- **OA-05:** stands (37 resources + 1 overview = 38 pages).
+
+**New items:**
+
+OA-08 — Global-edit flag is `global=1`, not `global=yes` (**wrapper wrong**)
+- The wrapper (W:484-497) documents `global=yes`, e.g. `/pbx/openapi.php/featurecodes?global=yes`.
+- The official pages use `global=1` in all 24 occurrences (`overview-and-examples.md:38` and the object pages). No official page contains `global=yes`.
+- Resources that accept it, per ov:38: Custom Destination, Setting, Media File, Music On Hold, Caller ID Blacklist, Cron Job, Feature Code, Short Number. This set matches the wrapper's list.
+
+OA-09 — The Overview's error list is not exhaustive (a note, **not a conflict**)
+- `overview-and-examples.md:42` says common errors "include" 8 codes and omits `tenant_required`.
+- 34 resource pages document `tenant_required` ("A tenant code is required for tenant-scoped writes or tenant-key reads").
+- The wrapper's list (W:504-512) had it. The wrapper was right here.
+- Ten more page-specific codes exist, e.g. `single_tenant_required`, `admin_required`, `api_ip_not_allowed`. The full table is in `openapi/_common.md` §6.
+
+OA-10 — Extension `realextensions` maps to `virtual_items` (**wrapper imprecise**)
+- The wrapper's W:181 says "`realextensions` -> virtual extension mappings".
+- `extension.md:15` gives the source field as `virtual_items`.
+
+**Coverage and security:** `openapi/README.md` (coverage index) and `openapi/resources.json` (counts).

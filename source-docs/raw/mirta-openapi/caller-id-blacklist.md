@@ -1,0 +1,87 @@
+# Caller ID Blacklist
+
+The **Caller ID Blacklist** object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally tenant-scoped. With a global API key, use `global=1` to manage the shared/global record set. Tenant writes still require `tenant=CANISTRACCI`.
+
+## Object Summary
+
+<table id="bkmrk-propertyvalueobjectc"><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Object</td><td>`calleridblacklist`</td></tr><tr><td>Primary path</td><td>`/calleridblacklists`</td></tr><tr><td>ID field</td><td>`bl_id`</td></tr><tr><td>Label field</td><td>`bl_callerid`</td></tr><tr><td>Primary source table</td><td>`bl_blacklists`</td></tr><tr><td>Required on create</td><td>`bl_callerid`</td></tr><tr><td>Path aliases</td><td>`/calleridblacklist`, `/calleridblacklists`, `/callerid_blacklist`, `/callerid_blacklists`, `/blacklist`, `/blacklists`</td></tr></tbody></table>
+
+## Endpoint Patterns
+
+<table id="bkmrk-actionexample-patter"><thead><tr><th>Action</th><th>Example pattern</th></tr></thead><tbody><tr><td>List</td><td>`GET https://pbx.example.com/pbx/openapi.php/calleridblacklists?tenant=CANISTRACCI`</td></tr><tr><td>Get by ID</td><td>`GET https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI`</td></tr><tr><td>Create</td><td>`POST https://pbx.example.com/pbx/openapi.php/calleridblacklists?tenant=CANISTRACCI`</td></tr><tr><td>Update</td><td>`PATCH https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI`</td></tr><tr><td>Delete</td><td>`DELETE https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI`</td></tr></tbody></table>
+
+## Accepted Field Aliases
+
+<table id="bkmrk-request-fieldsource-"><thead><tr><th>Request field</th><th>Source field</th></tr></thead><tbody><tr><td>`callerid`</td><td>`bl_callerid`</td></tr><tr><td>`reason`</td><td>`bl_reason`</td></tr><tr><td>`inserted`</td><td>`bl_inserted`</td></tr></tbody></table>
+
+## Examples
+
+### List Caller ID Blacklists
+
+Returns the caller id blacklists visible to the key and scope.
+
+```
+curl -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists?tenant=CANISTRACCI"
+```
+
+### Get Caller ID Blacklist
+
+Reads one object by its internal ID.
+
+```
+curl -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI"
+```
+
+### Create Caller ID Blacklist
+
+Creates a new object. Use the short aliases shown above or the source field names.
+
+```
+curl -X POST \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "callerid": "+15559990000",
+  "reason": "Docs API blocked caller"
+}' \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists?tenant=CANISTRACCI"
+```
+
+### Edit Caller ID Blacklist
+
+Updates only the supplied fields.
+
+```
+curl -X PATCH \
+  -H "X-API-Key: TENANT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "reason": "Updated documentation example"
+}' \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI"
+```
+
+### Delete Caller ID Blacklist
+
+Deletes the object. Check references before deleting configuration used by routing or reporting.
+
+```
+curl -X DELETE \
+  -H "X-API-Key: TENANT_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists/OBJECT_ID?tenant=CANISTRACCI"
+```
+
+### List Global Caller ID Blacklists
+
+Uses the shared/global record set for object types that support global rows.
+
+```
+curl -H "X-API-Key: GLOBAL_API_KEY" \
+  "https://pbx.example.com/pbx/openapi.php/calleridblacklists?global=1"
+```
+
+## Common Errors
+
+<table id="bkmrk-errormeaningmissing_"><thead><tr><th>Error</th><th>Meaning</th></tr></thead><tbody><tr><td>`missing_api_key`</td><td>No API key was supplied in the query string, `X-API-Key`, or bearer token.</td></tr><tr><td>`invalid_api_key`</td><td>The supplied key does not match the tenant or global API key.</td></tr><tr><td>`tenant_required`</td><td>A tenant code is required for tenant-scoped writes or tenant-key reads.</td></tr><tr><td>`read_only_api_key`</td><td>The key can read data but cannot create, update, or delete objects.</td></tr><tr><td>`missing_required_field`</td><td>A required create field is missing.</td></tr></tbody></table>

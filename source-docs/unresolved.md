@@ -366,14 +366,15 @@ one-endpoint vertical slice can be built truthfully.
   - which installation it comes from (1com's PBX, or another MiRTA
     install)
   - its MiRTA/spec version
-  - whether fetching it needs an API key (the wrapper's L17-20 URLs are
-    unverified)
+  - whether fetching it needs an API key (the spec URLs themselves are
+    DOCUMENTED: `raw/mirta-openapi/overview-and-examples.md:10-13`)
 - Why it matters: per-install differences must be recorded as
   differences, never merged silently.
 - Options:
   1. A spec from 1com's own PBX (preferred).
   2. A spec from another MiRTA install, labelled as such.
   3. Official manual pages only, with no spec.
+- Note (2026-09-26): the spec is optional — an extra verification layer per `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md` §2.2; the baseline proceeds from the official pages, and spec absence is never filled by invention. Official spec URLs are now DOCUMENTED (`raw/mirta-openapi/overview-and-examples.md:10-13`); whether they need a key is still unknown.
 - Recommendation: 1. If a key is needed, the user fetches it in their own
   terminal; the key never enters chat or disk.
 - User decision: pending (the user will supply the spec)
@@ -392,5 +393,5 @@ one-endpoint vertical slice can be built truthfully.
      the Phase 3 precedent (`raw/SOURCES.md`).
 - Recommendation: 2. It is reproducible and hash-verifiable, and matches
   the Phase 3 method.
-- User decision: pending
-- Final status: open
+- User decision: Claude fetches the pages (2026-09-26).
+- Final status: **closed** — all 38 pages captured 2026-09-26 (`raw/SOURCES.md`, `raw/mirta-openapi/`).

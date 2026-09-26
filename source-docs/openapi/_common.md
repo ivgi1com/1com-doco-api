@@ -1,107 +1,114 @@
 # MiRTA PBX OpenAPI — Common Contract
 
-Cross-resource behavior. Each claim carries an evidence state (`README.md`).
-"Wrapper Lnn" means `docs/mirta-openapi-claude-reference.md` line nn. That
-file is structure/policy only, so every wrapper-only claim here is
-**UNKNOWN** until an official page or the spec confirms it.
+Cross-resource behavior of `openapi.php`. Rules: `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md`.
 
-## 1. Base path and spec discovery
+**Citations.**
+- `ov:N` = `source-docs/raw/mirta-openapi/overview-and-examples.md` line N (BookStack rev #21, updated 2026-08-26). Other pages are cited as `<slug>.md:N` in the same folder.
+- Corrections to earlier local assumptions are logged in `source-docs/DOCS_AUDIT.md` §13 (`OA-` items).
+
+**States.** `DOCUMENTED` / `OBSERVED` / `DOCUMENTED+OBSERVED` / `CONFLICT` / `UNKNOWN`. Nothing here is `OBSERVED`: no OpenAPI call has been made.
+
+## 1. Spec and base URL
 
 | Item | Value | State | Evidence |
 |---|---|---|---|
-| Spec format | OpenAPI 3.0.3 JSON | DOCUMENTED (truncated) | chapter snippet `overview-and-examples`: "exposes configuration and reporting APIs as an OpenAPI 3.0.3 JSON ..." |
-| Base path | wrapper claims `/pbx/openapi.php` (L14) | UNKNOWN | the wrapper itself is inconsistent: L31-35 use `/openapi.php/…` without `/pbx` (OA-01) |
-| Spec URLs | wrapper claims `GET /pbx/openapi.php`, `?spec=1`, `/openapi.json`, `/swagger.json` (L17-20) | UNKNOWN | — |
-| Spec requires auth? | not stated anywhere | UNKNOWN | U-18 |
-| 1com host serves it? | never checked | UNKNOWN | U-17 |
+| Spec format | OpenAPI 3.0.3 JSON, describing paths, methods, auth schemes, request bodies and response schemas | DOCUMENTED | ov:3 |
+| Base URL | `https://<pbx-host>/pbx/openapi.php` (vendor example host `pbx.example.com`) | DOCUMENTED | ov:10 |
+| Spec URLs | `…/openapi.php`, `…/openapi.php?spec=1`, `…/openapi.php/openapi.json`, `…/openapi.php/swagger.json` | DOCUMENTED | ov:10-13 |
+| Does fetching the spec need a key? | not stated | UNKNOWN | U-18 |
+| Does 1com's PBX serve it, and which version? | not established | UNKNOWN | U-17, U-18 |
+| Resource paths | `/pbx/openapi.php/<path>` (earlier local form without `/pbx` corrected, OA-01) | DOCUMENTED | ov:32, every resource page |
 
 ## 2. Authentication
 
 | Item | Value | State | Evidence |
 |---|---|---|---|
-| Key transports | wrapper claims query `key=`, header `X-API-Key`, `Authorization: Bearer` (L23-26, L276-279) | UNKNOWN | — |
-| Preferred transport | wrapper *recommends* `X-API-Key` (L239). This is a project security preference (a credential in the URL gets logged), not an API fact. | policy | adopted as a project rule regardless of the API's options |
-| Key kinds | wrapper claims: tenant read-only, tenant writable/full, global/admin (L270-274) | UNKNOWN | the Proxy API has comparable kinds (`../proxy-api/_common.md`), but that is **not** evidence for OpenAPI |
-| Write needs writable key | wrapper claims (L28, L295) | UNKNOWN | — |
-| System objects reject tenant keys (Tenant, User, User Profile, Routing Profile) | wrapper claims (L499) | UNKNOWN | the official snippets say only that these objects are "managed at syste[m]..." (truncated) |
-| API-key IP filtering | wrapper claims, for AI Logs (L480) | UNKNOWN | — |
-| Error on wrong key kind | wrapper claims `read_only_api_key` (L510) | UNKNOWN | — |
+| Key transports | query `key=`, header `X-API-Key: <key>`, or `Authorization: Bearer <key>` | DOCUMENTED | ov:18, ov:21-27; `extension-state.md:13` |
+| Key kinds | tenant full, tenant read-only, global full, global read-only | DOCUMENTED | `ai-logs.md:13` |
+| Tenant keys need a tenant parameter | "Tenant API keys require a tenant parameter" | DOCUMENTED | ov:18 |
+| Global keys | "can access global administration objects and can list tenant-scoped objects across tenants when no tenant parameter is supplied" | DOCUMENTED | ov:18 |
+| Writes | "writes require a writable API key" (every object page's opening line) | DOCUMENTED | e.g. `extension.md:3` |
+| Read-only key on a write | error `read_only_api_key`: "The key can read data but cannot create, update, or delete objects." | DOCUMENTED | e.g. `extension.md:455` |
+| Required key kind for each object | the Overview's objects table; per-resource files carry it | DOCUMENTED | ov:38 |
+| API-key IP filtering | an optional per-key allowed IP/network list; error `api_ip_not_allowed` | DOCUMENTED on the AI Logs page only. Whether it applies to other resources is UNKNOWN | `ai-logs.md` errors |
+
+**Project preference, not an API fact:** use the `X-API-Key` header server-side. A key in the query string ends up in URLs and logs.
 
 ## 3. Tenant and global scope
 
 | Item | Value | State | Evidence |
 |---|---|---|---|
-| Per-object scope wording | "tenant-scoped" / "managed at system…" / "normally tenant…" | DOCUMENTED (truncated) | chapter snippets, one per resource (README coverage index). The wording after "normally tenant…" is cut off, so any global alternative is not shown. |
-| Tenant parameter | wrapper claims `?tenant=TENANTCODE` (L31-35) | UNKNOWN | — |
-| `global=yes` edits | wrapper claims, for 8 resource types with a global key (L484-497) | UNKNOWN | — |
-| Cross-tenant `%` / omitted tenant | wrapper claims, for AI Logs with a global key (L479) | UNKNOWN | — |
+| Tenant parameter | `tenant=<tenant code>`. Some pages also accept the tenant **name** | DOCUMENTED | ov:22; `extension-state.md:13` ("Tenant code or tenant name"); `cdr.md:3` |
+| Scope classes (Overview "Authentication scope" column) | "Tenant API key"; "Global API key"; "Global full API key"; "Tenant full API key"; "Tenant API key or global key"; "Tenant API key or global key with global=1"; "Tenant full or read-only API key, or global key" | DOCUMENTED | ov:38 |
+| Global-level edit flag | **`global=1`** (24 occurrences across pages; no official page uses `global=yes`, which is incorrect, OA-08) | DOCUMENTED | ov:38 and object pages |
+| Resources that accept `global=1` | Custom Destination, Setting, Media File, Music On Hold, Caller ID Blacklist, Cron Job, Feature Code, Short Number | DOCUMENTED | ov:38 |
+| Global-key-only objects | Tenant, User, User Profile, Routing Profile, Provider ("Global API key"); Auth Token ("Global full API key") | DOCUMENTED | ov:38 |
+| Tenant wildcards (`%`) and name lookup with a global key | documented on the four reporting pages only (CDR, Simple CDR, AI Analysis, AI Logs). AI Logs also allows omitting `tenant` to search all tenants. Not a general rule | DOCUMENTED per page | `cdr.md:15`, `simple-cdr.md:15`, `ai-analysis.md:66`, `ai-logs.md:16` |
+| Extension State needs a tenant even with a global key | yes | DOCUMENTED | `extension-state.md:59` |
 
-## 4. CRUD conventions
+## 4. Endpoint conventions
 
-| Item | Value | State | Evidence |
+| Pattern | Form | State | Evidence |
 |---|---|---|---|
-| List / Get / Create / Update / Delete | wrapper claims `GET`/`GET {id}`/`POST`/`PATCH {id}`/`DELETE {id}` on `/<plural>` (L287-293) | UNKNOWN | — |
-| PUT | not mentioned by the wrapper | UNKNOWN | — |
-| Not every resource supports every method | wrapper (L37) | UNKNOWN in general; DOCUMENTED for CDR and Simple CDR ("GET only") | chapter snippets `cdr`, `simple-cdr` |
-| Lookup by alternate key (e.g. `/extensions/number/100`) | wrapper claims (L216) | UNKNOWN | — |
-| Path aliases (singular, underscore forms) | wrapper claims, for User Profile and Campaign Number (L440-444, L457-461) | UNKNOWN | — |
-| Legacy query form `?object=…&action=list` | wrapper claims, for AI Logs (L474) | UNKNOWN | — |
-| Request body format | wrapper claims JSON (L219) | UNKNOWN | — |
-| Field aliases (`number`→`ex_number` etc.) | wrapper claims (L171-181 and per resource) | UNKNOWN | — |
-| Destination aliases (`EXT-NOANSWER` etc.) | wrapper claims (L197-205, L363-373, L399-402) | UNKNOWN | cf. the Proxy ManageDB destination tags (`../proxy-api/managedb.md`), which are not evidence here |
+| List | `GET /pbx/openapi.php/<path>?tenant=…` | DOCUMENTED | ov:32 |
+| Get by ID | `GET /pbx/openapi.php/<path>/<ID>?tenant=…` | DOCUMENTED | ov:32 |
+| Create | `POST /pbx/openapi.php/<path>?tenant=…` | DOCUMENTED | ov:32 |
+| Modify | `PATCH /pbx/openapi.php/<path>/<ID>?tenant=…` | DOCUMENTED | ov:32 |
+| Delete | `DELETE /pbx/openapi.php/<path>/<ID>?tenant=…` | DOCUMENTED | ov:32 |
+| PUT | never mentioned by any official page | UNKNOWN (not documented) | — |
+| Coverage per object | "Most configuration objects support CRUD operations." CDR, Simple CDR, AI Analysis and AI Logs are read-only reporting endpoints. Supported methods are recorded **per resource** from its own page, never inferred | DOCUMENTED | ov:36 |
+| Read-only endpoints on a write method | error `method_not_allowed` | DOCUMENTED | `cdr.md:3`, `simple-cdr.md:3`, `ai-analysis.md`, `ai-logs.md` |
+| Request bodies | JSON with `Content-Type: application/json` in every write example | DOCUMENTED (examples) | e.g. `extension.md:63-81` |
+| PATCH semantics | "Updates only the supplied … fields" (Extension) | DOCUMENTED per page | `extension.md:147` |
+| Field aliases | a short request field (e.g. `number`) maps to a column (`ex_number`); documented per object | DOCUMENTED per page | e.g. `extension.md:15` |
+| Destination fields | one destination string or an array such as `EXT-100` / `VOICEMAIL-100`; alias keys or a `destinations` object keyed by destination type | DOCUMENTED per page | `extension.md:19`, `extension.md:306` |
 
-## 5. Filters, pagination, formats, dates
-
-| Item | Value | State |
-|---|---|---|
-| Pagination | not described anywhere | UNKNOWN |
-| Filters | wrapper: "filters per resource spec" (L334-335) | UNKNOWN |
-| Output formats | wrapper claims JSON/CSV, for AI Logs (L161, L470) | UNKNOWN; "sup..." in the official AI Logs snippet is cut off |
-| Date format | wrapper claims `YYYY-MM-DD HH:MM:SS`, for AI Logs (L472) | UNKNOWN |
-| Default date range | wrapper claims "current day", for AI Logs (L161) | UNKNOWN |
-
-## 6. Error model
+## 5. Response conventions
 
 | Item | Value | State |
 |---|---|---|
-| Error body | wrapper claims "JSON errors" (L503) | UNKNOWN |
-| Error codes | wrapper lists `missing_api_key`, `invalid_api_key`, `tenant_not_found`, `tenant_required`, `invalid_json`, `missing_required_field`, `read_only_api_key`, `method_not_allowed`, `not_found` (L504-512) | UNKNOWN |
-| HTTP statuses per error | not stated | UNKNOWN |
+| Content type | JSON. Some endpoints also document CSV or XML/template output (per resource) | DOCUMENTED per page |
+| Success HTTP status codes | **no official page states a status code** | UNKNOWN |
+| List envelope (bare array vs wrapper object) | recorded per resource where examples exist | per resource |
+| Pagination | **not documented anywhere** (no `limit`/`offset`/`page`) | UNKNOWN |
+| Empty-result behavior | per resource where documented | per resource |
 
-Project rule (adopted from wrapper L514): preserve the actual HTTP status
-and error body. Never merge distinct server errors into one invented
-error.
+## 6. Errors
 
-## 7. Safe testing policy (project policy, adopted)
+"Errors are returned as JSON with an error code and message" (ov:42).
+- The JSON field names of the error body are **not shown on any page**, so they are UNKNOWN.
+- No HTTP status for any error is documented, so those are UNKNOWN.
+- Project rule: preserve the real status and error body. Never merge distinct errors into one.
 
-- **No real call** is made unless the user explicitly authorizes it and
-  supplies a TEST key and tenant. The key never enters chat or disk (Proxy
-  Stage 4 method: in-process environment only, masked output, self-tested
-  masker).
-- **GET/read:** allowed only after authorization. Evidence is sanitized
-  before commit.
-- **POST/PUT/PATCH/DELETE and actions (Dial, Auth Token, any `action=`):**
-  - never run just to learn behavior
-  - explicit per-operation user approval
-  - isolated test tenant/object only
-  - the expected mutation is stated beforehand
-  - cleanup is verified
-- Documentation is never authorization to call or mutate the PBX.
+| Code | Meaning (official wording) | Where documented |
+|---|---|---|
+| `missing_api_key` | No API key was supplied in the query string, `X-API-Key`, or bearer token. | ov:42; 35 resource pages |
+| `invalid_api_key` | The supplied key does not match the tenant or global API key. | ov:42; 35 pages |
+| `tenant_required` | A tenant code is required for tenant-scoped writes or tenant-key reads. | 34 resource pages. **Not** in ov:42's list, which says "include", so that list is not exhaustive (OA-09) |
+| `read_only_api_key` | The key can read data but cannot create, update, or delete objects. | 31 pages |
+| `missing_required_field` | A required create field is missing. | ov:42; 30 pages |
+| `tenant_not_found` | The tenant parameter did not match any visible tenant. | ov:42; `ai-analysis.md`, `ai-logs.md` |
+| `method_not_allowed` | The endpoint is read-only and only supports GET. | ov:42; CDR, Simple CDR, AI Analysis, AI Logs |
+| `invalid_json` | (no per-page meaning given) | ov:42 only |
+| `not_found` | (no per-page meaning given) | ov:42 only |
+| `single_tenant_required` | Template output requires the request to resolve to exactly one tenant. | `cdr.md`, `simple-cdr.md` |
+| `template_not_found` | The selected XML/template output template does not exist for the tenant. | `cdr.md`, `simple-cdr.md` |
+| `uniqueid_required` | The request did not include a usable `uniqueid` value. | `ai-analysis.md` |
+| `invalid_format` | The `format` value is not `json` or `csv`. | `ai-logs.md` |
+| `api_ip_not_allowed` | IP filtering is enabled and the client address is not in the key's allowed IP or network list. | `ai-logs.md` |
+| `admin_required` | A global API key is required. | `auth-token.md` |
+| `missing_user` | The request body did not include a user value. | `auth-token.md` |
+| `user_not_found` | No supported web user or extension identity matched the requested user value. | `auth-token.md` |
+| `invalid_validity` | The validity value was not ONCE and could not be parsed as a date/time. | `auth-token.md` |
 
-## 8. Live security policy (project policy, adopted)
+## 7. Examples convention
 
-- **Credentials:** kept server-side. Never in browser bundles, Demo
-  fixtures, examples or Git.
-- **Responses:** Live responses pass through an explicit per-operation
-  **field allowlist**, default deny. A name-based blacklist is not
-  sufficient.
-  - Proxy `QUEUELOGS` (A-55, SEC-REQ-01) repeated every value under a
-    bare numeric key that name-based redaction cannot match.
-  - Every OpenAPI response schema is checked for the same shape.
-- **Tenant isolation:** preserved on every call.
-- **Operations:** only explicitly approved ones are exposed. Documenting
-  an operation does not enable it.
-- **Demo:** synthetic data only. It never contacts the PBX, and never
-  replaces a Live failure silently.
-- Each sensitive response gets a `SEC-REQ-0n` entry in
-  `../../docs/SECURITY.md` before any Live consideration.
+- **Official pages:** vendor-fictional values (ov:36): tenant `CANISTRACCI`, keys `TENANT_API_KEY` / `GLOBAL_API_KEY`, `example.com` emails, `198.51.100.x` IPs.
+- **Local docs:** normalize them to `TESTTENANT`, `TEST_API_KEY`, `pbx.example.com`, `Demo User` and `555-01xx`, as required by the instructions §5.
+
+## 8. Policies
+
+Real-PBX testing, security review, and Demo vs Live all follow the instructions file (§§8–10). Summary:
+- No call without explicit authorization and a test key/tenant.
+- No mutation (POST/PATCH/PUT/DELETE, Dial, token generation/reset) without per-task approval.
+- Browser-facing Live responses use a default-deny field allowlist. The Proxy `QUEUELOGS` lesson applies: values can also appear under numeric/positional duplicate keys.

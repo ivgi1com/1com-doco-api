@@ -1,190 +1,97 @@
-# MiRTA PBX OpenAPI — Source Normalization (baseline started 2026-09-26)
+# MiRTA PBX OpenAPI — Local Reference and Coverage Index
 
-Evidence-based record of what the **official MiRTA PBX OpenAPI
-documentation and specification** establish about `openapi.php`. This is
-audit data, not portal content: nothing here is implemented, and nothing
-is enabled in Demo or Live. Documentation and Live authorization are
-separate decisions (`../../docs/SECURITY.md`).
+An evidence-based engineering reference for MiRTA PBX `openapi.php`. It is documentation only: nothing here is implemented, and nothing is enabled in Demo or Live.
 
-**Accuracy over completeness.** A gap stays `UNKNOWN`. It is never filled
-by inference from another resource or from the wrapper.
+- **Rules:** `docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md` (the permanent rulebook: evidence states, per-resource template §15, security review §8, testing policy §10, completion report §14).
+- **Branch, phase and status:** `docs/CURRENT_STATUS.md` and `docs/SESSION_HANDOFF.md`, not this file.
 
-## Authority (user decision, 2026-09-26; `../../docs/DECISIONS.md`)
+## Sources and authority
 
-1. **Authoritative:** the official MiRTA OpenAPI documentation
-   (`manual.mirtapbx.com/books/api/chapter/openapi` and its pages) and the
-   OpenAPI 3.0.3 specification, as supplied by the user. Snapshots go in
-   `../raw/mirta-openapi/`, hashed in `../raw/SOURCES.md`.
-   - Where the two disagree, both are recorded and the conflict is logged
-     in `../DOCS_AUDIT.md` §13. No winner is picked without a user decision.
-2. **Structure/policy only, not evidence:**
-   `../../docs/mirta-openapi-claude-reference.md` (the "wrapper").
-   - Its organization, security rules, testing policy, verification states
-     and checklist are adopted.
-   - Its technical claims (paths, fields, aliases, auth, errors) are
-     recorded as `UNKNOWN — wrapper claims …` until an official source
-     confirms them.
-   - When the official source differs, the official value is written here
-     and the difference is logged as an `OA-` item.
-3. This differs from the Proxy API precedent. For Proxy, 1com's own
-   documentation outranks MiRTA (`../proxy-api/README.md`). 1com publishes
-   no OpenAPI documentation, so for OpenAPI the official MiRTA material is
-   the authority.
-   - Differences specific to 1com's install, if a spec from 1com's PBX is
-     supplied, are recorded as per-install differences, never merged
-     silently.
+1. **Official MiRTA OpenAPI pages (primary).**
+   - The 38 pages of `https://manual.mirtapbx.com/books/api/chapter/openapi`.
+   - Snapshots from 2026-09-26 are in `../raw/mirta-openapi/<slug>.{md,html}`, with revision numbers and hashes in `../raw/SOURCES.md`.
+   - Citations: `<slug>.md:<line>` (`ov:` = the Overview page).
+2. **PBX-generated OpenAPI 3.0.3 spec (an extra check, optional).**
+   - Not available yet (`../unresolved.md` U-18).
+   - When supplied, it strengthens field-level precision and is compared against the pages (instructions §11).
+- **Not a source:** the former local wrapper (`mirta-openapi-claude-reference.md`) is retired and not a source of truth. It survives in Git history only as historical context. Every claim it made was checked against the official pages before it was removed, and corrections are logged as `OA-` items in `../DOCS_AUDIT.md` §13.
+- **Conflict rule:** two official sources disagreeing is `CONFLICT`, recorded with both references. No winner is picked.
+- 1com publishes no OpenAPI documentation, and nobody has checked whether 1com's PBX serves `openapi.php` (U-17).
+- **Proxy API and OpenAPI are separate API families.** Official pages sometimes cross-reference Proxy operations. That is recorded, but no Proxy behavior is carried over.
 
-## Evidence states
+## Files
 
-| State | Meaning |
-|---|---|
-| `DOCUMENTED` | Stated directly by an official MiRTA page or the spec. Cite file and line/JSON pointer. |
-| `OBSERVED` | Seen in an explicitly authorized real call (sanitized evidence in `../observed/`). |
-| `DOCUMENTED+OBSERVED` | Both, and they agree. |
-| `CONFLICT` | Observed behavior contradicts the documentation. Stop and report. |
-| `UNKNOWN` | Not established. A wrapper claim alone is always `UNKNOWN`. |
+- **`_common.md`**: base URL and spec URLs, authentication and key kinds, tenant/global scope and `global=1`, endpoint conventions, response conventions, and the full error-code table.
+- **`<path>.md`**: one file per resource page, using the instructions §15 template.
+  - Named after the documented primary path, e.g. `/extensions` → `extensions.md`, `/extensions/state` → `extensions-state.md`, `/auth/token` → `auth-token.md`.
+  - A file exists only once its page has been processed.
+- **`resources.json`**: the machine-readable form of the index below: one entry per official page, plus aggregate counts.
+  - Regenerated from the snapshots and the per-page processing state.
+  - The Overview's objects table (`overview-and-examples.md:38`) supplies each resource's documented primary path and authentication scope.
 
-- **Truncated official text** (the chapter index's ~100-character preview
-  snippets) is `DOCUMENTED` only for the words actually shown. Nothing is
-  extrapolated past the `...`.
+## Status definitions used in the index
 
-## Current evidence inventory
-
-| Source | Status | What it establishes |
-|---|---|---|
-| `../raw/api-book-openapi-chapter.html` (fetched 2026-09-24) | official, **index only** | The 38 page titles and URLs (37 resources plus the overview) and one truncated preview sentence per page. No paths, methods, fields, auth or errors. |
-| Official resource pages | **not yet captured** | Stage B |
-| OpenAPI 3.0.3 spec JSON | **not yet supplied** | Stage B |
-| Wrapper | structure/policy only | Nothing technical, by rule |
-| Real calls | **none** | No test key or tenant authorized for OpenAPI |
-
-**Not established:**
-- Whether 1com's PBX host serves `/pbx/openapi.php` at all.
-- Which MiRTA version or spec revision 1com runs.
-
-Both are tracked in `../unresolved.md` U-17 and U-18.
-
-## Layout
-
-- `_common.md` — base path and spec endpoints, authentication, key kinds,
-  tenant/global scope, CRUD conventions, filters/pagination/formats, error
-  model, safe-testing policy, Live security policy.
-- `<resource>.md` — one per resource. **Created only when official
-  evidence for that resource exists** (no empty stubs). Named after the
-  official path plural once `DOCUMENTED` (e.g. `extensions.md`), otherwise
-  after the official page slug.
-- `resources.json` — machine-readable inventory of the same coverage
-  index, for later coverage tests (mirrors `../proxy-api/operations.json`).
-
-## Per-resource file template
-
-```markdown
-# <Resource title>
-
-## Quick card
-| | Value | State |
-|---|---|---|
-| Purpose | | |
-| Primary path / aliases | | |
-| Methods | GET list · GET one · POST · PATCH · PUT · DELETE · actions (each marked separately; never assumed from another resource) | |
-| Tenant required | | |
-| Key level | read-only / writable-full / global-admin | |
-| Global mode (`global=yes`) | | |
-| Mutating | | |
-| Response sensitivity | none / PII / credential-bearing / nested rows / positional duplicates | |
-| Demo suitability | | |
-| Live prerequisites | | |
-
-## Identity
-Object name, table, ID field, label field, official page URL, spec JSON pointer.
-
-## Operations
-### <METHOD> <path>
-- Parameters: name | in (path/query/header) | required | type | aliases | allowed values | default | state
-- Filters / pagination / date formats / output formats
-- Request body (writes): required, optional, aliases, types, nesting, validation, destinations
-- Response: structure, field types, arrays/objects, pagination metadata, empty result, success status
-- Errors
-- Examples: synthetic only, and only where the schema is established
-
-## Security
-Credential or PII fields; nested DB rows; numeric/positional duplicate keys.
-Anything sensitive → `SEC-REQ-0n` in `docs/SECURITY.md` (Live requires an explicit field allowlist).
-
-## Sources · Open questions
-```
-
-## Conventions
-
-- **Synthetic examples only:**
-  - host `pbx.example.com`, key `TEST_API_KEY`, tenant `TESTTENANT`
-  - numbers `555-01xx`, names prefixed `Demo`, secrets `SYNTHETIC_SECRET`
-  - no real keys, tenants, numbers, names, emails, recordings, caller IDs
-    or production IDs, in examples or in raw snapshots (raw snapshots are
-    redacted before commit)
-- **Mutation policy:** POST/PUT/PATCH/DELETE and action endpoints (Dial,
-  Auth Token) are never executed without explicit, per-operation user
-  approval (`_common.md` "Safe testing policy").
-- **Citations:**
-  - pages: `raw/mirta-openapi/<slug>.<ext>:<line>`
-  - spec: `raw/mirta-openapi/<spec file>#/paths/~1extensions/get`
-  - chapter snippets: `raw/api-book-openapi-chapter.html` + slug
+- **Doc status:**
+  - `DOCUMENTED`: path, methods, parameters and response shape are all established by the official page. HTTP status codes are excluded: no official page documents any.
+  - `PARTIAL`: the page is processed, but a contract element (typically the response shape) is not established.
+  - `UNKNOWN`: the page is not processed yet, or the page establishes nothing usable.
+  - `CONFLICT`: official sources disagree.
+- **Security review:** `PASS` / `REVIEW REQUIRED` / `BLOCK LIVE` / `UNKNOWN` (instructions §8). Anything other than PASS gets a `SEC-REQ-0n` in `docs/SECURITY.md`.
+- **Methods = "not yet processed":** the Overview may name the path, but the page's own operations have not been transcribed. CRUD is never inferred.
 
 ## Coverage index
 
-Status as of Stage A. Nothing is verified yet.
+| Counter | Value |
+|---|---|
+| TOTAL OFFICIAL PAGES | 38 |
+| PROCESSED PAGES | 3 |
+| OVERVIEW/GENERAL PAGES | 1 |
+| RESOURCE PAGES | 37 |
+| UNIQUE RESOURCES | 37 |
+| ENDPOINT PATHS (documented so far) | 4 |
+| HTTP OPERATIONS (documented so far) | 7 |
+| DOCUMENTED | 1 |
+| PARTIAL | 1 |
+| UNKNOWN | 35 |
+| CONFLICT | 0 |
 
-- **Official page** and **Snippet**: `DOCUMENTED`, from the chapter
-  index. Snippets are cut off where shown with `...`.
-- **Path**, **Methods** and **Key level**: `UNKNOWN` unless stated. The
-  wrapper's claim is shown in *italics* for orientation only.
-- **Sensitivity watch**: a reason to scrutinize the schema, not a finding.
-- **Snippet prefix omitted:** the object-page snippets (rows 7–36) all
-  begin with the same sentence, "The <Title> object is supported by the
-  MiRTA PBX OpenAPI endpoint." That sentence is dropped from the table.
-
-| # | Resource | Official page | Official snippet (truncated) | Path | Methods | Mutating | Sensitivity watch | File |
-|---|---|---|---|---|---|---|---|---|
-| 1 | Overview and Examples | `overview-and-examples` | "exposes configuration and reporting APIs as an OpenAPI 3.0.3 JSON ..." | n/a | n/a | n/a | — | `_common.md` |
-| 2 | Extension State | `extension-state` | "returns live call-state information for one extension. It is a read-..." | UNKNOWN *(`/extensions/state`)* | UNKNOWN *(GET)* | not stated ("read-..." is cut off) | call state | — |
-| 3 | Auth Token | `auth-token` | "generates or resets temporary login tokens for web users and extension we..." | UNKNOWN *(`/auth/token`)* | UNKNOWN | **yes** (DOCUMENTED: "generates or resets") | **login tokens** | — |
-| 4 | Dial | `dial` | "originates a call between a source extension and a destination number. It is th..." | UNKNOWN *(`/dial`)* | UNKNOWN *(POST)* | **yes** (DOCUMENTED: "originates a call") | phone numbers | — |
-| 5 | CDR | `cdr` | "a read-only reporting endpoint. It supports GET only; create, update, and de..." | UNKNOWN *(`/cdrs`)* | GET only (DOCUMENTED) | no (DOCUMENTED) | call records, numbers | — |
-| 6 | Simple CDR | `simple-cdr` | "a read-only reporting endpoint. It supports GET only; create, update,..." | UNKNOWN *(`/simplecdrs`)* | GET only (DOCUMENTED) | no (DOCUMENTED) | call records, numbers | — |
-| 7 | Extension | `extension` | "This object is tenant-scoped..." | UNKNOWN *(`/extensions`)* | UNKNOWN *(CRUD)* | UNKNOWN | **SIP secrets, web passwords, PINs, 2FA, email, nested tech rows** (Proxy A-40/A-55 precedent) | — |
-| 8 | Tenant | `tenant` | "This object is managed at syste..." | UNKNOWN *(`/tenants`)* | UNKNOWN | UNKNOWN | tenant config | — |
-| 9 | User | `user` | "This object is managed at system ..." | UNKNOWN *(`/users`)* | UNKNOWN | UNKNOWN | **user credentials** | — |
-| 10 | User Profile | `user-profile` | "This object is managed at..." | UNKNOWN *(`/userprofiles`)* | UNKNOWN | UNKNOWN | permissions | — |
-| 11 | Routing Profile | `routing-profile` | "This object is managed..." | UNKNOWN *(`/routingprofiles`)* | UNKNOWN | UNKNOWN | — | — |
-| 12 | Provider | `provider` | "This object is managed at sys..." | UNKNOWN *(`/providers`)* | UNKNOWN | UNKNOWN | **trunk credentials** | — |
-| 13 | Voicemail | `voicemail` | "This object is tenant-scoped..." | UNKNOWN *(`/voicemails`)* | UNKNOWN | UNKNOWN | **mailbox PIN, IMAP credentials** (Proxy A-77 precedent), email | — |
-| 14 | IVR | `ivr` | "This object is tenant-scoped. Tena..." | UNKNOWN *(`/ivrs`)* | UNKNOWN | UNKNOWN | — | — |
-| 15 | Custom Destination | `custom-destination` | "This object is norm..." | UNKNOWN *(`/customdestinations`)* | UNKNOWN | UNKNOWN | — | — |
-| 16 | Condition | `condition` | "This object is tenant-scoped..." | UNKNOWN *(`/conditions`)* | UNKNOWN | UNKNOWN | — | — |
-| 17 | Hunt List | `hunt-list` | "This object is tenant-scoped..." | UNKNOWN *(`/huntlists`)* | UNKNOWN | UNKNOWN | — | — |
-| 18 | DID | `did` | "This object is tenant-scoped. Tena..." | UNKNOWN *(`/dids`)* | UNKNOWN | UNKNOWN | numbers; possible tenant-row join with recording credentials (Proxy A-53 precedent) | — |
-| 19 | Queue | `queue` | "This object is tenant-scoped. Te..." | UNKNOWN *(`/queues`)* | UNKNOWN | UNKNOWN | — | — |
-| 20 | Setting | `setting` | "This object is normally tenant..." | UNKNOWN *(`/settings`)* | UNKNOWN | UNKNOWN | **may hold secrets** | — |
-| 21 | Media File | `media-file` | "This object is normally ten..." | UNKNOWN *(`/mediafiles`)* | UNKNOWN | UNKNOWN | audio content | — |
-| 22 | Music On Hold | `music-on-hold` | "This object is normally ..." | UNKNOWN *(`/musiconholds`)* | UNKNOWN | UNKNOWN | — | — |
-| 23 | Paging Group | `paging-group` | "This object is tenant-sco..." | UNKNOWN *(`/paginggroups`)* | UNKNOWN | UNKNOWN | — | — |
-| 24 | Conference Room | `conference-room` | "This object is tenant-..." | UNKNOWN *(`/conferencerooms`)* | UNKNOWN | UNKNOWN | **room PINs** | — |
-| 25 | Flow | `flow` | "This object is tenant-scoped. Ten..." | UNKNOWN *(`/flows`)* | UNKNOWN | UNKNOWN | — | — |
-| 26 | Tenant Variable | `tenant-variable` | "This object is tenant-..." | UNKNOWN *(`/tenantvariables`)* | UNKNOWN | UNKNOWN | **may hold secrets** | — |
-| 27 | DISA | `disa` | "This object is tenant-scoped. Ten..." | UNKNOWN *(`/disas`)* | UNKNOWN | UNKNOWN | **DISA PIN** | — |
-| 28 | Caller ID Blacklist | `caller-id-blacklist` | "This object is nor..." | UNKNOWN *(`/calleridblacklists`)* | UNKNOWN | UNKNOWN | caller numbers | — |
-| 29 | Campaign | `campaign` | "This object is tenant-scoped...." | UNKNOWN *(`/campaigns`)* | UNKNOWN | UNKNOWN | — | — |
-| 30 | Campaign Number | `campaign-number` | "This object is tenant-..." | UNKNOWN *(`/campaignnumbers`)* | UNKNOWN | UNKNOWN | customer numbers | — |
-| 31 | Cron Job | `cron-job` | "This object is normally tenan..." | UNKNOWN *(`/cronjobs`)* | UNKNOWN | UNKNOWN | — | — |
-| 32 | Feature Code | `feature-code` | "This object is normally t..." | UNKNOWN *(`/featurecodes`)* | UNKNOWN | UNKNOWN | — | — |
-| 33 | Short Number | `short-number` | "This object is normally t..." | UNKNOWN *(`/shortnumbers`)* | UNKNOWN | UNKNOWN | — | — |
-| 34 | Phone Book | `phone-book` | "This object is tenant-scope..." | UNKNOWN *(`/phonebooks`)* | UNKNOWN | UNKNOWN | — | — |
-| 35 | Phone Book Entry | `phone-book-entry` | "This object is tenant..." | UNKNOWN *(`/phonebookentries`)* | UNKNOWN | UNKNOWN | **contact PII** | — |
-| 36 | Provisioning Phone | `provisioning-phone` | "This object is tena..." | UNKNOWN *(`/provisioningphones`)* | UNKNOWN | UNKNOWN | **MACs, provisioning credentials** | — |
-| 37 | AI Analysis | `ai-analysis` | "returns transcript, AI summary, and sentimental analysis data for record..." | UNKNOWN *(`/aianalysis`)* | UNKNOWN *(GET)* | not stated | **call transcripts** | — |
-| 38 | AI Logs | `ai-logs` | "exports records from ai_ailogs. It is a read-only OpenAPI endpoint that sup..." | UNKNOWN *(`/ailogs`)* | UNKNOWN *(GET)* | no (DOCUMENTED: "read-only") | AI conversation content | — |
-
-**Totals:**
-- 37 resources plus 1 overview page.
-- Resource files created so far: 0.
-- Path `DOCUMENTED`: 0/37. Methods `DOCUMENTED`: 2/37 (CDR, Simple CDR, "GET only").
+| # | Page (official) | Type | Primary path | Methods | Auth scope (Overview) | Doc status | Security review | File | Unresolved |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | [Overview and Examples](https://manual.mirtapbx.com/books/api/page/overview-and-examples) | overview | — | — | — | DOCUMENTED | n/a | `_common.md` | — |
+| 2 | [Extension State](https://manual.mirtapbx.com/books/api/page/extension-state) | resource | `/extensions/state` | GET | — | DOCUMENTED | REVIEW REQUIRED | `extensions-state.md` | SEC-REQ-04 |
+| 3 | [Auth Token](https://manual.mirtapbx.com/books/api/page/auth-token) | resource | `/auth/token` | not yet processed | Global full API key | UNKNOWN | UNKNOWN | — | — |
+| 4 | [Dial](https://manual.mirtapbx.com/books/api/page/dial) | resource | `/dial` | not yet processed | Tenant full API key | UNKNOWN | UNKNOWN | — | — |
+| 5 | [CDR](https://manual.mirtapbx.com/books/api/page/cdr) | resource | `/cdrs` | not yet processed | Tenant API key or global key; GET only | UNKNOWN | UNKNOWN | — | — |
+| 6 | [Simple CDR](https://manual.mirtapbx.com/books/api/page/simple-cdr) | resource | `/simplecdrs` | not yet processed | Tenant API key or global key; GET only | UNKNOWN | UNKNOWN | — | — |
+| 7 | [Extension](https://manual.mirtapbx.com/books/api/page/extension) | resource | `/extensions` | GET, POST, PATCH, DELETE | Tenant API key | PARTIAL | BLOCK LIVE | `extensions.md` | response schemas, SEC-REQ-03 |
+| 8 | [Tenant](https://manual.mirtapbx.com/books/api/page/tenant) | resource | `/tenants` | not yet processed | Global API key | UNKNOWN | UNKNOWN | — | — |
+| 9 | [User](https://manual.mirtapbx.com/books/api/page/user) | resource | `/users` | not yet processed | Global API key | UNKNOWN | UNKNOWN | — | — |
+| 10 | [User Profile](https://manual.mirtapbx.com/books/api/page/user-profile) | resource | `/userprofiles` | not yet processed | Global API key | UNKNOWN | UNKNOWN | — | — |
+| 11 | [Routing Profile](https://manual.mirtapbx.com/books/api/page/routing-profile) | resource | `/routingprofiles` | not yet processed | Global API key | UNKNOWN | UNKNOWN | — | — |
+| 12 | [Provider](https://manual.mirtapbx.com/books/api/page/provider) | resource | `/providers` | not yet processed | Global API key | UNKNOWN | UNKNOWN | — | — |
+| 13 | [Voicemail](https://manual.mirtapbx.com/books/api/page/voicemail) | resource | `/voicemails` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 14 | [IVR](https://manual.mirtapbx.com/books/api/page/ivr) | resource | `/ivrs` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 15 | [Custom Destination](https://manual.mirtapbx.com/books/api/page/custom-destination) | resource | `/customdestinations` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 16 | [Condition](https://manual.mirtapbx.com/books/api/page/condition) | resource | `/conditions` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 17 | [Hunt List](https://manual.mirtapbx.com/books/api/page/hunt-list) | resource | `/huntlists` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 18 | [DID](https://manual.mirtapbx.com/books/api/page/did) | resource | `/dids` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 19 | [Queue](https://manual.mirtapbx.com/books/api/page/queue) | resource | `/queues` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 20 | [Setting](https://manual.mirtapbx.com/books/api/page/setting) | resource | `/settings` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 21 | [Media File](https://manual.mirtapbx.com/books/api/page/media-file) | resource | `/mediafiles` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 22 | [Music On Hold](https://manual.mirtapbx.com/books/api/page/music-on-hold) | resource | `/musiconholds` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 23 | [Paging Group](https://manual.mirtapbx.com/books/api/page/paging-group) | resource | `/paginggroups` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 24 | [Conference Room](https://manual.mirtapbx.com/books/api/page/conference-room) | resource | `/conferencerooms` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 25 | [Flow](https://manual.mirtapbx.com/books/api/page/flow) | resource | `/flows` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 26 | [Tenant Variable](https://manual.mirtapbx.com/books/api/page/tenant-variable) | resource | `/tenantvariables` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 27 | [DISA](https://manual.mirtapbx.com/books/api/page/disa) | resource | `/disas` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 28 | [Caller ID Blacklist](https://manual.mirtapbx.com/books/api/page/caller-id-blacklist) | resource | `/calleridblacklists` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 29 | [Campaign](https://manual.mirtapbx.com/books/api/page/campaign) | resource | `/campaigns` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 30 | [Campaign Number](https://manual.mirtapbx.com/books/api/page/campaign-number) | resource | `/campaignnumbers` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 31 | [Cron Job](https://manual.mirtapbx.com/books/api/page/cron-job) | resource | `/cronjobs` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 32 | [Feature Code](https://manual.mirtapbx.com/books/api/page/feature-code) | resource | `/featurecodes` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 33 | [Short Number](https://manual.mirtapbx.com/books/api/page/short-number) | resource | `/shortnumbers` | not yet processed | Tenant API key or global key with global=1 | UNKNOWN | UNKNOWN | — | — |
+| 34 | [Phone Book](https://manual.mirtapbx.com/books/api/page/phone-book) | resource | `/phonebooks` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 35 | [Phone Book Entry](https://manual.mirtapbx.com/books/api/page/phone-book-entry) | resource | `/phonebookentries` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 36 | [Provisioning Phone](https://manual.mirtapbx.com/books/api/page/provisioning-phone) | resource | `/provisioningphones` | not yet processed | Tenant API key | UNKNOWN | UNKNOWN | — | — |
+| 37 | [AI Analysis](https://manual.mirtapbx.com/books/api/page/ai-analysis) | resource | `/aianalysis` | not yet processed | Tenant API key or global key; GET only | UNKNOWN | UNKNOWN | — | — |
+| 38 | [AI Logs](https://manual.mirtapbx.com/books/api/page/ai-logs) | resource | `/ailogs` | not yet processed | Tenant full or read-only API key, or global key; GET only | UNKNOWN | UNKNOWN | — | — |

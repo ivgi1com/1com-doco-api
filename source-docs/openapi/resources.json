@@ -1,1637 +1,764 @@
 {
-  "generatedFrom": [
-    "source-docs/raw/api-book-openapi-chapter.html",
-    "docs/mirta-openapi-claude-reference.md (wrapper claims only, UNKNOWN)"
-  ],
-  "stage": "A (scaffold) — no official resource page or spec captured yet",
-  "evidenceStates": [
-    "DOCUMENTED",
-    "OBSERVED",
-    "DOCUMENTED+OBSERVED",
-    "CONFLICT",
-    "UNKNOWN"
-  ],
-  "overview": {
-    "id": "overview-and-examples",
-    "officialPage": "https://manual.mirtapbx.com/books/api/page/overview-and-examples",
-    "snippet": "Overview and Examples The MiRTA PBX OpenAPI endpoint exposes configuration and reporting APIs as an OpenAPI 3.0.3 JSON ..."
+  "rules": "docs/OPENAPI_DOCUMENTATION_INSTRUCTIONS.md",
+  "source": "https://manual.mirtapbx.com/books/api/chapter/openapi (snapshots 2026-09-26, source-docs/raw/SOURCES.md)",
+  "note": "authScope/overviewOpsOrRequired are DOCUMENTED from the Overview objects table; methods/httpOperations are filled only from each resource page once processed (null = not yet processed).",
+  "counts": {
+    "totalOfficialPages": 38,
+    "processedPages": 3,
+    "overviewGeneralPages": 1,
+    "resourcePages": 37,
+    "uniqueResources": 37,
+    "endpointPathsDocumented": 4,
+    "httpOperationsDocumented": 7,
+    "DOCUMENTED": 1,
+    "PARTIAL": 1,
+    "UNKNOWN": 35,
+    "CONFLICT": 0,
+    "overviewObjectsTableRows": 36
   },
-  "resources": [
+  "pages": [
     {
-      "id": "extension-state",
+      "n": 1,
+      "slug": "overview-and-examples",
+      "title": "Overview and Examples",
+      "pageType": "overview",
+      "url": "https://manual.mirtapbx.com/books/api/page/overview-and-examples",
+      "snapshot": "source-docs/raw/mirta-openapi/overview-and-examples.md",
+      "primaryPath": null,
+      "primaryPathSource": null,
+      "authScope": null,
+      "overviewOpsOrRequired": null,
+      "methods": null,
+      "httpOperations": null,
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "n/a",
+      "file": "source-docs/openapi/_common.md",
+      "unresolved": []
+    },
+    {
+      "n": 2,
+      "slug": "extension-state",
       "title": "Extension State",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/extension-state",
-      "officialSnippet": {
-        "text": "Extension State The Extension State endpoint returns live call-state information for one extension. It is a read-...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/extensions/state"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L86,L127,L331",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/extension-state",
+      "snapshot": "source-docs/raw/mirta-openapi/extension-state.md",
+      "primaryPath": "/extensions/state",
+      "primaryPathSource": "extension-state.md",
+      "authScope": null,
+      "overviewOpsOrRequired": null,
+      "methods": [
+        "GET"
+      ],
+      "httpOperations": [
+        "GET /extensions/state"
+      ],
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/extensions-state.md",
+      "unresolved": [
+        "SEC-REQ-04"
+      ]
     },
     {
-      "id": "auth-token",
+      "n": 3,
+      "slug": "auth-token",
       "title": "Auth Token",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/auth-token",
-      "officialSnippet": {
-        "text": "Auth Token The Auth Token endpoint generates or resets temporary login tokens for web users and extension we...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/auth/token"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": []
-      },
-      "mutating": {
-        "value": true,
-        "state": "DOCUMENTED",
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'generates or resets temporary login tokens')"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L87,L332",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/auth-token",
+      "snapshot": "source-docs/raw/mirta-openapi/auth-token.md",
+      "primaryPath": "/auth/token",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global full API key",
+      "overviewOpsOrRequired": "POST generate, DELETE reset",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "dial",
+      "n": 4,
+      "slug": "dial",
       "title": "Dial",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/dial",
-      "officialSnippet": {
-        "text": "Dial The Dial endpoint originates a call between a source extension and a destination number. It is th...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/dial"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "POST"
-        ]
-      },
-      "mutating": {
-        "value": true,
-        "state": "DOCUMENTED",
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'originates a call')"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L88,L137,L333",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/dial",
+      "snapshot": "source-docs/raw/mirta-openapi/dial.md",
+      "primaryPath": "/dial",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant full API key",
+      "overviewOpsOrRequired": "POST only; requires source and dest",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "cdr",
+      "n": 5,
+      "slug": "cdr",
       "title": "CDR",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/cdr",
-      "officialSnippet": {
-        "text": "CDR The CDR endpoint is a read-only reporting endpoint. It supports GET only; create, update, and de...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/cdrs"
-      },
-      "methods": {
-        "value": [
-          "GET"
-        ],
-        "state": "DOCUMENTED",
-        "wrapperClaim": [
-          "GET"
-        ],
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'supports GET only')"
-      },
-      "mutating": {
-        "value": false,
-        "state": "DOCUMENTED",
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'supports GET only')"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L89,L144,L334",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/cdr",
+      "snapshot": "source-docs/raw/mirta-openapi/cdr.md",
+      "primaryPath": "/cdrs",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key; GET only",
+      "overviewOpsOrRequired": "GET only",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "simple-cdr",
+      "n": 6,
+      "slug": "simple-cdr",
       "title": "Simple CDR",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/simple-cdr",
-      "officialSnippet": {
-        "text": "Simple CDR The Simple CDR endpoint is a read-only reporting endpoint. It supports GET only; create, update,...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/simplecdrs"
-      },
-      "methods": {
-        "value": [
-          "GET"
-        ],
-        "state": "DOCUMENTED",
-        "wrapperClaim": [
-          "GET"
-        ],
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'supports GET only')"
-      },
-      "mutating": {
-        "value": false,
-        "state": "DOCUMENTED",
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'supports GET only')"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L90,L149,L335",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/simple-cdr",
+      "snapshot": "source-docs/raw/mirta-openapi/simple-cdr.md",
+      "primaryPath": "/simplecdrs",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key; GET only",
+      "overviewOpsOrRequired": "GET only",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "extension",
+      "n": 7,
+      "slug": "extension",
       "title": "Extension",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/extension",
-      "officialSnippet": {
-        "text": "Extension The Extension object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/extensions"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L165,L208-225,L301",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/extension",
+      "snapshot": "source-docs/raw/mirta-openapi/extension.md",
+      "primaryPath": "/extensions",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "number or ex_number; GET /extensions/state for live state",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
+      "httpOperations": [
+        "GET /extensions",
+        "GET /extensions/{ex_id}",
+        "GET /extensions/number/{number}",
+        "POST /extensions",
+        "PATCH /extensions/{ex_id}",
+        "DELETE /extensions/{ex_id}"
+      ],
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/extensions.md",
+      "unresolved": [
+        "response schemas",
+        "SEC-REQ-03"
+      ]
     },
     {
-      "id": "tenant",
+      "n": 8,
+      "slug": "tenant",
       "title": "Tenant",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/tenant",
-      "officialSnippet": {
-        "text": "Tenant The Tenant object is supported by the MiRTA PBX OpenAPI endpoint. This object is managed at syste...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/tenants"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L302",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/tenant",
+      "snapshot": "source-docs/raw/mirta-openapi/tenant.md",
+      "primaryPath": "/tenants",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global API key",
+      "overviewOpsOrRequired": "te_name, te_code",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "user",
+      "n": 9,
+      "slug": "user",
       "title": "User",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/user",
-      "officialSnippet": {
-        "text": "User The User object is supported by the MiRTA PBX OpenAPI endpoint. This object is managed at system ...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/users"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L303",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/user",
+      "snapshot": "source-docs/raw/mirta-openapi/user.md",
+      "primaryPath": "/users",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global API key",
+      "overviewOpsOrRequired": "us_username",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "user-profile",
+      "n": 10,
+      "slug": "user-profile",
       "title": "User Profile",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/user-profile",
-      "officialSnippet": {
-        "text": "User Profile The User Profile object is supported by the MiRTA PBX OpenAPI endpoint. This object is managed at...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/userprofiles"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L304,L428",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/user-profile",
+      "snapshot": "source-docs/raw/mirta-openapi/user-profile.md",
+      "primaryPath": "/userprofiles",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global API key",
+      "overviewOpsOrRequired": "up_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "routing-profile",
+      "n": 11,
+      "slug": "routing-profile",
       "title": "Routing Profile",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/routing-profile",
-      "officialSnippet": {
-        "text": "Routing Profile The Routing Profile object is supported by the MiRTA PBX OpenAPI endpoint. This object is managed...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/routingprofiles"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L305",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/routing-profile",
+      "snapshot": "source-docs/raw/mirta-openapi/routing-profile.md",
+      "primaryPath": "/routingprofiles",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global API key",
+      "overviewOpsOrRequired": "rp_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "provider",
+      "n": 12,
+      "slug": "provider",
       "title": "Provider",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/provider",
-      "officialSnippet": {
-        "text": "Provider The Provider object is supported by the MiRTA PBX OpenAPI endpoint. This object is managed at sys...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/providers"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L306",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/provider",
+      "snapshot": "source-docs/raw/mirta-openapi/provider.md",
+      "primaryPath": "/providers",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Global API key",
+      "overviewOpsOrRequired": "pr_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "voicemail",
+      "n": 13,
+      "slug": "voicemail",
       "title": "Voicemail",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/voicemail",
-      "officialSnippet": {
-        "text": "Voicemail The Voicemail object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/voicemails"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L307",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/voicemail",
+      "snapshot": "source-docs/raw/mirta-openapi/voicemail.md",
+      "primaryPath": "/voicemails",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "mailbox",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "ivr",
+      "n": 14,
+      "slug": "ivr",
       "title": "IVR",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/ivr",
-      "officialSnippet": {
-        "text": "IVR The IVR object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Tena...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/ivrs"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L308",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/ivr",
+      "snapshot": "source-docs/raw/mirta-openapi/ivr.md",
+      "primaryPath": "/ivrs",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "iv_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "custom-destination",
+      "n": 15,
+      "slug": "custom-destination",
       "title": "Custom Destination",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/custom-destination",
-      "officialSnippet": {
-        "text": "Custom Destination The Custom Destination object is supported by the MiRTA PBX OpenAPI endpoint. This object is norm...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/customdestinations"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L309",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/custom-destination",
+      "snapshot": "source-docs/raw/mirta-openapi/custom-destination.md",
+      "primaryPath": "/customdestinations",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "cu_name, cu_ct_id",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "condition",
+      "n": 16,
+      "slug": "condition",
       "title": "Condition",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/condition",
-      "officialSnippet": {
-        "text": "Condition The Condition object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/conditions"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L310",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/condition",
+      "snapshot": "source-docs/raw/mirta-openapi/condition.md",
+      "primaryPath": "/conditions",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "co_type",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "hunt-list",
+      "n": 17,
+      "slug": "hunt-list",
       "title": "Hunt List",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/hunt-list",
-      "officialSnippet": {
-        "text": "Hunt List The Hunt List object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/huntlists"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L311,L417-421",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/hunt-list",
+      "snapshot": "source-docs/raw/mirta-openapi/hunt-list.md",
+      "primaryPath": "/huntlists",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "hu_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "did",
+      "n": 18,
+      "slug": "did",
       "title": "DID",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/did",
-      "officialSnippet": {
-        "text": "DID The DID object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Tena...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/dids"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L312,L388-392",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/did",
+      "snapshot": "source-docs/raw/mirta-openapi/did.md",
+      "primaryPath": "/dids",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "di_number",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "queue",
+      "n": 19,
+      "slug": "queue",
       "title": "Queue",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/queue",
-      "officialSnippet": {
-        "text": "Queue The Queue object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Te...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/queues"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L313,L352-356",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/queue",
+      "snapshot": "source-docs/raw/mirta-openapi/queue.md",
+      "primaryPath": "/queues",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "No required create field listed",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "setting",
+      "n": 20,
+      "slug": "setting",
       "title": "Setting",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/setting",
-      "officialSnippet": {
-        "text": "Setting The Setting object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally tenant...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/settings"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L314",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/setting",
+      "snapshot": "source-docs/raw/mirta-openapi/setting.md",
+      "primaryPath": "/settings",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "se_code",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "media-file",
+      "n": 21,
+      "slug": "media-file",
       "title": "Media File",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/media-file",
-      "officialSnippet": {
-        "text": "Media File The Media File object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally ten...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/mediafiles"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L315",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/media-file",
+      "snapshot": "source-docs/raw/mirta-openapi/media-file.md",
+      "primaryPath": "/mediafiles",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "me_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "music-on-hold",
+      "n": 22,
+      "slug": "music-on-hold",
       "title": "Music On Hold",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/music-on-hold",
-      "officialSnippet": {
-        "text": "Music On Hold The Music On Hold object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally ...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/musiconholds"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L316",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/music-on-hold",
+      "snapshot": "source-docs/raw/mirta-openapi/music-on-hold.md",
+      "primaryPath": "/musiconholds",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "mu_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "paging-group",
+      "n": 23,
+      "slug": "paging-group",
       "title": "Paging Group",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/paging-group",
-      "officialSnippet": {
-        "text": "Paging Group The Paging Group object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-sco...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/paginggroups"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L317",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/paging-group",
+      "snapshot": "source-docs/raw/mirta-openapi/paging-group.md",
+      "primaryPath": "/paginggroups",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "pa_name, pa_number",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "conference-room",
+      "n": 24,
+      "slug": "conference-room",
       "title": "Conference Room",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/conference-room",
-      "officialSnippet": {
-        "text": "Conference Room The Conference Room object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/conferencerooms"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L318",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/conference-room",
+      "snapshot": "source-docs/raw/mirta-openapi/conference-room.md",
+      "primaryPath": "/conferencerooms",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "cr_name, cr_number",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "flow",
+      "n": 25,
+      "slug": "flow",
       "title": "Flow",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/flow",
-      "officialSnippet": {
-        "text": "Flow The Flow object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Ten...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/flows"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L319",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/flow",
+      "snapshot": "source-docs/raw/mirta-openapi/flow.md",
+      "primaryPath": "/flows",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "fl_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "tenant-variable",
+      "n": 26,
+      "slug": "tenant-variable",
       "title": "Tenant Variable",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/tenant-variable",
-      "officialSnippet": {
-        "text": "Tenant Variable The Tenant Variable object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/tenantvariables"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L320",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/tenant-variable",
+      "snapshot": "source-docs/raw/mirta-openapi/tenant-variable.md",
+      "primaryPath": "/tenantvariables",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "tv_al_id",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "disa",
+      "n": 27,
+      "slug": "disa",
       "title": "DISA",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/disa",
-      "officialSnippet": {
-        "text": "DISA The DISA object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped. Ten...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/disas"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L321",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/disa",
+      "snapshot": "source-docs/raw/mirta-openapi/disa.md",
+      "primaryPath": "/disas",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "ds_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "caller-id-blacklist",
+      "n": 28,
+      "slug": "caller-id-blacklist",
       "title": "Caller ID Blacklist",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/caller-id-blacklist",
-      "officialSnippet": {
-        "text": "Caller ID Blacklist The Caller ID Blacklist object is supported by the MiRTA PBX OpenAPI endpoint. This object is nor...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/calleridblacklists"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L322",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/caller-id-blacklist",
+      "snapshot": "source-docs/raw/mirta-openapi/caller-id-blacklist.md",
+      "primaryPath": "/calleridblacklists",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "bl_callerid",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "campaign",
+      "n": 29,
+      "slug": "campaign",
       "title": "Campaign",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/campaign",
-      "officialSnippet": {
-        "text": "Campaign The Campaign object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scoped....",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/campaigns"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L323",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/campaign",
+      "snapshot": "source-docs/raw/mirta-openapi/campaign.md",
+      "primaryPath": "/campaigns",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "ca_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "campaign-number",
+      "n": 30,
+      "slug": "campaign-number",
       "title": "Campaign Number",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/campaign-number",
-      "officialSnippet": {
-        "text": "Campaign Number The Campaign Number object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/campaignnumbers"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L324,L450",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/campaign-number",
+      "snapshot": "source-docs/raw/mirta-openapi/campaign-number.md",
+      "primaryPath": "/campaignnumbers",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "cn_ca_id, cn_number",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "cron-job",
+      "n": 31,
+      "slug": "cron-job",
       "title": "Cron Job",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/cron-job",
-      "officialSnippet": {
-        "text": "Cron Job The Cron Job object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally tenan...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/cronjobs"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L325",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/cron-job",
+      "snapshot": "source-docs/raw/mirta-openapi/cron-job.md",
+      "primaryPath": "/cronjobs",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "cr_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "feature-code",
+      "n": 32,
+      "slug": "feature-code",
       "title": "Feature Code",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/feature-code",
-      "officialSnippet": {
-        "text": "Feature Code The Feature Code object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally t...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/featurecodes"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L326",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/feature-code",
+      "snapshot": "source-docs/raw/mirta-openapi/feature-code.md",
+      "primaryPath": "/featurecodes",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "fe_code",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "short-number",
+      "n": 33,
+      "slug": "short-number",
       "title": "Short Number",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/short-number",
-      "officialSnippet": {
-        "text": "Short Number The Short Number object is supported by the MiRTA PBX OpenAPI endpoint. This object is normally t...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/shortnumbers"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L327",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/short-number",
+      "snapshot": "source-docs/raw/mirta-openapi/short-number.md",
+      "primaryPath": "/shortnumbers",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key with global=1",
+      "overviewOpsOrRequired": "sn_number",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "phone-book",
+      "n": 34,
+      "slug": "phone-book",
       "title": "Phone Book",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/phone-book",
-      "officialSnippet": {
-        "text": "Phone Book The Phone Book object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant-scope...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/phonebooks"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L328",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/phone-book",
+      "snapshot": "source-docs/raw/mirta-openapi/phone-book.md",
+      "primaryPath": "/phonebooks",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "pb_name",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "phone-book-entry",
+      "n": 35,
+      "slug": "phone-book-entry",
       "title": "Phone Book Entry",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/phone-book-entry",
-      "officialSnippet": {
-        "text": "Phone Book Entry The Phone Book Entry object is supported by the MiRTA PBX OpenAPI endpoint. This object is tenant...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/phonebookentries"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L329",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/phone-book-entry",
+      "snapshot": "source-docs/raw/mirta-openapi/phone-book-entry.md",
+      "primaryPath": "/phonebookentries",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "phonebook_id, at least one value",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "provisioning-phone",
+      "n": 36,
+      "slug": "provisioning-phone",
       "title": "Provisioning Phone",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/provisioning-phone",
-      "officialSnippet": {
-        "text": "Provisioning Phone The Provisioning Phone object is supported by the MiRTA PBX OpenAPI endpoint. This object is tena...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/provisioningphones"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L330",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/provisioning-phone",
+      "snapshot": "source-docs/raw/mirta-openapi/provisioning-phone.md",
+      "primaryPath": "/provisioningphones",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key",
+      "overviewOpsOrRequired": "ph_name, ph_mac",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "ai-analysis",
+      "n": 37,
+      "slug": "ai-analysis",
       "title": "AI Analysis",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/ai-analysis",
-      "officialSnippet": {
-        "text": "AI Analysis The AI Analysis endpoint returns transcript, AI summary, and sentimental analysis data for record...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/aianalysis"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET"
-        ]
-      },
-      "mutating": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L121,L154,L336",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/ai-analysis",
+      "snapshot": "source-docs/raw/mirta-openapi/ai-analysis.md",
+      "primaryPath": "/aianalysis",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant API key or global key; GET only",
+      "overviewOpsOrRequired": "GET only; requires uniqueid",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     },
     {
-      "id": "ai-logs",
+      "n": 38,
+      "slug": "ai-logs",
       "title": "AI Logs",
-      "officialPage": "https://manual.mirtapbx.com/books/api/page/ai-logs",
-      "officialSnippet": {
-        "text": "AI Logs The AI Logs endpoint exports records from ai_ailogs. It is a read-only OpenAPI endpoint that sup...",
-        "state": "DOCUMENTED",
-        "truncated": true,
-        "source": "source-docs/raw/api-book-openapi-chapter.html"
-      },
-      "path": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": "/ailogs"
-      },
-      "methods": {
-        "value": null,
-        "state": "UNKNOWN",
-        "wrapperClaim": [
-          "GET"
-        ]
-      },
-      "mutating": {
-        "value": false,
-        "state": "DOCUMENTED",
-        "source": "source-docs/raw/api-book-openapi-chapter.html (snippet: 'read-only OpenAPI endpoint')"
-      },
-      "keyScope": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "tenantRequired": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "responseSensitivity": {
-        "value": null,
-        "state": "UNKNOWN"
-      },
-      "wrapperLines": "L122,L159,L337,L469-474",
-      "docFile": null
+      "pageType": "resource",
+      "url": "https://manual.mirtapbx.com/books/api/page/ai-logs",
+      "snapshot": "source-docs/raw/mirta-openapi/ai-logs.md",
+      "primaryPath": "/ailogs",
+      "primaryPathSource": "overview-and-examples.md:38",
+      "authScope": "Tenant full or read-only API key, or global key; GET only",
+      "overviewOpsOrRequired": "GET only; JSON or CSV; defaults to the current day",
+      "methods": null,
+      "httpOperations": null,
+      "processed": false,
+      "docStatus": "UNKNOWN",
+      "securityReview": "UNKNOWN",
+      "file": null,
+      "unresolved": []
     }
   ]
 }

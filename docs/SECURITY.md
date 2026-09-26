@@ -295,6 +295,38 @@ represent `imapuser`/`imappassword` in the documented schema/fixtures — see
 the QUEUELOGS precedent (SEC-REQ-01, A-55): keep the fields in the schema,
 fixed at `null`.
 
+### SEC-REQ-03 — OpenAPI Extension responses (BLOCKING for Live, open)
+
+Recorded 2026-09-26 during the MiRTA OpenAPI documentation baseline. This is documentation only; OpenAPI has no Live support. Evidence: `source-docs/openapi/extensions.md`, `source-docs/raw/mirta-openapi/extension.md`.
+
+**Why it is blocking:**
+- `GET /extensions/{id}` and `GET /extensions/number/{n}` return the extension "and include related technology data" (`extension.md:42`).
+- The technology rows (`sipfriends`, `ps_auths`, …) are where the extension's secret is stored: `password` maps to "technology secret/password" (`extension.md:15`).
+- No response schema is documented, so the exact fields are unknown.
+- The list response is described only as "ID, number, name, and technology".
+- `ex_email` is PII.
+
+**Before any Live exposure of an Extension read:**
+1. A server-side, per-operation response field allowlist, default deny. It must cover nested technology objects and any numeric/positional duplicate keys (the SEC-REQ-01 lesson).
+2. The response schema is established first, from the spec or an authorized read-only observation. An allowlist must not be designed against guessed fields.
+3. Tests prove that technology secrets, passwords and email cannot reach the browser, including a case where they are populated.
+4. Writes (create/update/cascading delete) stay out of Live, pending a separate security decision.
+
+Closing needs an Opus security review and the user's explicit approval.
+
+### SEC-REQ-04 — OpenAPI Extension State live caller data (REVIEW REQUIRED before Live, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/extensions-state.md`, `source-docs/raw/mirta-openapi/extension-state.md:27-55`.
+
+**Why:** `GET /extensions/state` returns live call metadata: the other party's number and name (`Connected Line ID`, `Connected Line ID Name`, `OtherParty`, `Extension`) and channel IDs. This is customer PII. No credentials appear in the documented shape.
+
+**Before any Live exposure:**
+1. An allowlist of exactly the 8 documented keys. Nothing else is passed through.
+2. Tenant-scoped keys only.
+3. A decision on whether showing live caller numbers in the portal is acceptable.
+
+Closing needs the user's explicit approval.
+
 ## Open action items
 
 ### Stage 4 TEST API key rotation (2026-09-26, not yet done)
