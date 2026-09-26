@@ -19,6 +19,12 @@ import { musiconholdCategory } from "./musiconholds";
 import { paginggroupCategory } from "./paginggroups";
 import { phonebookCategory } from "./phonebooks";
 import { phonebookentryCategory } from "./phonebookentries";
+import { providerCategory } from "./providers";
+import { provisioningphoneCategory } from "./provisioningphones";
+import { queueCategory } from "./queues";
+import { routingprofileCategory } from "./routingprofiles";
+import { settingCategory } from "./settings";
+import { shortnumberCategory } from "./shortnumbers";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
 import { OPENAPI_BASE_URL } from "./shared";
@@ -58,11 +64,19 @@ const categories: Category[] = [
   didCategory,
   disaCategory,
   featurecodeCategory,
+  // Call routing (continued)
+  queueCategory,
   // Phone books & provisioning
   phonebookCategory,
   phonebookentryCategory,
+  provisioningphoneCategory,
+  // Numbers & dialing (continued)
+  shortnumberCategory,
   // System / admin
   cronjobCategory,
+  settingCategory,
+  providerCategory,
+  routingprofileCategory,
   // Actions
   dialCategory,
   authTokenCategory,
