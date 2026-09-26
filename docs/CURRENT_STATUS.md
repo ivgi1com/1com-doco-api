@@ -19,8 +19,9 @@ pages). `npm run check` 285/285, `npm run build` clean, Playwright
 162/164 (1 known flake confirmed to pass alone, 1 WebKit skip), a
 40-load visual pass and a secret scan, all clean. Full detail:
 `docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
-**Phase 8B (OpenAPI Demo): Stages 1–5 COMPLETE, AT THE APPROVAL GATE**
-(awaiting the user's A/B/C/D decision — not yet approved). Stage 1
+**Phase 8B (OpenAPI Demo): Stages 1–5 COMPLETE, APPROVED (2026-09-26,
+gate B — approve, save, and stop; next phase (8C) not started, waiting
+for separate approval before planning begins).** Stage 1
 (Demo fixes and documented cases), Stage 2 (masked OpenAPI GET probe),
 Stage 3 (observed Reference responses wired via
 `src/content/observed.ts`, `DOCS_AUDIT.md` §14 OA-14..OA-18,

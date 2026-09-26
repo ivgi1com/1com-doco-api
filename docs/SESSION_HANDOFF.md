@@ -1,13 +1,22 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: Stages 1–5 COMPLETE,
-validation done, AT THE GATE — awaiting the user's A/B/C/D decision;
-read this first)
+Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: Stages 1–5 APPROVED,
+gate B — stop here; next phase (8C) NOT started; read this first)
 
-## Phase 8B — Stages 1–5 complete, at the approval gate (2026-09-26, Sonnet 5)
+## Phase 8B — APPROVED (2026-09-26, gate B: approve, save, and stop)
 
-- Branch `phase/open-api`, HEAD `71fcc30` (on top of the Stage 4/5 WIP
-  commits `2de5888`/`11377ef`). Not pushed, not merged, not tagged.
+- Branch `phase/open-api`, HEAD (after the approval commit) on top of
+  `c086c14`. Not pushed, not merged, not tagged.
+- **Approved by the user, gate B** (approve, save, and stop). The next
+  phase (8C — OpenAPI Playground) has **not started** and needs its own
+  plan presented and separately approved before any implementation.
+- **First action next session:** confirm the model — 8C's spec and
+  model routing (`docs/phases/08-substages-README.md`) have not been
+  read yet this session; read `docs/phases/08C-openapi-playground.md`
+  and re-check routing before entering plan mode for 8C. Do not
+  assume Sonnet 5 is still correct without checking.
+- Everything below is the completed Stage 4/5 work this approval
+  covers.
 - **This session fixed one real bug found during its own Stage 5
   validation** (rule 6 — drive the real UI, don't trust unit tests
   alone): `aianalysis-get`'s "Unique ID missing" case relied on

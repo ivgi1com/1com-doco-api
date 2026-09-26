@@ -1445,3 +1445,14 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
 - **Phase 8B is complete pending the user's gate decision** (§16 report
   presented separately). Stage 6 (cross-API consistency and security
   review, Opus) remains on hold behind 8C/8D per the existing plan.
+
+## Phase 8B — APPROVED (2026-09-26, gate B)
+
+Approved: approve, save, and stop. Stages 1–5 complete per the
+completion report and the "Phase 8B Stage 4–5 completion, recovered
+scope, and generalized decisions" entry above (52 Demo-supported
+OpenAPI GETs, full validation clean). Not merged into `main`, not
+tagged, not pushed (none requested). **Next: Phase 8C — OpenAPI
+Playground.** Not started; waiting for its own plan to be presented and
+separately approved. Do not begin 8C planning or implementation without
+that approval.
