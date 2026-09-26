@@ -7,19 +7,26 @@ feature-complete before Stage 6** (the API Reference didn't expose all
 baseline-documented information; the OpenAPI Demo and Playground were
 missing/incomplete). **Four sub-phases were inserted before Stage 6:
 8A (API Reference completeness), 8B (Demo), 8C (Playground), 8D
-(pre-Stage-6 readiness gate) — all Sonnet 5. **8A is IN PROGRESS (WIP
-checkpoint, not at its gate, not approved):** 325 official named
-examples now in the Reference (`source-docs/openapi/examples.json`),
-CDR/Simple CDR response field tables rendered, 2 list filters added;
-section audit done (6 more alias/notes fixes, body-key coverage test),
-check/build/Playwright green. Still open: examples render collapsed
-(display mode undecided — ask the user) and literal backticks in
-notes/errors/example descriptions — see `docs/SESSION_HANDOFF.md`. Stage 6 (Opus
-cross-API consistency and security review — the Phase 8 gate item) is
-on hold until 8D passes.** Full detail: `docs/phases/08-open-api.md`
-"Pre-Stage-6 sub-phases", `docs/phases/08-substages-README.md`,
-`docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases inserted". This
-supersedes the "FEATURE-COMPLETE" status previously recorded here.
+(pre-Stage-6 readiness gate) — all Sonnet 5. **8A is APPROVED
+(2026-09-26, gate A):** 325 official named examples in the Reference
+(`source-docs/openapi/examples.json`), CDR/Simple CDR response field
+tables, 2 list filters, a full alias/notes audit (6 fixes) with a new
+request-body-key coverage test, and a shared-component rendering fix
+(`endpoint-view.tsx` now passes notes/error/response/example
+descriptions through `InlineMarkup`, so documented backtick spans
+render as inline code instead of literal text — also benefits Proxy
+pages). `npm run check` 285/285, `npm run build` clean, Playwright
+162/164 (1 known flake confirmed to pass alone, 1 WebKit skip), a
+40-load visual pass and a secret scan, all clean. Full detail:
+`docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
+**Next: Phase 8B (OpenAPI Demo) planning — switch to Opus 5.5 first**
+(8B's scope question is a Demo-architecture decision, not routine
+implementation). Stage 6 (Opus cross-API consistency and security
+review — the Phase 8 gate item) is on hold until 8D passes.** Full
+detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",
+`docs/phases/08-substages-README.md`, `docs/DECISIONS.md` "Phase 8
+pre-Stage-6 sub-phases inserted". This supersedes the "FEATURE-COMPLETE"
+status previously recorded here.
 Plan approved 2026-09-26
 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`; decisions
 in `docs/DECISIONS.md` "Phase 8 planning", "Phase 8 Stage 1 complete",

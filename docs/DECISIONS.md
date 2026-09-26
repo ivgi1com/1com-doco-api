@@ -1296,3 +1296,51 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
 - **Correction:** an earlier 8A completion report this session (only 2
   list filters fixed, "complete") was wrong. The user found the gap by
   comparing the official CDR page.
+
+## Phase 8A — APPROVED (2026-09-26, gate A: approve, save, and continue to planning 8B)
+
+- **Second correction, same session:** a follow-up completion report
+  (after the examples/field-table work above plus a section-by-section
+  alias/notes audit) was also premature. The user checked the official
+  Campaign page's "Delete Campaign" example against the app and found
+  two real UI gaps not caught by any existing test:
+  1. Notes, error descriptions, example descriptions, response
+     descriptions, and deprecation notes were rendered as raw text
+     (`ContentText` with no markup pass), so documented backtick spans
+     like `` `/campaign` `` showed as literal backticks instead of
+     inline code. Parameter descriptions were already correct
+     (`ParamList` already used `InlineMarkup`) — only
+     `endpoint-view.tsx`'s other content-model text was affected. This
+     is a shared component, so it affected the Proxy API's pages too,
+     not just OpenAPI.
+  2. Every example under "Examples" renders collapsed by default,
+     showing only its title until clicked.
+- **User decisions:** (1) is a real defect, fixed by wrapping every
+  affected spot in `endpoint-view.tsx` with the existing `InlineMarkup`
+  component (no new component, matching the `ParamList` precedent).
+  (2) is not a defect — **examples stay collapsed by default**, kept
+  as-is.
+- **Audit fixes this session** (`docs/SESSION_HANDOFF.md` has the full
+  list): `mediafiles.ts` `format`→`me_format` citation corrected;
+  `extensions.ts`/`ivrs.ts` destination-alias lists completed to match
+  the aliases the official examples actually send;
+  `customdestinations.ts` bare `RANDOMDESTINATION`/`random_destination`
+  alias added; `paginggroups.ts` missing `/paginggroup` path alias
+  added; `reporting.ts` Simple CDR gained the same start/end
+  applicability rule CDR already had. A new unit test
+  (`tests/unit/openapi-coverage.test.ts`) ties every official example's
+  request-body keys to a modeled field, a documented alias, or a
+  documented numbered-key template, guarding against this class of gap.
+- **Validation at approval:** `npm run check` 285/285 (typecheck, lint,
+  unit tests), `npm run build` clean (576 pages) — both re-run fresh
+  after the `InlineMarkup` fix. The full Playwright suite (162 passed,
+  1 known pre-existing flake confirmed to pass alone, 1 WebKit skip)
+  and the 40-load visual/console-error pass across representative
+  OpenAPI resources were run just before the `InlineMarkup` fix; the
+  fix itself is a narrow rendering-only change (no test asserts literal
+  backtick text) and the user personally confirmed the rendered result
+  on the flagged page, so the full e2e suite was not re-run a second
+  time for this fix specifically.
+- **Approved 2026-09-26**, gate A. Not merged into `main`, not tagged,
+  not pushed. Next: Phase 8B (OpenAPI Demo) planning, per
+  `docs/phases/08B-openapi-demo.md`.

@@ -101,7 +101,7 @@ export function EndpointView({
             {endpoint.status === "deprecated" && endpoint.deprecation && (
               <Callout kind="warning" title={t("deprecatedBanner", { date: endpoint.deprecation.date ?? "" })}>
                 <ContentText>
-                  {endpoint.deprecation.note}{" "}
+                  {endpoint.deprecation.note && <InlineMarkup text={endpoint.deprecation.note} />}{" "}
                   {replacement && (
                     <>
                       {t.rich("useInstead", {
@@ -117,7 +117,7 @@ export function EndpointView({
             )}
             {endpoint.status === "legacy" && endpoint.deprecation && (
               <Callout kind="note" title={t("legacyBanner")}>
-                <ContentText>{endpoint.deprecation.note}</ContentText>
+                <ContentText>{endpoint.deprecation.note && <InlineMarkup text={endpoint.deprecation.note} />}</ContentText>
               </Callout>
             )}
             <div className="flex flex-wrap items-center gap-3">
@@ -242,7 +242,9 @@ export function EndpointView({
                       <span dir="ltr" className={`w-10 shrink-0 font-mono font-semibold tabular ${statusInk(r.status)}`}>
                         {r.status}
                       </span>
-                      <ContentText className="text-ink">{r.description}</ContentText>
+                      <ContentText className="text-ink">
+                        <InlineMarkup text={r.description} />
+                      </ContentText>
                     </li>
                   ))}
                 </ul>
@@ -280,7 +282,11 @@ export function EndpointView({
                         )}
                       </summary>
                       <div className="space-y-3 border-t border-border px-3 py-3">
-                        {ex.description && <ContentText className="text-sm text-ink-muted">{ex.description}</ContentText>}
+                        {ex.description && (
+                          <ContentText className="text-sm text-ink-muted">
+                            <InlineMarkup text={ex.description} />
+                          </ContentText>
+                        )}
                         <CodeTabs samples={ex.samples} />
                       </div>
                     </details>
@@ -319,7 +325,7 @@ export function EndpointView({
                         <code className="prose-code">{e.code}</code>
                       </td>
                       <td lang="en" dir="auto" className="px-3 py-2.5 text-ink max-sm:col-span-2 max-sm:mt-1 max-sm:p-0">
-                        {e.description}
+                        <InlineMarkup text={e.description} />
                       </td>
                     </tr>
                   ))}
@@ -333,7 +339,9 @@ export function EndpointView({
               <ul className="list-disc space-y-1.5 ps-5 text-sm text-ink-muted">
                 {endpoint.notes.map((note, i) => (
                   <li key={i}>
-                    <ContentText className="inline">{note}</ContentText>
+                    <ContentText className="inline">
+                      <InlineMarkup text={note} />
+                    </ContentText>
                   </li>
                 ))}
               </ul>

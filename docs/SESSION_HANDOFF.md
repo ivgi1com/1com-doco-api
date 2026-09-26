@@ -1,10 +1,46 @@
 # Session Handoff
 
-Last updated: 2026-09-26 ~17:45 (Phase 8A — OpenAPI API Reference
-completeness: IN PROGRESS, second WIP checkpoint, NOT at its STOP gate,
-NOT approved — read this first)
+Last updated: 2026-09-26 ~17:55 (Phase 8A — OpenAPI API Reference
+completeness: APPROVED, gate A. Phase 8B — OpenAPI Demo: planning next,
+switch to Opus 5.5 first — read this first)
 
-## Phase 8A — second STOP checkpoint (2026-09-26 ~17:45): WIP, not finished, not approved
+## Phase 8A — APPROVED (2026-09-26 ~17:55, gate A: approve, save, continue to planning 8B)
+
+- Branch `phase/open-api`. Approved on top of the two WIP checkpoints
+  below (`634f58b`, then this session's alias/notes-audit checkpoint),
+  plus one more fix made after approval was requested: every content-
+  model text spot in `src/components/reference/endpoint-view.tsx`
+  (notes, error/response/example descriptions, deprecation notes) now
+  passes through `InlineMarkup` instead of being rendered raw — found
+  by the user checking the official Campaign page's "Delete Campaign"
+  example against the app and seeing literal backticks
+  (e.g. `` `/campaign` ``) instead of inline code. `ParamList` already
+  did this correctly; only `endpoint-view.tsx`'s other text was wrong.
+  This is a shared component, so Proxy pages were affected too.
+  Examples' collapsed-by-default display was reviewed and **kept as
+  is** (user decision, not a defect).
+- Full detail, all 6 alias/notes-audit fixes, and the new
+  request-body-key coverage test: the superseded checkpoint entries
+  below and `docs/DECISIONS.md` "Phase 8A — APPROVED".
+- **Validation:** `npm run check` 285/285, `npm run build` clean (576
+  pages) — both fresh after the `InlineMarkup` fix. Full Playwright
+  (162 passed, 1 known flake confirmed to pass alone, 1 WebKit skip)
+  and a 40-load visual/console-error pass across representative OpenAPI
+  pages were run just before that fix; not re-run after it (narrow
+  rendering-only change, no test depends on literal backtick text, user
+  confirmed the render personally). Secret scan of the diff: clean.
+- **Not merged into `main`, not tagged, not pushed.**
+- **Next: Phase 8B — OpenAPI Demo** (`docs/phases/08B-openapi-demo.md`).
+  Planning has not started. **Switch to Opus 5.5 before planning 8B**
+  — the user asked to be prompted for this switch, and 8B's scope
+  question (its spec asks for Demo coverage beyond the 3 GETs already
+  decided — see `docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases
+  inserted", "Scope note") is a Demo-architecture decision, not routine
+  implementation.
+- **First action next session:** confirm the model is Opus 5.5, then
+  read `docs/phases/08B-openapi-demo.md` and enter plan mode.
+
+## (Superseded by the entry above) Phase 8A — second STOP checkpoint (2026-09-26 ~17:45): WIP, not finished, not approved
 
 - Branch `phase/open-api`. This session's work is committed as a WIP
   checkpoint on top of `634f58b`. Not pushed.
