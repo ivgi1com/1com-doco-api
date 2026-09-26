@@ -70,17 +70,37 @@ test.describe("interactions", () => {
   test("mobile nav drawer (sidebar) opens and closes", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/en");
-    await page.getByRole("button", { name: "Open navigation" }).click();
-    await expect(page.getByRole("dialog", { name: "Main" })).toBeVisible();
+    const dialog = page.getByRole("dialog", { name: "Main" });
+    // Same hydration race as the search-palette test below: a locator
+    // .click() retries the click itself until the element is actionable,
+    // but that doesn't wait for this button's onClick (wired up by React
+    // after hydration) to actually be attached — a click dispatched into
+    // that pre-hydration window opens nothing, and a single subsequent
+    // assertion then times out. Retry the click until the dialog opens.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Open navigation" }).click();
+      await expect(dialog).toBeVisible({ timeout: 500 });
+    }).toPass({ timeout: 10_000 });
     await page.getByRole("button", { name: "Close navigation" }).click();
-    await expect(page.getByRole("dialog", { name: "Main" })).toBeHidden();
+    await expect(dialog).toBeHidden();
   });
 
   test("search palette: keyboard shortcut opens it, Escape closes it", async ({ page }) => {
     await page.goto("/en");
-    await page.keyboard.press("Control+k");
     const dialog = page.getByRole("dialog", { name: "Search docs" });
-    await expect(dialog).toBeVisible();
+    // SearchPalette wires up its document keydown listener in a useEffect,
+    // which only runs after hydration. page.keyboard.press is a single
+    // fire-and-forget keystroke (unlike a locator action, it has no
+    // actionability retry), so a press sent in the pre-hydration window is
+    // silently lost — this is what made this test flaky specifically under
+    // full-suite parallel load (heavier CPU contention delays hydration),
+    // not a real product bug (no real user presses Ctrl+K within
+    // milliseconds of navigation). Retry the press itself until the dialog
+    // opens, rather than a single attempt or an arbitrary fixed sleep.
+    await expect(async () => {
+      await page.keyboard.press("Control+k");
+      await expect(dialog).toBeVisible({ timeout: 500 });
+    }).toPass({ timeout: 10_000 });
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });

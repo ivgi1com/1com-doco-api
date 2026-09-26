@@ -1,8 +1,8 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–5 done, STOP at the Stage 6 gate — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–6 done, STOP at the Stage 7 gate — read this first)
 
-## Phase 7 in progress — Stages 0–5 done, STOP before Stage 6
+## Phase 7 in progress — Stages 0–6 done, STOP before Stage 7 (final review)
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
   (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
@@ -139,10 +139,68 @@ Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–5 done, STOP
   - ManageDB and the two `unclear` operations (`info-voicemail`,
     `voicemail-message`) still have no Demo fixture, per the Stage 1
     decision — unaffected by this stage.
-- **Next: Stage 6 — Guides and Search** (Sonnet 5, current model is
-  correct). Full detail: the approved plan
-  (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`, "Stage
-  6").
+- **Stage 6 — Guides and Search, COMPLETE.** The guide-body content-model
+  design was Opus (`src/content/guides/types.ts` + a generic
+  `<GuideBody>` renderer, replacing the old hardcoded single-guide page —
+  full detail in the Stage 6 commit and `docs/DECISIONS.md`); writing the
+  3 Proxy guides' actual content and the rest of this stage was Sonnet.
+  - **3 new guides** (`src/content/guides/{authentication,call-history,
+    managedb-writes}.ts`), built only from documented/observed facts
+    (`_common.md`, `info.md`, `managedb.md`, plus Stage 4's A-49/A-54/A-64
+    findings): key kinds and the Admin-key rule, `tenant` scoping;
+    CDRS vs SIMPLECDRS, `format` per operation, the 3 recording lookups'
+    shared "no id" error; `jsondata` encoding, the Admin-key requirement,
+    and destination tags. "Getting started" (Sample API) migrated into
+    the new model unchanged, still prototype-labelled.
+  - **Search**: `tests/unit/guides.test.ts` adds the Stage 6 index-count
+    test (endpoints + guides) — passes as-is, so `getSearchIndex()`
+    already covered every endpoint and guide with no code change needed.
+    Also added: referential integrity for every guide (every `sample`/
+    `endpoints` block resolves to a real endpoint of its own API, unique
+    slugs/section ids, balanced inline-code backticks, non-synthetic
+    guides cite sources).
+  - **Two real, pre-existing Playwright bugs found and fixed** (both the
+    same root cause, found via systematic debugging while chasing the
+    Ctrl+K flake): `SearchPalette`'s and the mobile nav drawer's listeners
+    are wired up in a `useEffect`, which only runs after hydration.
+    `page.keyboard.press` and a locator `.click()` both retry/settle on
+    their own action, but neither waits for *hydration* — a keystroke or
+    click landing in that pre-hydration window is silently lost, with no
+    further retry, so a single subsequent assertion times out. This is a
+    strong candidate for the **actual root cause of the "a different
+    single test fails each run under full-suite parallel load" pattern**
+    dismissed as unavoidable flakiness across Phase 5 and Stage 3 (heavier
+    CPU contention under parallel workers delays hydration enough to lose
+    the input) — not confirmed for every one of those past occurrences,
+    but both bugs found this session fit the pattern exactly, and the
+    fixed suite ran clean 3/3 full runs afterward (142/142 each) where it
+    had not run clean 3 times in a row before. Fixed by retrying the
+    input itself (`expect(async () => {...}).toPass(...)`) instead of a
+    single fire-and-forget attempt, in both tests.
+  - **Dev-only 404 `<script>` warning** (`src/app/[locale]/layout.tsx`):
+    attempted per your go-ahead; the "one-line `next/script` fix" the
+    prior session predicted **did not work** — verified with a clean
+    `.next` cache and a fresh dev server restart, the warning still
+    fires. Root cause is deeper: Next's dev-mode not-found boundary does
+    a client-side re-render of the root layout, and React's warning fires
+    for *any* `<script>`-type element hit during a client render pass,
+    regardless of whether it's a raw `<script>` or `next/script`. Your
+    call: kept the `next/script` change anyway (verified harmless — zero
+    console errors and correct theme resolution on every normal page
+    tested) since it's arguably better practice, but the dev-only warning
+    itself remains open, unresolved, non-blocking.
+  - Validation: `npm run check` 245/245 (+15 over Stage 5), `npm run
+    build` clean, a Playwright pass of all 3 new guides at desktop/mobile
+    × en/he (12 combinations) — 200, zero console errors, no overflow,
+    every reference link resolves. **Full Playwright suite run 3 times on
+    a fresh `build && start` this stage: 142/142 clean every time**
+    (previously the standing bar was "141/142, a different failure each
+    run" — now clean, consistent with the hydration-race fixes above).
+- **Next: Stage 7 — Review and gate** (Opus 5.5: final architecture
+  review, `code-review`, `security-review`). Full detail: the approved
+  plan (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`,
+  "Stage 7"). This is the Phase 7 completion gate — present the Phase
+  Completion Report and the A/B/C/D question after it, not before.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

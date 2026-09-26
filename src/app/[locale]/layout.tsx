@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Assistant, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeDir, routing } from "@/i18n/routing";
@@ -59,7 +60,19 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/*
+          Must run before paint (sets d.dataset.theme synchronously to avoid a
+          flash of the wrong theme), so `beforeInteractive`, not a client
+          component. Next's <Script> renders this the same way a raw <script>
+          tag would, but through Next's own script-injection path — a plain
+          <script dangerouslySetInnerHTML> here triggered a dev-only React
+          warning ("Encountered a script tag while rendering") on any page
+          that hits the not-found boundary (confirmed dev-only: production
+          builds never showed it).
+        */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
       </head>
       <body className="antialiased">
         <NextIntlClientProvider>

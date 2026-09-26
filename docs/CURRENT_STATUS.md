@@ -1,7 +1,7 @@
 # Current Status
 
 Current work:
-**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–5 done).** Plan
+**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–6 done).** Plan
 approved 2026-09-25
 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
 decisions in `docs/DECISIONS.md` "Phase 7 planning", "Phase 7 Stage 1
@@ -34,8 +34,21 @@ precedent. A real UI bug was found and fixed during manual verification
 (`info-extstate`'s case didn't match the field's own pre-filled example
 value). `npm run check` 223/223, build clean, a Playwright pass driving the
 real Playground confirmed all 13 resolve with zero console errors.
-Next: **Stage 6 — Guides and Search** (Sonnet 5). Full detail:
-`docs/SESSION_HANDOFF.md`.
+Stage 6 (Guides and Search) is also complete: a new guide content model
+(Opus — `src/content/guides/types.ts` + a generic renderer, replacing
+hardcoded single-guide JSX) plus 3 new Proxy guides (Sonnet — Authentication
+and keys, Call history, ManageDB writes); search already covered every
+endpoint and guide (new index-count test passes as-is). Two real,
+pre-existing Playwright bugs fixed (a hydration race losing an early
+keystroke/click in the search-palette and mobile-nav-drawer tests) — very
+likely the actual cause of the "different single test fails each run"
+flakiness dismissed across Phase 5/Stage 3; the suite ran 142/142 clean 3
+times in a row afterward. The dev-only 404 `<script>` warning was attempted
+but not resolved — the predicted one-line fix doesn't work (deeper Next.js
+dev-mode behavior); the `next/script` cleanup was kept anyway (harmless),
+warning stays open. `npm run check` 245/245, build clean.
+Next: **Stage 7 — Review and gate** (Opus 5.5). Full detail:
+`docs/SESSION_HANDOFF.md`. This is the Phase 7 completion gate.
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
