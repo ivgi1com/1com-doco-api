@@ -1,11 +1,37 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
-[resource transcription] done, checkpoint committed, **not reviewed or
-approved** — Stage C [security review] and the completion report are
-next, on Opus — read this first)
+Last updated: 2026-09-26 (Phase 8 — pre-Stage-6 sub-phases 8A–8D
+inserted after a manual review found implementation gaps; 8A next, on
+Sonnet — read this first)
 
-## Phase 8 — Stage 5 DONE (2026-09-26); Stage 6 next, on OPUS (gate item)
+## Phase 8 — pre-Stage-6 sub-phases 8A–8D inserted (2026-09-26); 8A next, on SONNET
+
+A manual product review found Phase 8 was not actually
+feature-complete before the existing Stage 6 review: the OpenAPI API
+Reference did not expose all information available in the approved
+baseline, and the OpenAPI Demo and Playground were missing/incomplete.
+
+Four sub-phases were inserted between Stage 5 (below) and the existing
+Stage 6, each with its own STOP/approval gate, specified in
+`docs/phases/08A-openapi-api-reference-completeness.md`,
+`08B-openapi-demo.md`, `08C-openapi-playground.md`,
+`08D-pre-stage6-readiness-gate.md`, and ordered/routed in
+`docs/phases/08-substages-README.md`:
+
+1. **8A — OpenAPI API Reference completeness** (Sonnet 5) — next.
+2. **8B — OpenAPI Demo** (Sonnet 5) — after 8A is approved.
+3. **8C — OpenAPI Playground** (Sonnet 5) — after 8B is approved.
+4. **8D — Pre-Stage-6 readiness gate** (Sonnet 5, deterministic
+   validation) — after 8C is approved.
+5. **Existing Stage 6 — cross-API consistency and security review**
+   (Opus 5.5) — only after 8D passes.
+
+This supersedes the "Phase 8 is feature-complete" status below and in
+`docs/CURRENT_STATUS.md`. Stages 0–5 are unaffected and remain done;
+nothing about them is reopened. Full detail:
+`docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases inserted".
+
+## (Superseded by the entry above) Phase 8 — Stage 5 DONE (2026-09-26); Stage 6 next, on OPUS (gate item)
 
 - New e2e coverage in `tests/e2e/smoke.spec.ts` ("Open API rollout
   (Phase 8)"): API-select switching, a path-param endpoint (`OBJECT_ID`

@@ -1,9 +1,19 @@
 # Current Status
 
 Current work:
-**Phase 8 — Open API rollout: FEATURE-COMPLETE. Stages 0–5 done; Stage
-6 (Opus cross-API consistency and security review — the Phase 8 gate
-item) not started.** Plan approved 2026-09-26
+**Phase 8 — Open API rollout: Stages 0–5 done. A manual product review
+on 2026-09-26 found the OpenAPI implementation was not actually
+feature-complete before Stage 6** (the API Reference didn't expose all
+baseline-documented information; the OpenAPI Demo and Playground were
+missing/incomplete). **Four sub-phases were inserted before Stage 6:
+8A (API Reference completeness), 8B (Demo), 8C (Playground), 8D
+(pre-Stage-6 readiness gate) — all Sonnet 5. 8A is next. Stage 6 (Opus
+cross-API consistency and security review — the Phase 8 gate item) is
+on hold until 8D passes.** Full detail: `docs/phases/08-open-api.md`
+"Pre-Stage-6 sub-phases", `docs/phases/08-substages-README.md`,
+`docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases inserted". This
+supersedes the "FEATURE-COMPLETE" status previously recorded here.
+Plan approved 2026-09-26
 (`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`; decisions
 in `docs/DECISIONS.md` "Phase 8 planning", "Phase 8 Stage 1 complete",
 "Phase 8 Stage 3 complete", "Phase 8 Stage 4 complete", "Phase 8 Stage 5

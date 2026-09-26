@@ -1238,3 +1238,37 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
   clean.
 - Phase 8 is now feature-complete pending Stage 6 (Opus cross-API
   consistency and security review — the Phase 8 gate item).
+  **Superseded 2026-09-26** — see "Phase 8 pre-Stage-6 sub-phases
+  inserted" below: a manual review found this claim premature.
+
+## Phase 8 pre-Stage-6 sub-phases inserted (2026-09-26)
+
+- **Reason:** a manual product review (not an automated check) found
+  that Phase 8 was not actually feature-complete despite the Stage 5
+  entry above. The OpenAPI API Reference did not expose all
+  information available in the approved documentation baseline
+  (aliases, enums, defaults, filters, body-field detail, evidence/
+  security notes, etc. present in `source-docs/openapi/` but not
+  surfaced in the app), and the OpenAPI Demo and Playground were
+  missing/incomplete relative to what the baseline supports.
+- **Decision:** four sub-phases are inserted between Stage 5 and the
+  existing Stage 6, each with its own STOP/approval gate. Full spec:
+  `docs/phases/08A-openapi-api-reference-completeness.md`,
+  `08B-openapi-demo.md`, `08C-openapi-playground.md`,
+  `08D-pre-stage6-readiness-gate.md`; order and routing summarized in
+  `docs/phases/08-substages-README.md` and
+  `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases".
+- **Order:** 8A (API Reference completeness) → 8B (Demo) → 8C
+  (Playground) → 8D (pre-Stage-6 readiness gate) → existing Stage 6.
+- **Model routing:** 8A, 8B, 8C, and 8D (deterministic validation) are
+  all Sonnet 5, per the user's explicit instruction that this is
+  routine implementation work, not architecture/security design.
+  Existing Stage 6 stays Opus 5.5 and does not start until 8D passes.
+- **Scope note:** 8B's spec asks for evidence-based Demo coverage
+  beyond the 3 GETs decided in "Phase 8 planning" above (possibly
+  including simulated writes). This is not decided yet — it will be
+  presented as an explicit option at the 8B planning gate, not assumed.
+  The Live allowlist is unaffected by any of these sub-phases; it stays
+  the 3 Proxy IDs already approved.
+- **Not reopened:** Stages 0–5 remain approved/done as recorded above;
+  none of that work is redone or undone by this insertion.
