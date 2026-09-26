@@ -196,11 +196,47 @@ Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–6 done, STOP
     a fresh `build && start` this stage: 142/142 clean every time**
     (previously the standing bar was "141/142, a different failure each
     run" — now clean, consistent with the hydration-race fixes above).
-- **Next: Stage 7 — Review and gate** (Opus 5.5: final architecture
-  review, `code-review`, `security-review`). Full detail: the approved
-  plan (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`,
-  "Stage 7"). This is the Phase 7 completion gate — present the Phase
-  Completion Report and the A/B/C/D question after it, not before.
+- **Stage 7 — review DONE (Opus), remediation NOT started.** Findings and
+  user decisions: `docs/DECISIONS.md` "Phase 7 Stage 7 review". Live
+  boundary, write blocking, secrets and guide rendering all passed.
+  **Remediation (Sonnet 5), in this order:**
+  1. **format=json samples.** For every Proxy endpoint whose
+     `responses[0].format === "json"` (18 today: info-extensions, -agents,
+     -dids, -simplecdrs, -queuelogs, -queues, -queue, -agentsconnected,
+     -agentsdelay, -outdialed, -config, -extstate, blfs, channel,
+     countpeers, flows, peers, voicemail-list), make its `format` query
+     parameter carry `example: "json"`; add the parameter where missing,
+     described as observed/undocumented (cite the A-number). Then:
+     - Demo `when` maps in `src/content/demo/proxy.ts` gain the `format`
+       key where it was added (exhaustiveness test enforces it); default
+       pre-fill becomes "json", so cases that should resolve by default
+       must accept "json".
+     - Update e2e tests that assert "default is Not simulated"
+       (info-simplecdrs, info-queuelogs) and any Live test that assumes a
+       plain default for info-extensions/info-agents.
+     - Add a unit test (proxy-coverage.test.ts): every Proxy endpoint with a
+       JSON primary response has a `format` query param whose example is
+       "json"; and no query-auth JS sample contains `response.json()`
+       without `"format": "json"` in its params.
+     - `LIVE_POLICIES` itself must not change.
+  2. **BLFS/FLOWS positional keys** (A-72/A-73 amendment, see DECISIONS
+     finding 2): BLFS schema/fixture get `0`..`2` mirroring st_extension,
+     st_state, st_timestamp; FLOWS get `0`..`17` mirroring its 18 named
+     fields in order. Amend A-72/A-73 text with the masker-collision
+     explanation, and add a tests/unit/demo-fixtures.test.ts check that each
+     positional key equals the named field at that index (as SIMPLECDRS).
+  3. **Queue stats: 23 fields**, not 24 — fix A-56, info.ts description,
+     the fixture basis text.
+  4. **Error-only responses**: for the 13 endpoints whose only Stage 4
+     observation was a missing-parameter error or an empty body, change the
+     response `description` to lead with "Success response not documented."
+     and describe the observed error/empty body as the no-parameter case.
+     Keep status 200 (one response per status code).
+  5. Then the Stage 7 checks: `npm run check`, `npm run build`, full
+     Playwright on a fresh `build && start`, the visual pass (desktop 1440,
+     tablet 1024, mobile 390; en and he) over one page per category plus a
+     write page, a binary page, a Demo read and the guides, and a secret
+     scan. Then the Phase Completion Report and the A/B/C/D gate question.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

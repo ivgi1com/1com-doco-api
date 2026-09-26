@@ -816,3 +816,47 @@ Full validation: `npm run check` 209/209 after each fix, `npm run build`
 clean (228 pre-rendered paths), full Playwright suite on a fresh
 `build && start` (see this session's completion report for the pass
 count — run in progress at commit time).
+
+## Phase 7 Stage 6 guide model (2026-09-26, Opus 5.5)
+
+- Guides are content modules (`src/content/guides/`), rendered by one
+  generic page; the page holds no API-specific logic. Blocks: paragraph,
+  list, callout, code (literal), `sample` (generated from a real endpoint
+  by `buildSample`, so guides can't drift from the reference), `endpoints`
+  (reference links resolved from the content model). Inline code via
+  backticks only; no HTML or markdown. Referential integrity is enforced by
+  `tests/unit/guides.test.ts`.
+- "Getting started" (Sample API) migrated unchanged, still prototype-labelled.
+
+## Phase 7 Stage 7 review (2026-09-26, Opus 5.5)
+
+Architecture, code and security review over `main..HEAD`. Live boundary
+unchanged (allowlist: import path only; GET-only assertion intact); writes
+blocked in Demo, UI and Live; no secret in the tree or scratchpad; guides
+render no raw HTML. Findings and user decisions:
+
+1. **Samples parse JSON without requesting it** (18 Proxy endpoints):
+   `buildQueryAuthSample` picks `response.json()` from the first documented
+   response's format, but no sample sends `format=json`, and the Proxy
+   default output is plain text. Decision: every Proxy endpoint whose
+   primary documented response is `format: "json"` gets a `format` query
+   parameter with `example: "json"` (added where missing, documented as
+   observed/undocumented where the source doesn't list json). Accepted
+   side effect: the Playground pre-fills format=json, so Live defaults for
+   info-extensions/info-agents switch from plain to json (already allowed
+   by `LIVE_POLICIES`). Guarded by a new test.
+2. **BLFS/FLOWS positional-key counts wrong** (A-72/A-73): the Stage 4
+   masker labelled every 1-digit key `<9>` and 2-digit key `<99>`, so
+   positional keys collided in its output. Default-format lines show
+   named/positional alternation for every field: BLFS has `0`..`2`, FLOWS
+   `0`..`17`, each mirroring the named field at that index. To be corrected
+   in the audit, schemas and fixtures.
+3. **Queue stats field count** is 23, not 24 (trailing `|` on the default
+   line). To be corrected.
+4. **Error-only responses read as the operation's response** (13
+   endpoints whose only observation was a missing-parameter error or an
+   empty body). To be relabelled so the Reference doesn't present an error
+   as the normal result.
+5. **`use-playground.ts` hard-codes `tenant`** as the endpoint-switch
+   shared field (Phase 5 code). Recorded, not fixed: harmless for Open API;
+   move to the API definition if Open API needs a different shared field.
