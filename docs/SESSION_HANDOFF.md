@@ -5,7 +5,28 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — STOP checkpoint (2026-09-26): Stage 3 in progress, WIP, NOT committed
+## Phase 8 — Stage 3 DONE (2026-09-26); Stage 4 next, on Sonnet
+
+- Close-out (continuing from the STOP checkpoint below): `npm run
+  check` 272/272, `npm run build` clean (546 endpoint pages).
+- Playground validation (a throwaway Playwright script against a fresh
+  `build && start`, not committed): all 3 Demo endpoints
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`) resolve
+  their documented-example scenario at desktop 1440 + mobile 390, plus
+  one Hebrew page (English scenario label in Hebrew chrome) — zero
+  console errors, no overflow. 3 negative states confirmed: `ailogs-list
+  format=csv` → "Not simulated"; `cdrs-list` → "Demo data not
+  available"; `dial` (a write) → "Reference only", Send absent/disabled.
+- `docs/ARCHITECTURE.md` "Demo fixture system" updated for the per-API
+  merge; `docs/DECISIONS.md` "Phase 8 Stage 3 complete" has full detail.
+  `docs/API_CONTENT_MODEL.md` and `docs/SECURITY.md` "Demo mode
+  guarantees" were checked and need no change (already API-neutral).
+- **Next: Stage 4 on Sonnet** — one guide, "OpenAPI authentication and
+  scope", built only from `_common.md` (key kinds, `tenant`, `global=1`,
+  errors, the Live-never-uses-global-keys rule). Update
+  `docs/API_CONTENT_MODEL.md` if the guide content model needs it.
+
+## (Superseded by the entry above) Phase 8 — STOP checkpoint (2026-09-26): Stage 3 in progress, WIP, NOT committed
 
 - Branch `phase/open-api` @ `c353d4b` (Stage 2's final commit). Stage 3
   work is **uncommitted** on top of it (`git status`: `src/content/demo/

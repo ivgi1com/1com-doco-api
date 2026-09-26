@@ -1120,3 +1120,32 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
   description says the status is not documented.
 - Validation at close-out: `npm run check` 269/269, lint covers
   `scripts/*.mjs` (no ignore, verified), `npm run build` clean.
+
+## Phase 8 Stage 3 complete (2026-09-26)
+
+- **Demo fixtures added for the 3 approved OpenAPI GETs**
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get` — the only
+  resources with both a documented response schema and no categorical
+  Live/Demo exclusion, per "Phase 8 planning" above):
+  `src/content/demo/openapi.ts`, one case each, reusing the same values
+  already published as each endpoint's own vendor response example
+  (already normalized to the project's synthetic conventions at Stage 1).
+  Every other OpenAPI GET falls back to "Demo data not available"; every
+  write stays Reference-only (SEC-REQ-27) — verified directly against the
+  running Playground, not just by reading the code.
+- **Demo registry generalized to merge fixture sets per API**
+  (`src/content/demo/index.ts`), and `tests/unit/demo-fixtures.test.ts`
+  now iterates a combined Proxy+OpenAPI fixture list
+  (`fixtureSetFor(apiId, endpointId)`) instead of a Proxy-only helper, so
+  a future API's fixtures reuse the same exhaustiveness/synthetic-value
+  guards without further test-file changes.
+- **Not simulated by design, not by gap:** an explicit `format=csv` on AI
+  Logs, an all-miss AI Analysis query, and an unregistered/no-active-
+  channel Extension State all resolve to "Not simulated" — none of those
+  cases has a worked example on the official pages, so none is fixtured.
+- Validation: `npm run check` 272/272, `npm run build` clean (546
+  endpoint pages), a Playwright pass driving the real Playground for all
+  3 Demo endpoints (desktop 1440 + mobile 390, en) plus one Hebrew page —
+  scenario resolution, the 3 negative states above (Not simulated, Demo
+  data not available, Reference-only/Send-blocked), zero console errors,
+  no overflow.

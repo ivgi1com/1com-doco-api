@@ -92,7 +92,12 @@ with a fixture set, it resolves a scenario instead of falling back
 straight to `unavailable`:
 
 `src/content/demo/` defines the model (`types.ts`) and holds the fixture
-data itself, one file per API (`proxy.ts`). A `DemoFixtureSet` attaches to
+data itself, one file per API (`proxy.ts`, `openapi.ts` — Phase 8 Stage 3).
+`index.ts` merges every API's fixture sets into one `getDemoFixtures`
+lookup, keyed by `${apiId}/${endpointId}`; `tests/unit/demo-fixtures.test.ts`
+iterates the same merged list, so a new API's fixtures get the same
+exhaustiveness/synthetic-value guards without any test-file changes beyond
+adding its endpoints to `FIXTURE_ENDPOINTS`. A `DemoFixtureSet` attaches to
 one non-synthetic endpoint (`ApiDefinition.synthetic === false`) without
 touching that endpoint's own `responses` field — those stay vendor/observed
 documentation and are never replayed. Every fixture value is
