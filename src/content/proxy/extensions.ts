@@ -22,7 +22,10 @@ export const blfs = proxyOperation({
   title: "Get BLF status",
   summary: "Returns the BLF (Busy Lamp Field) status, peers and flows for the tenant.",
   source: "blfs.md",
-  queryParameters: [q("tenant", "The tenant to report.")],
+  queryParameters: [
+    q("tenant", "The tenant to report."),
+    q("format", "Output format. Observed (A-72): the default is a pipe-delimited table; format=json (undocumented) returns an array of the same fields.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {
@@ -68,7 +71,10 @@ export const countpeers = proxyOperation({
   title: "Count peers",
   summary: "Returns the number of peers on each node, and the total.",
   source: "countpeers.md",
-  queryParameters: [peerCountTenantParam],
+  queryParameters: [
+    peerCountTenantParam,
+    q("format", "Output format. Observed (A-70): the default is a pipe-delimited `<node>:<count>` line; format=json (undocumented) returns a keyed object.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {
@@ -99,7 +105,10 @@ export const peers = proxyOperation({
   title: "List peers",
   summary: "Shows the peers registered on all nodes of the network.",
   source: "peers.md",
-  queryParameters: [peerCountTenantParam],
+  queryParameters: [
+    peerCountTenantParam,
+    q("format", "Output format. Observed (A-71): the default is a pipe-delimited table; format=json (undocumented) returns an array of the same fields.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {

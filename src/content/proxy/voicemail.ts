@@ -88,7 +88,10 @@ export const voicemailList = proxyOperation({
   title: "List voicemails",
   summary: "Lists every voicemail for a tenant.",
   source: "voicemail.md",
-  queryParameters: [vmTenantParam],
+  queryParameters: [
+    vmTenantParam,
+    q("format", "Output format. Observed (A-77): the default is a 5-column pipe-delimited table; format=json (undocumented) returns an array with the full per-mailbox record.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {

@@ -711,14 +711,14 @@ A-56 — `INFO queues` / `INFO queue` (OBSERVED)
   (undocumented): an object keyed by queue id, each value a short string
   (the queue name).
 - `queue`: called with no `id` (none was supplied), it still returned one
-  queue's full stats as a pipe-delimited row of 24 named fields
+  queue's full stats as a pipe-delimited row of 23 named fields
   (`AGENTSAVAILABLE`, `AGENTSPAUSED`, `AGENTSFREE`, `AGENTSONLINE`,
   `CALLSINQUEUE`, `SERVICELEVEL`, `FIRSTWAITING`, `SECONDWAITING`,
   `THIRDWAITING`, `CALLSONLINE`, `TALKTIME`, `HOLDTIME`, `ANSWEREDCALLS`,
   `CALLSRECEIVED`, `REALANSWEREDCALLS`, `TRANSFEREDCALLS`,
   `ABANDONEDCALLS`, `TIMEDOUTCALLS`, `QUEUECAR`, `EXITWITHKEYCALLS`,
   `MAXHOLDTIME`, `AVERAGETALKTIME`, `AVERAGEHOLDTIME`); `format=json`
-  confirms the same 24 field names. **Not confirmed**: whether this is the
+  confirms the same 23 field names. **Not confirmed**: whether this is the
   tenant's only/first queue, a default, or `id` silently ignored when
   absent — no id-filtering behavior was observed.
 

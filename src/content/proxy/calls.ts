@@ -117,7 +117,11 @@ export const channel = proxyOperation({
   title: "Get a channel",
   summary: "Shows one channel's details for the selected tenant.",
   source: "channel.md",
-  queryParameters: [q("channel", "The channel to show info for."), tenantParam],
+  queryParameters: [
+    q("channel", "The channel to show info for."),
+    tenantParam,
+    q("format", "Output format. Observed (A-69): the default is a pipe-delimited line; format=json (undocumented) returns an array.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {

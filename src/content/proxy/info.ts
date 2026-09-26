@@ -32,6 +32,7 @@ const formatParam: Parameter = {
   type: "string",
   required: "undocumented",
   enum: ["plain", "json"],
+  example: "json",
   description:
     "Output format. The source lists plain, json, xml and csv \"depending on the request\" without saying which this operation supports. Observed (A-40): the default is plain (a pipe-delimited table); json returns an array; xml and csv returned an empty body, so they are not offered here.",
   source: `${SOURCE_PAGE}#bkmrk-common-parameters`,
@@ -224,6 +225,7 @@ const didsFormatParam: Parameter = {
   type: "string",
   required: "undocumented",
   enum: ["plain", "json", "csv"],
+  example: "json",
   description:
     "Output format. Observed (A-53): the default is plain (an 11-column pipe-delimited table); json returns an array where each upstream item also carries the whole tenant record (this portal shows only the DID's own fields); csv returned an empty body on the tenant tested.",
   source: "source-docs/DOCS_AUDIT.md#a-53",
@@ -330,6 +332,7 @@ const simplecdrsFormatParam: Parameter = {
   type: "string",
   required: "undocumented",
   enum: ["json", "csv"],
+  example: "json",
   description:
     "Output format. Observed (A-49): json returns an array (each record's fields also duplicated under bare positional keys); csv returns the same fields as a comma-separated table. Default/plain is not offered here: its real structure is only partially decoded from a masked capture (A-54) and is not reproduced without confidence.",
   source: "source-docs/DOCS_AUDIT.md#a-54",
@@ -440,6 +443,7 @@ const queuelogsFormatParam: Parameter = {
   type: "string",
   required: "undocumented",
   enum: ["json", "csv"],
+  example: "json",
   description:
     "Output format. json returns an array of records, each field also duplicated under a bare positional key (observed from one user-supplied record, A-50). csv is the Site's own example format; only its empty result (0 bytes) has been observed. The default format's structure with data is unknown and is not offered here.",
   source: "source-docs/DOCS_AUDIT.md#a-50",
@@ -693,7 +697,7 @@ export const infoQueues = proxyOperation({
   source: "info.md",
   queryParameters: [
     tenantParam,
-    q("format", "Output format. Observed (A-56): the default is one line of pipe-delimited `<id>: <label>` pairs with no header; format=json (undocumented) returns an object keyed by queue id.", { required: false, enum: ["json"] }),
+    q("format", "Output format. Observed (A-56): the default is one line of pipe-delimited `<id>: <label>` pairs with no header; format=json (undocumented) returns an object keyed by queue id.", { required: false, enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -723,6 +727,7 @@ export const infoQueue = proxyOperation({
   queryParameters: [
     q("id", "The queue's id."),
     tenantParam,
+    q("format", "Output format. Observed (A-56): the default is a pipe-delimited positional row; format=json (undocumented) returns the same fields by name.", { required: false, enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -760,6 +765,7 @@ export const infoAgentsconnected = proxyOperation({
   queryParameters: [
     tenantParam,
     q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
+    q("format", "Output format. Observed (A-57): the default is a pipe-delimited `<number>:<state>` line; format=json (undocumented) returns a keyed object.", { required: false, enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -800,6 +806,7 @@ export const infoAgentsdelay = proxyOperation({
   queryParameters: [
     tenantParam,
     q("queue", "Queue id to narrow the result to. Shared INFO param (Doc line 151).", { required: false }),
+    q("format", "Output format. Observed (A-57): the default is a pipe-delimited `<id>:<value>` line; format=json (undocumented) returns a keyed object.", { required: false, enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -835,7 +842,10 @@ export const infoOutdialed = proxyOperation({
   title: "List calls dialed out by extensions",
   summary: "Returns info about calls dialed out by extensions.",
   source: "info.md",
-  queryParameters: [tenantParam],
+  queryParameters: [
+    tenantParam,
+    q("format", "Output format. Observed (A-58): the default is an empty body; format=json (undocumented) returns a keyed object.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {
@@ -890,7 +900,10 @@ export const infoConfig = proxyOperation({
   title: "Get tenant configuration",
   summary: "Returns info about the configured tenant.",
   source: "info.md",
-  queryParameters: [tenantParam],
+  queryParameters: [
+    tenantParam,
+    q("format", "Output format. Observed (A-63): the default is a 7-field pipe-delimited positional row; format=json (undocumented) returns 3 named fields.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {
@@ -949,6 +962,7 @@ export const infoExtstate = proxyOperation({
   queryParameters: [
     q("ext", "The extension number.", { example: "500" }),
     tenantParam,
+    q("format", "Output format. Observed (A-62): the default is a 2-byte whitespace-only body; format=json (undocumented) returns { UniqueID, LinkedID }.", { required: false, enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [

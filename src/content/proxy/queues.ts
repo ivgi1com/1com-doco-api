@@ -193,7 +193,10 @@ export const flows = proxyOperation({
   title: "List flow statuses",
   summary: "Shows the status of every flow for the tenant.",
   source: "flows.md",
-  queryParameters: [q("tenant", "The tenant to report.")],
+  queryParameters: [
+    q("tenant", "The tenant to report."),
+    q("format", "Output format. Observed (A-73): the default is a pipe-delimited table; format=json (undocumented) returns an array of the same fields.", { required: false, enum: ["json"], example: "json" }),
+  ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {

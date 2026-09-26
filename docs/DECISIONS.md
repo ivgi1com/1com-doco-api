@@ -860,3 +860,26 @@ render no raw HTML. Findings and user decisions:
 5. **`use-playground.ts` hard-codes `tenant`** as the endpoint-switch
    shared field (Phase 5 code). Recorded, not fixed: harmless for Open API;
    move to the API definition if Open API needs a different shared field.
+
+### Stage 7 remediation amendment (2026-09-26, Sonnet 5, session interrupted mid-fix)
+
+- **Finding 2 (BLFS/FLOWS positional keys) re-checked and confirmed**, not
+  just re-asserted: cross-checked the JSON masked shapes against the
+  probe's own default/plain-format lines (a separate channel the
+  digit-masking bug doesn't corrupt the same way). BLFS's plain line shows
+  exactly 3 interleaved positional/named pairs, a closed match to its 3
+  named fields — keys `0`-`2`. FLOWS's plain line shows 4+ interleaved
+  pairs before the probe's capture-length truncation, and the JSON shape's
+  two colliding buckets (one single-digit, one double-digit) are exactly
+  what 18 positional keys (0-9 single-digit, 10-17 double-digit) would
+  produce under that masking bug, with nothing left over — keys `0`-`17`.
+  Not yet written into `source-docs/DOCS_AUDIT.md` A-72/A-73 or the
+  content model at session end; see `docs/SESSION_HANDOFF.md` for the
+  exact resume point.
+- **Finding 3 (queue-stats field count) closed as a review counting
+  error, not a real bug.** Re-counted both the original probe evidence and
+  `queueStatsFieldNames` in `info.ts`: the array already has 23 unique
+  entries. The Stage 7 review's "should be 23, code says 24" claim was
+  itself a miscount made during that review — only 3 prose mentions of
+  "24" needed fixing (`demo/proxy.ts`, `DOCS_AUDIT.md` A-56 ×2), not the
+  array.

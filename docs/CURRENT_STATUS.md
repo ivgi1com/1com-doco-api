@@ -47,8 +47,14 @@ times in a row afterward. The dev-only 404 `<script>` warning was attempted
 but not resolved — the predicted one-line fix doesn't work (deeper Next.js
 dev-mode behavior); the `next/script` cleanup was kept anyway (harmless),
 warning stays open. `npm run check` 245/245, build clean.
-Next: **Stage 7 — Review and gate** (Opus 5.5). Full detail:
-`docs/SESSION_HANDOFF.md`. This is the Phase 7 completion gate.
+Stage 7 review (Opus) is done: Live boundary, write blocking, secrets and
+guide rendering all passed; 4 findings to fix (one closed as a review
+counting error, not a real bug — see below). **Remediation (Sonnet) is
+IN PROGRESS, interrupted mid-fix — working tree is currently dirty, not
+committed, `npm run check` not re-run since the last edit.** Full detail
+and the exact resume point: `docs/SESSION_HANDOFF.md` "Stage 7 — review
+DONE, remediation IN PROGRESS". Do not start Stage 7's final checks or the
+Phase Completion Report until remediation is finished and green again.
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
