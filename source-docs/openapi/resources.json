@@ -4,15 +4,15 @@
   "note": "authScope/overviewOpsOrRequired are DOCUMENTED from the Overview objects table; methods/httpOperations are filled only from each resource page once processed (null = not yet processed).",
   "counts": {
     "totalOfficialPages": 38,
-    "processedPages": 3,
+    "processedPages": 38,
     "overviewGeneralPages": 1,
     "resourcePages": 37,
     "uniqueResources": 37,
-    "endpointPathsDocumented": 4,
-    "httpOperationsDocumented": 7,
-    "DOCUMENTED": 1,
-    "PARTIAL": 1,
-    "UNKNOWN": 35,
+    "endpointPathsDocumented": 37,
+    "httpOperationsDocumented": 128,
+    "DOCUMENTED": 5,
+    "PARTIAL": 32,
+    "UNKNOWN": 0,
     "CONFLICT": 0,
     "overviewObjectsTableRows": 36
   },
@@ -50,9 +50,7 @@
       "methods": [
         "GET"
       ],
-      "httpOperations": [
-        "GET /extensions/state"
-      ],
+      "httpOperations": null,
       "processed": true,
       "docStatus": "DOCUMENTED",
       "securityReview": "REVIEW REQUIRED",
@@ -69,16 +67,21 @@
       "url": "https://manual.mirtapbx.com/books/api/page/auth-token",
       "snapshot": "source-docs/raw/mirta-openapi/auth-token.md",
       "primaryPath": "/auth/token",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "auth-token.md",
       "authScope": "Global full API key",
       "overviewOpsOrRequired": "POST generate, DELETE reset",
-      "methods": null,
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/auth-token.md",
+      "unresolved": [
+        "SEC-REQ-05"
+      ]
     },
     {
       "n": 4,
@@ -88,16 +91,20 @@
       "url": "https://manual.mirtapbx.com/books/api/page/dial",
       "snapshot": "source-docs/raw/mirta-openapi/dial.md",
       "primaryPath": "/dial",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "dial.md",
       "authScope": "Tenant full API key",
       "overviewOpsOrRequired": "POST only; requires source and dest",
-      "methods": null,
+      "methods": [
+        "POST"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/dial.md",
+      "unresolved": [
+        "SEC-REQ-06"
+      ]
     },
     {
       "n": 5,
@@ -107,16 +114,21 @@
       "url": "https://manual.mirtapbx.com/books/api/page/cdr",
       "snapshot": "source-docs/raw/mirta-openapi/cdr.md",
       "primaryPath": "/cdrs",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "cdr.md",
       "authScope": "Tenant API key or global key; GET only",
       "overviewOpsOrRequired": "GET only",
-      "methods": null,
+      "methods": [
+        "GET"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/cdrs.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-07"
+      ]
     },
     {
       "n": 6,
@@ -126,16 +138,21 @@
       "url": "https://manual.mirtapbx.com/books/api/page/simple-cdr",
       "snapshot": "source-docs/raw/mirta-openapi/simple-cdr.md",
       "primaryPath": "/simplecdrs",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "simple-cdr.md",
       "authScope": "Tenant API key or global key; GET only",
       "overviewOpsOrRequired": "GET only",
-      "methods": null,
+      "methods": [
+        "GET"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/simplecdrs.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-08"
+      ]
     },
     {
       "n": 7,
@@ -145,7 +162,7 @@
       "url": "https://manual.mirtapbx.com/books/api/page/extension",
       "snapshot": "source-docs/raw/mirta-openapi/extension.md",
       "primaryPath": "/extensions",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "extension.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "number or ex_number; GET /extensions/state for live state",
       "methods": [
@@ -154,20 +171,13 @@
         "PATCH",
         "DELETE"
       ],
-      "httpOperations": [
-        "GET /extensions",
-        "GET /extensions/{ex_id}",
-        "GET /extensions/number/{number}",
-        "POST /extensions",
-        "PATCH /extensions/{ex_id}",
-        "DELETE /extensions/{ex_id}"
-      ],
+      "httpOperations": null,
       "processed": true,
       "docStatus": "PARTIAL",
       "securityReview": "BLOCK LIVE",
       "file": "source-docs/openapi/extensions.md",
       "unresolved": [
-        "response schemas",
+        "response schema",
         "SEC-REQ-03"
       ]
     },
@@ -179,16 +189,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/tenant",
       "snapshot": "source-docs/raw/mirta-openapi/tenant.md",
       "primaryPath": "/tenants",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "tenant.md",
       "authScope": "Global API key",
       "overviewOpsOrRequired": "te_name, te_code",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/tenants.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-11"
+      ]
     },
     {
       "n": 9,
@@ -198,16 +216,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/user",
       "snapshot": "source-docs/raw/mirta-openapi/user.md",
       "primaryPath": "/users",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "user.md",
       "authScope": "Global API key",
       "overviewOpsOrRequired": "us_username",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/users.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-12"
+      ]
     },
     {
       "n": 10,
@@ -217,16 +243,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/user-profile",
       "snapshot": "source-docs/raw/mirta-openapi/user-profile.md",
       "primaryPath": "/userprofiles",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "user-profile.md",
       "authScope": "Global API key",
       "overviewOpsOrRequired": "up_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/userprofiles.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-13"
+      ]
     },
     {
       "n": 11,
@@ -236,16 +270,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/routing-profile",
       "snapshot": "source-docs/raw/mirta-openapi/routing-profile.md",
       "primaryPath": "/routingprofiles",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "routing-profile.md",
       "authScope": "Global API key",
       "overviewOpsOrRequired": "rp_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/routingprofiles.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 12,
@@ -255,16 +296,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/provider",
       "snapshot": "source-docs/raw/mirta-openapi/provider.md",
       "primaryPath": "/providers",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "provider.md",
       "authScope": "Global API key",
       "overviewOpsOrRequired": "pr_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/providers.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-14"
+      ]
     },
     {
       "n": 13,
@@ -274,16 +323,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/voicemail",
       "snapshot": "source-docs/raw/mirta-openapi/voicemail.md",
       "primaryPath": "/voicemails",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "voicemail.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "mailbox",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/voicemails.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-15"
+      ]
     },
     {
       "n": 14,
@@ -293,16 +350,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/ivr",
       "snapshot": "source-docs/raw/mirta-openapi/ivr.md",
       "primaryPath": "/ivrs",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "ivr.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "iv_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/ivrs.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 15,
@@ -312,16 +376,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/custom-destination",
       "snapshot": "source-docs/raw/mirta-openapi/custom-destination.md",
       "primaryPath": "/customdestinations",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "custom-destination.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "cu_name, cu_ct_id",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/customdestinations.md",
+      "unresolved": [
+        "response schema",
+        "cu_ct_id enum"
+      ]
     },
     {
       "n": 16,
@@ -331,16 +403,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/condition",
       "snapshot": "source-docs/raw/mirta-openapi/condition.md",
       "primaryPath": "/conditions",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "condition.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "co_type",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/conditions.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 17,
@@ -350,16 +429,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/hunt-list",
       "snapshot": "source-docs/raw/mirta-openapi/hunt-list.md",
       "primaryPath": "/huntlists",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "hunt-list.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "hu_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/huntlists.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 18,
@@ -369,16 +455,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/did",
       "snapshot": "source-docs/raw/mirta-openapi/did.md",
       "primaryPath": "/dids",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "did.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "di_number",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/dids.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-16"
+      ]
     },
     {
       "n": 19,
@@ -388,16 +482,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/queue",
       "snapshot": "source-docs/raw/mirta-openapi/queue.md",
       "primaryPath": "/queues",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "queue.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "No required create field listed",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/queues.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 20,
@@ -407,16 +508,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/setting",
       "snapshot": "source-docs/raw/mirta-openapi/setting.md",
       "primaryPath": "/settings",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "setting.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "se_code",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/settings.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-17"
+      ]
     },
     {
       "n": 21,
@@ -426,16 +535,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/media-file",
       "snapshot": "source-docs/raw/mirta-openapi/media-file.md",
       "primaryPath": "/mediafiles",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "media-file.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "me_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/mediafiles.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-18"
+      ]
     },
     {
       "n": 22,
@@ -445,16 +562,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/music-on-hold",
       "snapshot": "source-docs/raw/mirta-openapi/music-on-hold.md",
       "primaryPath": "/musiconholds",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "music-on-hold.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "mu_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/musiconholds.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 23,
@@ -464,16 +588,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/paging-group",
       "snapshot": "source-docs/raw/mirta-openapi/paging-group.md",
       "primaryPath": "/paginggroups",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "paging-group.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "pa_name, pa_number",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/paginggroups.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-19"
+      ]
     },
     {
       "n": 24,
@@ -483,16 +615,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/conference-room",
       "snapshot": "source-docs/raw/mirta-openapi/conference-room.md",
       "primaryPath": "/conferencerooms",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "conference-room.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "cr_name, cr_number",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-20"
+      ]
     },
     {
       "n": 25,
@@ -502,16 +642,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/flow",
       "snapshot": "source-docs/raw/mirta-openapi/flow.md",
       "primaryPath": "/flows",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "flow.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "fl_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/flows.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 26,
@@ -521,16 +668,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/tenant-variable",
       "snapshot": "source-docs/raw/mirta-openapi/tenant-variable.md",
       "primaryPath": "/tenantvariables",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "tenant-variable.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "tv_al_id",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-21"
+      ]
     },
     {
       "n": 27,
@@ -540,16 +695,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/disa",
       "snapshot": "source-docs/raw/mirta-openapi/disa.md",
       "primaryPath": "/disas",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "disa.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "ds_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/disas.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-22"
+      ]
     },
     {
       "n": 28,
@@ -559,16 +722,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/caller-id-blacklist",
       "snapshot": "source-docs/raw/mirta-openapi/caller-id-blacklist.md",
       "primaryPath": "/calleridblacklists",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "caller-id-blacklist.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "bl_callerid",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 29,
@@ -578,16 +748,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/campaign",
       "snapshot": "source-docs/raw/mirta-openapi/campaign.md",
       "primaryPath": "/campaigns",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "campaign.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "ca_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/campaigns.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-23"
+      ]
     },
     {
       "n": 30,
@@ -597,16 +775,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/campaign-number",
       "snapshot": "source-docs/raw/mirta-openapi/campaign-number.md",
       "primaryPath": "/campaignnumbers",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "campaign-number.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "cn_ca_id, cn_number",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-24"
+      ]
     },
     {
       "n": 31,
@@ -616,16 +802,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/cron-job",
       "snapshot": "source-docs/raw/mirta-openapi/cron-job.md",
       "primaryPath": "/cronjobs",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "cron-job.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "cr_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/cronjobs.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 32,
@@ -635,16 +828,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/feature-code",
       "snapshot": "source-docs/raw/mirta-openapi/feature-code.md",
       "primaryPath": "/featurecodes",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "feature-code.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "fe_code",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/featurecodes.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 33,
@@ -654,16 +854,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/short-number",
       "snapshot": "source-docs/raw/mirta-openapi/short-number.md",
       "primaryPath": "/shortnumbers",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "short-number.md",
       "authScope": "Tenant API key or global key with global=1",
       "overviewOpsOrRequired": "sn_number",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/shortnumbers.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 34,
@@ -673,16 +880,23 @@
       "url": "https://manual.mirtapbx.com/books/api/page/phone-book",
       "snapshot": "source-docs/raw/mirta-openapi/phone-book.md",
       "primaryPath": "/phonebooks",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "phone-book.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "pb_name",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
+      "processed": true,
+      "docStatus": "PARTIAL",
       "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "file": "source-docs/openapi/phonebooks.md",
+      "unresolved": [
+        "response schema"
+      ]
     },
     {
       "n": 35,
@@ -692,16 +906,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/phone-book-entry",
       "snapshot": "source-docs/raw/mirta-openapi/phone-book-entry.md",
       "primaryPath": "/phonebookentries",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "phone-book-entry.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "phonebook_id, at least one value",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-25"
+      ]
     },
     {
       "n": 36,
@@ -711,16 +933,24 @@
       "url": "https://manual.mirtapbx.com/books/api/page/provisioning-phone",
       "snapshot": "source-docs/raw/mirta-openapi/provisioning-phone.md",
       "primaryPath": "/provisioningphones",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "provisioning-phone.md",
       "authScope": "Tenant API key",
       "overviewOpsOrRequired": "ph_name, ph_mac",
-      "methods": null,
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "PARTIAL",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "unresolved": [
+        "response schema",
+        "SEC-REQ-26"
+      ]
     },
     {
       "n": 37,
@@ -730,16 +960,20 @@
       "url": "https://manual.mirtapbx.com/books/api/page/ai-analysis",
       "snapshot": "source-docs/raw/mirta-openapi/ai-analysis.md",
       "primaryPath": "/aianalysis",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "ai-analysis.md",
       "authScope": "Tenant API key or global key; GET only",
       "overviewOpsOrRequired": "GET only; requires uniqueid",
-      "methods": null,
+      "methods": [
+        "GET"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "BLOCK LIVE",
+      "file": "source-docs/openapi/aianalysis.md",
+      "unresolved": [
+        "SEC-REQ-09"
+      ]
     },
     {
       "n": 38,
@@ -749,16 +983,20 @@
       "url": "https://manual.mirtapbx.com/books/api/page/ai-logs",
       "snapshot": "source-docs/raw/mirta-openapi/ai-logs.md",
       "primaryPath": "/ailogs",
-      "primaryPathSource": "overview-and-examples.md:38",
+      "primaryPathSource": "ai-logs.md",
       "authScope": "Tenant full or read-only API key, or global key; GET only",
       "overviewOpsOrRequired": "GET only; JSON or CSV; defaults to the current day",
-      "methods": null,
+      "methods": [
+        "GET"
+      ],
       "httpOperations": null,
-      "processed": false,
-      "docStatus": "UNKNOWN",
-      "securityReview": "UNKNOWN",
-      "file": null,
-      "unresolved": []
+      "processed": true,
+      "docStatus": "DOCUMENTED",
+      "securityReview": "REVIEW REQUIRED",
+      "file": "source-docs/openapi/ailogs.md",
+      "unresolved": [
+        "SEC-REQ-10"
+      ]
     }
   ]
 }

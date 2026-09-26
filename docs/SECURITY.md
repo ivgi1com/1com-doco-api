@@ -327,6 +327,136 @@ Recorded 2026-09-26. Evidence: `source-docs/openapi/extensions-state.md`, `sourc
 
 Closing needs the user's explicit approval.
 
+### SEC-REQ-05 — OpenAPI Auth Token (BLOCKING, exclusion not allowlist, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/auth-token.md`.
+
+`POST/DELETE /auth/token` mints or resets a real login token/password-substitute for a web user or extension identity. This is credential issuance, not data exposure, so a field allowlist does not apply. Must never be reachable from Demo or Live, categorically, not merely allowlist-gated. Closing needs explicit user approval and is out of scope for the standard Live-enablement checklist.
+
+### SEC-REQ-06 — OpenAPI Dial (BLOCKING, action-authorization decision, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/dial.md`.
+
+`POST /dial` originates a real phone call, with caller-ID override and dialplan-variable injection. Never Live- or Demo-reachable without a separate, explicit business/security decision outside the standard read-allowlist pattern.
+
+### SEC-REQ-07 — OpenAPI CDR response fields (BLOCKING, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/cdrs.md`.
+
+Field names are documented (`clid`, `src`/`dst`/`realsrc`, `pincode`, `cc_cost`/`cc_country`/`cc_network`/`cc_buy`) but no response example exists, so envelope/types are unconfirmed. Before Live: confirm response schema, then a default-deny allowlist excluding `pincode` and billing-cost fields absent a business decision.
+
+### SEC-REQ-08 — OpenAPI Simple CDR response fields (BLOCKING, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/simplecdrs.md`.
+
+Caller PII fields (`sc_calleridnum`, `sc_calleridname`, `sc_dialednum`) documented by name only, no response example. Before Live: confirm response schema, then a default-deny allowlist.
+
+### SEC-REQ-09 — OpenAPI AI Analysis (BLOCK LIVE outright, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/aianalysis.md`.
+
+`GET /aianalysis` returns full call transcripts, AI summaries and sentiment data — call **content**, not just metadata. Schema and a worked example are both confirmed. This is content exposure; a field allowlist alone does not address the risk. Any future Live consideration needs a distinct privacy/consent decision, not just allowlisting.
+
+### SEC-REQ-10 — OpenAPI AI Logs `ai_talk` field (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/ailogs.md`.
+
+`GET /ailogs` returns `ai_talk`, conversation text with the AI service; the page itself warns it "can contain sensitive conversation content" (`ai-logs.md:89`). Accepts read-only keys. Before Live: explicit product sign-off on whether `ai_talk` is includable at all, separate from the mechanical field allowlist.
+
+### SEC-REQ-11 — OpenAPI Tenant response schema (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/tenants.md`. No response example exists; `te_billingcode` is business-sensitive. Confirm schema before any Live read; writes excluded from Live regardless.
+
+### SEC-REQ-12 — OpenAPI User (BLOCKING, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/users.md`.
+
+Create/update writes `us_password` (a real login password) plus 2FA/IP-filter security-control fields directly. No response schema is documented, so whether GET echoes `us_password` or these controls is unconfirmed. Given this object underlies the Auth Token identity resolution (SEC-REQ-05), treat as high sensitivity; likely excluded from Live entirely pending a business decision, not just field-allowlisted.
+
+### SEC-REQ-13 — OpenAPI User Profile (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/userprofiles.md`.
+
+Controls privilege/authorization assignment for Users; a write vulnerability has systemic (privilege-escalation) impact. No response schema documented. Confirm schema and treat any Live read cautiously given the privilege-control role.
+
+### SEC-REQ-14 — OpenAPI Provider (BLOCK LIVE, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/providers.md`.
+
+Create/update writes two distinct secrets directly: the trunk SIP/PJSIP registration password and `pr_smspassword` (SMS gateway credential). Following the confirmed pattern on Extension (nested technology-row GET exposure), assume GET may echo these until proven otherwise.
+
+### SEC-REQ-15 — OpenAPI Voicemail (BLOCK LIVE, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/voicemails.md`.
+
+Create/update writes a real mailbox password directly — the same class of finding as the already-blocking Proxy API VOICEMAIL exposure (A-77, SEC-REQ-02), in a different API family. Confirm the password is excluded from any GET response before Live.
+
+### SEC-REQ-16 — OpenAPI DID (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/dids.md`.
+
+No response schema documented. The Proxy API's own `info-dids` (A-53) joined the DID row with the entire tenant row including recording credentials and billing code — a different API family, not carried over as evidence, but a direct precedent to check for once an OpenAPI DID response schema is available.
+
+### SEC-REQ-17 — OpenAPI Setting (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/settings.md`.
+
+`se_code`/`se_value` is a generic, unenumerated key/value slot — risk depends entirely on which settings a real PBX stores here. Before Live: enumerate actual `se_code` values in use and apply a default-deny allowlist by code, not just by response field name.
+
+### SEC-REQ-18 — OpenAPI Media File `me_data` (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/mediafiles.md`.
+
+Create accepts a base64 audio payload (`data_base64`→`me_data`). Whether GET returns this payload is unconfirmed; if so, both a bandwidth and content-sensitivity concern. Confirm before Live.
+
+### SEC-REQ-19 — OpenAPI Paging Group `pa_pin` (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/paginggroups.md`.
+
+Create/update writes an intercom access PIN (`pin`→`pa_pin`) directly. Confirm it is excluded from any GET response before Live.
+
+### SEC-REQ-20 — OpenAPI Conference Room `meetme` PINs (BLOCK LIVE, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/conferencerooms.md`.
+
+Create/update writes a nested `meetme` object containing a join PIN and a separate admin/moderator PIN directly. The admin PIN grants moderator control (mute/kick/lock) over a live conference. Assume GET returns the `meetme` object until proven otherwise, consistent with the confirmed Extension/Provider pattern.
+
+### SEC-REQ-21 — OpenAPI Tenant Variable (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/tenantvariables.md`.
+
+Same generic key/value risk as Setting (SEC-REQ-17): enumerate the "allowed variable" (`tv_al_id`) definitions before Live and allowlist by definition, not just by field name.
+
+### SEC-REQ-22 — OpenAPI DISA PIN (BLOCK LIVE, exclusion not allowlist, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/disas.md`.
+
+`ds_pin` grants outbound dialing access through the tenant's trunk — a fraud/cost risk on write alone, independent of whether it is ever readable. Treat like Dial/Auth Token (SEC-REQ-05/06): categorically excluded from Live, not a standard field-allowlist case.
+
+### SEC-REQ-23 — OpenAPI Campaign state (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/campaigns.md`.
+
+Writing `state` (e.g. `ACTIVE`) starts/stops real automated outbound dialing — an operational side effect beyond ordinary CRUD. No response schema documented. Confirm schema before any Live read; state-changing writes excluded from Live regardless of read-allowlist status.
+
+### SEC-REQ-24 — OpenAPI Campaign Number response fields (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/campaignnumbers.md`.
+
+Target phone numbers and per-number call-outcome fields (`billsec`, `lastattempt`, `attempts`), comparable sensitivity to CDR (SEC-REQ-07). Confirm response schema before Live.
+
+### SEC-REQ-25 — OpenAPI Phone Book Entry (REVIEW REQUIRED, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/phonebookentries.md`.
+
+Holds real contact PII (name, phone, email) via a flexible values/fields/details write shape. No response schema documented. Before Live: confirm schema and scope any allowlist to the phone book's own declared layout.
+
+### SEC-REQ-26 — OpenAPI Provisioning Phone (BLOCK LIVE, open)
+
+Recorded 2026-09-26. Evidence: `source-docs/openapi/provisioningphones.md`.
+
+Create/update writes two distinct secrets directly: a device provisioning password and an HTTP basic-auth password used to serve the phone's own config file. A provisioning system commonly needs to serve back its own credentials, which increases (not decreases) the odds a GET here would echo them. Assume so until proven otherwise.
+
 ## Open action items
 
 ### Stage 4 TEST API key rotation (2026-09-26, not yet done)
