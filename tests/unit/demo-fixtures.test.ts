@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getEndpoint } from "@/content";
 import { getDemoFixtures, resolveDemoCase } from "@/content/demo";
+import { openapiDemoFixtures } from "@/content/demo/openapi";
 import { proxyDemoFixtures } from "@/content/demo/proxy";
 import type { DemoFixtureSet } from "@/content/demo/types";
 import observedInfoExtensions from "../../source-docs/observed/info-extensions.json";
@@ -11,8 +12,9 @@ import observedInfoQueuelogs from "../../source-docs/observed/info-queuelogs.jso
  * itself, plus three guards on the fixture data — exhaustiveness (every
  * `when` covers every one of the endpoint's own query parameters),
  * schema conformance (fixture bodies match the documented response
- * schema in proxy-api.ts), and a synthetic-value guard (nothing here is,
- * or was derived from, real observed data).
+ * schema), and a synthetic-value guard (nothing here is, or was derived
+ * from, real observed data). Generalized in Phase 8 Stage 3 to iterate
+ * over every API's fixture sets, not just Proxy's.
  */
 
 const FIXTURE_ENDPOINTS = [
@@ -35,16 +37,22 @@ const FIXTURE_ENDPOINTS = [
   { apiId: "proxy", endpointId: "flows" },
   { apiId: "proxy", endpointId: "countpeers" },
   { apiId: "proxy", endpointId: "voicemail-list" },
+  // Phase 8 Stage 3 (docs/DECISIONS.md "Phase 8 planning"):
+  { apiId: "openapi", endpointId: "extensions-state-get" },
+  { apiId: "openapi", endpointId: "ailogs-list" },
+  { apiId: "openapi", endpointId: "aianalysis-get" },
 ] as const;
 
-function fixtureSetFor(endpointId: string): DemoFixtureSet {
-  const set = proxyDemoFixtures.find((s) => s.endpoint === `proxy/${endpointId}`);
-  if (!set) throw new Error(`no fixture set for proxy/${endpointId}`);
+const allFixtureSets: readonly DemoFixtureSet[] = [...proxyDemoFixtures, ...openapiDemoFixtures];
+
+function fixtureSetFor(apiId: string, endpointId: string): DemoFixtureSet {
+  const set = allFixtureSets.find((s) => s.endpoint === `${apiId}/${endpointId}`);
+  if (!set) throw new Error(`no fixture set for ${apiId}/${endpointId}`);
   return set;
 }
 
 describe("resolveDemoCase", () => {
-  const set = fixtureSetFor("info-agents");
+  const set = fixtureSetFor("proxy", "info-agents");
 
   it("returns undefined-set as null (no fixtures for this endpoint)", () => {
     expect(resolveDemoCase(undefined, { tenant: "ACME" })).toBeNull();
@@ -103,7 +111,7 @@ describe("fixture exhaustiveness: every `when` covers every query parameter, not
       const endpoint = getEndpoint(apiId, endpointId);
       expect(endpoint, `content endpoint ${apiId}/${endpointId} must exist`).toBeDefined();
       const paramNames = endpoint!.queryParameters.map((p) => p.name).sort();
-      const set = fixtureSetFor(endpointId);
+      const set = fixtureSetFor(apiId, endpointId);
       expect(set.cases.length).toBeGreaterThan(0);
       for (const demoCase of set.cases) {
         const whenKeys = Object.keys(demoCase.when).sort();
@@ -116,7 +124,7 @@ describe("fixture exhaustiveness: every `when` covers every query parameter, not
 describe("fixture schema conformance (bodies match the documented response schema)", () => {
   it("info-extensions JSON cases: each record has exactly the 6 allowlisted fields", () => {
     const expected = ["ex_id", "ex_number", "ex_name", "ex_tech", "st_state", "username"].sort();
-    const set = fixtureSetFor("info-extensions");
+    const set = fixtureSetFor("proxy", "info-extensions");
     const jsonCase = set.cases.find((c) => c.id === "list-json")!;
     const body = jsonCase.response.body as Array<Record<string, unknown>>;
     expect(body.length).toBeGreaterThan(0);
@@ -127,7 +135,7 @@ describe("fixture schema conformance (bodies match the documented response schem
 
   it("info-agents JSON cases: each record has exactly the observed positional keys", () => {
     const expected = ["0", "1", "2", "4", "5", "6", "7", "8", "10", "11"].sort();
-    const set = fixtureSetFor("info-agents");
+    const set = fixtureSetFor("proxy", "info-agents");
     const knownCase = set.cases.find((c) => c.id === "known-json")!;
     const body = knownCase.response.body as Record<string, Record<string, unknown>>;
     for (const record of Object.values(body)) {
@@ -150,7 +158,7 @@ describe("fixture schema conformance (bodies match the documented response schem
       "di_emailrecording",
       "di_smsemail",
     ].sort();
-    const set = fixtureSetFor("info-dids");
+    const set = fixtureSetFor("proxy", "info-dids");
     const jsonCase = set.cases.find((c) => c.id === "list-json")!;
     const body = jsonCase.response.body as Array<Record<string, unknown>>;
     expect(body.length).toBeGreaterThan(0);
@@ -177,7 +185,7 @@ describe("fixture schema conformance (bodies match the documented response schem
     ];
     const positional = Array.from({ length: 11 }, (_, i) => String(i));
     const expected = [...named, ...positional].sort();
-    const set = fixtureSetFor("info-simplecdrs");
+    const set = fixtureSetFor("proxy", "info-simplecdrs");
     for (const id of ["unfiltered-json", "matched-json"]) {
       const demoCase = set.cases.find((c) => c.id === id)!;
       const body = demoCase.response.body as Array<Record<string, unknown>>;
@@ -202,7 +210,7 @@ describe("blfs/flows fixtures (A-72, A-73): positional keys mirror named fields"
     const named = ["st_extension", "st_state", "st_timestamp"];
     const positional = Array.from({ length: 3 }, (_, i) => String(i));
     const expected = [...named, ...positional].sort();
-    const set = fixtureSetFor("blfs");
+    const set = fixtureSetFor("proxy", "blfs");
     const demoCase = set.cases.find((c) => c.id === "list-json")!;
     const body = demoCase.response.body as Array<Record<string, unknown>>;
     expect(body.length).toBeGreaterThan(0);
@@ -238,7 +246,7 @@ describe("blfs/flows fixtures (A-72, A-73): positional keys mirror named fields"
     expect(named).toHaveLength(18);
     const positional = Array.from({ length: 18 }, (_, i) => String(i));
     const expected = [...named, ...positional].sort();
-    const set = fixtureSetFor("flows");
+    const set = fixtureSetFor("proxy", "flows");
     const demoCase = set.cases.find((c) => c.id === "list-json")!;
     const body = demoCase.response.body as Array<Record<string, unknown>>;
     expect(body.length).toBeGreaterThan(0);
@@ -252,7 +260,7 @@ describe("blfs/flows fixtures (A-72, A-73): positional keys mirror named fields"
 });
 
 describe("info-queuelogs fixtures (A-50, A-55)", () => {
-  const set = fixtureSetFor("info-queuelogs");
+  const set = fixtureSetFor("proxy", "info-queuelogs");
   const abandoned = set.cases.find((c) => c.id === "abandoned-json")!;
   const records = abandoned.response.body as Array<Record<string, unknown>>;
   const observed = observedInfoQueuelogs.response[0] as Record<string, unknown>;
@@ -295,7 +303,7 @@ describe("info-queuelogs fixtures (A-50, A-55)", () => {
 
 describe("voicemail-list fixtures (A-77, SECURITY)", () => {
   it("imapuser and imappassword are null in every record, in every case", () => {
-    const set = fixtureSetFor("voicemail-list");
+    const set = fixtureSetFor("proxy", "voicemail-list");
     for (const demoCase of set.cases) {
       const body = demoCase.response.body as Array<Record<string, unknown>>;
       for (const record of body) {
@@ -320,10 +328,10 @@ function collectByKey(value: unknown, keys: readonly string[], out: unknown[] = 
 }
 
 describe("synthetic-value guard", () => {
-  const allCases = proxyDemoFixtures.flatMap((set) => set.cases);
+  const allCases = allFixtureSets.flatMap((set) => set.cases);
 
   it("every fixture set is marked evidence: synthetic", () => {
-    for (const set of proxyDemoFixtures) {
+    for (const set of allFixtureSets) {
       expect(set.evidence).toBe("synthetic");
     }
   });
@@ -342,7 +350,17 @@ describe("synthetic-value guard", () => {
   });
 
   it("every phone/DID number field uses the reserved fictional NANP exchange 555", () => {
-    const phoneFields = ["di_number", "sc_calleridnum", "sc_dialednum", "callerid"] as const;
+    const phoneFields = [
+      "di_number",
+      "sc_calleridnum",
+      "sc_dialednum",
+      "callerid",
+      // Phase 8 Stage 3 (MiRTA OpenAPI):
+      "ai_callerid",
+      "Extension",
+      "OtherParty",
+      "Connected Line ID",
+    ] as const;
     for (const demoCase of allCases) {
       const values = collectByKey(demoCase.response.body, phoneFields);
       for (const v of values) {

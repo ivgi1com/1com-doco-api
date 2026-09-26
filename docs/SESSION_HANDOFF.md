@@ -5,7 +5,42 @@ Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
 approved** — Stage C [security review] and the completion report are
 next, on Opus — read this first)
 
-## Phase 8 — Stage 2 DONE (2026-09-26); Stage 3 next, on Sonnet
+## Phase 8 — STOP checkpoint (2026-09-26): Stage 3 in progress, WIP, NOT committed
+
+- Branch `phase/open-api` @ `c353d4b` (Stage 2's final commit). Stage 3
+  work is **uncommitted** on top of it (`git status`: `src/content/demo/
+  index.ts` and `tests/unit/demo-fixtures.test.ts` modified,
+  `src/content/demo/openapi.ts` untracked — nothing else).
+- **Done:** `src/content/demo/openapi.ts` — 3 fixture sets
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`), one
+  documented-example case each, values reused from the endpoints' own
+  vendor examples (already synthetic per Stage 1/2). `src/content/demo/
+  index.ts` merges `openapiDemoFixtures` into the registry.
+  `tests/unit/demo-fixtures.test.ts` generalized per the plan ("the
+  fixtures test iterates over every API"): `fixtureSetFor` now takes
+  `(apiId, endpointId)`, `FIXTURE_ENDPOINTS` gained the 3 new
+  `openapi/*` rows, the synthetic-value guard now scans
+  `allFixtureSets` (Proxy + OpenAPI) and its phone-field list gained
+  `ai_callerid`/`Extension`/`OtherParty`/`Connected Line ID`.
+- **Validated so far:** `npm run check` — 272/272 (3 new exhaustiveness
+  tests for the OpenAPI endpoints pass; the existing Proxy tests are
+  unaffected).
+- **Not yet done/verified this session:**
+  - `npm run build` — started, not completed (session stopped mid-run,
+    no output captured; treat as **not verified**, not as failing).
+  - No Playground/Playwright pass on the 3 new Demo scenario chips yet
+    (the Stage 5/6 precedent is to drive the real UI, not just trust
+    the code — do this before calling Stage 3 done).
+  - `docs/DECISIONS.md`, `docs/ARCHITECTURE.md` "Demo provider",
+    `docs/API_CONTENT_MODEL.md` not yet updated for this stage.
+  - No checkpoint commit — the user stopped the session before one was
+    made; nothing here is safe to assume finished.
+- **First action next session:** confirm branch/`HEAD` above and
+  `git status` matches this description, then re-run `npm run build`
+  and the Playground visual check for the 3 Demo endpoints before
+  moving on.
+
+## (Superseded by the entry above) Phase 8 — Stage 2 DONE (2026-09-26); Stage 3 next, on Sonnet
 
 - All 34 remaining resources authored (159/159 operations total), in 5
   commits by category batch, each with `npm run check` green:

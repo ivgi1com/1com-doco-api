@@ -1,7 +1,8 @@
+import { openapiDemoFixtures } from "./openapi";
 import { proxyDemoFixtures } from "./proxy";
 import type { DemoFixtureSet } from "./types";
 
-const allFixtures: readonly DemoFixtureSet[] = [...proxyDemoFixtures];
+const allFixtures: readonly DemoFixtureSet[] = [...proxyDemoFixtures, ...openapiDemoFixtures];
 
 const byEndpoint = new Map<string, DemoFixtureSet>(allFixtures.map((set) => [set.endpoint, set]));
 
