@@ -294,3 +294,18 @@ explicit approval to add this operation to Live. Demo mode is unaffected
 represent `imapuser`/`imappassword` in the documented schema/fixtures — see
 the QUEUELOGS precedent (SEC-REQ-01, A-55): keep the fields in the schema,
 fixed at `null`.
+
+## Open action items
+
+### Stage 4 TEST API key rotation (2026-09-26, not yet done)
+
+The Phase 7 Stage 4 probe (35 read operations) used a user-supplied TEST
+API key/tenant, in-process only, never written to disk. The user was
+directed to rotate that key after the probe. Confirmed at the Phase 7
+approval gate (2026-09-26): **rotation has not happened yet.**
+
+This is a live credential-hygiene gap, not a code or documentation defect.
+Rotate the key before that tenant/key pair is reused for any further
+probing or verification work. Not itself blocking for Phase 7 approval
+(no code or committed artifact depends on the key remaining valid), but
+track it until closed.

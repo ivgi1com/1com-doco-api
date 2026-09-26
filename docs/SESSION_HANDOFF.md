@@ -1,10 +1,21 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–7 done, all
-Stage 7 checks green — at the Phase 7 completion gate, waiting for the
-user's A/B/C/D decision — read this first)
+Last updated: 2026-09-26 (Phase 7 — Proxy API rollout, Stages 0–7 done,
+**APPROVED (gate A)** — next phase not started, waiting for its own plan
+review — read this first)
 
-## Phase 7 — Stages 0–7 done, at the completion gate
+## Phase 7 — Stages 0–7 done, APPROVED (gate A)
+
+Approved 2026-09-26. Freshness checks re-run at approval time: `npm run
+check` 250/250, `npm run build` clean (254 pages). Full Playwright/visual/
+secret-scan validation below is from the Stage 7 remediation session and
+was not re-run at approval time (no code changed since).
+
+**Open action, explicitly not resolved by this approval**: the Stage 4
+probe's TEST API key has been confirmed **not yet rotated**. This is a
+live credential-hygiene gap, not a documentation gap — rotate it before
+any further probing work reuses the same tenant/key. Tracked in
+`docs/SECURITY.md` "Open action items".
 
 - Approved plan: `C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`
   (Stages 0–7). Decisions: `docs/DECISIONS.md` "Phase 7 planning", "Phase
@@ -250,9 +261,26 @@ user's A/B/C/D decision — read this first)
     Playground pages: zero console errors, zero overflow, new text and
     positional keys spot-checked as actually rendering. Secret scan of
     the full `main..HEAD` diff and the working tree: clean.
-  - **Not committed yet** — this is the Phase Completion Report state;
-    commit happens on the user's A or B choice below, per `CLAUDE.md`'s
-    gate procedure.
+  - This work was preserved in WIP checkpoint commit `7644136` before the
+    gate decision (verified, not itself an approval — see its commit
+    message). The approval below is recorded as its own commit on top.
+  - **Approved 2026-09-26 (gate A: approve, save, and continue to
+    planning the next phase)**. Not merged into `main`, not tagged, not
+    pushed (none requested). Full decision record: `docs/DECISIONS.md`
+    "Phase 7 approval". Carried-forward open items (none block the
+    approval; none newly introduced by Phase 7 review/remediation):
+    SEC-REQ-01 (QUEUELOGS) and SEC-REQ-02 (VOICEMAIL imap credentials)
+    both stay blocking for Live; `info-call` remains untested
+    (`tested: false`, both probe attempts timed out); ~19 read operations
+    intentionally ship with no Demo fixture (error/empty/timeout-only
+    observations); the residual "different single test fails once under
+    parallel load" Playwright flake class; the dev-only 404 `<script>`
+    React warning (confirmed prod-clean). **New open action**: the Stage
+    4 probe's TEST API key is confirmed **not rotated** — see
+    `docs/SECURITY.md` "Open action items".
+  - Next phase has **not started** — no planning, research, or
+    implementation. Waiting for its own plan to be presented and
+    separately approved before any implementation begins.
 
 ## Phase 6 complete and approved (gate B) — Demo Playground, all 5 operations
 

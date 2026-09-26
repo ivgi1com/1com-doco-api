@@ -957,3 +957,49 @@ regression, all found and fixed this session:
   zero console errors, zero horizontal overflow, and the new response
   text/positional keys spot-checked to actually render as intended. A
   secret scan of the full `main..HEAD` diff and the working tree: clean.
+
+## 2026-09-26 — Phase 7 (Proxy API rollout) approved, gate A
+
+Approved by the user (gate A: approve, save, and continue to planning the
+next phase). Freshness checks re-run at approval time on the unchanged
+checkpoint (`7644136`): `npm run check` 250/250, `npm run build` clean
+(254 pages). Both passed with no unexpected failures. The rest of the
+Stage 7 validation (Playwright, visual pass, secret scan) was not re-run,
+since no code changed since it was last performed — see
+`docs/SESSION_HANDOFF.md` "Phase 7 — Stages 0–7 done" for those results.
+
+Documentation discrepancies found and fixed as part of this approval (all
+stale wording only, no code/behavior implication):
+- `docs/SESSION_HANDOFF.md` said Stage 7's work was "not committed yet";
+  it was already preserved in WIP checkpoint `7644136`. Corrected to
+  describe the approval as its own commit on top of that checkpoint.
+- `docs/CURRENT_STATUS.md`'s header said "Stages 0–6 done" while its own
+  body described Stage 7 as complete. Corrected.
+- `docs/CURRENT_STATUS.md`'s "Current branch" section still described
+  "Stages 0–4 committed", stale since Stage 4. Corrected.
+
+**New open action, recorded rather than resolved by this approval**: the
+Stage 4 probe's TEST API key was confirmed by the user as **not yet
+rotated**. This is a live credential-hygiene item, not a documentation
+gap. Added to `docs/SECURITY.md` "Open action items"; must be resolved
+before that tenant/key is reused for any further probing.
+
+Carried-forward open items, none newly introduced, none blocking this
+approval: SEC-REQ-01 (QUEUELOGS) and SEC-REQ-02 (VOICEMAIL imap
+credentials) both remain blocking for Live enablement; `info-call` stays
+untested (`tested: false`, both probe attempts timed out with no
+response); ~19 read operations intentionally ship with no Demo fixture
+(their only observed behavior was an error string, a true empty result,
+or a timeout); a residual "a different single test fails once under
+parallel load" Playwright flake class (not this phase's introduction);
+the dev-only 404 `<script>` React warning (confirmed harmless against a
+production build).
+
+**No merge to `main`, no tag, no push** — none requested, matching every
+prior phase's precedent in this project. `phase/proxy-rollout` stays
+unmerged pending a separate, explicit instruction.
+
+Status: Phase 7 complete and approved. Next phase has not started — no
+planning, research, or implementation — and needs its own plan presented
+and separately approved before implementation begins. Full detail:
+`docs/CURRENT_STATUS.md`, `docs/SESSION_HANDOFF.md`.

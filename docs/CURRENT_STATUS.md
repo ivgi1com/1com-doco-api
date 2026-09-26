@@ -1,7 +1,7 @@
 # Current Status
 
 Current work:
-**Phase 7 — Proxy API rollout: IN PROGRESS (Stages 0–6 done).** Plan
+**Phase 7 — Proxy API rollout: APPROVED (gate A), Stages 0–7 done.** Plan
 approved 2026-09-25
 (`C:\Users\ivgi-pc\.claude\plans\start-phase-7-swirling-boot.md`;
 decisions in `docs/DECISIONS.md` "Phase 7 planning", "Phase 7 Stage 1
@@ -62,9 +62,13 @@ Final checks: `npm run check` 250/250, `npm run build` clean,
 sets, full Playwright (146 tests × 2 projects) clean on 2 of 3 fresh-build
 runs (1 unrelated pre-existing-class flake, passed alone), a 90-page-load
 visual/console pass at 3 viewports × 2 locales over the newly-touched
-pages, and a clean secret scan. **Phase 7 is at its completion gate,
-waiting for the user's A/B/C/D decision** — see the Phase Completion
-Report presented this session.
+pages, and a clean secret scan. **Phase 7 is APPROVED (2026-09-26, gate
+A)** — freshness checks (`npm run check`, `npm run build`) re-confirmed
+clean at approval time; full detail in `docs/DECISIONS.md` "Phase 7
+approval". Not merged into `main`, not tagged, not pushed. Next phase has
+not started; waiting for its own plan to be presented and approved.
+**Open action carried forward**: the Stage 4 TEST API key is confirmed
+not yet rotated (`docs/SECURITY.md` "Open action items").
 
 Previous phase:
 **Phase 6 — Demo Mode: COMPLETE AND APPROVED** (approved 2026-09-25, gate
@@ -171,10 +175,12 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`phase/proxy-rollout` (Phase 7, Stages 0–4 committed; see the top of this
-file and `docs/SESSION_HANDOFF.md`). The `phase/demo-mode` @ `0631a95` line
-this section used to show is stale history from before the Phase 6 approval
-and the Phase 7 branch — kept below only as Phase 6/6-superseded record.
+`phase/proxy-rollout` (Phase 7, Stages 0–7 complete and APPROVED at gate A,
+2026-09-26; see the top of this file and `docs/SESSION_HANDOFF.md`). Not
+merged into `main`, not tagged, not pushed. The `phase/demo-mode` @
+`0631a95` line this section used to show is stale history from before the
+Phase 6 approval and the Phase 7 branch — kept below only as
+Phase 6/6-superseded record.
 
 Earlier phase:
 **Phase 4 — One Real Proxy API Endpoint: COMPLETE AND APPROVED** (approved 2026-09-25, gate option B; all 7 steps of the approved plan done, U-11 resolved)
@@ -336,8 +342,12 @@ Previous phases:
 - U-08 (Live allowlist scope) and U-10 (the 23 table-only reqtypes) remain
   open; neither blocks Phase 4.
 
-Next phase:
+Earlier phase:
 **Phase 7 — Proxy API rollout** (`docs/phases/07-proxy-api-rollout.md`).
-Not started.
+Approved 2026-09-26, gate A — see the top of this file.
+
+Next phase:
+Not started. Waiting for its plan to be presented and separately
+approved before any implementation begins.
 
 Resume: see `docs/SESSION_HANDOFF.md`.
