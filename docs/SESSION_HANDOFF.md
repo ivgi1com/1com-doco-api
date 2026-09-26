@@ -1,10 +1,92 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: IN PROGRESS, Stage 4
-fixtures + Stage 5 coverage report committed as WIP, STOP — Stage 5
-validation unfinished; read this first)
+Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: Stages 1–5 COMPLETE,
+validation done, AT THE GATE — awaiting the user's A/B/C/D decision;
+read this first)
 
-## Phase 8B — Stage 4 + Stage 5 coverage report: WIP checkpoint committed (2026-09-26, Sonnet 5); STOP, Stage 5 validation not finished
+## Phase 8B — Stages 1–5 complete, at the approval gate (2026-09-26, Sonnet 5)
+
+- Branch `phase/open-api`, HEAD `71fcc30` (on top of the Stage 4/5 WIP
+  commits `2de5888`/`11377ef`). Not pushed, not merged, not tagged.
+- **This session fixed one real bug found during its own Stage 5
+  validation** (rule 6 — drive the real UI, don't trust unit tests
+  alone): `aianalysis-get`'s "Unique ID missing" case relied on
+  submitting an empty `uniqueid`, but that field is a documented
+  `required: true` query parameter, so the Playground's own client-side
+  validation (`use-playground.ts`) blocks Send before the Demo resolver
+  ever runs — the case was permanently unreachable. Removed (commit
+  `71fcc30`); the file's header comment now explains this alongside the
+  analogous, already-known get-by-ID 404 exclusion.
+- **Validation, now complete:**
+  - `npm run check`: 348/348 unit tests, typecheck, lint.
+  - `npm run build`: clean, 576 pages.
+  - A 76-test Playwright pass (not committed, scratch file deleted
+    after running) covering every new fixture's scenario resolution —
+    chromium-desktop + mobile-safari, en + he, at the 1440×900 viewport
+    this project's own `smoke.spec.ts` "interactions" block always
+    uses for these tests (its `test.use({viewport})` override applies
+    regardless of Playwright project name — "mobile-safari" there means
+    the WebKit engine, not a narrow viewport) — plus a narrow-mobile
+    (390px) layout/console/no-network smoke check on 4 representative
+    endpoints × 2 locales. All 76 passed: correct DEMO stamp, correct
+    status/scenario text, zero console errors, zero
+    `**/api/playground` requests, zero horizontal overflow. One
+    screenshot manually reviewed (rule 6).
+  - Full Playwright suite re-run fresh, twice: 176/178 both times. The
+    one failure each time (`Try in Playground opens the Playground on
+    this endpoint with the Proxy API's own samples`, unrelated to
+    OpenAPI or this work) passed cleanly when rerun alone — confirmed
+    as this project's documented parallel-load flake class.
+  - Secret/PII scan of `git diff 63aa91b..HEAD`: clean. Also checked
+    every literal string in the masked probe file itself: only already-
+    public MiRTA error codes and type/length descriptors, no PII or
+    secrets of any kind.
+  - `source-docs/OPENAPI_DEMO_STATUS.md` (Stage 5 coverage report):
+    52/66 read operations Demo-supported; the other 14 have a recorded
+    reason (global-key-only resource, not probed, or probed with no
+    fixturable data).
+- **Debugging note, in case it recurs:** while building the 76-test
+  pass, several confusing dead ends turned out to be test-script bugs,
+  not product bugs — worth knowing before assuming a "hang" or
+  "mobile-only failure" is real: (a) a stale `npm run start` background
+  process left running from an earlier build served pre-edit code,
+  producing a phantom "tenant field won't clear" symptom that a fresh
+  `rm -rf .next && npm run build` resolved; (b) `.md\:grid`
+  (`desktopPane`) is genuinely `display:none` below the 768px Tailwind
+  `md` breakpoint — the existing OpenAPI Demo e2e tests only appear to
+  validate mobile-safari because `test.use({viewport:{width:1440,
+  height:900}})` at the top of `smoke.spec.ts`'s "interactions" describe
+  block overrides the project's own device viewport; a genuine narrow
+  check needs an explicit `page.setViewportSize()`, matching that same
+  file's own "mobile nav drawer" test; (c) a chip's `preset` value only
+  reaches the real field after React flushes the state update — a
+  `chip.click()` immediately followed by `send.click()` with no wait
+  can race it (the same class of bug as the Phase 7 `info-extstate`
+  lesson).
+- **Untracked cleanup:** all scratch/diagnostic files from this and the
+  crashed prior session were deleted after use (`.diag-tmp.mjs`,
+  `.diag-aia.mjs`, `.diag-params.mjs`, the temporary Playwright spec,
+  and `test-results/`) — none were ever committed, and `.diag-tmp.mjs`'s
+  original question (a "Try in Playground" issue on `extensions-get`)
+  turned out to match the same parallel-load flake class confirmed
+  above, so its investigation is resolved, not abandoned.
+- **Not yet done (deliberately, per the plan):** Stage 6 (Opus
+  cross-API consistency and security review) stays on hold behind 8C
+  (Playground) and 8D (readiness gate), per the existing plan — this
+  session did not touch either. The TEST API key rotation from Phase
+  8B Stage 2 is still an open `docs/SECURITY.md` action.
+- **Environment:** the Playwright-managed `next start` server from the
+  last full-suite run was torn down when the run finished; port 3000
+  should be free. No dev/start server was left running by this session.
+- **Model:** Sonnet 5 for all of this session's Stage 4/5 work, per the
+  project's routing rule (routine fixture/test/validation work). The
+  Stage 6 review, whenever it starts, is Opus per the existing plan.
+- **First action next session:** `git status`, `git log -3`, confirm
+  the tree is clean, then present (or re-present, if the user already
+  saw it and this is a fresh session) the Phase 8B §16 completion
+  report and wait for the A/B/C/D decision below. Do not start 8C.
+
+## (Superseded by the entry above) Phase 8B — Stage 4 + Stage 5 coverage report: WIP checkpoint committed (2026-09-26, Sonnet 5); STOP, Stage 5 validation not finished
 
 - Branch `phase/open-api`, commit `2de5888` (WIP, not final). Not pushed.
 - **Why this entry exists — do not trust the entry below by itself:** the

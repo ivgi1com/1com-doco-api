@@ -19,23 +19,28 @@ pages). `npm run check` 285/285, `npm run build` clean, Playwright
 162/164 (1 known flake confirmed to pass alone, 1 WebKit skip), a
 40-load visual pass and a secret scan, all clean. Full detail:
 `docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
-**Phase 8B (OpenAPI Demo) IN PROGRESS:** Stage 1 (Demo fixes and
-documented cases), Stage 2 (masked OpenAPI GET probe), and Stage 3
-(observed Reference responses wired via `src/content/observed.ts`,
-`DOCS_AUDIT.md` §14 OA-14..OA-18, SECURITY.md probe observations) done.
-**Stage 4 (Demo fixtures for every probed GET with genuine data, 52
-endpoints total) and Stage 5's OpenAPI coverage report
-(`source-docs/OPENAPI_DEMO_STATUS.md`) are implemented and committed as
-a WIP checkpoint (`2de5888`), but Stage 5's validation checklist
-(full Playwright, a visual pass, an explicit secret scan) is not
-finished — not yet at the Phase 8B gate.** After a PC crash mid-session
-lost the running handoff, this scope was recovered from the raw session
-transcripts and reconfirmed with the user; see `docs/SESSION_HANDOFF.md`
-"Phase 8B — Stage 4 + Stage 5 coverage report" for full detail, including
-2 real bugs found and fixed while validating. `npm run check` 348/348,
-build clean (576 pages). TEST key rotation still pending. Stage 6 (Opus
-cross-API consistency and security review — the Phase 8 gate item) is on
-hold until 8D passes.** Full
+**Phase 8B (OpenAPI Demo): Stages 1–5 COMPLETE, AT THE APPROVAL GATE**
+(awaiting the user's A/B/C/D decision — not yet approved). Stage 1
+(Demo fixes and documented cases), Stage 2 (masked OpenAPI GET probe),
+Stage 3 (observed Reference responses wired via
+`src/content/observed.ts`, `DOCS_AUDIT.md` §14 OA-14..OA-18,
+SECURITY.md probe observations), Stage 4 (Demo fixtures for all 52
+Demo-supported OpenAPI GETs), and Stage 5 (labeling, the
+`source-docs/OPENAPI_DEMO_STATUS.md` coverage report, and full
+validation) are all done. After a PC crash mid-session lost the running
+handoff, the Stage 4 scope was recovered from raw session transcripts
+and reconfirmed with the user; one real bug found during Stage 5's own
+visual validation (an unreachable "Unique ID missing" Demo case, since
+its field is client-side-required) was fixed. `npm run check` 348/348,
+`npm run build` clean (576 pages), a dedicated 76-test Playwright pass
+across both engines/locales/desktop+narrow-mobile all green, the full
+Playwright suite 176/178 (the one failure unrelated, confirmed to pass
+alone), and a secret/PII scan, all clean. Full detail:
+`docs/SESSION_HANDOFF.md` "Phase 8B — Stages 1–5 complete, at the
+approval gate", `docs/DECISIONS.md` "Phase 8B Stage 4–5 completion,
+recovered scope, and generalized decisions". TEST key rotation still
+pending. Stage 6 (Opus cross-API consistency and security review — the
+Phase 8 gate item) is on hold until 8C and 8D pass.** Full
 detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",
 `docs/phases/08-substages-README.md`, `docs/DECISIONS.md` "Phase 8
 pre-Stage-6 sub-phases inserted". This supersedes the "FEATURE-COMPLETE"
