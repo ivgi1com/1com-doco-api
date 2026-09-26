@@ -1003,3 +1003,46 @@ Status: Phase 7 complete and approved. Next phase has not started — no
 planning, research, or implementation — and needs its own plan presented
 and separately approved before implementation begins. Full detail:
 `docs/CURRENT_STATUS.md`, `docs/SESSION_HANDOFF.md`.
+
+## 2026-09-26 — MiRTA OpenAPI documentation baseline (docs only)
+
+User direction: before any OpenAPI implementation, establish an
+evidence-based MiRTA OpenAPI reference. The work is documentation only.
+Plan: `C:\Users\ivgi-pc\.claude\plans\keen-swinging-origami.md`
+(approved).
+
+**Decisions:**
+- **Authority for OpenAPI** is the official MiRTA OpenAPI documentation
+  (`manual.mirtapbx.com/books/api/chapter/openapi`) and the OpenAPI 3.0.3
+  specification, both supplied by the user.
+  - This deliberately differs from the Proxy baseline reset above, where
+    1com's sources outrank MiRTA; 1com publishes no OpenAPI documentation.
+  - Proxy is unaffected.
+  - Resolves `source-docs/DOCS_AUDIT.md` OA-06.
+- **`docs/mirta-openapi-claude-reference.md` is the "wrapper"**:
+  - Adopted: its structure, security rules, safe-testing policy,
+    verification states and checklist.
+  - Every technical claim in it is `UNKNOWN` until officially confirmed.
+  - Where it conflicts with the official source, the official source wins;
+    the local docs are corrected and the conflict logged as an `OA-` item.
+  - The file itself is kept unmodified.
+- **Evidence states:** `DOCUMENTED`, `OBSERVED`, `DOCUMENTED+OBSERVED`,
+  `CONFLICT`, `UNKNOWN`. Accuracy is preferred over completeness.
+- **Location:** `source-docs/openapi/` (README with coverage index,
+  `_common.md`, per-resource files only once evidence exists,
+  `resources.json`), mirroring `source-docs/proxy-api/`. Raw snapshots go
+  under `source-docs/raw/mirta-openapi/`.
+- **Out of scope:** real API calls, the application, Demo, Live, the
+  allowlist and Proxy docs. A mutation is never executed without explicit
+  per-operation approval.
+- **Branch:** `docs/openapi-baseline`, from `phase/proxy-rollout` @
+  `3612586`, following the `docs/proxy-api-rebuild` precedent. Not merged.
+
+**Correction to an earlier entry:** "Phase 3 setup" above says the 38
+OpenAPI pages are indexed in `source-docs/inventory.json`. That file was
+removed in the 2026-09-25 reset; `source-docs/openapi/resources.json`
+supersedes it (OA-07).
+
+**Status:** Stage A (scaffold) is done. Stage B (ingesting the official
+pages and spec) is waiting on user inputs (`source-docs/unresolved.md`
+U-18, U-19).

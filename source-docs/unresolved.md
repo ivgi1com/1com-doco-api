@@ -336,3 +336,61 @@ one-endpoint vertical slice can be built truthfully.
 - Final status: **closed — not a real ambiguity (2026-09-25).** The premise
   was a documentation error made during the rebuild: the Doc lists both
   `agents` (line 122) and `extensions` (line 133). `info.md` corrected.
+
+## U-17 — Does 1com's PBX serve MiRTA OpenAPI (`/pbx/openapi.php`), and on which host?
+
+- Source: `openapi/README.md`, `DOCS_AUDIT.md` §13.
+- Ambiguity: the only known 1com host (`pbx6webserver.1com.co.il`) has
+  been used only with `proxyapi.php`. U-01's host decision covers Proxy
+  only. Nobody has checked whether OpenAPI is enabled on 1com's install,
+  or which host or path would serve it.
+- Why it matters:
+  - Documentation is from MiRTA, so it may not reflect 1com's install
+    (version, enabled resources).
+  - Any future Demo/Live work targets a real host.
+- Options:
+  1. The user confirms with 1com operations.
+  2. The user authorizes one unauthenticated request for the spec URL on
+     1com's host (no key; read-only).
+  3. Defer until implementation planning.
+- Recommendation: 1 or 2 before implementation planning. Not blocking the
+  documentation baseline.
+- User decision: pending
+- Final status: open
+
+## U-18 — Which OpenAPI spec is the reference, and at what version?
+
+- Source: `openapi/README.md` "Authority".
+- Ambiguity: the preferred machine-readable contract is the spec JSON.
+  Still unknown:
+  - which installation it comes from (1com's PBX, or another MiRTA
+    install)
+  - its MiRTA/spec version
+  - whether fetching it needs an API key (the wrapper's L17-20 URLs are
+    unverified)
+- Why it matters: per-install differences must be recorded as
+  differences, never merged silently.
+- Options:
+  1. A spec from 1com's own PBX (preferred).
+  2. A spec from another MiRTA install, labelled as such.
+  3. Official manual pages only, with no spec.
+- Recommendation: 1. If a key is needed, the user fetches it in their own
+  terminal; the key never enters chat or disk.
+- User decision: pending (the user will supply the spec)
+- Final status: open
+
+## U-19 — How the official MiRTA OpenAPI pages are captured
+
+- Source: `openapi/README.md` "Current evidence inventory".
+- Ambiguity: the 37 resource pages and the Overview page
+  (`manual.mirtapbx.com/books/api/page/<slug>`) are public, but none has
+  been captured. Only the chapter index exists.
+- Options:
+  1. The user supplies exports.
+  2. The user authorizes an unauthenticated `curl` snapshot of the 38
+     pages (HTML plus BookStack Markdown export), hashed and redacted as in
+     the Phase 3 precedent (`raw/SOURCES.md`).
+- Recommendation: 2. It is reproducible and hash-verifiable, and matches
+  the Phase 3 method.
+- User decision: pending
+- Final status: open

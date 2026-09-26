@@ -1014,3 +1014,86 @@ probe observation as the endpoint's success response"):
   a `notes` entry instead of a second same-status response — the pattern
   finding 4 asks for, already applied to these four during Stage 3/Stage
   4 authoring, before the review ran.
+
+## 13. MiRTA PBX OpenAPI — documentation baseline (started 2026-09-26)
+
+Scope: documentation only (`openapi/README.md`). **No OpenAPI call has
+been made.** IDs use the `OA-` prefix so they don't collide with the
+Proxy `A-` series.
+
+- Authority: the official MiRTA OpenAPI pages and the spec.
+- The wrapper `docs/mirta-openapi-claude-reference.md` supplies
+  structure/policy only.
+- Official evidence so far is the chapter index snapshot only
+  (`raw/api-book-openapi-chapter.html`).
+
+OA-01 — Wrapper base path is internally inconsistent (wrapper defect)
+- L14, L17-20, L127-159 and L289-293 use `/pbx/openapi.php/…`.
+- L31-35 ("Common REST patterns") use `/openapi.php/…` with no `/pbx`
+  prefix.
+- Neither is officially confirmed yet. Status: UNKNOWN; resolve from the
+  official Overview page or the spec (`servers`/`paths`).
+
+OA-02 — Wrapper resource paths: two inconsistent levels of detail, and no
+official backing (wrapper defect)
+- The "High-level endpoint catalog" (L92-120) gives vague paths ("tenant
+  resource", "IVR resource", …).
+- The "Resource matrix" (L302-330) gives specific plurals (`/tenants`,
+  `/ivrs`, `/customdestinations`, …).
+- No evidence in the repo supports either form. The official chapter
+  snapshot has no paths.
+- All 37 paths are recorded as UNKNOWN, with the wrapper's plural shown
+  only as a claim (`openapi/resources.json` `path.wrapperClaim`).
+
+OA-03 — Wrapper labels unverified content as "confirmed" (wrapper defect)
+- The headings "Confirmed special endpoints" (L124) and "Extension
+  resource — confirmed detail" (L163) cite no official page, line or spec
+  pointer.
+- The wrapper assigns no verification state to any item, although it
+  defines them (L543-548).
+- Treated as UNKNOWN like every other wrapper claim.
+
+OA-04 — Wrapper provenance cannot be verified (wrapper defect)
+- The wrapper carries no fetch date, page revision, hash or raw capture.
+- By its own account it is "not a verbatim mirror of all 38 web pages"
+  (L259).
+- Recorded in `raw/SOURCES.md` as structure/policy input, not evidence.
+
+OA-05 — Resource count wording (minor, wrapper)
+- L41 says the chapter "contains 38 pages/resources".
+- The official index has 38 pages, one of which is "Overview and
+  Examples", so there are **37 resources plus 1 overview**. The official
+  count stands.
+
+OA-06 — Authority conflict between the wrapper's rule and the project
+precedent (**decided**)
+- The wrapper's rule 1 (L230) makes the MiRTA manual/spec authoritative.
+- The 2026-09-25 Proxy baseline reset made 1com's own sources outrank
+  MiRTA (`docs/DECISIONS.md` "Proxy API documentation baseline reset").
+- Decided by the user on 2026-09-26: for OpenAPI, the official MiRTA
+  documentation and spec are authoritative (1com publishes none). Proxy
+  is unaffected. Recorded in `docs/DECISIONS.md`.
+
+OA-07 — Stale or misleading OpenAPI references elsewhere in the repo
+(recorded, **not fixed** in this docs-only task)
+- `docs/DECISIONS.md` L194 says the 38 OpenAPI pages are indexed in
+  `source-docs/inventory.json`. That file was removed in the 2026-09-25
+  reset; `openapi/resources.json` now supersedes it.
+- `src/content/proxy/shared.ts:25` (legacy-deprecation text) reads
+  "OpenAPI-based Proxy API documentation is not yet available". This
+  conflates the two APIs. It is application code and is out of scope
+  here; fix it when OpenAPI implementation starts.
+
+Facts established so far (DOCUMENTED, from truncated official snippets
+only):
+- The spec is OpenAPI 3.0.3 JSON.
+- CDR and Simple CDR are read-only, "GET only".
+- AI Logs is read-only and exports from `ai_ailogs`.
+- Auth Token "generates or resets temporary login tokens".
+- Dial "originates a call".
+- Extension State returns live call-state for one extension.
+- AI Analysis returns transcript/summary/sentiment data.
+- Scope wording for each object ("tenant-scoped" / "managed at system…" /
+  "normally tenant…").
+
+Everything else is UNKNOWN. Full index: `openapi/README.md`.

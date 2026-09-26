@@ -103,3 +103,31 @@ revisions were not inspected.
 is the vendor's own Markdown export of the same revision, kept for easier
 diffing if the page changes. To detect upstream changes, re-fetch and
 compare hashes.
+
+## MiRTA PBX OpenAPI (authoritative for OpenAPI; baseline started 2026-09-26)
+
+Normalized in `../openapi/` (conventions and authority rule:
+`../openapi/README.md`). User decision 2026-09-26: the **official MiRTA
+OpenAPI documentation and spec are authoritative for OpenAPI**. This is
+independent of the Proxy decision above; 1com publishes no OpenAPI
+documentation.
+
+**Official evidence captured so far:**
+- `api-book-openapi-chapter.html` (table in the historical section above).
+  - It is superseded **for Proxy** only. For OpenAPI it is current official
+    evidence, but it is an **index only**: 38 page titles/URLs plus one
+    truncated (~100-character) preview snippet per page.
+  - Its URLs and snippets seed `../openapi/README.md`'s coverage index and
+    `../openapi/resources.json`.
+- Official resource pages: **none captured yet**.
+- OpenAPI 3.0.3 spec JSON: **not supplied yet**.
+
+When captured, snapshots go under `mirta-openapi/`, with fetch
+time/method, URL, HTTP status and as-fetched/committed hashes in a table
+here. Redact before commit (session tokens, keys, real data), as above.
+
+**Structure/policy input, not evidence:**
+
+| File | Origin | SHA-256 (committed blob) | Status |
+|---|---|---|---|
+| `../../docs/mirta-openapi-claude-reference.md` | added by the user, commit `5395552` (2026-09-26 00:14 +0300); no fetch date, hash or raw capture of its own sources | `5762244077cadde2dadff5b267d2f63f300705b0e2e70927b64fce47bb48f409` | **wrapper**: organization, security/testing policy and verification states are adopted. Every technical claim is `UNKNOWN` until officially confirmed. It describes itself as "not a verbatim mirror of all 38 web pages" (its L259). |
