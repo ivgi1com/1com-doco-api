@@ -1,5 +1,5 @@
 import type { Category } from "../types";
-import { f, openapiResource } from "./shared";
+import { f, openapiResource, q } from "./shared";
 
 /**
  * Campaign Number. Source: source-docs/openapi/campaignnumbers.md (official
@@ -20,6 +20,9 @@ const [list, get, create, update, remove] = openapiResource({
   scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/campaignnumber", "/campaign_number", "/campaign_numbers"],
+  listFilters: [
+    q("campaign_id", "Filters the list by parent Campaign. Aliases: `caid`, `cn_ca_id`.", { type: "integer", example: "44" }),
+  ],
   fields: [
     f("campaign_id", "Parent Campaign reference. Maps to `cn_ca_id`.", { required: true, type: "integer", example: "44" }),
     f("number", "Maps to `cn_number`.", { required: true, example: "5550100" }),
@@ -35,11 +38,6 @@ const [list, get, create, update, remove] = openapiResource({
   notes: [
     "Security (SEC-REQ-24): `number` is a target phone number tied to campaign call activity; `billsec`/`lastattempt`/`attempts` are call-outcome metadata, similar sensitivity to CDR/Simple CDR (SEC-REQ-07/08). Before Live: confirm the response schema.",
   ],
-  operationNotes: {
-    list: [
-      "Also filterable by the parent campaign via `campaign_id` (aliases `caid`, `cn_ca_id`); not modeled as a separate parameter here since it is additional to the shared tenant query set.",
-    ],
-  },
 });
 
 export const campaignnumberCategory: Category = {

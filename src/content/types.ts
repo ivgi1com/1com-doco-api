@@ -143,6 +143,24 @@ export interface Endpoint {
   related: string[];
 }
 
+/**
+ * A named request example taken from the official source page (title,
+ * description, and the request it shows), with real-looking values
+ * normalized. Shown in the Reference; the code sample is rendered from
+ * these fields, never copied, so it always uses the portal's base URL and
+ * auth convention. `path` is literal (placeholders already substituted).
+ */
+export interface EndpointExample {
+  title: string;
+  description: string;
+  path: string;
+  query: Record<string, string>;
+  body?: Record<string, unknown> | unknown[];
+  /** Which key the source's example uses: a tenant key or a global key. */
+  keyKind: "tenant" | "global";
+  source: string;
+}
+
 export interface Category {
   id: string;
   title: string;

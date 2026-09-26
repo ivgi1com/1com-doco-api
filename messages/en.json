@@ -109,7 +109,11 @@
     "writeOperationBody": "This operation changes something on the PBX: it can place a call, change configuration, or delete data. The Playground never sends it, in Live or Demo mode. Try it from your own environment, against a tenant where the change is safe.",
     "referenceOnly": "Reference only: this operation changes state, so it isn't available in the Playground.",
     "bodyFormJsonField": "Sent as an application/x-www-form-urlencoded body with one field, {field}, whose value is the object below encoded as JSON.",
-    "bodyMultipart": "Sent as a multipart/form-data upload, with the file in the {field} field."
+    "bodyMultipart": "Sent as a multipart/form-data upload, with the file in the {field} field.",
+    "examples": "Examples",
+    "examplesHelp": "Named examples from the official documentation. Code samples use this portal's base URL and send the key from an environment variable; example values are synthetic.",
+    "globalKeyExample": "Global key",
+    "noExampleSchemaOnly": "No example body documented. The response fields are listed under Responses."
   },
   "lifecycle": {
     "stable": "Stable",

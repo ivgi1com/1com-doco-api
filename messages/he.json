@@ -109,7 +109,11 @@
     "writeOperationBody": "פעולה זו משנה משהו במרכזייה: היא יכולה להוציא שיחה, לשנות הגדרות או למחוק נתונים. ה-Playground לעולם אינו שולח אותה, לא במצב Live ולא במצב Demo. נסו אותה מהסביבה שלכם, מול טננט שבו השינוי בטוח.",
     "referenceOnly": "לעיון בלבד: פעולה זו משנה מצב, ולכן אינה זמינה ב-Playground.",
     "bodyFormJsonField": "נשלח כגוף application/x-www-form-urlencoded עם שדה אחד, {field}, שערכו הוא האובייקט שלהלן בקידוד JSON.",
-    "bodyMultipart": "נשלח כהעלאת multipart/form-data, כשהקובץ בשדה {field}."
+    "bodyMultipart": "נשלח כהעלאת multipart/form-data, כשהקובץ בשדה {field}.",
+    "examples": "דוגמאות",
+    "examplesHelp": "דוגמאות מהתיעוד הרשמי. דוגמאות הקוד משתמשות בכתובת הבסיס של הפורטל ושולחות את המפתח ממשתנה סביבה; ערכי הדוגמה סינתטיים.",
+    "globalKeyExample": "מפתח גלובלי",
+    "noExampleSchemaOnly": "לא תועדה דוגמת גוף. שדות התגובה מפורטים תחת תגובות."
   },
   "lifecycle": {
     "stable": "יציב",

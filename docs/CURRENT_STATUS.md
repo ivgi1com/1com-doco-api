@@ -7,7 +7,12 @@ feature-complete before Stage 6** (the API Reference didn't expose all
 baseline-documented information; the OpenAPI Demo and Playground were
 missing/incomplete). **Four sub-phases were inserted before Stage 6:
 8A (API Reference completeness), 8B (Demo), 8C (Playground), 8D
-(pre-Stage-6 readiness gate) — all Sonnet 5. 8A is next. Stage 6 (Opus
+(pre-Stage-6 readiness gate) — all Sonnet 5. **8A is IN PROGRESS (WIP
+checkpoint, not at its gate, not approved):** 325 official named
+examples now in the Reference (`source-docs/openapi/examples.json`),
+CDR/Simple CDR response field tables rendered, 2 list filters added;
+remaining section audit and a full Playwright re-run are pending — see
+`docs/SESSION_HANDOFF.md`. Stage 6 (Opus
 cross-API consistency and security review — the Phase 8 gate item) is
 on hold until 8D passes.** Full detail: `docs/phases/08-open-api.md`
 "Pre-Stage-6 sub-phases", `docs/phases/08-substages-README.md`,

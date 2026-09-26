@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { CodeTabs } from "@/components/code/code-tabs";
 import { Callout } from "@/components/ui/callout";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
@@ -259,6 +260,35 @@ export function EndpointView({
               </>
             )}
           </Section>
+
+          {panel.examples.length > 0 && (
+            <Section id="examples" title={t("examples")}>
+              <ContentText className="mb-3 text-sm text-ink-muted">{t("examplesHelp")}</ContentText>
+              <ul className="space-y-2" data-testid="endpoint-examples">
+                {panel.examples.map((ex, i) => (
+                  <li key={i}>
+                    <details className="group rounded-md border border-border">
+                      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                        <ChevronRight className="icon-directional size-4 shrink-0 text-ink-muted transition-transform group-open:rotate-90" aria-hidden />
+                        <span lang="en" className="min-w-0 flex-1">
+                          {ex.title}
+                        </span>
+                        {ex.keyKind === "global" && (
+                          <span className="shrink-0 rounded border border-border px-1.5 py-0.5 text-xs font-medium text-ink-muted">
+                            {t("globalKeyExample")}
+                          </span>
+                        )}
+                      </summary>
+                      <div className="space-y-3 border-t border-border px-3 py-3">
+                        {ex.description && <ContentText className="text-sm text-ink-muted">{ex.description}</ContentText>}
+                        <CodeTabs samples={ex.samples} />
+                      </div>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
 
           <Section id="errors" title={t("errors")}>
             {!Array.isArray(endpoint.errors) || endpoint.errors.length === 0 ? (

@@ -1,4 +1,4 @@
-import type { Endpoint } from "@/content/types";
+import type { Endpoint, EndpointExample } from "@/content/types";
 
 export type SampleLanguage = "curl" | "javascript" | "python";
 
@@ -57,6 +57,28 @@ export function resolvePath(endpoint: Endpoint): string {
       path.replaceAll(`{${param.name}}`, String(param.example ?? `<${param.name}>`)),
     endpoint.path,
   );
+}
+
+/**
+ * The endpoint as one named example requests it: its literal path, its
+ * query values, its body. Feeding this to `buildSample` renders the example
+ * with the endpoint's own auth convention (never the source's inline key).
+ */
+export function exampleEndpoint(endpoint: Endpoint, example: EndpointExample): Endpoint {
+  return {
+    ...endpoint,
+    path: example.path,
+    pathParameters: [],
+    queryParameters: Object.entries(example.query).map(([name, value]) => ({
+      name,
+      location: "query",
+      type: "string",
+      required: false,
+      description: "",
+      example: value,
+    })),
+    requestExample: example.body,
+  };
 }
 
 export function exampleQuery(endpoint: Endpoint): string {

@@ -1,0 +1,17 @@
+{
+  "$comment": "Normalization for scripts/openapi-examples.mjs. Official example values that resemble real data (a tenant code, person names and their emails, a business name, a non-555 phone number) are replaced with the synthetic values Phase 8 Stage 2 already uses in src/content/openapi (TESTTENANT, Demo User, Demo Corp, 5550100). 555 numbers, TEST-NET IPs (198.51.100.0/24) and example.com mailboxes without a person name are already synthetic and kept.",
+  "exact": {
+    "CAN%": "TEST%",
+    "Ada Rivera": "Demo User",
+    "Ada Rivera - Desk": "Demo User - Desk",
+    "Bruno Long": "Demo User 2",
+    "ada.rivera@example.com": "demo.user@example.com",
+    "ada.desk@example.com": "demo.desk@example.com",
+    "ada.updated@example.com": "demo.updated@example.com",
+    "39055123456": "5550100",
+    "Welcome to Kartoon Cars. Press 1 for sales or 2 for support.": "Welcome to Demo Corp. Press 1 for sales or 2 for support."
+  },
+  "substring": {
+    "CANISTRACCI": "TESTTENANT"
+  }
+}

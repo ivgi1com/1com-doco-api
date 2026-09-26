@@ -1,10 +1,13 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { getApi, listEndpoints } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
+import { getEndpointExamples } from "@/content/examples";
+import type { Parameter } from "@/content/types";
 import { listLiveTargetIds } from "@/server/playground/allowlist";
-import { buildSample, sampleLanguages } from "@/lib/code-samples";
+import { buildSample, exampleEndpoint, sampleLanguages } from "@/lib/code-samples";
+import examplesDoc from "../../source-docs/openapi/examples.json";
 import inventory from "../../source-docs/openapi/operations.json";
 
 /**
@@ -143,5 +146,124 @@ describe("OpenAPI content ↔ inventory", () => {
     const missing = rows.filter((r) => !have.has(r.id)).map((r) => r.id);
     if (ROLLOUT_COMPLETE) expect(missing).toEqual([]);
     else expect(missing.length).toBeLessThan(rows.length);
+  });
+});
+
+describe("OpenAPI Reference completeness (Phase 8A)", () => {
+  const byIdEp = new Map(endpoints.map((e) => [e.id, e]));
+  const RAW_DIR = resolve(__dirname, "../../source-docs/raw/mirta-openapi");
+  const exampleRows = examplesDoc.examples as unknown as Array<{
+    operationId: string;
+    method: string;
+    title: string;
+    path: string;
+    query: Record<string, string>;
+    body?: unknown;
+    source: string;
+  }>;
+
+  it("maps every named official example to an operation, and every operation has one", () => {
+    expect(examplesDoc.counts.matched).toBe(exampleRows.length);
+    // The only unmatched example is the Overview's cross-resource authentication sample.
+    expect(examplesDoc.unmatched.map((u: { source: string }) => u.source)).toEqual([
+      "source-docs/raw/mirta-openapi/overview-and-examples.md",
+    ]);
+    for (const ex of exampleRows) {
+      const e = byIdEp.get(ex.operationId);
+      expect(e, `${ex.title}: unknown operation ${ex.operationId}`).toBeDefined();
+      expect(ex.method, ex.title).toBe(e!.method);
+    }
+    const withExamples = new Set(exampleRows.map((x) => x.operationId));
+    expect(endpoints.filter((e) => !withExamples.has(e.id)).map((e) => e.id)).toEqual([]);
+  });
+
+  it("counts every curl example heading on the official pages", () => {
+    // Each heading whose first code block is a curl call is one example.
+    let total = 0;
+    for (const f of readdirSync(RAW_DIR).filter((n) => n.endsWith(".md"))) {
+      const text = readFileSync(resolve(RAW_DIR, f), "utf8").replace(/\r\n/g, "\n");
+      for (const part of text.split(/\n(?=#{2,3} )/)) {
+        const first = part.match(/```\n([\s\S]*?)```/)?.[1];
+        if (first?.includes("curl") && first.includes("pbx.example.com")) total++;
+      }
+    }
+    expect(exampleRows.length + examplesDoc.unmatched.length).toBe(total);
+  });
+
+  it("normalizes real-looking example values and never carries a credential", () => {
+    const text = JSON.stringify(exampleRows);
+    for (const banned of ["CANISTRACCI", "CAN%", "Ada Rivera", "Bruno Long", "Kartoon", "39055123456", "change-this", "new-secret"]) {
+      expect(text, banned).not.toContain(banned);
+    }
+    const walk = (v: unknown, key?: string): void => {
+      if (typeof v === "string" && key && /(password|secret|pin|pincode|token)$/i.test(key)) expect(v, key).toBe("SYNTHETIC_SECRET");
+      else if (Array.isArray(v)) v.forEach((x) => walk(x, key));
+      else if (v && typeof v === "object") for (const [k, x] of Object.entries(v)) walk(x, k);
+    };
+    for (const ex of exampleRows) {
+      walk(ex.body);
+      expect(Object.keys(ex.query), `${ex.title}: key in query`).not.toContain("key");
+    }
+  });
+
+  it("models every query parameter an official example uses", () => {
+    const missing: string[] = [];
+    for (const ex of exampleRows) {
+      const e = byIdEp.get(ex.operationId)!;
+      const names = new Set(e.queryParameters.map((p) => p.name));
+      for (const k of Object.keys(ex.query)) if (!names.has(k)) missing.push(`${ex.operationId}: ${k} (${ex.title})`);
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it("renders every example with the header credential and the portal base URL", () => {
+    for (const ex of exampleRows) {
+      const e = byIdEp.get(ex.operationId)!;
+      for (const example of getEndpointExamples("openapi", e.id)) {
+        const curl = buildSample(exampleEndpoint(e, example), openapi.baseUrl, "curl");
+        expect(curl, ex.title).toContain("X-API-Key: $OPENAPI_API_KEY");
+        expect(curl, ex.title).toContain(openapi.baseUrl);
+        expect(curl, ex.title).not.toContain("pbx.example.com");
+        expect(curl, ex.title).not.toMatch(/key=/);
+      }
+    }
+  });
+
+  it("represents every field of each official response field table", () => {
+    // Every "## ... Fields" table on a reporting page (Response, Recording, Transcript
+    // Segment, Response and CSV): each listed field appears in the endpoint's 2xx schema.
+    const pages: Record<string, string> = {
+      "cdr.md": "cdrs-list",
+      "simple-cdr.md": "simplecdrs-list",
+      "ai-analysis.md": "aianalysis-get",
+      "ai-logs.md": "ailogs-list",
+    };
+    for (const [file, id] of Object.entries(pages)) {
+      const text = readFileSync(resolve(RAW_DIR, file), "utf8").replace(/\r\n/g, "\n");
+      const tables = text.split(/\n(?=## )/).filter((part) => /^## [^\n]*Fields/.test(part));
+      const fields = new Set(tables.flatMap((t) => [...t.matchAll(/<tr><td>`([^`]+)`<\/td>/g)].map((m) => m[1])));
+      expect(fields.size, file).toBeGreaterThan(0);
+      const names = new Set<string>();
+      const collect = (ps: Parameter[] = []): void => ps.forEach((p) => (names.add(p.name), collect(p.children)));
+      collect(byIdEp.get(id)!.responses.find((r) => r.status < 300)?.schema);
+      expect([...fields].filter((f) => !names.has(f)), `${id} missing response fields`).toEqual([]);
+    }
+  });
+
+  it("models documented parent-object list filters as real query parameters, not notes-only", () => {
+    // Both were previously documented only in an operationNotes bullet
+    // ("not modeled as a separate parameter") — a real completeness gap
+    // found in Phase 8A's baseline-vs-app audit, fixed via ResourceSpec.listFilters.
+    const cases: Array<{ id: string; name: string; aliasesText: string }> = [
+      { id: "phonebookentries-list", name: "phonebook_id", aliasesText: "pbid" },
+      { id: "campaignnumbers-list", name: "campaign_id", aliasesText: "caid" },
+    ];
+    for (const { id, name, aliasesText } of cases) {
+      const endpoint = byIdEp.get(id);
+      expect(endpoint, id).toBeDefined();
+      const param = endpoint!.queryParameters.find((p) => p.name === name);
+      expect(param, `${id} is missing the ${name} query parameter`).toBeDefined();
+      expect(param!.description, `${id} ${name} description`).toContain(aliasesText);
+    }
   });
 });

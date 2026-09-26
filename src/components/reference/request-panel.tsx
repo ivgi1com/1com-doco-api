@@ -9,6 +9,13 @@ import { type RenderedResponse, ResponseExamples } from "./response-examples";
 export interface RequestPanelData {
   samples: RenderedSample[];
   responses: RenderedResponse[];
+  /** Named official examples, rendered in the main column (see EndpointView). */
+  examples: {
+    title: string;
+    description: string;
+    keyKind: "tenant" | "global";
+    samples: RenderedSample[];
+  }[];
 }
 
 /** The sticky right column: method/path, request samples, Try link, response example. */

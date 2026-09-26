@@ -1272,3 +1272,27 @@ Plan approved: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
   the 3 Proxy IDs already approved.
 - **Not reopened:** Stages 0–5 remain approved/done as recorded above;
   none of that work is redone or undone by this insertion.
+
+## Phase 8A — official named examples and response field tables (2026-09-26, 8A in progress)
+
+- **Examples: structured + generated** (user decision, this session).
+  `scripts/openapi-examples.mjs` parses the official page snapshots into
+  `source-docs/openapi/examples.json`, one entry per named curl example
+  matched to an operation. Code samples are rendered from the structured
+  fields by the existing `buildSample`, so they use the portal base URL
+  and the `X-API-Key` env-var convention, and are never copied verbatim.
+  Examples are read server-side (`src/content/examples.ts`) and are not
+  a field on `Endpoint`, so the client sidebar bundle does not ship them.
+- **Normalization:** official example values that look like real data
+  are replaced with the synthetic values Stage 2 already uses
+  (`scripts/openapi-examples-normalize.json`: TESTTENANT, Demo User,
+  Demo Corp, 5550100). Every credential-shaped body key becomes
+  `SYNTHETIC_SECRET`.
+- **Response field tables:** a documented field/description table with
+  no example goes under status 200, with `type: "unknown"` and
+  `required: "undocumented"`. This extends Stage 1's "vendor examples go
+  under status 200"; the response description states that the status,
+  envelope and types are undocumented.
+- **Correction:** an earlier 8A completion report this session (only 2
+  list filters fixed, "complete") was wrong. The user found the gap by
+  comparing the official CDR page.

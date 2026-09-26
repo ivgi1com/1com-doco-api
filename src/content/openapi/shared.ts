@@ -160,6 +160,12 @@ export interface ResourceSpec {
   globalFlag?: boolean;
   /** Documented path aliases, recorded as a note. */
   aliases?: string[];
+  /**
+   * Extra query parameters accepted only by `list`, beyond the shared
+   * tenant/global set (e.g. a parent-object filter). Additive: most
+   * resources have none.
+   */
+  listFilters?: Parameter[];
   /** Create/update body fields, request name first, mapped column in the description. */
   fields: Parameter[];
   createExample: Record<string, unknown>;
@@ -225,7 +231,7 @@ export function openapiResource(r: ResourceSpec): Endpoint[] {
       title: `List ${r.plural}`,
       summary: r.summaries?.list ?? `Returns the ${r.plural} visible to the key and scope.`,
       authentication: readAuth,
-      queryParameters: readQuery,
+      queryParameters: [...readQuery, ...(r.listFilters ?? [])],
       related: [`${r.slug}-get`, `${r.slug}-create`],
     }),
     openapiOperation({

@@ -12,6 +12,8 @@ export interface RenderedResponse {
   evidence?: Evidence;
   /** The body is binary (e.g. audio); never rendered as text. */
   binary?: boolean;
+  /** Fields are documented but the source gives no example body. */
+  schemaOnly?: boolean;
 }
 
 function statusTone(status: number) {
@@ -66,7 +68,7 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
       {current.html ? (
         <div tabIndex={0} className="code-body max-h-[28rem] overflow-y-auto" dangerouslySetInnerHTML={{ __html: current.html }} />
       ) : (
-        <p className="px-4 py-3 font-mono text-sm text-code-muted">{current.binary ? t("binaryBody") : t("noBody")}</p>
+        <p className="px-4 py-3 font-mono text-sm text-code-muted">{current.binary ? t("binaryBody") : current.schemaOnly ? t("noExampleSchemaOnly") : t("noBody")}</p>
       )}
     </div>
   );

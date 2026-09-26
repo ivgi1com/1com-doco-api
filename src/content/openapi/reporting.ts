@@ -14,6 +14,76 @@ const wildcardTenant = (extra: string) =>
 
 // --- CDR ---
 
+/**
+ * A documented response field whose JSON type the source does not give
+ * (CDR and Simple CDR publish a field/description table but no example).
+ */
+const field = (name: string, description: string): Parameter => ({
+  name,
+  location: "body",
+  type: "unknown",
+  required: "undocumented",
+  description,
+});
+
+/** Shared description for a field table with no example, envelope or status (Stage 1 "vendor examples go under status 200"). */
+const fieldTableResponse = (fields: Parameter[]) => ({
+  status: 200,
+  description:
+    "Per-record fields as listed by the source (field names and descriptions only). Not documented: the HTTP status, the JSON envelope (array or wrapper object), each field's type, and empty-result behavior.",
+  format: "json" as const,
+  evidence: "vendor" as const,
+  schema: fields,
+  verified: false,
+});
+
+const cdrFields: Parameter[] = [
+  field("accountcode", "Tenant code stored on the CDR."),
+  field("ID", "Internal CDR row ID."),
+  field("start", "Call start timestamp."),
+  field("answer", "Answer timestamp when the call was answered."),
+  field("end", "Call end timestamp."),
+  field("clid", "Full caller ID string."),
+  field("realsrc", "Normalized or real source value."),
+  field("firstdst", "First dialed destination tracked by MiRTA PBX."),
+  field("duration", "Total call duration in seconds."),
+  field("billsec", "Answered talk time in seconds."),
+  field("disposition", "Asterisk call disposition."),
+  field("cc_cost", "Calculated tenant-side call cost when available."),
+  field("dcontext", "Asterisk destination context."),
+  field("dstchannel", "Destination channel."),
+  field("userfield", "MiRTA PBX call marker, commonly including inbound or outbound direction information."),
+  field("uniqueid", "Asterisk unique ID for the CDR leg."),
+  field("prevuniqueid", "Previous unique ID for linked call-leg processing."),
+  field("lastdst", "Last destination reached by the call."),
+  field("wherelanded", "Final PBX object or destination where the call landed."),
+  field("src", "Asterisk source value."),
+  field("dst", "Asterisk destination value."),
+  field("lastapp", "Last Asterisk application executed."),
+  field("srcCallID", "Source SIP Call-ID when available."),
+  field("linkedid", "Asterisk linked ID used to group related CDR legs."),
+  field("peeraccount", "Asterisk peer account value."),
+  field("originateid", "Origination tracking ID when available."),
+  field("cc_country", "Rated country when rating data is available."),
+  field("cc_network", "Rated network when rating data is available."),
+  field("pincode", "PIN code associated with the call when present."),
+  field("cc_buy", "Calculated buy-side cost when available."),
+];
+const simplecdrFields: Parameter[] = [
+  field("sc_te_id", "Internal tenant ID."),
+  field("tenantcode", "Tenant code."),
+  field("sc_start", "Simple CDR start timestamp."),
+  field("sc_direction", "Simple direction value, such as IN, OUT, or LOCAL."),
+  field("sc_calleridnum", "Caller ID number."),
+  field("sc_calleridname", "Caller ID name."),
+  field("sc_dialednum", "Dialed number."),
+  field("sc_disposition", "Call disposition."),
+  field("sc_duration", "Total call duration in seconds."),
+  field("sc_billsec", "Answered talk time in seconds."),
+  field("sc_uniqueid", "Asterisk unique ID represented by the simple CDR row."),
+  field("sc_whoanswered", "Extension, user, or object that answered the call."),
+];
+
 const cdr = openapiOperation({
   file: "cdrs.md",
   page: "cdr",
@@ -28,8 +98,8 @@ const cdr = openapiOperation({
   }),
   queryParameters: [
     wildcardTenant("query one tenant by code/name or use a `%` SQL-style wildcard across tenants"),
-    q("start", "Start date/time filter. Applied only when neither `id` nor `uniqueid` is supplied. Defaults to today 00:00:00.", { example: "2026-01-01 00:00:00" }),
-    q("end", "End date/time filter. Applied only when neither `id` nor `uniqueid` is supplied. Defaults to today 23:59:59.", { example: "2026-01-01 23:59:59" }),
+    q("start", "Start date/time filter. Defaults to today 00:00:00. The source states two rules: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00" }),
+    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same two rules as `start`.", { example: "2026-01-01 23:59:59" }),
     q("id", "Comma-separated CDR row IDs. A path segment (`/cdrs/123`) also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
     q("linkedid", "Comma-separated linked IDs. Groups call legs of the same call."),
@@ -42,11 +112,12 @@ const cdr = openapiOperation({
     q("template", "Template name. Only with `format=template` or `format=xml`.", { condition: "Only with `format=template`/`xml`" }),
     q("contenttype", "Content-Type override for rendered template output."),
   ],
+  responses: [fieldTableResponse(cdrFields)],
   errors: errors("missing_api_key", "invalid_api_key", "tenant_required", "method_not_allowed", "single_tenant_required", "template_not_found"),
   notes: [
     "Path aliases: `/cdr`, `/cdrs`, `/call`, `/calls`.",
     "The endpoint may repair attended-transfer and where-landed CDR metadata while preparing results — an undocumented normalization step, not raw storage.",
-    "No JSON example is given. Field names and descriptions are documented; the JSON envelope (array vs wrapper object), value types, and empty-result behavior are undocumented.",
+    "No JSON example is given. The response field names and descriptions are listed under Responses; the JSON envelope (array vs wrapper object), value types, and empty-result behavior are undocumented.",
     "Security (SEC-REQ-07): fields include `clid` (full caller ID string), `src`/`dst`/`realsrc`/`firstdst`/`lastdst` (phone numbers), and `pincode`. `cc_cost`/`cc_country`/`cc_network`/`cc_buy` are billing-rate fields. Before Live: a default-deny field allowlist excluding `pincode` and billing-cost fields.",
     "Template/XML output renders through a tenant-configured template, a second output path whose own rendered content is out of scope of this documentation.",
   ],
@@ -85,11 +156,12 @@ const simplecdr = openapiOperation({
     q("template", "Template name. Only with `format=template` or `format=xml`.", { condition: "Only with `format=template`/`xml`" }),
     q("contenttype", "Content-Type override for rendered template output."),
   ],
+  responses: [fieldTableResponse(simplecdrFields)],
   errors: errors("missing_api_key", "invalid_api_key", "tenant_required", "method_not_allowed", "single_tenant_required", "template_not_found"),
   notes: [
     "Path aliases: `/simplecdr`, `/simplecdrs`, `/simple_cdr`, `/simple_cdrs`.",
     "Template output also exposes template variables `{$end}`, `{$clid}`, `{$callerid_number}`, `{$callerid_name}`, `{$firstdst}`, `{$talk_time}`, `{$who_answered}` inside `{row_loop}`.",
-    "No JSON example is given. Field names are documented; the JSON envelope, value types, and empty-result behavior are undocumented.",
+    "No JSON example is given. The response field names and descriptions are listed under Responses; the JSON envelope, value types, and empty-result behavior are undocumented.",
     "Security (SEC-REQ-08): `sc_calleridnum`, `sc_calleridname`, `sc_dialednum` are caller PII. Before Live: a default-deny field allowlist.",
   ],
 });

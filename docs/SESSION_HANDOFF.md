@@ -1,10 +1,106 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 8 — pre-Stage-6 sub-phases 8A–8D
-inserted after a manual review found implementation gaps; 8A next, on
-Sonnet — read this first)
+Last updated: 2026-09-26 (Phase 8A — OpenAPI API Reference completeness:
+IN PROGRESS, WIP checkpoint committed, NOT at its STOP gate, NOT
+approved — read this first)
 
-## Phase 8 — pre-Stage-6 sub-phases 8A–8D inserted (2026-09-26); 8A next, on SONNET
+## Phase 8A — STOP checkpoint (2026-09-26): WIP, not finished, not approved
+
+- Branch `phase/open-api`, WIP checkpoint commit on top of `1f4c0df`
+  holding all 8A work so far. Not pushed.
+- **History this session:** a first 8A pass fixed only 2 unmodeled list
+  filters and was reported to the user as complete — **that report was
+  wrong**. The user compared the official CDR page
+  (manual.mirtapbx.com/books/api/page/cdr) with the app and said 8A is
+  not finished. A systematic comparison against all 38 raw official
+  snapshots (`source-docs/raw/mirta-openapi/*.md`) then found two
+  systemic gaps, now addressed:
+  1. **Named official examples (none were shown anywhere):** 326 curl
+     examples on the official pages. User chose "structured + generated"
+     (AskUserQuestion, this session). New `scripts/openapi-examples.mjs`
+     generates `source-docs/openapi/examples.json`: 325 matched to an
+     operation, 1 unmatched (the Overview's cross-resource auth example,
+     expected); all 159/159 operations have at least 1 example.
+     Real-looking values normalized via
+     `scripts/openapi-examples-normalize.json` (CANISTRACCI -> TESTTENANT,
+     CAN% -> TEST%, person names/emails -> Demo User, Kartoon Cars -> Demo
+     Corp, 39055123456 -> 5550100 — matching Stage 2 precedent); every
+     credential-shaped body key -> `SYNTHETIC_SECRET`. Accessor:
+     `src/content/examples.ts` (`getEndpointExamples`) — deliberately
+     not on `Endpoint`, so the client sidebar bundle does not ship them.
+     New `EndpointExample` type in `src/content/types.ts`;
+     `exampleEndpoint()` in `src/lib/code-samples.ts` renders each
+     example through the existing `buildSample` (portal base URL,
+     `X-API-Key: $OPENAPI_API_KEY`); server pre-render in
+     `src/lib/endpoint-panel.ts` (`buildExamples`); new collapsible
+     "Examples" section in `src/components/reference/endpoint-view.tsx`
+     with a "Global key" badge where the source used a global key.
+  2. **Response Fields tables not rendered:** CDR (30 fields) and Simple
+     CDR (12) now have a 200 response carrying the field table
+     (`type: "unknown"`, `required: "undocumented"`, no example) —
+     applies the Stage 1 "vendor examples go under status 200" decision
+     to field tables; the description states status, envelope and types
+     are undocumented. `response-examples.tsx` now says "No example body
+     documented. The response fields are listed under Responses."
+     instead of the misleading "No response body." (new `schemaOnly`
+     flag, new i18n key `noExampleSchemaOnly` in en + he).
+  3. CDR `start`/`end`: added the missing second date-range rule
+     (neither `id` nor `linkedid`).
+  4. Kept from the first pass: `ResourceSpec.listFilters`
+     (`src/content/openapi/shared.ts`), `phonebook_id` / `campaign_id`
+     list filters.
+- **Tests added** (`tests/unit/openapi-coverage.test.ts`, "OpenAPI
+  Reference completeness (Phase 8A)"): example <-> operation mapping and
+  159/159 coverage; total curl-heading count equals the raw pages;
+  normalization/credential guard; **every query key used by an official
+  example is a modeled query parameter**; rendered examples use the
+  portal base URL and header credential; every field of every official
+  "... Fields" table (CDR, Simple CDR, AI Analysis, AI Logs) appears in
+  the 2xx schema. One e2e test added in `tests/e2e/smoke.spec.ts`
+  ("CDR Reference shows the documented response fields and the official
+  named examples (8A)") — **not yet run**.
+- **Validation done:** `npm run check` 284/284, lint clean.
+  `npm run build` clean (576 static pages) — ran before the
+  `noExampleSchemaOnly` wording change; re-run. A throwaway Playwright
+  pass against `next dev` (desktop 1440 + mobile 390, en + he) over
+  cdrs-list, simplecdrs-list, extensions-create,
+  customdestinations-update and a Proxy page: examples render
+  (10/11/4/30), CDR shows 30 response anchors, zero console errors, no
+  overflow, no `pbx.example.com` / CANISTRACCI / `key=` in rendered
+  curl; Proxy unchanged (0 examples). Secret/PII scan of the diff: the
+  only hits are the normalize map's source keys and the tests' ban
+  lists — values already present in the committed public raw snapshots.
+- **Validation NOT done / incomplete:** the full Playwright suite was
+  **stopped at 80/164** by the user's stop request; the only failure
+  so far was the known Phase 5 "tenant and API key survive an endpoint
+  switch" chromium-desktop flake (same class as Stage 5; not re-run
+  alone this time). The new 8A e2e test was not reached.
+- **Not yet audited (possible remaining 8A gaps):** examples,
+  response-field tables and query-parameter coverage were checked
+  systematically; still to compare against the raw pages: "Endpoint
+  Patterns" tables; "Accepted Field Aliases" / "Destination Fields"
+  field by field (are all body fields and aliases modeled? — a test
+  comparing example body keys against `requestBody`, like the
+  query-key test, would answer this); Simple CDR "Template Variables"
+  (currently a notes line); auth-token "Supported Identities"; dial
+  "Compatibility Notes"; extension-state "Response"; "Important Notes"
+  on each page.
+- **Environment:** the dev server (was :3000) and the orphaned e2e
+  `next start` were both stopped; port 3000 is free. Chrome tabs opened
+  on localhost pages are dead until a server is restarted.
+- **Model:** the user switched to Opus 5.5 mid-8A and said "continue";
+  project routing puts 8A on Sonnet 5 (user override, deliberate).
+  Confirm with the user which model to use next session.
+- **Exact next task:** finish the 8A audit (the remaining sections
+  above), re-run `npm run build` and the full Playwright suite fresh,
+  then present the 8A STOP-gate report (coverage numbers, files, tests,
+  git status) and wait for approval before 8B. Record the
+  examples/normalization decision in `docs/DECISIONS.md` at the gate.
+- **First action next session:** `git status`, `git log -3`, then
+  `npx vitest run tests/unit/openapi-coverage.test.ts` (expect 22/22),
+  then continue the section-by-section comparison.
+
+## (Superseded by the entry above) Phase 8 — pre-Stage-6 sub-phases 8A–8D inserted (2026-09-26); 8A next, on SONNET
 
 A manual product review found Phase 8 was not actually
 feature-complete before the existing Stage 6 review: the OpenAPI API

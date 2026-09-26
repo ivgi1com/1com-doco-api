@@ -1,5 +1,5 @@
 import type { Category } from "../types";
-import { f, openapiResource } from "./shared";
+import { f, openapiResource, q } from "./shared";
 
 /**
  * Phone Book Entry. Source: source-docs/openapi/phonebookentries.md
@@ -28,6 +28,9 @@ const [list, get, create, update, remove] = openapiResource({
     "/phonebook_contact",
     "/phonebook_contacts",
   ],
+  listFilters: [
+    q("phonebook_id", "Filters the list by parent Phone Book. Aliases: `pbid`, `pe_pb_id`.", { type: "integer", example: "12" }),
+  ],
   fields: [
     f("phonebook_id", "Parent Phone Book reference. Alias: `pbid`. Maps to `pe_pb_id`.", { required: true, type: "integer", example: "12" }),
     f(
@@ -44,9 +47,6 @@ const [list, get, create, update, remove] = openapiResource({
     "Three equivalent request shapes exist for entry values: a `values`/`fields` object, top-level item codes sent directly, or `details` rows containing `pi_id`/`pi_code` plus a value.",
     "Security (SEC-REQ-25): holds real contact PII (name, phone, email) via this flexible values/fields/details write shape. Before Live: confirm the response schema and scope any allowlist to the phone book's own declared layout.",
   ],
-  operationNotes: {
-    list: ["Also filterable by the parent phone book via `phonebook_id` (aliases `pbid`, `pe_pb_id`); not modeled as a separate parameter here."],
-  },
 });
 
 export const phonebookentryCategory: Category = {

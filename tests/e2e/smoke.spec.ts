@@ -943,6 +943,26 @@ test.describe("interactions", () => {
       await expect(page.getByRole("heading", { name: "MiRTA OpenAPI" }).first()).toBeVisible();
     });
 
+    test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {
+      await page.goto("/en/reference/openapi/cdrs-list");
+      await expect(page.getByRole("heading", { name: "List CDRs" })).toBeVisible();
+      // Response Fields table from the official page: 30 fields, types undocumented.
+      await expect(page.locator('[id^="response-200"]')).toHaveCount(30);
+      await expect(page.locator('[id="response-200.pincode"]')).toBeAttached();
+      // The panel says the example is missing, not that the body is empty.
+      await expect(page.getByText("No example body documented.", { exact: false }).first()).toBeAttached();
+      // Named examples, rendered with the portal base URL and the header credential.
+      const examples = page.getByTestId("endpoint-examples");
+      await expect(examples.locator(":scope > li")).toHaveCount(10);
+      const byLinkedId = examples.locator("details").filter({ hasText: "CDR by Linked ID" });
+      await byLinkedId.locator("summary").click();
+      const code = byLinkedId.locator("pre").first();
+      await expect(code).toContainText("pbx6webserver.1com.co.il/pbx/openapi.php/cdrs?tenant=TESTTENANT&linkedid=");
+      await expect(code).toContainText("X-API-Key: $OPENAPI_API_KEY");
+      await expect(code).not.toContainText("CANISTRACCI");
+      await expect(examples.locator("details").filter({ hasText: "CDR Global Tenant Wildcard" })).toContainText("Global key");
+    });
+
     test("a path-parameter endpoint documents its example placeholder and prefills it in the Playground", async ({ page }) => {
       await page.goto("/en/reference/openapi/extensions-get");
       await expect(page.getByRole("heading", { name: "Get extension" })).toBeVisible();
