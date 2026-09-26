@@ -37,10 +37,63 @@ const FIXTURE_ENDPOINTS = [
   { apiId: "proxy", endpointId: "flows" },
   { apiId: "proxy", endpointId: "countpeers" },
   { apiId: "proxy", endpointId: "voicemail-list" },
-  // Phase 8 Stage 3 (docs/DECISIONS.md "Phase 8 planning"):
+  // Phase 8 Stage 3 (docs/DECISIONS.md "Phase 8 planning"), revised Phase 8B
+  // Stage 4 (docs/DECISIONS.md "Phase 8B planning and probe decisions" plus
+  // this session's resumed scope, docs/SESSION_HANDOFF.md "Phase 8B Stage
+  // 4"): ailogs-list dropped (AI Logs 404s on the test PBX); every other
+  // OpenAPI GET the masked probe returned genuine data for is added.
   { apiId: "openapi", endpointId: "extensions-state-get" },
-  { apiId: "openapi", endpointId: "ailogs-list" },
   { apiId: "openapi", endpointId: "aianalysis-get" },
+  { apiId: "openapi", endpointId: "queues-list" },
+  { apiId: "openapi", endpointId: "queues-get" },
+  { apiId: "openapi", endpointId: "calleridblacklists-list" },
+  { apiId: "openapi", endpointId: "calleridblacklists-get" },
+  { apiId: "openapi", endpointId: "campaignnumbers-list" },
+  { apiId: "openapi", endpointId: "campaignnumbers-get" },
+  { apiId: "openapi", endpointId: "campaigns-list" },
+  { apiId: "openapi", endpointId: "campaigns-get" },
+  { apiId: "openapi", endpointId: "conditions-list" },
+  { apiId: "openapi", endpointId: "conditions-get" },
+  { apiId: "openapi", endpointId: "conferencerooms-list" },
+  { apiId: "openapi", endpointId: "conferencerooms-get" },
+  { apiId: "openapi", endpointId: "cronjobs-list" },
+  { apiId: "openapi", endpointId: "cronjobs-get" },
+  { apiId: "openapi", endpointId: "customdestinations-list" },
+  { apiId: "openapi", endpointId: "customdestinations-get" },
+  { apiId: "openapi", endpointId: "dids-list" },
+  { apiId: "openapi", endpointId: "dids-get" },
+  { apiId: "openapi", endpointId: "disas-list" },
+  { apiId: "openapi", endpointId: "disas-get" },
+  { apiId: "openapi", endpointId: "featurecodes-list" },
+  { apiId: "openapi", endpointId: "featurecodes-get" },
+  { apiId: "openapi", endpointId: "flows-list" },
+  { apiId: "openapi", endpointId: "flows-get" },
+  { apiId: "openapi", endpointId: "huntlists-list" },
+  { apiId: "openapi", endpointId: "huntlists-get" },
+  { apiId: "openapi", endpointId: "ivrs-list" },
+  { apiId: "openapi", endpointId: "ivrs-get" },
+  { apiId: "openapi", endpointId: "mediafiles-list" },
+  { apiId: "openapi", endpointId: "mediafiles-get" },
+  { apiId: "openapi", endpointId: "musiconholds-list" },
+  { apiId: "openapi", endpointId: "musiconholds-get" },
+  { apiId: "openapi", endpointId: "paginggroups-list" },
+  { apiId: "openapi", endpointId: "paginggroups-get" },
+  { apiId: "openapi", endpointId: "phonebooks-list" },
+  { apiId: "openapi", endpointId: "phonebooks-get" },
+  { apiId: "openapi", endpointId: "provisioningphones-list" },
+  { apiId: "openapi", endpointId: "provisioningphones-get" },
+  { apiId: "openapi", endpointId: "settings-list" },
+  { apiId: "openapi", endpointId: "settings-get" },
+  { apiId: "openapi", endpointId: "shortnumbers-list" },
+  { apiId: "openapi", endpointId: "shortnumbers-get" },
+  { apiId: "openapi", endpointId: "voicemails-list" },
+  { apiId: "openapi", endpointId: "voicemails-get" },
+  { apiId: "openapi", endpointId: "extensions-list" },
+  { apiId: "openapi", endpointId: "extensions-get" },
+  { apiId: "openapi", endpointId: "extensions-get-by-number" },
+  { apiId: "openapi", endpointId: "simplecdrs-list" },
+  { apiId: "openapi", endpointId: "phonebookentries-list" },
+  { apiId: "openapi", endpointId: "phonebookentries-get" },
 ] as const;
 
 const allFixtureSets: readonly DemoFixtureSet[] = [...proxyDemoFixtures, ...openapiDemoFixtures];
@@ -272,6 +325,49 @@ describe("blfs/flows fixtures (A-72, A-73): positional keys mirror named fields"
         expect(record[String(i)], `positional "${i}" mirrors ${key}`).toBe(record[key]);
       });
     }
+  });
+});
+
+describe("OpenAPI aianalysis-get invalid-key fixture (Phase 8B Stage 4)", () => {
+  it("resolves via the key query field and returns the documented invalid_api_key envelope", () => {
+    const set = fixtureSetFor("openapi", "aianalysis-get");
+    const resolved = resolveDemoCase(set, { tenant: "TESTTENANT", uniqueid: "1700000000.42", key: "DEMO_INVALID_KEY" });
+    expect(resolved?.id).toBe("invalid-key-json");
+    expect(resolved?.response.status).toBe(401);
+    expect(resolved?.response.body).toEqual({
+      error: { code: "invalid_api_key", message: expect.any(String) },
+    });
+  });
+
+  it("does not shadow the success cases for an unrelated key value", () => {
+    const set = fixtureSetFor("openapi", "aianalysis-get");
+    const resolved = resolveDemoCase(set, { tenant: "TESTTENANT", uniqueid: "1700000000.42", key: "" });
+    expect(resolved?.id).toBe("found-json");
+  });
+});
+
+describe("OpenAPI queues-list/queues-get fixtures (Phase 8B Stage 4)", () => {
+  it("queues-list returns an array of queue rows with the generic id/name fields", () => {
+    const set = fixtureSetFor("openapi", "queues-list");
+    const resolved = resolveDemoCase(set, { tenant: "TESTTENANT" });
+    const body = resolved!.response.body as Array<Record<string, unknown>>;
+    expect(body.length).toBeGreaterThan(0);
+    for (const row of body) {
+      expect(row).toHaveProperty("qu_id");
+      expect(row).toHaveProperty("qu_name");
+      expect(row).toHaveProperty("id");
+      expect(row).toHaveProperty("name");
+    }
+  });
+
+  it("queues-get returns related.members and related.allowed_members, matching the Phase 8B probe's observed shape", () => {
+    const set = fixtureSetFor("openapi", "queues-get");
+    const resolved = resolveDemoCase(set, { tenant: "TESTTENANT" });
+    const body = resolved!.response.body as Record<string, unknown>;
+    const related = body.related as Record<string, unknown>;
+    expect(Array.isArray(related.members)).toBe(true);
+    expect(Array.isArray(related.allowed_members)).toBe(true);
+    expect((related.allowed_members as unknown[]).length).toBeGreaterThan(0);
   });
 });
 

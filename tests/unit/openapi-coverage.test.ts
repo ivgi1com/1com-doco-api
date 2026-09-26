@@ -20,8 +20,69 @@ import inventory from "../../source-docs/openapi/operations.json";
  */
 const ROLLOUT_COMPLETE = true;
 
-/** Stage 3 decision (docs/DECISIONS.md "Phase 8 planning"): the only OpenAPI endpoints allowed Demo fixtures. */
-const DEMO_ALLOWED = new Set(["extensions-state-get", "ailogs-list", "aianalysis-get"]);
+/**
+ * The only OpenAPI endpoints allowed Demo fixtures. Stage 3 decision
+ * (docs/DECISIONS.md "Phase 8 planning"), revised Stage 4 (docs/DECISIONS.md
+ * "Phase 8B planning and probe decisions" plus this session's resumed
+ * scope, docs/SESSION_HANDOFF.md "Phase 8B Stage 4"): ailogs-list dropped
+ * (404 on the test PBX); every other OpenAPI GET the masked probe returned
+ * genuine data for is added (src/content/demo/openapi.ts has the full list
+ * and the evidence rules).
+ */
+const DEMO_ALLOWED = new Set([
+  "extensions-state-get",
+  "aianalysis-get",
+  "queues-list",
+  "queues-get",
+  "calleridblacklists-list",
+  "calleridblacklists-get",
+  "campaignnumbers-list",
+  "campaignnumbers-get",
+  "campaigns-list",
+  "campaigns-get",
+  "conditions-list",
+  "conditions-get",
+  "conferencerooms-list",
+  "conferencerooms-get",
+  "cronjobs-list",
+  "cronjobs-get",
+  "customdestinations-list",
+  "customdestinations-get",
+  "dids-list",
+  "dids-get",
+  "disas-list",
+  "disas-get",
+  "featurecodes-list",
+  "featurecodes-get",
+  "flows-list",
+  "flows-get",
+  "huntlists-list",
+  "huntlists-get",
+  "ivrs-list",
+  "ivrs-get",
+  "mediafiles-list",
+  "mediafiles-get",
+  "musiconholds-list",
+  "musiconholds-get",
+  "paginggroups-list",
+  "paginggroups-get",
+  "phonebooks-list",
+  "phonebooks-get",
+  "provisioningphones-list",
+  "provisioningphones-get",
+  "settings-list",
+  "settings-get",
+  "shortnumbers-list",
+  "shortnumbers-get",
+  "voicemails-list",
+  "voicemails-get",
+  "extensions-list",
+  "extensions-get",
+  "extensions-get-by-number",
+  "simplecdrs-list",
+  "phonebookentries-list",
+  "phonebookentries-get",
+]);
 
 interface OperationRow {
   id: string;

@@ -992,7 +992,8 @@ test.describe("interactions", () => {
 
     const demoFixtures: { endpoint: string; label: string }[] = [
       { endpoint: "openapi/extensions-state-get", label: "Registered, active channel" },
-      { endpoint: "openapi/ailogs-list", label: "AI logs found (JSON)" },
+      { endpoint: "openapi/queues-list", label: "Queues found" },
+      { endpoint: "openapi/queues-get", label: "Queue found" },
       { endpoint: "openapi/aianalysis-get", label: "Analysis found (JSON)" },
     ];
 
@@ -1008,16 +1009,17 @@ test.describe("interactions", () => {
       });
     }
 
-    test("ailogs-list: an unfixtured format=csv shows Not simulated, not a guess", async ({ page }) => {
+    test("ailogs-list: dropped from Demo (404 on the test PBX, 8B) shows Demo data not available, not a guess", async ({ page }) => {
       await page.goto("/en/playground?endpoint=openapi/ailogs-list");
-      await desktopPane(page).getByLabel("format", { exact: true }).selectOption("csv");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
-      await expect(desktopPane(page).getByText("Not simulated")).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
     });
 
     const documentedChips: { endpoint: string; chip: string; expect: RegExp }[] = [
       { endpoint: "openapi/extensions-state-get", chip: "Not registered", expect: /Extension not registered/ },
       { endpoint: "openapi/aianalysis-get", chip: "One of two unique IDs unknown", expect: /1700000000\.42/ },
+      { endpoint: "openapi/aianalysis-get", chip: "Invalid API key", expect: /invalid_api_key/ },
+      { endpoint: "openapi/queues-get", chip: "Queue found", expect: /allowed_members/ },
     ];
 
     for (const { endpoint, chip, expect: body } of documentedChips) {

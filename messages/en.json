@@ -134,7 +134,7 @@
     "request": "Request",
     "response": "Response",
     "demoLabel": "DEMO",
-    "demoText": "Synthetic data. No real requests are sent.",
+    "demoText": "Synthetic data. No real requests are sent. No credentials required.",
     "liveLabel": "LIVE",
     "liveText": "Requests reach your tenant.",
     "switchToLive": "Switch to Live",
