@@ -1,6 +1,6 @@
 # Developer Portal — Claude Code Project Control Pack
 
-This repository control pack is designed to bootstrap a developer portal for the company's VoIP APIs using Claude Code inside VS Code.
+This repository control pack is designed to bootstrap a documentation site for developers
 
 ## Goal
 
