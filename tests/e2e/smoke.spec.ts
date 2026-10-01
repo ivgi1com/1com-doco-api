@@ -1147,6 +1147,51 @@ test.describe("interactions", () => {
       expect(sent).toEqual([]);
     });
 
+    test("narrow mobile: select a resource, enter a parameter, preview the request, run Demo, and a write stays unsendable (8C)", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      const consoleErrors: string[] = [];
+      page.on("console", (m) => {
+        if (m.type() === "error") consoleErrors.push(m.text());
+      });
+      // The stepper (md:hidden) is the only pane rendered at this width; the
+      // desktop grid stays in the DOM but hidden, so scope to the stepper.
+      const mobile = page.locator(".md\\:hidden");
+      const step = (name: string) => mobile.getByRole("tab", { name, exact: true });
+
+      await page.goto("/en/playground?endpoint=openapi/extensions-list");
+      await expect(mobile.getByTestId("operation-header")).toContainText("Key scope");
+      await mobile.getByTestId("request-preview").locator("summary").click();
+      // A fill sent before React hydrates is overwritten by the controlled
+      // value (same race as the search-palette and nav-drawer tests above):
+      // retry until the preview, which is derived from state, shows it.
+      await expect(async () => {
+        await mobile.getByRole("textbox", { name: /^tenant/ }).fill("MOBILETENANT");
+        await expect(mobile.getByTestId("request-preview")).toContainText("tenant=MOBILETENANT", { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+
+      await mobile.getByRole("button", { name: "Send request" }).click();
+      await step("Response").click();
+      await expect(mobile.getByText(/source: DEMO/)).toBeVisible({ timeout: 3000 });
+      await expect(mobile.getByText(/status: 401|status: 200/)).toBeVisible();
+
+      // Resource selection through the Endpoint step, onto a write.
+      await step("Endpoint").click();
+      await mobile.getByPlaceholder("Filter endpoints").fill("Create extension");
+      await mobile.getByRole("button", { name: /Create extension/ }).click();
+      await step("Request").click();
+      await expect(mobile.getByTestId("op-kind")).toHaveText("Changes state");
+      await expect(mobile.getByTestId("write-only-note")).toBeVisible();
+      await expect(mobile.getByRole("button", { name: "Send request" })).toBeDisabled();
+
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+      expect(sent).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    });
+
     test("a read with no Demo data still shows the request it would make (8C)", async ({ page }) => {
       await page.goto("/en/playground?endpoint=openapi/cdrs-list");
       const pane = desktopPane(page);
