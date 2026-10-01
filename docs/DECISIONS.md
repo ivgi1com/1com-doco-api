@@ -1484,3 +1484,33 @@ that approval.
   exists yet (Stage 2), so the visible behavior is unchanged until then.
   `docs/SECURITY.md` SEC-REQ-27 and "Demo mode guarantees" amended.
   `npm run check` 352/352.
+
+## Phase 8C Stage 1 — write-response audit; Stage 2 dropped (2026-10-01)
+
+- **Finding (Sonnet, from the content model, `listEndpoints(openapi)` with
+  `operationClass === "write"`):** of the 93 OpenAPI writes, only 3 carry
+  any documented response — `dial`, `auth-token-create`,
+  `auth-token-delete` (status 200, `evidence: "vendor"`). The other 90
+  have no response at all and document only error *codes* (`errors[]`,
+  every `status: "undocumented"`; no official page gives an HTTP status).
+  `source-docs/openapi/examples.json` holds request examples only (325
+  curl examples), no responses.
+- All 3 documented writes are categorically excluded from Demo and Live
+  by SEC-REQ-05 (Auth Token — credential issuance) and SEC-REQ-06 (Dial —
+  originates a real call). Under the documented-only rule, **0 of 93
+  writes can be Demo-simulated.**
+- **User decision:** keep 0 and **drop Stage 2** (write fixtures). The
+  Stage 0 guard (`DEMO_WRITE_APIS`, `isDemoSimulatedWrite`) and the
+  SEC-REQ-27 amendment stay as dormant, unit-tested machinery: a future
+  write gains Demo only by adding a documented-example fixture set, and
+  the coverage test (`tests/unit/openapi-coverage.test.ts`) still pins
+  every OpenAPI write without fixtures. Rejected alternatives: error-only
+  Demo for the 90 (always ends in an error, status of non-auth errors
+  undocumented) and lifting SEC-REQ-05/06 for the 3 (needs explicit user
+  approval + Opus review).
+- Consequences for 8C: write Demo coverage in the Section-13 report is
+  stated as "0 simulatable: no documented success response (3
+  documented, all SEC-REQ-05/06-excluded)". Body entry, request preview
+  and cURL for writes (Stage 3/4) are unaffected: they build the request
+  without sending it. Writes keep `writeOnlyNote`; `writeDemoNote` is
+  unreachable until a write fixture exists.
