@@ -228,10 +228,6 @@ Topic: Post-call data delivery / sending call details to the customer after a ca
 
 - For every ambiguity encountered during the audit or implementation, ask the user instead of guessing.
 
-## Explicitly Out of Scope / Cancelled
-
-Do NOT implement the previously discussed Playground/Demo audit for missing JSON responses after “Send Request”. That item was explicitly cancelled for now and must not be included in this change set.
-
 ## Suggested Execution Order
 
 1. First audit the current codebase and create an internal checklist of affected files/components/content.

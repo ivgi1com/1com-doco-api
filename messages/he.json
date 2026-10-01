@@ -7,12 +7,9 @@
     "skip": "דילוג לתוכן",
     "guides": "מדריכים",
     "reference": "תיעוד API",
-    "changelog": "יומן שינויים",
     "playground": "Playground",
     "search": "חיפוש בתיעוד",
     "searchShort": "חיפוש",
-    "console": "קונסולה",
-    "consoleSoon": "הקונסולה עדיין לא זמינה",
     "menu": "פתיחת הניווט",
     "closeMenu": "סגירת הניווט",
     "home": "דף הבית של 1com למפתחים",
@@ -237,11 +234,6 @@
   },
   "guide": {
     "onThisPage": "בעמוד זה"
-  },
-  "changelog": {
-    "title": "יומן שינויים",
-    "emptyTitle": "אין עדיין רשומות",
-    "emptyBody": "שינויים בממשקים יפורסמו כאן לאחר שיתועד ה-API הראשון."
   },
   "notFound": {
     "title": "העמוד לא נמצא",

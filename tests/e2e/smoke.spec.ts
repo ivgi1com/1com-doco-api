@@ -16,7 +16,6 @@ const routes = [
   "/en/reference/sample/list-call-records",
   "/en/guides/getting-started",
   "/en/playground",
-  "/en/changelog",
   "/en/no-such-page",
   "/he",
   "/he/reference/proxy/info-extensions",
@@ -66,6 +65,27 @@ for (const viewport of viewports) {
 
 test.describe("interactions", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("the header and drawer show neither Console nor Changelog, and the route is gone (8E)", async ({ page }) => {
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/en");
+      if (width < 640) {
+        const dialog = page.getByRole("dialog", { name: "Main" });
+        await expect(async () => {
+          await page.getByRole("button", { name: "Open navigation" }).click();
+          await expect(dialog).toBeVisible({ timeout: 500 });
+        }).toPass({ timeout: 10_000 });
+        await expect(dialog.getByRole("link", { name: "Changelog" })).toHaveCount(0);
+      }
+      await expect(page.getByRole("link", { name: "Changelog" })).toHaveCount(0);
+      await expect(page.getByText("Console", { exact: true })).toHaveCount(0);
+      await expect(page.getByText("Console is not available yet")).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+    }
+    const res = await page.goto("/en/changelog");
+    expect(res?.status()).toBe(404);
+  });
 
   test("mobile nav drawer (sidebar) opens and closes", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

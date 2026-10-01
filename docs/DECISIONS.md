@@ -1817,3 +1817,25 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
 - **Model note:** the plan routed only the mechanism and SECURITY.md notes
   to Opus; the removals were done in the same Opus session because the
   exclusion list, deletions and test reconciliation only pass together.
+
+## Phase 8E Stage 3 — Console and Change Log removed (2026-10-01, Sonnet 5)
+
+- **Console:** `console-button.tsx` and its render in `site-header.tsx` are
+  deleted (it was an inert, disabled button with no route), plus the
+  `nav.console*` keys. The header's right-hand cluster is now search, locale
+  switch, theme toggle; no spacing change was needed (`ms-auto` + `gap`).
+- **Change Log:** the single `mainNav` entry in `nav-config.ts` (which feeds
+  both the desktop nav and the mobile drawer), the empty placeholder route
+  `src/app/[locale]/changelog` and the `nav.changelog` / `changelog.*` keys
+  (en + he) are deleted. There was no release-history data in the repo to
+  preserve. `/en/changelog` now returns the standard 404; it is dropped from
+  the smoke route list.
+- **Tests:** new e2e (desktop 1440 and drawer at 390): no Console, no
+  Changelog link, no overflow, `/en/changelog` is 404.
+- **Build note:** after deleting a route, `.next` kept stale generated types
+  and failed the build's type check; `.next` (git-ignored build cache) was
+  cleared and rebuilt. Not a source issue.
+- **Validation:** `npm run check` 375/375; build clean (448 pages);
+  Playwright 190 passed / 2 WebKit skips / 0 failed; browser check en/he ×
+  desktop/tablet/mobile: no Console or Changelog text, no overflow, no
+  console errors.

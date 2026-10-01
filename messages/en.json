@@ -7,12 +7,9 @@
     "skip": "Skip to content",
     "guides": "Guides",
     "reference": "API Reference",
-    "changelog": "Changelog",
     "playground": "Playground",
     "search": "Search docs",
     "searchShort": "Search",
-    "console": "Console",
-    "consoleSoon": "Console is not available yet",
     "menu": "Open navigation",
     "closeMenu": "Close navigation",
     "home": "1com Developers home",
@@ -237,11 +234,6 @@
   },
   "guide": {
     "onThisPage": "On this page"
-  },
-  "changelog": {
-    "title": "Changelog",
-    "emptyTitle": "No entries yet",
-    "emptyBody": "Changes to the APIs are published here once the first API is documented."
   },
   "notFound": {
     "title": "Page not found",
