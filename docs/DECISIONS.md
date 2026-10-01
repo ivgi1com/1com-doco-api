@@ -1599,3 +1599,23 @@ that approval.
   Visual/console pass (desktop 1440, mobile 390, en + he) over the new
   header, fields, switcher, not-found and Live states: zero console
   errors, no overflow, zero `/api/playground` requests.
+
+## Phase 8C Stage 5 — Playground coverage report (2026-10-01, Sonnet 5)
+
+- `npm run rollout:status` now also writes
+  `source-docs/OPENAPI_PLAYGROUND_STATUS.md` (spec §13), generated from
+  `operations.json`, the content model, the Demo registry
+  (`isDemoSimulatedWrite`) and the **real Live allowlist**
+  (`listLiveTargetIds`). The Live count is therefore computed, not
+  hard-coded. Because `allowlist.ts` imports `server-only`, the script now
+  runs as `tsx --conditions=react-server` (package.json); this resolves
+  `server-only` to its empty module, as Next.js does on the server.
+- **Result:** 37 documented resources, 37 represented (36 picker
+  categories: `extension` holds the Extension and Extension State pages);
+  159/159 operations represented; Demo-executable 52 (52/66 reads, 0/93
+  writes); Live-executable 0; Live-disabled 159; Send-blocked in Demo
+  107 (14 reads without a fixture, 93 writes); missing operations none;
+  no operation is hidden from the Playground. Only 3 of the 93 writes
+  document a success response (dial, auth-token-create/delete), all
+  excluded by SEC-REQ-05/06.
+- Kept `OPENAPI_DEMO_STATUS.md` unchanged and separate (Demo-only view).
