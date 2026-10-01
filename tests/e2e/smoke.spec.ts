@@ -138,7 +138,8 @@ test.describe("interactions", () => {
   });
 
   test("playground: switching to Live requires confirmation and shows the key field", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    // An allowlisted endpoint: the key field is shown only where Live can send (8C).
+    await page.goto("/en/playground?endpoint=proxy/info-extensions");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await expect(page.getByRole("heading", { name: "Switch to Live mode?" })).toBeVisible();
     await page.getByRole("button", { name: "Switch mode" }).click();
@@ -153,9 +154,9 @@ test.describe("interactions", () => {
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
     await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
-    await expect(
-      desktopPane(page).getByText("Live requests aren't available for this endpoint in this deployment yet."),
-    ).toBeVisible();
+    await expect(desktopPane(page).getByText(/Live execution is not enabled for this operation/)).toBeVisible();
+    // No key field where Live cannot send (8C): a key typed there would go nowhere.
+    await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
     await expect(desktopPane(page).getByText(/DEMO|LIVE/)).toHaveCount(0);
   });
 
@@ -1093,6 +1094,56 @@ test.describe("interactions", () => {
       await expect(preview).not.toContainText("SYNTHETIC_SECRET");
       await expect(preview).toContainText("Content-Type: application/json");
       await expect(preview).toContainText("-X POST");
+      expect(sent).toEqual([]);
+    });
+
+    test("the operation header shows kind, auth and key scope (8C)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/tenants-list");
+      const header = desktopPane(page).getByTestId("operation-header");
+      await expect(header.getByTestId("op-kind")).toHaveText("Read-only");
+      await expect(header.getByTestId("op-scope")).toContainText("Global API key");
+      await expect(header).toContainText("X-API-Key header");
+      await page.goto("/en/playground?endpoint=openapi/extensions-create");
+      await expect(desktopPane(page).getByTestId("operation-header").getByTestId("op-kind")).toHaveText("Changes state");
+    });
+
+    test("fields show their documented type and description, and JSON fields are text areas (8C)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/extensions-create");
+      const pane = desktopPane(page);
+      await expect(pane.getByText("Extension number.", { exact: false }).first()).toBeVisible();
+      const aors = pane.getByRole("textbox", { name: /^ps_aors/ });
+      expect(await aors.evaluate((el) => el.tagName)).toBe("TEXTAREA");
+      await expect(aors).toHaveValue('{"max_contacts":1}');
+    });
+
+    test("the Playground API select moves to another API's first endpoint (8C)", async ({ page, browserName }) => {
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");
+      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await desktopPane(page).getByLabel("API", { exact: true }).selectOption("openapi");
+      await expect(page).toHaveURL(/endpoint=openapi\//);
+      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("Key scope");
+    });
+
+    test("an unknown ?endpoint= says so instead of silently showing another operation (8C)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/does-not-exist");
+      await expect(page.getByTestId("endpoint-not-found")).toContainText("openapi/does-not-exist");
+      await page.goto("/en/playground");
+      await expect(page.getByTestId("endpoint-not-found")).toHaveCount(0);
+    });
+
+    test("Live on an OpenAPI operation is explicitly not enabled: no key field, nothing sendable (8C)", async ({ page }) => {
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      await page.goto("/en/playground?endpoint=openapi/extensions-list");
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      const pane = desktopPane(page);
+      await expect(page.getByText("Live execution is not enabled for this operation. Nothing is sent.")).toBeVisible();
+      await expect(pane.getByLabel("API key")).toHaveCount(0);
+      await expect(pane.getByRole("button", { name: "Send request" })).toBeDisabled();
+      await expect(pane.getByText(/default-deny/)).toBeVisible();
       expect(sent).toEqual([]);
     });
 

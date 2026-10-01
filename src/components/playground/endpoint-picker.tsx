@@ -4,20 +4,24 @@ import { useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
+import { apis } from "@/content";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 
 export function EndpointPicker({
   api,
   selected,
   onSelect,
+  onSelectApi,
 }: {
   api: ApiDefinition;
   selected: Endpoint;
   onSelect: (endpoint: Endpoint) => void;
+  onSelectApi: (apiId: string) => void;
 }) {
   const t = useTranslations("playground");
   const [query, setQuery] = useState("");
   const filterId = useId();
+  const apiSelectId = useId();
 
   const categories = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -34,6 +38,21 @@ export function EndpointPicker({
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-border p-3">
+        <label htmlFor={apiSelectId} className="mb-1.5 block text-xs font-semibold text-ink-muted">
+          {t("api")}
+        </label>
+        <select
+          id={apiSelectId}
+          value={api.id}
+          onChange={(e) => onSelectApi(e.target.value)}
+          className="mb-3 h-8 w-full min-w-0 rounded-md border border-border-control bg-bg px-2 text-sm font-semibold text-ink"
+        >
+          {apis.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
         <label htmlFor={filterId} className="mb-1.5 block text-xs font-semibold text-ink-muted">
           {t("endpoints")}
         </label>

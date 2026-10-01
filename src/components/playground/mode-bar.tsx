@@ -29,10 +29,13 @@ const config: Record<
 export function ModeBar({
   mode,
   sending,
+  liveAvailable,
   onRequestSwitch,
 }: {
   mode: PlaygroundMode;
   sending: boolean;
+  /** False when the selected operation has no Live target (default deny). */
+  liveAvailable: boolean;
   onRequestSwitch: (target: PlaygroundMode) => void;
 }) {
   const t = useTranslations("playground");
@@ -44,7 +47,7 @@ export function ModeBar({
         <Icon className="size-3.5" aria-hidden />
         {t(label)}
       </span>
-      <p className={`min-w-0 flex-1 text-sm ${ink}`}>{t(text)}</p>
+      <p className={`min-w-0 flex-1 text-sm ${ink}`}>{mode === "live" && !liveAvailable ? t("liveBlockedText") : t(text)}</p>
       <button
         type="button"
         disabled={sending}

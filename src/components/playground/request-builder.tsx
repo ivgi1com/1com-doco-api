@@ -10,6 +10,7 @@ import type { DemoFixtureSet } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
 import { sanitizedRequest, substitutePathParams } from "./executor";
+import { OperationHeader } from "./operation-header";
 import { ParamField } from "./param-field";
 import { RequestTab } from "./response-viewer";
 import { fieldKey, type PlaygroundState } from "./use-playground";
@@ -75,6 +76,8 @@ export function RequestBuilder({
 
   return (
     <div className="space-y-5 p-4">
+      <OperationHeader endpoint={endpoint} />
+
       <div dir="ltr" className="flex items-center gap-2 rounded-md border border-border bg-surface-2 px-3 py-2">
         <MethodBadge method={endpoint.method} />
         <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{resolveLivePath(endpoint, fieldValues)}</code>
@@ -89,7 +92,8 @@ export function RequestBuilder({
         </p>
       )}
 
-      {mode === "live" && (
+      {/* No key field when this operation cannot be sent in Live: a key typed here would go nowhere. */}
+      {mode === "live" && liveAvailable && (
         <div>
           <label htmlFor={keyId} className="mb-1 block text-xs font-semibold text-ink">
             {t("apiKey")}

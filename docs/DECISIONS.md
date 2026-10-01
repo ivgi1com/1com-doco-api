@@ -1555,3 +1555,47 @@ that approval.
   visual/console pass at 1440 and 390 px, en + he (RTL), OpenAPI and
   Proxy, zero console errors, no overflow, zero `/api/playground`
   requests.
+
+## Phase 8C Stage 4 — Playground form and page UX (2026-10-01, Sonnet 5)
+
+- **Field details** (`param-field.tsx`, shared by all APIs): each field
+  shows its documented type, description (inline code rendered), condition,
+  default and constraints, wired to the control with `aria-describedby`.
+  The type chip sits outside the `<label>` so a control's accessible name
+  stays the bare field name (an earlier draft put it inside and broke 15
+  e2e locators). API prose is `lang="en" dir="auto"`, matching the
+  Reference's `ContentText`.
+- **Defaults are placeholders, not pre-fills (deviation from the plan,
+  reversible):** the plan said "pre-fill from `default`". Pre-filling would
+  send a value the user never chose and change which Demo scenario
+  resolves (the `info-extstate` lesson). The documented default is shown
+  as the placeholder when no example exists, and in the details line.
+- **Array/object body fields** render as a JSON `<textarea>`; an optional
+  enum can be cleared again (blank option enabled unless required).
+- **Operation header** (`operation-header.tsx`): title, summary, read vs
+  "Changes state", auth transport and the key scope — all from the
+  content model (`authentication.scope`), no per-API logic.
+- **API switcher** in the endpoint picker; the page remounts per API
+  (`key={api.id}`). An unknown `?endpoint=` now shows a "not found" notice
+  naming the endpoint it fell back to, instead of silently showing the
+  first Proxy endpoint. (Notice + fallback rather than replacing the
+  Playground with an error page — smaller, still not silent.)
+- **Live-unavailable UI:** for an operation with no Live target the API
+  key field is hidden, the mode bar says "Live execution is not enabled
+  for this operation. Nothing is sent." and the blocked text names the
+  default-deny. "Requests reach your tenant." now appears only where Live
+  can send. Demo-unavailable copy no longer says "built in a later phase"
+  (accurate for both APIs: there is no verified response to simulate).
+  Hebrew strings are DRAFT.
+- **Tests:** unit 361/361. e2e added: operation header (kind/auth/scope),
+  field type/description + JSON textarea, API switcher (WebKit skipped,
+  same `selectOption` gap), unknown-endpoint notice, Live-not-enabled on an
+  OpenAPI read with zero `/api/playground` requests. Two older tests
+  updated for the intentional behavior change (the key-field test now uses
+  an allowlisted endpoint; the Sample-API Live test asserts the new text
+  and no key field). Full Playwright on a fresh build: 185/190 before
+  those two updates, with only the 2 intended-change tests plus the known
+  parallel-load flake failing; the updated tests and the flake pass.
+  Visual/console pass (desktop 1440, mobile 390, en + he) over the new
+  header, fields, switcher, not-found and Live states: zero console
+  errors, no overflow, zero `/api/playground` requests.
