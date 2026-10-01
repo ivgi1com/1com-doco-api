@@ -1701,3 +1701,30 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   `src/lib/playground-protocol.ts`) has no diff versus `main`.
 - **Not done / by design:** Phase 8 and Stage 6 are not marked complete;
   nothing merged, pushed or tagged. Stage 6 needs Opus 5.
+
+## Phase 8E — customer-facing change brief: planning (2026-10-01)
+
+- **Why:** the user added `docs/phases/1com_API_Documentation_App_Change_Brief.md`
+  (12 items) to make the portal customer-ready. It removes content the 8D
+  readiness gate counted, so it runs as a **new phase before the Phase 8
+  Stage 6 Opus review**, on branch `phase/customer-brief` (from the 8D
+  checkpoint `4d1c8ab`). The 8D checks are re-run at the end against the
+  reduced surface. Phase doc: `docs/phases/08E-customer-change-brief.md`.
+- **Decisions (user):** remove everything admin-keyed (27 OpenAPI + 35 Proxy
+  ManageDB operations, guides, `global=1`, "or global key" wording; approved
+  baseline files untouched, reconciled through an exclusion list); OpenAPI is
+  named "1com Open API"; `srv02` call-ID prefixes and node ids become `PBX`
+  (Live responses never rewritten); native date/time inputs with no timezone
+  conversion, documented-format fields only; "Most Used Cases" ships with
+  Click to Call and CDRs, and the inbound-call popup and post-call delivery
+  wait for the user's description (no documented mechanism exists);
+  Sample guide kept as a third Guides selector entry.
+- **Defaults chosen (confirmed by approving the plan):** "Key scope" display
+  dropped; tenant parameter wording changed but `required` unchanged; Demo
+  error bodies that mimic API output stay verbatim; code-sample env var names
+  unchanged; date-only on a date-time field uses the documented default time;
+  Playground default endpoint `simplecdrs-list`; Change Log route deleted;
+  Proxy second with a "legacy" qualifier. Open question for Stage 1:
+  `proxy/info.ts:110` (`/mirtapbx/proxyapi.php`, a quoted vendor path).
+- **Model routing:** Sonnet 5 throughout; Stage 2's exclusion mechanism and
+  SECURITY.md notes on Opus 5; Stage 6 (Phase 8) review stays Opus 5.
