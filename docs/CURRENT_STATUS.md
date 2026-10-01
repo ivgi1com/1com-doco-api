@@ -1,7 +1,17 @@
 # Current Status
 
 Current work:
-**Phase 8D — pre-Stage-6 readiness gate: validation run 2026-10-01, result
+**Phase 8E — customer-facing change brief (before Phase 8 Stage 6): Stages
+0-4 DONE and committed on branch `phase/customer-brief` (work HEAD
+`ce30196`, 2026-10-02); Stage 5 (Open API first/default) next, not started;
+nothing pushed/merged/tagged.** Spec `docs/phases/08E-customer-change-brief.md`;
+detail `docs/DECISIONS.md` "Phase 8E ..." and `docs/SESSION_HANDOFF.md`.
+Open API now 132 operations / 31 resources, Proxy 74 operations (admin
+content excluded via `source-docs/portal-exclusions.json`). Validation at
+`ce30196`: check 382/382, build clean, Playwright 197 passed / 2 skips / 1
+known flake that passes alone.
+
+Previous: **Phase 8D — pre-Stage-6 readiness gate: validation run 2026-10-01, result
 PASS — ready for Stage 6 (checkpoint commit, not an approval).** Phase 8
 and Stage 6 are NOT complete; Stage 6 (Opus cross-API consistency and
 security review) has NOT started and needs the user to switch to Opus 5.

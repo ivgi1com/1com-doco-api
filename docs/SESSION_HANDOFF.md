@@ -1,9 +1,62 @@
 # Session Handoff
 
-Last updated: 2026-10-01 (Phase 8D readiness gate: result PASS, checkpoint
-committed; Stage 6 NOT started; read this first)
+Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-4 DONE and
+committed, Stage 5 NOT started; read this first)
 
-## Phase 8D — readiness gate PASS (2026-10-01; checkpoint, not an approval)
+## Phase 8E — customer-facing change brief: Stages 0-4 done, STOPPED before Stage 5 (2026-10-02)
+
+- **Branch `phase/customer-brief`** (from `phase/open-api` @ `4d1c8ab`),
+  work HEAD `ce30196` (+ this docs checkpoint), working tree clean, nothing
+  pushed/merged/tagged. Commits: `e3f3173` (S0), `38681c5` (S1), `fec48b3`
+  (S2), `1fdff96` (S3), `ce30196` (S4). Plan file:
+  `C:\Users\ivgi-pc\.claude\plans\magical-zooming-sutton.md`; spec and
+  decisions: `docs/phases/08E-customer-change-brief.md`, `docs/DECISIONS.md`
+  "Phase 8E ..." entries; source brief:
+  `docs/phases/1com_API_Documentation_App_Change_Brief.md`.
+- **Position:** 8E runs BEFORE the Phase 8 Stage 6 Opus review (the 8D PASS
+  counted content 8E removes; re-run the 8D checks at 8E Stage 7).
+- **Done:** S1 branding (1com Open API; no Mirta except the user-kept
+  `/mirtapbx/proxyapi.php` path in `proxy/info.ts:110`), "API Key" wording,
+  key-scope display removed, srv02->PBX, `tests/unit/customer-copy.test.ts`
+  guard. S2 (Opus) admin-keyed content removed (27 Open API + 35 Proxy
+  ManageDB ops, guides rewritten, `global=1`, global examples) with
+  `source-docs/portal-exclusions.json`; Open API 132 ops / 31 resources,
+  Proxy 74 ops. S3 Console button + Change Log removed. S4 native date/time
+  pickers (`Parameter.format`, `src/lib/date-value.ts`) on 12 documented
+  start/end fields.
+- **Validation at work HEAD `ce30196`:** `npm run check` 382/382; build
+  clean; Playwright 197 passed / 2 WebKit skips / 1 known parallel-load flake
+  (`a path-parameter endpoint documents its example placeholder...`, passes
+  alone).
+- **Stage 5 (NOT started, files only read):** Open API first/default (brief
+  item 8). Findings: `src/content/index.ts` has `apis = [proxyApi,
+  openapiApi, sampleApi]` (change to `[openapiApi, proxyApi, sampleApi]`);
+  `apis[0]` is used by `src/app/[locale]/page.tsx:12` (PrototypeBanner),
+  `reference/page.tsx:6` (redirect), `playground/page.tsx:32` (default API)
+  and `sidebar-nav.tsx:23` (fallback). Planned: a `defaultEndpoint` for the
+  Playground landing (`simplecdrs-list`), a "legacy" qualifier on Proxy in
+  selectors/chips, update the e2e that expects `/reference` to redirect to
+  `/reference/proxy` (~`smoke.spec.ts:221-227`), verify every selector. The
+  home "getting started" button hard-codes `/guides/getting-started`
+  (Sample guide) — revisit in Stage 6.
+- **Remaining 8E stages:** S5 Open API default; S6 Guides API selector
+  (Open API / Proxy API / Sample (prototype)) + "Most Used Cases" guide
+  (Click to Call via `dial`, Viewing CDRs; inbound-call popup and post-call
+  delivery wait for the user's description) + landing card; S7 regression,
+  8D readiness re-run, full validation; S8 gate report and A/B/C/D.
+- **Known notes:** Hebrew strings DRAFT; TEST API key rotation still open
+  (`docs/SECURITY.md`); `phonebook-add` vendor example (`Ross`/`3564732920`)
+  looks like real data (flagged, out of scope); after deleting a route,
+  clear the git-ignored `.next` before building (stale generated types).
+- **Environment:** no dev/start server is running; port 3000 free.
+- **Model:** Sonnet 5 for Stages 5-7; Opus 5 for the later Phase 8 Stage 6
+  review (separately approved).
+- **First action next session:** `git status`, `git log -3` (expect clean on
+  `phase/customer-brief`), then "go stage 5": reorder `apis`, update the
+  `apis[0]` consumers, add the Playground default endpoint, update tests,
+  validate.
+
+## (Superseded by the entry above) Phase 8D readiness gate PASS (2026-10-01)
 
 - Branch `phase/open-api`. 8C approval `b9069e7` plus the 8D checkpoint
   commit; local only, **not pushed, merged or tagged**. Phase 8 and
