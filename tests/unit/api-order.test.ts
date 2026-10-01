@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { apis, defaultEndpoint, listEndpoints } from "@/content";
+import { getGuide, guideApis, guides, guidesForApi } from "@/content/guides";
 import en from "../../messages/en.json";
 import he from "../../messages/he.json";
 
@@ -29,5 +30,29 @@ describe("API order and defaults (8E)", () => {
       if (api.defaultEndpoint) expect(ids).toContain(api.defaultEndpoint);
       else expect(defaultEndpoint(api).id).toBe(ids[0]);
     }
+  });
+});
+
+describe("Guides API selector and Most Used Cases (8E)", () => {
+  it("offers Open API, Proxy and Sample guides, Open API first", () => {
+    expect(guideApis().map((a) => a.id)).toEqual(["openapi", "proxy", "sample"]);
+    expect(guides[0].apiId).toBe("openapi");
+  });
+
+  it("registry order keeps each API's guides together, in apis order", () => {
+    const order = guides.map((g) => apis.findIndex((a) => a.id === g.apiId));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+  });
+
+  it("Most Used Cases is an Open API guide covering Click to Call and CDRs only", () => {
+    const guide = getGuide("most-used-cases");
+    expect(guide?.apiId).toBe("openapi");
+    expect(guide?.sections.map((s) => s.id)).toEqual(["click-to-call", "call-history"]);
+    expect(guidesForApi("openapi").map((g) => g.slug)).toContain("most-used-cases");
+  });
+
+  it("no Open API guide references a Proxy endpoint or reqtype", () => {
+    const text = JSON.stringify(guidesForApi("openapi"));
+    expect(text).not.toMatch(/reqtype|proxyapi\.php/i);
   });
 });

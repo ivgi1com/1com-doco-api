@@ -39,7 +39,7 @@ export function SiteHeader() {
             </div>
             <section className="border-t border-border pt-4">
               <h2 className="mb-2 px-2 text-xs font-semibold text-ink-muted">{t("guides")}</h2>
-              <GuidesNav />
+              <GuidesNav idPrefix="drawer" />
             </section>
             <section className="border-t border-border pt-4">
               <h2 className="mb-3 px-2 text-xs font-semibold text-ink-muted">{t("reference")}</h2>

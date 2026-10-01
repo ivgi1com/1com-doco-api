@@ -4,8 +4,11 @@ Current work:
 **Phase 8E — customer-facing change brief (before Phase 8 Stage 6): Stages
 0-5 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
 5 made Open API first/default (Proxy "legacy", Playground opens on
-`simplecdrs-list`). Stage 6 (Guides selector, Most Used Cases) next, not
-started; nothing pushed/merged/tagged.** Spec `docs/phases/08E-customer-change-brief.md`;
+`simplecdrs-list`). Stage 6 (Guides selector, Most Used Cases) implemented
+and WIP-committed, NOT done: check 395/395, build clean, targeted e2e 69
+passed, but the visual pass still shows resource errors (probably from a
+stale server; unverified). Re-validate first, see `docs/SESSION_HANDOFF.md`.
+Nothing pushed/merged/tagged.** Spec `docs/phases/08E-customer-change-brief.md`;
 detail `docs/DECISIONS.md` "Phase 8E ..." and `docs/SESSION_HANDOFF.md`.
 Open API now 132 operations / 31 resources, Proxy 74 operations (admin
 content excluded via `source-docs/portal-exclusions.json`). Validation at

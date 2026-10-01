@@ -1,7 +1,45 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-5 DONE and
-committed, Stage 6 NOT started; read this first)
+Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-5 DONE;
+Stage 6 implemented and WIP-committed, visual pass NOT yet clean; read this first)
+
+## Phase 8E — Stage 6 implemented, WIP checkpoint, visual validation open (2026-10-02)
+
+- Branch `phase/customer-brief`, WIP checkpoint commit on top of `e7f48a1`
+  (Stage 5). Not pushed/merged/tagged. Stage 6 is NOT marked done.
+- **Implemented (brief items 9-11):** `src/content/guides/index.ts`
+  registry reordered (Open API first) + `guidesForApi(apiId)` /
+  `guideApis()`; new `src/content/guides/most-used-cases.ts` (Click to
+  Call via `POST /dial`, CDRs via `simplecdrs-list` / `cdrs-list`; popup
+  and post-call cases deliberately absent); `GuidesNav` API selector in
+  `src/components/shell/sidebar-nav.tsx` (`idPrefix`, drawer uses
+  `"drawer"` in `site-header.tsx`); `/guides` redirects to the default
+  API's first guide; home: "Most Used Cases" card (4-card grid
+  sm:2 / lg:4), start button -> `/guides/openapi-authentication`
+  ("Get started with the Open API"); i18n keys `home.mostUsedTitle/Body`
+  (he DRAFT), indentation fix in en/he `playground` keys; tests in
+  `tests/unit/api-order.test.ts` and `tests/e2e/smoke.spec.ts`.
+- **Validation done:** `npm run check` 395/395; `npm run build` clean
+  (450 pages); targeted Playwright (`-g "8E|guide|Guide|loads without
+  console"`) 69 passed / 1 WebKit skip.
+- **Open issue:** the 60-load visual pass (scratchpad `visual.mjs`, port
+  3100) reported 3x "Failed to load resource: 500" on `/en` and
+  `/en/guides/getting-started`, 1x 404 on `/en/guides/most-used-cases`.
+  Probable cause (UNVERIFIED): its `next start -p 3100` failed with
+  EADDRINUSE, so the pass hit a stale Stage 5 server whose HTML referenced
+  chunks replaced by the Stage 6 rebuild and which had no
+  `most-used-cases` route. The e2e console-error tests were clean. Port
+  3100 was free at checkpoint time.
+- **Next task:** finish Stage 6 validation, then the Stage 6 commit; then
+  STOP before Stage 7. Model per routing: Sonnet 5.
+- **First action:** `npm run build`, `npx next start -p 3101` (confirm
+  "Ready" in its log), re-run the visual pass (2 engines × en/he ×
+  desktop/tablet/mobile × `/`, `/guides`, `/guides/most-used-cases`,
+  `/guides/call-history`, `/guides/getting-started`) against 3101. If
+  clean, review screenshots (home grid, Guides selector in sidebar + mobile
+  drawer, Hebrew RTL), stop only that server, update this file and
+  CURRENT_STATUS, commit Stage 6. If errors remain, capture the failing URLs
+  via `page.on("response")` and debug.
 
 ## Phase 8E — Stage 5 done (Open API first/default), STOPPED before Stage 6 (2026-10-02)
 

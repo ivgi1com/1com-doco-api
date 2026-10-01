@@ -261,6 +261,32 @@ test.describe("interactions", () => {
       await expect(chips).toHaveText(["1com Open API", "Proxy API (legacy)"]);
     });
 
+    test("Guides open in Open API mode; Proxy guides only after selecting it (8E)", async ({ page, browserName }) => {
+      await page.goto("/en/guides");
+      await expect(page).toHaveURL(/\/guides\/openapi-authentication$/);
+      const sidebar = page.locator("aside").first();
+      const select = sidebar.getByRole("combobox");
+      await expect(select).toHaveValue("openapi");
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample API"]);
+      await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toBeVisible();
+      await expect(sidebar.getByRole("link", { name: "Call history" })).toHaveCount(0);
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");
+      await select.selectOption("proxy");
+      await expect(page).toHaveURL(/\/guides\/authentication$/);
+      await expect(sidebar.getByRole("link", { name: "Call history" })).toBeVisible();
+      await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toHaveCount(0);
+    });
+
+    test("the home Most Used Cases card and primary button lead to Open API guides (8E)", async ({ page }) => {
+      await page.goto("/en");
+      await expect(page.getByRole("link", { name: "Get started with the Open API" })).toHaveAttribute("href", /\/guides\/openapi-authentication$/);
+      await page.getByRole("link", { name: /Most Used Cases/ }).click();
+      await expect(page).toHaveURL(/\/guides\/most-used-cases$/);
+      await expect(page.getByRole("heading", { level: 1, name: "Most Used Cases" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Click to Call" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Viewing call history (CDRs)" })).toBeVisible();
+    });
+
     test("Try in Playground opens the Playground on this endpoint with the Proxy API's own samples", async ({
       page,
     }) => {

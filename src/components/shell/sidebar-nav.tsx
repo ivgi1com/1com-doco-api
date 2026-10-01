@@ -3,7 +3,7 @@
 import { ChevronDown, BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { apis, getApi } from "@/content";
-import { guides } from "@/content/guides";
+import { getGuide, guideApis, guidesForApi } from "@/content/guides";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -87,18 +87,47 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
   );
 }
 
-export function GuidesNav() {
+/** Guides for one API at a time. The API comes from the guide being viewed;
+ * elsewhere it is the default (first) API. Switching opens that API's first guide. */
+export function GuidesNav({ idPrefix = "side" }: { idPrefix?: string }) {
+  const t = useTranslations("nav");
+  const pathname = usePathname();
+  const router = useRouter();
+  const options = guideApis();
+  const slug = /^\/guides\/([^/]+)/.exec(pathname)?.[1];
+  const apiId = (slug && getGuide(slug)?.apiId) || options[0].id;
+  const selectId = `${idPrefix}-guides-api`;
+
   return (
-    <ul className="space-y-0.5">
-      {guides.map((guide) => (
-        <li key={guide.slug}>
-          <NavLink href={`/guides/${guide.slug}`} className={itemClass}>
-            <BookOpen className="size-4 shrink-0" aria-hidden />
-            {guide.title}
-          </NavLink>
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-3">
+      <div className="grid gap-2">
+        <label className="sr-only" htmlFor={selectId}>
+          {t("api")}
+        </label>
+        <select
+          id={selectId}
+          value={apiId}
+          onChange={(e) => router.push(`/guides/${guidesForApi(e.target.value)[0].slug}`)}
+          className="h-8 min-w-0 rounded-md border border-border-control bg-bg px-2 text-sm font-semibold text-ink"
+        >
+          {options.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.legacy ? t("legacyApi", { name: a.name }) : a.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <ul className="space-y-0.5">
+        {guidesForApi(apiId).map((guide) => (
+          <li key={guide.slug}>
+            <NavLink href={`/guides/${guide.slug}`} className={itemClass}>
+              <BookOpen className="size-4 shrink-0" aria-hidden />
+              {guide.title}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
