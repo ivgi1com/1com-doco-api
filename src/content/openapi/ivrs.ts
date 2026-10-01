@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "IVRs",
   path: "/ivrs",
   idField: "iv_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f("name", "Maps to `iv_name`.", { required: true, example: "Demo IVR" }),

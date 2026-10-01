@@ -1728,3 +1728,37 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   `proxy/info.ts:110` (`/mirtapbx/proxyapi.php`, a quoted vendor path).
 - **Model routing:** Sonnet 5 throughout; Stage 2's exclusion mechanism and
   SECURITY.md notes on Opus 5; Stage 6 (Phase 8) review stays Opus 5.
+
+## Phase 8E Stage 1 — branding, API Key wording, SRV (2026-10-01, Sonnet 5)
+
+- **Mirta -> 1com:** the OpenAPI is named "1com Open API" (selectors,
+  breadcrumbs, titles); customer-visible prose reworded ("Open API" is the
+  spelling in prose; `openapi.php`, ids and env var names are unchanged).
+  Reworded: API summaries, `proxy/cdr.ts`, `extensions.ts`, `misc.ts`,
+  `shared.ts`, `musiconholds.ts`, `reporting.ts`, `auth-token.ts` (removed in
+  Stage 2). `examples.json` is regenerated through a new `brand` map in
+  `scripts/openapi-examples-normalize.json` (also normalises "API key").
+  Not rendered and left alone: `sourceUrl`/`source` provenance
+  (`manual.mirtapbx.com`, `source-docs/raw/mirta-openapi`), comments,
+  `source-docs/`. **Kept by the user's decision:** the quoted vendor path
+  `/mirtapbx/proxyapi.php` in `proxy/info.ts:110`.
+- **API Key:** "API key" -> "API Key" in the content model and `messages/en.json`
+  (Hebrew keeps "מפתח API"); "Tenant API key"/"Tenant key" qualifiers on the
+  ordinary key removed. Demo `error.message` bodies that reproduce the API's
+  output stay verbatim (default 4). The "Key scope" display and the
+  `Authentication.scope` data were removed (default 1): `openapiAuth()` no
+  longer takes a scope, resource files lost their `scope:` lines, the
+  Reference and Playground no longer render it. Global/admin wording and
+  the Proxy Admin text are left for Stage 2.
+- **SRV -> PBX:** 22 occurrences (call IDs and node/peer ids) in the Proxy
+  content, Demo fixtures and tests are now `PBX` / `PBX-<id>`; no code parsed the
+  prefix (the Live `uniqueid` pattern accepts any `word-` prefix).
+- **Guard test:** `tests/unit/customer-copy.test.ts` walks every
+  customer-visible string (content model incl. the observed layer, guides,
+  Demo fixtures, rendered examples, both message files) and fails on Mirta
+  (except the kept path), `SRVxx`, "API key" outside verbatim API output, and
+  Sample/Tenant API Key qualifiers.
+- **Validation:** `npm run check` 382/382; build clean (576 pages); full
+  Playwright 192 passed / 2 WebKit skips / 0 failed after updating the chip
+  label test; browser spot check (en/he, desktop/mobile): no Mirta, no key
+  scope, no `API key`, no SRV, no overflow.

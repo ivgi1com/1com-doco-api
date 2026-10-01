@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "conditions",
   path: "/conditions",
   idField: "co_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f("type", "Maps to `co_type`. Example value `\"WEEKTIME\"`; not stated exhaustive. This is the required-on-create field, not the label field `name`.", {

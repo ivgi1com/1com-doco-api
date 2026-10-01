@@ -19,7 +19,7 @@ export const authentication: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "Every request authenticates with an API key: either a Tenant key, scoped to one tenant, or the Admin key, which can see across tenants. Tenant keys come in two kinds — Read/Write and read-only — generated per tenant on the Configuration/Settings page.",
+          text: "Every request authenticates with an API Key: either a Tenant key, scoped to one tenant, or the Admin key, which can see across tenants. Tenant keys come in two kinds — Read/Write and read-only — generated per tenant on the Configuration/Settings page.",
         },
         {
           kind: "callout",
@@ -50,7 +50,7 @@ export const authentication: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "The `tenant` query parameter selects which tenant's data a request reads or writes. The source's own wording for when it can be omitted is “Sometime optional if the Admin API key is used” (sic) — inconsistent phrasing that this portal reproduces rather than smooths over.",
+          text: "The `tenant` query parameter selects which tenant's data a request reads or writes. The source's own wording for when it can be omitted is “Sometime optional if the Admin API Key is used” (sic) — inconsistent phrasing that this portal reproduces rather than smooths over.",
         },
         {
           kind: "paragraph",

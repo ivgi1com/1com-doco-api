@@ -78,11 +78,10 @@ describe("content ↔ inventory", () => {
     }
   });
 
-  it("agrees on read/write class and key scope", () => {
+  it("agrees on read/write class", () => {
     for (const e of endpoints) {
       const row = byId.get(e.id)!;
       expect(e.operationClass === "write", `${e.id} operationClass`).toBe(row.class === "write");
-      if (row.keyScope === "admin") expect(e.authentication.scope, e.id).toBe("Admin key");
     }
   });
 

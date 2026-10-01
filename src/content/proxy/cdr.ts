@@ -15,8 +15,8 @@ const uniqueidParam: Parameter = {
   type: "string",
   required: "undocumented",
   description:
-    "Unique identifier of the call record (CDR). Format not documented; examples look like `srv02-1701011773.4670` (server prefix, epoch seconds, sequence).",
-  example: "srv02-1701011773.4670",
+    "Unique identifier of the call record (CDR). Format not documented; examples look like `PBX-1701011773.4670` (server prefix, epoch seconds, sequence).",
+  example: "PBX-1701011773.4670",
   constraints: "Optional `<server>-` prefix, then `<digits>.<digits>` (enforced by this portal's Live proxy).",
   source: `${SOURCE_PAGE}#bkmrk-cdr-%2F-get-the-userfi`,
 };
@@ -56,7 +56,7 @@ const cdrGet: Endpoint = {
   responses: [cdrGetResponse],
   errors: "undocumented",
   notes: [
-    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical MiRTA evidence: source-docs/proxy-api/cdr-standalone.md.",
+    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical vendor evidence: source-docs/proxy-api/cdr-standalone.md.",
     "field is fixed to userfield in this portal: it is the only value the source shows, and other CDR columns (such as caller and callee numbers) are personal data.",
     "The userfield is free-form data written by your own integration. The portal cannot tell what it contains, so Live mode shows it as returned.",
     "Errors are not signalled by HTTP status: an unknown uniqueid returns HTTP 200 with an empty body (A-42).",

@@ -16,10 +16,10 @@ const dial = openapiOperation({
   path: "/dial",
   title: "Originate a call",
   summary:
-    "Originates a call between a source extension and a destination number. The source describes it as the OpenAPI equivalent of the Proxy API's DIAL, using the same PBX dialplan contexts.",
-  authentication: openapiAuth("Tenant full API key", {
+    "Originates a call between a source extension and a destination number. The source describes it as the Open API equivalent of the Proxy API's DIAL, using the same PBX dialplan contexts.",
+  authentication: openapiAuth({
     write: true,
-    extra: "Read-only API keys cannot originate calls.",
+    extra: "Read-only API Keys cannot originate calls.",
   }),
   queryParameters: [tenantParam(true, "Tenant code or tenant name.")],
   requestBody: [

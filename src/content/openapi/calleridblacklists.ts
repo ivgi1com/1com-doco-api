@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "caller ID blacklist entries",
   path: "/calleridblacklists",
   idField: "bl_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/calleridblacklist", "/callerid_blacklist", "/callerid_blacklists", "/blacklist", "/blacklists"],

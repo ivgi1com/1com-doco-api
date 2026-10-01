@@ -50,7 +50,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "extensions",
   path: "/extensions",
   idField: "ex_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: extensionFields,
   createExample: {
@@ -87,7 +86,7 @@ const getByNumber = openapiOperation({
   title: "Get extension by number",
   summary:
     "Reads an extension by PBX number. Keep the tenant parameter when the same number may exist in multiple tenants.",
-  authentication: openapiAuth("Tenant API key"),
+  authentication: openapiAuth(),
   pathParameters: [
     { name: "number", location: "path", type: "string", required: true, description: "Extension number.", example: "100" },
   ],
@@ -118,11 +117,11 @@ const getState = openapiOperation({
   title: "Get extension state",
   summary:
     "Returns the live call state of one extension. It checks the extension's registration server and queries the Asterisk manager for the active channel, unlike Get extension, which returns the cached state.",
-  authentication: openapiAuth("Tenant context required, even with a global key", {
+  authentication: openapiAuth({
     extra: "Which key kinds are accepted (read-only or full) is not documented.",
   }),
   queryParameters: [
-    tenantParam(true, "Tenant code or tenant name. Required even with a global API key."),
+    tenantParam(true, "Tenant code or tenant name. Required even with a global API Key."),
     q("number", "Extension number to check.", { condition: "Required unless `ext` is used", example: "100" }),
     q("ext", "Compatibility alias for `number`.", { condition: "Required unless `number` is used" }),
   ],

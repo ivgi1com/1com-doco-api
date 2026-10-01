@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "media files",
   path: "/mediafiles",
   idField: "me_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/media_files", "/media_file"],

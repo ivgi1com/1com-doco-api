@@ -46,7 +46,7 @@
     {
       "operationId": "aianalysis-get",
       "title": "Global Key Tenant Wildcard",
-      "description": "Uses a global API key to search matching tenants. Use this only when unique IDs may need to be resolved across tenant boundaries.",
+      "description": "Uses a global API Key to search matching tenants. Use this only when unique IDs may need to be resolved across tenant boundaries.",
       "method": "GET",
       "path": "/aianalysis",
       "query": {
@@ -504,7 +504,7 @@
     {
       "operationId": "cdrs-list",
       "title": "CDR Direction",
-      "description": "Filters by outbound calls using the MiRTA PBX CDR userfield mapping.",
+      "description": "Filters by outbound calls using the PBX CDR userfield mapping.",
       "method": "GET",
       "path": "/cdrs",
       "query": {
@@ -4977,7 +4977,7 @@
     {
       "operationId": null,
       "title": "Authentication",
-      "description": "Send the API key as a `key` query parameter, an `X-API-Key` header, or an `Authorization: Bearer` token. Tenant API keys require a tenant parameter. Global keys can access global administration objects and can list tenant-scoped objects across tenants when no tenant parameter is supplied.",
+      "description": "Send the API Key as a `key` query parameter, an `X-API-Key` header, or an `Authorization: Bearer` token. Tenant API Keys require a tenant parameter. Global keys can access global administration objects and can list tenant-scoped objects across tenants when no tenant parameter is supplied.",
       "method": "GET",
       "path": "/extensions",
       "query": {

@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "cron jobs",
   path: "/cronjobs",
   idField: "cr_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/cronjob", "/cron_job", "/cron_jobs"],

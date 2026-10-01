@@ -17,7 +17,7 @@ const notVerified = {
 const bearer = {
   type: "Bearer token",
   description:
-    "Send your API key in the Authorization header. Keys are scoped to one tenant.",
+    "Send your API Key in the Authorization header. Keys are scoped to one tenant.",
 };
 
 const authHeader: Parameter = {
@@ -184,12 +184,12 @@ const listCalls: Endpoint = {
         next_cursor: "cur_sample_2",
       },
     },
-    { status: 401, description: "Missing or invalid API key.", verified: false, example: errorBody("unauthorized", "The API key is missing or invalid.") },
+    { status: 401, description: "Missing or invalid API Key.", verified: false, example: errorBody("unauthorized", "The API Key is missing or invalid.") },
     { status: 429, description: "Rate limit exceeded.", verified: false, example: errorBody("rate_limited", "Too many requests. Retry after 12 seconds.") },
   ],
   errors: [
     { status: 400, code: "invalid_parameter", description: "A query parameter has an unsupported value." },
-    { status: 401, code: "unauthorized", description: "The API key is missing, malformed or revoked." },
+    { status: 401, code: "unauthorized", description: "The API Key is missing, malformed or revoked." },
     { status: 429, code: "rate_limited", description: "The tenant exceeded its request quota. Honour Retry-After." },
   ],
   related: ["get-call-record"],
@@ -216,7 +216,7 @@ const getCall: Endpoint = {
     { status: 404, description: "No call record with this identifier.", verified: false, example: errorBody("not_found", "No call record matches call_id.") },
   ],
   errors: [
-    { status: 401, code: "unauthorized", description: "The API key is missing, malformed or revoked." },
+    { status: 401, code: "unauthorized", description: "The API Key is missing, malformed or revoked." },
     { status: 404, code: "not_found", description: "The call record does not exist or belongs to another tenant." },
   ],
   related: ["list-call-records"],

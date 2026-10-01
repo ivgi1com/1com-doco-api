@@ -45,14 +45,14 @@ const cdrFields: Parameter[] = [
   field("end", "Call end timestamp."),
   field("clid", "Full caller ID string."),
   field("realsrc", "Normalized or real source value."),
-  field("firstdst", "First dialed destination tracked by MiRTA PBX."),
+  field("firstdst", "First dialed destination tracked by the PBX."),
   field("duration", "Total call duration in seconds."),
   field("billsec", "Answered talk time in seconds."),
   field("disposition", "Asterisk call disposition."),
   field("cc_cost", "Calculated tenant-side call cost when available."),
   field("dcontext", "Asterisk destination context."),
   field("dstchannel", "Destination channel."),
-  field("userfield", "MiRTA PBX call marker, commonly including inbound or outbound direction information."),
+  field("userfield", "PBX call marker, commonly including inbound or outbound direction information."),
   field("uniqueid", "Asterisk unique ID for the CDR leg."),
   field("prevuniqueid", "Previous unique ID for linked call-leg processing."),
   field("lastdst", "Last destination reached by the call."),
@@ -93,7 +93,7 @@ const cdr = openapiOperation({
   path: "/cdrs",
   title: "List CDRs",
   summary: "Read-only call detail record (CDR) reporting. Filters by date range, ID(s) or a set of call fields.",
-  authentication: openapiAuth("Tenant API key or global key", {
+  authentication: openapiAuth({
     extra: "Global keys can query one tenant by code/name or use a `%` SQL-style wildcard across tenants.",
   }),
   queryParameters: [
@@ -134,7 +134,7 @@ const simplecdr = openapiOperation({
   path: "/simplecdrs",
   title: "List simple CDRs",
   summary: "A simplified, read-only call-history reporting endpoint: fewer and renamed fields than CDR.",
-  authentication: openapiAuth("Tenant API key or global key", {
+  authentication: openapiAuth({
     extra: "Global keys can query one tenant by code/name or use a `%` SQL-style wildcard across tenants.",
   }),
   queryParameters: [
@@ -199,13 +199,13 @@ const aianalysis = openapiOperation({
   title: "Get AI call analysis",
   summary:
     "Returns transcript, AI-generated summary, and sentiment-analysis data for recorded calls, keyed by Asterisk uniqueid. Distinct from AI Logs (Talk-with-AI conversation logs).",
-  authentication: openapiAuth("Tenant API key or global key", {
+  authentication: openapiAuth({
     extra: "Global keys can query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants.",
   }),
   queryParameters: [
     wildcardTenant("query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants"),
     q("uniqueid", "Comma-separated Asterisk unique IDs. A path value (`/aianalysis/<id>`) also maps here.", { required: true, example: "1700000000.42" }),
-    q("key", "API key. The header or bearer transport is preferred for new integrations."),
+    q("key", "API Key. The header or bearer transport is preferred for new integrations."),
   ],
   responses: [
     {
@@ -303,7 +303,7 @@ const ailogs = openapiOperation({
   title: "List AI logs",
   summary:
     "Exports records of conversations handled by the \"Talk with AI\" custom destination: conversation text, duration, caller ID and token usage. Distinct from AI Analysis (recorded-call transcripts/summaries/sentiment).",
-  authentication: openapiAuth("Tenant full or read-only API key, or global key", {
+  authentication: openapiAuth({
     extra:
       "Accepts all four key kinds: tenant full, tenant read-only, global full, global read-only. Global keys can query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants. An optional per-key IP allowlist may also apply.",
   }),
@@ -316,7 +316,7 @@ const ailogs = openapiOperation({
     q("callerid", "Comma-separated exact caller ID values."),
     q("customid", "Comma-separated custom destination IDs from `cu_customs`."),
     q("format", "`json` (default) or `csv`. `/ailogs/export` defaults to `csv`.", { enum: ["json", "csv"], default: "json", example: "json" }),
-    q("key", "API key. The header or bearer transport is preferred."),
+    q("key", "API Key. The header or bearer transport is preferred."),
   ],
   responses: [
     {
@@ -352,7 +352,7 @@ const ailogs = openapiOperation({
     "A compatibility query form is also documented: `GET /openapi.php?object=ailogs&action=list&tenant=<code>`. Whether it has different security properties than the primary path is undocumented.",
     "CSV column order is documented as the same field order as JSON, but not independently verified for CSV.",
     "The 200 status is the portal's placeholder for a success response; the source documents no HTTP status codes.",
-    "Security (SEC-REQ-10): `ai_talk` is conversation content, and the source page itself warns it \"can contain sensitive conversation content. Store exports securely and restrict access to API keys.\" `ai_callerid` is caller PII. REVIEW REQUIRED: `ai_talk` needs explicit product sign-off before any Live/Demo exposure, beyond a mechanical field allowlist.",
+    "Security (SEC-REQ-10): `ai_talk` is conversation content, and the source page itself warns it \"can contain sensitive conversation content. Store exports securely and restrict access to API Keys.\" `ai_callerid` is caller PII. REVIEW REQUIRED: `ai_talk` needs explicit product sign-off before any Live/Demo exposure, beyond a mechanical field allowlist.",
   ],
 });
 

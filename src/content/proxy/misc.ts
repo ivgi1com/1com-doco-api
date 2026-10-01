@@ -104,7 +104,7 @@ export const phonebookQuery = proxyOperation({
     },
   ],
   notes: [
-    "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior MiRTA-sourced audit and unchanged in this source.",
+    "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior audit and unchanged in this source.",
     "Response observed by probe without field/value (source-docs/DOCS_AUDIT.md A-75); the success shape remains undocumented.",
   ],
   related: ["phonebook-add"],
@@ -260,7 +260,7 @@ export const responsepathGetlast = proxyOperation({
       verified: false,
       source: "source-docs/proxy-api/responsepath.md (Site lines 200-208)",
       example:
-        "UniqueID|Type|Type ID|Value|Type Name|Value Name\nsrv02-1509806457.625|START|0|2017-11-04 15:41:01||\nsrv02-1509806457.625|CALLERID|0|Susan <1132555678>||\nsrv02-1509806457.625|VARIABLE|85|36985||\nsrv02-1509806457.625|VARIABLE|144|56896||\nsrv02-1509806457.625|QUEUE|281|||\nsrv02-1509806457.625|ANSWER|0|105-DEMO||\nsrv02-1509806457.625|HANGUP|0|||",
+        "UniqueID|Type|Type ID|Value|Type Name|Value Name\nPBX-1509806457.625|START|0|2017-11-04 15:41:01||\nPBX-1509806457.625|CALLERID|0|Susan <1132555678>||\nPBX-1509806457.625|VARIABLE|85|36985||\nPBX-1509806457.625|VARIABLE|144|56896||\nPBX-1509806457.625|QUEUE|281|||\nPBX-1509806457.625|ANSWER|0|105-DEMO||\nPBX-1509806457.625|HANGUP|0|||",
     },
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },

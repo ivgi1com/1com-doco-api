@@ -207,7 +207,7 @@ export const countchannels = proxyOperation({
   source: "countchannels.md",
   queryParameters: [
     q("nodename", "Count only this node's channels.", { required: false }),
-    q("tenant", "Optional if using the Admin API key, returns only channels from the selected tenant.", { required: false }),
+    q("tenant", "Optional if using the Admin API Key, returns only channels from the selected tenant.", { required: false }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [

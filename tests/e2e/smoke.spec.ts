@@ -580,7 +580,7 @@ test.describe("interactions", () => {
       // field is fixed to userfield: shown as a fixed parameter, never editable.
       await expect(desktopPane(page).getByLabel("field", { exact: true })).toHaveCount(0);
       await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveCount(0);
-      await desktopPane(page).getByLabel("uniqueid", { exact: true }).fill("srv02-1701011773.4670");
+      await desktopPane(page).getByLabel("uniqueid", { exact: true }).fill("PBX-1701011773.4670");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("customer-note-e2e")).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText(/upstream returned an empty body/)).toHaveCount(0);
@@ -596,7 +596,7 @@ test.describe("interactions", () => {
       const headers = { origin: baseURL!, "sec-fetch-site": "same-origin", "content-type": "application/json" };
       const override = await request.post("/api/playground", {
         headers,
-        data: { endpoint: "proxy/cdr-get", params: { uniqueid: "srv02-1.2", field: "src" }, credential: "x" },
+        data: { endpoint: "proxy/cdr-get", params: { uniqueid: "PBX-1.2", field: "src" }, credential: "x" },
       });
       expect(override.status()).toBe(400);
       const listqueues = await request.post("/api/playground", {
@@ -913,7 +913,6 @@ test.describe("interactions", () => {
     test("a ManageDB write documents its jsondata body, admin key, and a form-encoded POST sample", async ({ page }) => {
       await page.goto("/en/reference/proxy/managedb-custom-add");
       await expect(page.getByText(/with one field, jsondata, whose value is the object below encoded as JSON/)).toBeVisible();
-      await expect(page.locator('section[aria-labelledby="authentication"]').getByText("Key scope: Admin key")).toBeVisible();
       const panel = await requestPanel(page);
       await expect(panel.getByText(/--url-query "reqtype=MANAGEDB"/)).toBeVisible();
       await expect(panel.getByText(/--data-urlencode 'jsondata=/)).toBeVisible();
@@ -948,7 +947,7 @@ test.describe("interactions", () => {
       await expect(page.getByRole("heading", { name: "Proxy" }).first()).toBeVisible();
       await page.locator("aside").getByLabel("API").selectOption("openapi");
       await expect(page).toHaveURL(/\/en\/reference\/openapi$/);
-      await expect(page.getByRole("heading", { name: "MiRTA OpenAPI" }).first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: "1com Open API" }).first()).toBeVisible();
     });
 
     test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {
@@ -1023,7 +1022,7 @@ test.describe("interactions", () => {
     const documentedChips: { endpoint: string; chip: string; expect: RegExp }[] = [
       { endpoint: "openapi/extensions-state-get", chip: "Not registered", expect: /Extension not registered/ },
       { endpoint: "openapi/aianalysis-get", chip: "One of two unique IDs unknown", expect: /1700000000\.42/ },
-      { endpoint: "openapi/aianalysis-get", chip: "Invalid API key", expect: /invalid_api_key/ },
+      { endpoint: "openapi/aianalysis-get", chip: "Invalid API Key", expect: /invalid_api_key/ },
       { endpoint: "openapi/queues-get", chip: "Queue found", expect: /allowed_members/ },
     ];
 
@@ -1097,12 +1096,12 @@ test.describe("interactions", () => {
       expect(sent).toEqual([]);
     });
 
-    test("the operation header shows kind, auth and key scope (8C)", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=openapi/tenants-list");
+    test("the operation header shows kind and auth, and no key scope (8C)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/cdrs-list");
       const header = desktopPane(page).getByTestId("operation-header");
       await expect(header.getByTestId("op-kind")).toHaveText("Read-only");
-      await expect(header.getByTestId("op-scope")).toContainText("Global API key");
       await expect(header).toContainText("X-API-Key header");
+      await expect(header).not.toContainText("Key scope");
       await page.goto("/en/playground?endpoint=openapi/extensions-create");
       await expect(desktopPane(page).getByTestId("operation-header").getByTestId("op-kind")).toHaveText("Changes state");
     });
@@ -1121,7 +1120,7 @@ test.describe("interactions", () => {
       await page.goto("/en/playground?endpoint=proxy/info-extensions");
       await desktopPane(page).getByLabel("API", { exact: true }).selectOption("openapi");
       await expect(page).toHaveURL(/endpoint=openapi\//);
-      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("Key scope");
+      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("X-API-Key header");
     });
 
     test("an unknown ?endpoint= says so instead of silently showing another operation (8C)", async ({ page }) => {
@@ -1163,7 +1162,7 @@ test.describe("interactions", () => {
       const step = (name: string) => mobile.getByRole("tab", { name, exact: true });
 
       await page.goto("/en/playground?endpoint=openapi/extensions-list");
-      await expect(mobile.getByTestId("operation-header")).toContainText("Key scope");
+      await expect(mobile.getByTestId("operation-header")).toContainText("X-API-Key header");
       await mobile.getByTestId("request-preview").locator("summary").click();
       // A fill sent before React hydrates is overwritten by the controlled
       // value (same race as the search-palette and nav-drawer tests above):

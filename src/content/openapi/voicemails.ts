@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "voicemail mailboxes",
   path: "/voicemails",
   idField: "uniqueid",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f("number", "Maps to `mailbox`, the object's label field.", { required: true, example: "240" }),

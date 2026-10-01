@@ -111,19 +111,19 @@ describe("cdr-get target", () => {
     expect(t.jsonFields.size).toBe(0);
   });
 
-  it.each(["srv02-1701011773.4670", "pbx99-1790000000.1234567", "1701011773.4670", "a_b-1.2"])("accepts uniqueid=%s", (uniqueid) => {
+  it.each(["PBX-1701011773.4670", "pbx99-1790000000.1234567", "1701011773.4670", "a_b-1.2"])("accepts uniqueid=%s", (uniqueid) => {
     expect(validateLiveRequest({ ...cdr, params: { tenant: TENANT, uniqueid } }).ok).toBe(true);
   });
 
   it.each([
     "zzz",
     "1701011773",
-    "srv02-1701011773.",
+    "PBX-1701011773.",
     ".4670",
     "srv-02-1701011773.4670",
-    "srv02-1701011773.4670.1",
-    "srv02 1701011773.4670",
-    "srv02-1701011773.4670&field=src",
+    "PBX-1701011773.4670.1",
+    "PBX 1701011773.4670",
+    "PBX-1701011773.4670&field=src",
     "' OR 1=1",
   ])("rejects uniqueid=%j", (uniqueid) => {
     expect(validateLiveRequest({ ...cdr, params: { tenant: TENANT, uniqueid } })).toEqual({ ok: false, code: "invalid_request" });

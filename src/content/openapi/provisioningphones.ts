@@ -18,7 +18,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "provisioning phones",
   path: "/provisioningphones",
   idField: "ph_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/phone", "/phones", "/provisioning_phones", "/provisioning_phone"],
   fields: [

@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "phone books",
   path: "/phonebooks",
   idField: "pb_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/phonebook", "/phone_book", "/phone_books"],
   fields: [

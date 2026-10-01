@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "conference rooms",
   path: "/conferencerooms",
   idField: "cr_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/conference", "/conferences", "/conference_rooms", "/conference_room"],
   fields: [

@@ -5,7 +5,7 @@ import { f, openapiResource } from "./shared";
  * User Profile. Source: source-docs/openapi/userprofiles.md (official page
  * `user-profile`, rev #17). A permission-profile object assigned to Users,
  * defining a set of privileges. Global system object: always requires a
- * global API key (`tenantScoped: false`).
+ * global API Key (`tenantScoped: false`).
  */
 
 const [list, get, create, update, remove] = openapiResource({
@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "user profiles",
   path: "/userprofiles",
   idField: "up_id",
-  scope: "Global API key",
   tenantScoped: false,
   aliases: ["/userprofile", "/user_profile", "/user_profiles"],
   fields: [

@@ -1,7 +1,7 @@
 import type { Guide } from "./types";
 
 /**
- * MiRTA OpenAPI authentication and scope. Derived only from
+ * MiRTA Open API authentication and scope. Derived only from
  * source-docs/openapi/_common.md (the cross-resource contract cited there
  * as `ov:N`, from source-docs/raw/mirta-openapi/overview-and-examples.md);
  * no behavior is assumed beyond what that page states. Slug distinct from
@@ -12,7 +12,7 @@ import type { Guide } from "./types";
  */
 export const openapiAuthentication: Guide = {
   slug: "openapi-authentication",
-  title: "OpenAPI authentication and scope",
+  title: "Open API authentication and scope",
   summary: "The 4 key kinds, how the key travels, tenant vs global scope, the common error codes, and why nothing here is Live yet.",
   synthetic: false,
   apiId: "openapi",
@@ -35,7 +35,7 @@ export const openapiAuthentication: Guide = {
           kind: "callout",
           tone: "note",
           title: "Full vs read-only",
-          text: "Writes (`POST`, `PATCH`, `DELETE`) require a writable (full) key; a read-only key attempting one gets `read_only_api_key`. An optional per-key IP allowlist is documented on the AI Logs page; whether it applies to every other resource too is not stated.",
+          text: "Writes (`POST`, `PATCH`, `DELETE`) require an API Key with write access; a read-only API Key attempting one gets `read_only_api_key`. An optional per-key IP allowlist is documented on the AI Logs page; whether it applies to every other resource too is not stated.",
         },
       ],
     },
@@ -111,7 +111,7 @@ export const openapiAuthentication: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "Every OpenAPI write stays Reference-only in this portal — the Playground never sends a `POST`, `PATCH`, `PUT`, or `DELETE`, in Live or Demo, regardless of any per-resource allowlist. No OpenAPI operation has been tested against a real PBX.",
+          text: "Every Open API write stays Reference-only in this portal — the Playground never sends a `POST`, `PATCH`, `PUT`, or `DELETE`, in Live or Demo, regardless of any per-resource allowlist. No Open API operation has been tested against a real PBX.",
         },
         {
           kind: "list",

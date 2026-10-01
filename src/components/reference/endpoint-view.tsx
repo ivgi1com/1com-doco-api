@@ -165,12 +165,6 @@ export function EndpointView({
               <ContentText className="mt-1 text-ink-muted">
                 <InlineMarkup text={endpoint.authentication.description} />
               </ContentText>
-              {endpoint.authentication.scope && (
-                <p className="mt-2 text-xs text-ink-muted">
-                  <span className="font-semibold text-ink">{t("keyScope")}:</span>{" "}
-                  {endpoint.authentication.scope}
-                </p>
-              )}
               {endpoint.authentication.location === "query" && endpoint.authentication.parameter && (
                 <p className="mt-2 text-xs text-ink-muted">
                   <InlineMarkup text={t("authInQuery", { parameter: endpoint.authentication.parameter })} />

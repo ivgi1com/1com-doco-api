@@ -33,6 +33,13 @@ function normalizeString(s) {
   return out;
 }
 
+/** Prose (titles, descriptions) is customer-visible: vendor brand names become 1com wording. */
+function brand(s) {
+  let out = s;
+  for (const [from, to] of Object.entries(NORMALIZE.brand ?? {})) out = out.split(from).join(to);
+  return out;
+}
+
 function normalizeValue(v, key) {
   if (typeof v === "string") return key && SECRET_KEYS.test(key) ? "SYNTHETIC_SECRET" : normalizeString(v);
   if (Array.isArray(v)) return v.map((x) => normalizeValue(x, key));
@@ -135,11 +142,11 @@ for (const raw of readdirSync(RAW).filter((f) => f.endsWith(".md")).sort()) {
       else if (v && typeof v === "object") Object.values(v).forEach(walk);
     })(parsed.body);
     const match = matchOperation(parsed, file);
-    const title = s.title.replace(/\\_/g, "_");
+    const title = brand(s.title.replace(/\\_/g, "_"));
     const entry = {
       operationId: match?.id ?? null,
       title,
-      description: s.prose.join(" ").replace(/\\_/g, "_"),
+      description: brand(s.prose.join(" ").replace(/\\_/g, "_")),
       method: parsed.method,
       path: normalizeString(parsed.path),
       query: normalizeValue(parsed.query),

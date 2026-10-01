@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "paging groups",
   path: "/paginggroups",
   idField: "pa_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/paging", "/pagings", "/paginggroup", "/intercom", "/intercoms"],
   fields: [

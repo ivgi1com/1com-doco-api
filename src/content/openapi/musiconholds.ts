@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "music on hold classes",
   path: "/musiconholds",
   idField: "mu_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/moh", "/music", "/music_on_hold", "/music_on_holds"],
@@ -29,7 +28,7 @@ const [list, get, create, update, remove] = openapiResource({
     f("format", "Maps to the raw `format` column. Example value `\"slin\"`."),
     f(
       "application",
-      "Raw, free-form field; its meaning is not documented on this page. In Asterisk music-on-hold configuration, `application` can name an external program the server runs — domain knowledge, not documented MiRTA behavior.",
+      "Raw, free-form field; its meaning is not documented on this page. In Asterisk music-on-hold configuration, `application` can name an external program the server runs — domain knowledge, not documented behavior of this API.",
       { required: "undocumented" },
     ),
     f("mode", "Maps to the raw `mode` column. Example value `\"playlist\"`; not stated exhaustive."),

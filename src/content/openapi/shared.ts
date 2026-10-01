@@ -20,20 +20,18 @@ const TRANSPORTS =
   "Send the key in the `X-API-Key` header. The source also accepts it as the `key` query parameter or as `Authorization: Bearer <key>`; the header keeps it out of URLs and logs.";
 
 /**
- * Authentication for one resource. `scope` is the Overview's
- * "Authentication scope" wording for the object (ov:38); `writes` adds the
- * rule every object page states for create/update/delete.
+ * Authentication for one resource. `write` adds the rule every object page
+ * states for create/update/delete.
  */
-export function openapiAuth(scope: string, opts: { write?: boolean; extra?: string } = {}): Authentication {
+export function openapiAuth(opts: { write?: boolean; extra?: string } = {}): Authentication {
   const parts = [TRANSPORTS];
-  if (opts.write) parts.push("Writes require a writable (full) API key; a read-only key gets `read_only_api_key`.");
+  if (opts.write) parts.push("Writes require an API Key with write access; a read-only API Key gets `read_only_api_key`.");
   if (opts.extra) parts.push(opts.extra);
   return {
-    type: "API key",
+    type: "API Key",
     description: parts.join(" "),
     location: "header",
     parameter: "X-API-Key",
-    scope,
   };
 }
 
@@ -58,11 +56,11 @@ export function tenantParam(required: Requirement, description?: string): Parame
     description ??
       (required === true
         ? "Tenant code."
-        : "Tenant code. Tenant API keys require it; with a global key, omitting it lists across tenants."), // ov:18
+        : "Tenant code. API Keys require it; with a global key, omitting it lists across tenants."), // ov:18
     {
       required,
       example: "TESTTENANT",
-      ...(required === true ? {} : { condition: "Required with a tenant API key" }),
+      ...(required === true ? {} : { condition: "Required with a API Key" }),
     },
   );
 }
@@ -70,14 +68,14 @@ export function tenantParam(required: Requirement, description?: string): Parame
 /** `global=1`, only on the 8 objects the Overview lists as supporting it (ov:38). */
 export const globalParam: Parameter = q(
   "global",
-  "With a global API key, `global=1` addresses the shared/global record set instead of a tenant's. The portal's Playground never sends it.",
+  "With a global API Key, `global=1` addresses the shared/global record set instead of a tenant's. The portal's Playground never sends it.",
   { enum: ["1"] },
 );
 
 /** Official wording for each documented error code (`_common.md` §6). */
 const ERROR_TEXT = {
-  missing_api_key: "No API key was supplied in the query string, `X-API-Key`, or bearer token.",
-  invalid_api_key: "The supplied key does not match the tenant or global API key.",
+  missing_api_key: "No API Key was supplied in the query string, `X-API-Key`, or bearer token.",
+  invalid_api_key: "The supplied key does not match the tenant or global API Key.",
   tenant_required: "A tenant code is required for tenant-scoped writes or tenant-key reads.",
   read_only_api_key: "The key can read data but cannot create, update, or delete objects.",
   missing_required_field: "A required create field is missing.",
@@ -88,7 +86,7 @@ const ERROR_TEXT = {
   uniqueid_required: "The request did not include a usable `uniqueid` value.",
   invalid_format: "The `format` value is not `json` or `csv`.",
   api_ip_not_allowed: "IP filtering is enabled and the client address is not in the key's allowed IP or network list.",
-  admin_required: "A global API key is required.",
+  admin_required: "A global API Key is required.",
   missing_user: "The request body did not include a user value.",
   user_not_found: "No supported web user or extension identity matched the requested user value.",
   invalid_validity: "The validity value was not ONCE and could not be parsed as a date/time.",
@@ -152,8 +150,6 @@ export interface ResourceSpec {
   plural: string;
   path: string;
   idField: string;
-  /** Overview "Authentication scope" wording (ov:38). */
-  scope: string;
   /** False for global-key-only objects (no `tenant` parameter). */
   tenantScoped: boolean;
   /** Accepts `global=1` (ov:38). */
@@ -218,8 +214,8 @@ export function openapiResource(r: ResourceSpec): Endpoint[] {
     notes: [...aliasNote, ...(r.notes ?? []), ...(r.operationNotes?.[kind] ?? [])],
     errors: pick(kind),
   });
-  const readAuth = openapiAuth(r.scope);
-  const writeAuth = openapiAuth(r.scope, { write: true });
+  const readAuth = openapiAuth();
+  const writeAuth = openapiAuth({ write: true });
   const updateFields = r.fields.map((p) => ({ ...p, required: false }));
 
   return [

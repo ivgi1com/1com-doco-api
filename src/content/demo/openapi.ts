@@ -2998,8 +2998,8 @@ const aianalysisFixtures: DemoFixtureSet = {
     },
     {
       id: "invalid-key-json",
-      label: "Invalid API key",
-      basis: "_common.md ov:42, `invalid_api_key`: \"The supplied key does not match the tenant or global API key\" (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the source.",
+      label: "Invalid API Key",
+      basis: "_common.md ov:42, `invalid_api_key`: \"The supplied key does not match the tenant or global API Key\" (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the source.",
       when: { tenant: "*", uniqueid: "*", key: ["DEMO_INVALID_KEY"] },
       preset: { tenant: TENANT, key: "DEMO_INVALID_KEY" },
       response: {

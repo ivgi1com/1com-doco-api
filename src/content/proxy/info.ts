@@ -544,7 +544,7 @@ export const infoRecording = proxyOperation({
   summary: "Returns the recording of one call, looked up by its unique id or by the call id a DIAL request returned.",
   source: "info.md",
   queryParameters: [
-    q("id", "The call's unique id, or the originate id returned by DIAL (its third field).", { example: "srv02-1531779475.48" }),
+    q("id", "The call's unique id, or the originate id returned by DIAL (its third field).", { example: "PBX-1531779475.48" }),
     tenantParam,
   ],
   responses: [
@@ -574,7 +574,7 @@ export const infoPlayrecording = proxyOperation({
   summary: "Same lookup as \"Get a call recording\", but asks the browser to play the recording inline instead of downloading it.",
   source: "info.md",
   queryParameters: [
-    q("id", "The call's unique id, or the originate id returned by DIAL.", { example: "srv02-1531779475.48" }),
+    q("id", "The call's unique id, or the originate id returned by DIAL.", { example: "PBX-1531779475.48" }),
     tenantParam,
   ],
   responses: [
@@ -977,7 +977,7 @@ export const infoExtstate = proxyOperation({
         { name: "UniqueID", location: "body", type: "string", required: true, description: "A short 2-letter code. Meaning not documented." },
         { name: "LinkedID", location: "body", type: "string", required: true, description: "A text value, up to 24 characters observed. Meaning not documented." },
       ],
-      example: { UniqueID: "ab", LinkedID: "srv02-1531779475.48" },
+      example: { UniqueID: "ab", LinkedID: "PBX-1531779475.48" },
     },
   ],
   notes: [

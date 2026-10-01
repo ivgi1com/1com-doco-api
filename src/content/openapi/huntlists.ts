@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "hunt lists",
   path: "/huntlists",
   idField: "hu_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f("name", "Maps to `hu_name`.", { required: true, example: "Demo Hunt List" }),

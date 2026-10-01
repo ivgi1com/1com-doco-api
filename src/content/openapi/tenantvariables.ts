@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "tenant variables",
   path: "/tenantvariables",
   idField: "tv_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/variable", "/variables", "/tenantvariable", "/tenant_variable", "/tenant_variables"],
   fields: [

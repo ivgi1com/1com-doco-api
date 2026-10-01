@@ -13,5 +13,10 @@
   },
   "substring": {
     "CANISTRACCI": "TESTTENANT"
+  },
+  "brand": {
+    "MiRTA PBX": "PBX",
+    "MiRTA": "1com",
+    "API key": "API Key"
   }
 }

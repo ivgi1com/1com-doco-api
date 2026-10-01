@@ -89,7 +89,6 @@
     "useInstead": "יש להשתמש ב-<link>{name}</link> במקומה.",
     "legacyBanner": "נקודת קצה מדור קודם (Legacy)",
     "methodInferredNote": "המקור אינו מציין את שיטת ה-HTTP עבור פעולה זו; היא נגזרת מדוגמאות הבקשה שלו.",
-    "keyScope": "היקף המפתח",
     "authInQuery": "נשלח כפרמטר השאילתה `{parameter}`. מכיוון שהוא עובר בכתובת ה-URL, יש להקפיד שלא יופיע ביומני מערכת, בהיסטוריית הדפדפן או בקוד צד לקוח.",
     "authInHeader": "נשלח בכותרת הבקשה `{parameter}`.",
     "statusUndocumented": "—",

@@ -19,7 +19,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "custom destinations",
   path: "/customdestinations",
   idField: "cu_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/custom", "/customs", "/custom_destinations", "/custom_destination"],

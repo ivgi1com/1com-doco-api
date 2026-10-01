@@ -5,7 +5,7 @@ import { f, openapiResource } from "./shared";
  * Tenant. Source: source-docs/openapi/tenants.md (official page `tenant`,
  * rev #17). A tenant configuration object: name, code, billing code,
  * timezone, and links to routing profiles. Global system object: always
- * requires a global API key (`tenantScoped: false`).
+ * requires a global API Key (`tenantScoped: false`).
  */
 
 const [list, get, create, update, remove] = openapiResource({
@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "tenants",
   path: "/tenants",
   idField: "te_id",
-  scope: "Global API key",
   tenantScoped: false,
   fields: [
     f("name", "Maps to `te_name`.", { required: true, example: "Demo Tenant" }),

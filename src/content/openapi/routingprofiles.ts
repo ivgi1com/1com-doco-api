@@ -5,7 +5,7 @@ import { f, openapiResource } from "./shared";
  * Routing Profile. Source: source-docs/openapi/routingprofiles.md (official
  * page `routing-profile`, rev #17). A named routing configuration (e.g.
  * voice/fax/campaign routing) referenced by Tenant. Global system object:
- * always requires a global API key (`tenantScoped: false`).
+ * always requires a global API Key (`tenantScoped: false`).
  */
 
 const [list, get, create, update, remove] = openapiResource({
@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "routing profiles",
   path: "/routingprofiles",
   idField: "rp_id",
-  scope: "Global API key",
   tenantScoped: false,
   aliases: ["/routing_profiles", "/routing_profile"],
   fields: [
@@ -33,7 +32,7 @@ const [list, get, create, update, remove] = openapiResource({
   updateExample: { description: "Demo outbound routing (updated)" },
   errorCodes: ["missing_api_key", "invalid_api_key", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Managed at system scope; requires a global API key.",
+    "Managed at system scope; requires a global API Key.",
     "No credential- or PII-shaped field is documented. Security review is held at UNKNOWN pending schema confirmation — lowest apparent sensitivity of the admin/system objects documented so far.",
   ],
 });

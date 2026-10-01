@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "queues",
   path: "/queues",
   idField: "qu_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f(

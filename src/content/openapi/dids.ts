@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "DIDs",
   path: "/dids",
   idField: "di_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   fields: [
     f("number", "Maps to `di_number`. Whether multiple formats (E.164 only, or also local formats) are accepted is not documented; the official example uses a leading `+1`.", {
@@ -35,7 +34,7 @@ const [list, get, create, update, remove] = openapiResource({
   updateExample: { comment: "Demo inbound DID (updated)" },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Security (SEC-REQ-16): no response schema is documented. The Proxy API's own `info-dids` (a different API family, not carried over as evidence) joined the DID row with the entire tenant row, including recording credentials and billing code — a direct precedent to check once an OpenAPI DID response schema is available. Before Live: establish the response schema and specifically check for joined tenant-level fields.",
+    "Security (SEC-REQ-16): no response schema is documented. The Proxy API's own `info-dids` (a different API family, not carried over as evidence) joined the DID row with the entire tenant row, including recording credentials and billing code — a direct precedent to check once an Open API DID response schema is available. Before Live: establish the response schema and specifically check for joined tenant-level fields.",
   ],
 });
 

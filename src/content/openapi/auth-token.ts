@@ -9,14 +9,14 @@ import { errors, f, openapiAuth, openapiOperation } from "./shared";
  * allowlist-gated. No GET is documented.
  */
 
-const authTokenAuth = openapiAuth("Global full API key", {
+const authTokenAuth = openapiAuth({
   extra: "Tenant keys and read-only keys are both rejected.",
 });
 
 const authTokenNotes = [
-  "This is a credential-issuance endpoint: a generated token substitutes for a user's login password. MiRTA PBX stores only a SHA-256 hash of the token; the plaintext value is returned once, in the API response.",
+  "This is a credential-issuance endpoint: a generated token substitutes for a user's login password. The PBX stores only a SHA-256 hash of the token; the plaintext value is returned once, in the API response.",
   "The user value is resolved in this order: web user (`us_users.us_username`), extension web user (`ex_extensions.ex_webuser`), then — only when `ex_webuser` is empty — SIP extension username (`sipfriends.name`) or PJSIP endpoint ID (`ps_endpoints.id`). This matches the legacy Proxy API token feature.",
-  "Scope limit: this endpoint manages login tokens only. It does not create or rotate OpenAPI API keys.",
+  "Scope limit: this endpoint manages login tokens only. It does not create or rotate OpenAPI API Keys.",
   "Security (SEC-REQ-05): never reachable from Demo or Live, categorically. This is a write-and-credential-mint action, not a standard field-allowlist case.",
 ];
 
@@ -28,7 +28,7 @@ const authTokenCreate = openapiOperation({
   method: "POST",
   path: "/auth/token",
   title: "Generate login token",
-  summary: "Creates a new login token for a resolved user identity, usable in place of the password on the MiRTA PBX login page.",
+  summary: "Creates a new login token for a resolved user identity, usable in place of the password on the PBX login page.",
   authentication: authTokenAuth,
   queryParameters: [],
   requestBody: [

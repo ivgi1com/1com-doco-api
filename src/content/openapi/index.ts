@@ -94,11 +94,11 @@ const categories: Category[] = [
 
 export const openapiApi: ApiDefinition = {
   id: "openapi",
-  name: "MiRTA OpenAPI",
+  name: "1com Open API",
   version: "current",
   baseUrl: OPENAPI_BASE_URL,
   synthetic: false,
   summary:
-    "MiRTA PBX's REST-style API (openapi.php): one path per object, JSON bodies, and list/get/create/update/delete on most configuration objects. Authenticate with the X-API-Key header; tenant-scoped objects take a tenant parameter. Documented from MiRTA's official pages; no operation has been tested against a real PBX yet. Operations that change state are documented here but never sent from the Playground.",
+    "1com's REST-style API (openapi.php): one path per object, JSON bodies, and list/get/create/update/delete on most configuration objects. Authenticate with the X-API-Key header; tenant-scoped objects take a tenant parameter. Documented from the official API documentation; no operation has been tested against a real PBX yet. Operations that change state are documented here but never sent from the Playground.",
   categories: categories.filter((c) => c.endpoints.length > 0),
 };

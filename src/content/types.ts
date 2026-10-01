@@ -69,8 +69,6 @@ export interface Authentication {
    * `Authorization: Bearer`.
    */
   parameter?: string;
-  /** Key scope needed for this endpoint, e.g. "Tenant key (read-only is sufficient)". */
-  scope?: string;
 }
 
 export interface ErrorSpec {

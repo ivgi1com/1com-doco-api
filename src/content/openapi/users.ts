@@ -5,7 +5,7 @@ import { f, openapiResource } from "./shared";
  * User. Source: source-docs/openapi/users.md (official page `user`, rev
  * #17). A web-login user account: username, description, email, profile,
  * password, 2FA/IP settings, and tenant/routing-profile/restriction
- * relations. Global system object: always requires a global API key
+ * relations. Global system object: always requires a global API Key
  * (`tenantScoped: false`). BLOCK LIVE (SEC-REQ-12).
  */
 
@@ -18,7 +18,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "users",
   path: "/users",
   idField: "us_id",
-  scope: "Global API key",
   tenantScoped: false,
   aliases: ["/user", "/nuser", "/nusers", "/us_user", "/us_users"],
   fields: [

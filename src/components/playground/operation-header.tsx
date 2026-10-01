@@ -10,7 +10,6 @@ import type { Endpoint } from "@/content/types";
  */
 export function OperationHeader({ endpoint }: { endpoint: Endpoint }) {
   const t = useTranslations("playground");
-  const te = useTranslations("endpoint");
   const { authentication: auth } = endpoint;
   const write = endpoint.operationClass === "write";
   const authText =
@@ -38,11 +37,6 @@ export function OperationHeader({ endpoint }: { endpoint: Endpoint }) {
         <li className="rounded-full border border-border-control px-2 py-0.5" dir="auto">
           {authText}
         </li>
-        {auth.scope && (
-          <li data-testid="op-scope" className="rounded-full border border-border-control px-2 py-0.5" dir="auto">
-            {te("keyScope")}: {auth.scope}
-          </li>
-        )}
       </ul>
     </header>
   );

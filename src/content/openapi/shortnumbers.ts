@@ -16,7 +16,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "short numbers",
   path: "/shortnumbers",
   idField: "sn_id",
-  scope: "Tenant API key or global key with global=1",
   tenantScoped: true,
   globalFlag: true,
   aliases: ["/short_numbers", "/short_number"],

@@ -5,7 +5,7 @@ import { f, openapiResource } from "./shared";
  * Provider. Source: source-docs/openapi/providers.md (official page
  * `provider`, rev #14). A SIP trunk/provider object (SIP or PJSIP), with
  * realtime peer/endpoint configuration, caller ID overrides, and SMS
- * gateway settings. Global system object: always requires a global API key
+ * gateway settings. Global system object: always requires a global API Key
  * (`tenantScoped: false`; no `tenant` parameter is documented for it).
  * BLOCK LIVE (SEC-REQ-14).
  */
@@ -19,7 +19,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "providers",
   path: "/providers",
   idField: "pr_id",
-  scope: "Global API key",
   tenantScoped: false,
   aliases: ["/provider"],
   fields: [
@@ -76,7 +75,7 @@ const [list, get, create, update, remove] = openapiResource({
   errorCodes: ["missing_api_key", "invalid_api_key", "read_only_api_key", "missing_required_field"],
   notes: [
     "SIP providers manage the related `sipfriends` realtime row when realtime is enabled; PJSIP providers manage `ps_endpoints`, `ps_aors`, `ps_auths`, and `ps_endpoint_id_ips`. Changing a provider's technology removes the old realtime rows before creating rows for the new technology — a destructive side effect of a technology change.",
-    "Providers are global system objects and always require a global API key. Read-only global keys can list and read; create, update and delete require the full global key.",
+    "Providers are global system objects and always require a global API Key. Read-only global keys can list and read; create, update and delete require the full global key.",
     "Security (SEC-REQ-14): `password` is the trunk's registration secret and `sms_password`→`pr_smspassword` is a second, distinct secret (SMS gateway credential). No GET example exists. By analogy with Extension (whose single-object GET is documented to include related technology data, where the secret is stored), assume GET may echo these until a response schema proves otherwise. BLOCK LIVE.",
   ],
 });

@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   plural: "DISAs",
   path: "/disas",
   idField: "ds_id",
-  scope: "Tenant API key",
   tenantScoped: true,
   aliases: ["/disa"],
   fields: [
