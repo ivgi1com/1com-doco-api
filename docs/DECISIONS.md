@@ -1514,3 +1514,44 @@ that approval.
   and cURL for writes (Stage 3/4) are unaffected: they build the request
   without sending it. Writes keep `writeOnlyNote`; `writeDemoNote` is
   unreachable until a write fixture exists.
+
+## Phase 8C Stage 3 — request generation (2026-10-01, Sonnet 5)
+
+- **Body in the generated request.** `sanitizedRequest` (`executor.ts`)
+  now carries a `body` for non-GET operations, built from the entered
+  `body:*` fields: empty fields omitted, values coerced only to the
+  field's documented type (integer/number/boolean; array/object/unknown
+  parsed as JSON when they start with `[`/`{`; anything that does not
+  parse stays a string — never guessed). A list-shaped body falls back to
+  its documented `requestExample`; multipart uploads have no form-field
+  body. `Content-Type` is added (`application/json`, or form-encoded for
+  `form-json-field`). `curlEquivalent` emits `-d '…'` (single-quote
+  escaped) or `--data-urlencode 'field=…'`.
+- **Secret-named body fields** (same name rule as `observed.ts`
+  `SECRET_NAME`) render as `<REDACTED>` in the preview and the cURL. A
+  separate `BODY_SECRET_MASK` is used so `curlEquivalent`'s
+  `MASK`→`$ENV_VAR` swap can never turn a body field into the API key.
+- **The body is preview-only.** `LiveRequestBody` has no body field, Live
+  refuses writes (Stage 0), and Demo never fetches; a typed body never
+  leaves the browser.
+- **Request preview.** A new collapsed "Request preview" section in the
+  request form (`request-builder.tsx`, shared by all APIs) reuses the
+  response viewer's `RequestTab` (now exported; also shows the body).
+  Updates as the user types, before Send, for every operation including
+  writes and fixture-less reads. `unavailable` Demo results now carry the
+  `request` and show it under the callout. Marked "Not sent" for Demo and
+  for writes.
+- **Pre-fill fix.** Array/object body examples now pre-fill as JSON text
+  instead of `[object Object]` (`use-playground.ts`; brought forward from
+  Stage 4 because the body preview depends on it).
+- **Tests.** Unit 361/361 (+9: body building, coercion, masking, cURL
+  escaping, form-json-field, unavailable-with-request, no fetch). New
+  e2e: write preview with typed + masked body and no `/api/playground`
+  request; fixture-less read still shows its request. Four existing
+  e2e locators became ambiguous because the preview repeats the same
+  text earlier in the DOM; scoped them (`.last()` / the cURL tab panel),
+  no behavior change. Full Playwright 180/182 on a fresh build (the one
+  failure is the documented parallel-load flake and passes alone);
+  visual/console pass at 1440 and 390 px, en + he (RTL), OpenAPI and
+  Proxy, zero console errors, no overflow, zero `/api/playground`
+  requests.

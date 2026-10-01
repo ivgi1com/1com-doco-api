@@ -9,7 +9,7 @@ import { JsonViewer } from "@/components/json/json-viewer";
 import type { Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
 import { formatBytes } from "@/lib/json-path";
-import { curlEquivalent, type PlaygroundResponse, type SanitizedRequest } from "./executor";
+import { bodyDisplay, curlEquivalent, type PlaygroundResponse, type SanitizedRequest } from "./executor";
 import type { PlaygroundState } from "./use-playground";
 
 function statusTone(status: number) {
@@ -60,7 +60,7 @@ function PortalErrorCallout({
 }
 
 /** Shared by Live (actually sent) and Demo (shown for reference only) responses. */
-function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest; endpoint: Endpoint; notSent?: boolean }) {
+export function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest; endpoint: Endpoint; notSent?: boolean }) {
   const t = useTranslations("code");
   const tp = useTranslations("playground");
   const envVar = authEnvVar(endpoint);
@@ -82,6 +82,14 @@ function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest;
               {name}: {value}
             </p>
           ))}
+        {request.body && (
+          <pre
+            data-testid="request-body"
+            className="mt-1 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-ink"
+          >
+            {bodyDisplay(request.body)}
+          </pre>
+        )}
       </div>
       <div>
         {/* "cURL" is a proper noun, not translated — matches the existing
@@ -137,6 +145,11 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
         <Callout kind="note" title={t("demoUnavailableTitle")}>
           <p>{t("demoUnavailableBody")}</p>
         </Callout>
+        {response.request && (
+          <div className="mt-3">
+            <RequestTab request={response.request} endpoint={endpoint} notSent />
+          </div>
+        )}
       </div>
     );
   }

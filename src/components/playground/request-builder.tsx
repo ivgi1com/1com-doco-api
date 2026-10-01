@@ -7,10 +7,11 @@ import type { RenderedSample } from "@/components/code/code-tabs";
 import { CodeTabs } from "@/components/code/code-tabs";
 import { MethodBadge } from "@/components/ui/method-badge";
 import type { DemoFixtureSet } from "@/content/demo";
-import type { Endpoint } from "@/content/types";
+import type { ApiDefinition, Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
-import { substitutePathParams } from "./executor";
+import { sanitizedRequest, substitutePathParams } from "./executor";
 import { ParamField } from "./param-field";
+import { RequestTab } from "./response-viewer";
 import { fieldKey, type PlaygroundState } from "./use-playground";
 
 function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
@@ -23,6 +24,7 @@ function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
 }
 
 export function RequestBuilder({
+  api,
   endpoint,
   samples,
   state,
@@ -30,6 +32,7 @@ export function RequestBuilder({
   liveAvailable,
   demoFixtures,
 }: {
+  api: ApiDefinition;
   endpoint: Endpoint;
   samples: RenderedSample[];
   state: PlaygroundState;
@@ -175,6 +178,20 @@ export function RequestBuilder({
           })}
         </fieldset>
       )}
+
+      <details data-testid="request-preview" className="group rounded-md border border-border">
+        <summary className="flex h-9 cursor-pointer list-none items-center px-3 text-xs font-semibold text-ink-muted [&::-webkit-details-marker]:hidden">
+          {t("requestPreview")}
+        </summary>
+        <div className="space-y-2 border-t border-border p-3">
+          <p className="text-xs text-ink-muted">{t("requestPreviewNote")}</p>
+          <RequestTab
+            request={sanitizedRequest(api, endpoint, fieldValues)}
+            endpoint={endpoint}
+            notSent={mode === "demo" || isWrite}
+          />
+        </div>
+      </details>
 
       <details className="group rounded-md border border-border">
         <summary className="flex h-9 cursor-pointer list-none items-center px-3 text-xs font-semibold text-ink-muted [&::-webkit-details-marker]:hidden">

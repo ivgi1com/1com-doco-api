@@ -169,6 +169,8 @@
     "send": "Send request",
     "sending": "Sending",
     "codePreview": "Code preview",
+    "requestPreview": "Request preview",
+    "requestPreviewNote": "Built from the values you enter, updating as you type. Credentials and secret-named body fields are masked. The Playground never sends a body.",
     "emptyTitle": "No response yet",
     "emptyBody": "Fill in the request and select Send request to see the response here.",
     "body": "Body",

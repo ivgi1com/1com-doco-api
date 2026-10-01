@@ -43,6 +43,7 @@ export function PlaygroundApp({
   const endpointPane = <EndpointPicker api={api} selected={endpoint} onSelect={selectEndpoint} />;
   const requestPane = (
     <RequestBuilder
+      api={api}
       endpoint={endpoint}
       samples={samples}
       state={state}

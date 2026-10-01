@@ -30,7 +30,9 @@ function defaultFieldValues(endpoint: Endpoint): Record<string, string> {
   for (const p of endpoint.queryParameters) values[fieldKey("query", p.name)] = p.example !== undefined ? String(p.example) : "";
   for (const p of endpoint.requestBody ?? []) {
     const example = (endpoint.requestExample as Record<string, unknown> | undefined)?.[p.name];
-    values[fieldKey("body", p.name)] = example !== undefined ? String(example) : "";
+    // Array/object examples become JSON text, not "[object Object]".
+    values[fieldKey("body", p.name)] =
+      example === undefined ? "" : typeof example === "object" && example !== null ? JSON.stringify(example) : String(example);
   }
   return values;
 }

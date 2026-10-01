@@ -232,7 +232,9 @@ test.describe("interactions", () => {
       await page.getByRole("link", { name: "Try in Playground" }).click();
       await expect(page).toHaveURL(/\/playground\?endpoint=proxy\/info-extensions$/);
       await desktopPane(page).getByText("Code preview").click();
-      await expect(desktopPane(page).getByText("PROXY_API_KEY")).toBeVisible();
+      // Scoped to the cURL tab panel: the Request preview (Phase 8C) renders
+      // the same env var name in its own collapsed curl line.
+      await expect(desktopPane(page).getByRole("tabpanel", { name: "cURL" }).getByText("$PROXY_API_KEY")).toBeVisible();
     });
 
     // info-extensions gained Demo fixtures in Phase 6 (see "Demo Mode (Phase
@@ -324,7 +326,8 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText("content-type:")).toBeVisible();
 
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
-      await expect(desktopPane(page).getByText(/key=••••/)).toBeVisible();
+      // `.last()`: the request-pane Request preview (Phase 8C) precedes the response pane in the DOM.
+      await expect(desktopPane(page).getByText(/key=••••/).last()).toBeVisible();
       // "$PROXY_API_KEY" also appears in the always-present static "Code
       // preview" curl sample (Phase 4), which renders it unmasked as
       // documentation; that one mounts first, so this Request tab's own
@@ -788,7 +791,8 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
       await expect(
-        desktopPane(page).getByText("Not sent — Demo. This shows what the equivalent Live request would look like."),
+        // `.last()`: the request-pane Request preview (Phase 8C) says the same, earlier in the DOM.
+        desktopPane(page).getByText("Not sent — Demo. This shows what the equivalent Live request would look like.").last(),
       ).toBeVisible();
       // `.first()` reaches the endpoint-path <code> element; the same substring
       // also appears in the full-URL and curl-command lines below it.
@@ -1057,14 +1061,48 @@ test.describe("interactions", () => {
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
-      await expect(desktopPane(page).getByText("X-API-Key: ••••")).toBeVisible();
-      await expect(desktopPane(page).getByText(/^curl ".*" -H "X-API-Key: \$OPENAPI_API_KEY"$/)).toBeVisible();
+      // `.last()`: the request-pane Request preview (Phase 8C) renders the same lines earlier in the DOM.
+      await expect(desktopPane(page).getByText("X-API-Key: ••••").last()).toBeVisible();
+      await expect(desktopPane(page).getByText(/^curl ".*" -H "X-API-Key: \$OPENAPI_API_KEY"$/).last()).toBeVisible();
     });
 
     test("cdrs-list: a GET with no fixture shows Demo data not available, never a guess", async ({ page }) => {
       await page.goto("/en/playground?endpoint=openapi/cdrs-list");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+    });
+
+    test("a write shows its request preview with the typed body, never sends, and masks secret fields (8C)", async ({ page }) => {
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      await page.goto("/en/playground?endpoint=openapi/extensions-create");
+      const pane = desktopPane(page);
+      await expect(pane.getByTestId("write-only-note")).toBeVisible();
+      await expect(pane.getByRole("button", { name: "Send request" })).toBeDisabled();
+      await pane.getByTestId("request-preview").locator("summary").click();
+      const body = pane.getByTestId("request-preview").getByTestId("request-body");
+      await expect(body).toContainText('"number": "100"');
+      await pane.getByRole("textbox", { name: /^name( \*)?$/ }).fill("Typed Name");
+      await expect(body).toContainText('"name": "Typed Name"');
+      await pane.getByRole("textbox", { name: /^password( \*)?$/ }).fill("hunter2-REAL");
+      const preview = pane.getByTestId("request-preview");
+      await expect(body).toContainText("<REDACTED>");
+      await expect(preview).not.toContainText("hunter2-REAL");
+      await expect(preview).not.toContainText("SYNTHETIC_SECRET");
+      await expect(preview).toContainText("Content-Type: application/json");
+      await expect(preview).toContainText("-X POST");
+      expect(sent).toEqual([]);
+    });
+
+    test("a read with no Demo data still shows the request it would make (8C)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/cdrs-list");
+      const pane = desktopPane(page);
+      await pane.getByRole("button", { name: "Send request" }).click();
+      await expect(pane.getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+      await expect(pane.getByText(/openapi\.php\/cdrs/).filter({ visible: true }).first()).toBeVisible();
+      await expect(pane.getByText("X-API-Key: ••••").filter({ visible: true }).first()).toBeVisible();
     });
   });
 });

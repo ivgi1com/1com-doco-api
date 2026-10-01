@@ -4,6 +4,8 @@ import { getDemoFixtures, isDemoSimulatedWrite } from "@/content/demo";
 import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import {
+  BODY_SECRET_MASK,
+  bodyDisplay,
   curlEquivalent,
   demoProvider,
   liveProvider,
@@ -153,6 +155,97 @@ describe("liveProvider", () => {
   });
 });
 
+describe("request bodies (Phase 8C)", () => {
+  const queuesCreate = getEndpoint("openapi", "campaigns-create")!; // has string, integer and array body fields
+  const body = (values: Record<string, string>) => sanitizedRequest(openapiApi, queuesCreate, values);
+  const bodyFields = queuesCreate.requestBody ?? [];
+  const named = (type: string) => bodyFields.find((p) => p.type === type);
+
+  it("has no body for a GET, even with body-keyed values", () => {
+    const r = sanitizedRequest(openapiApi, campaignsGet, { "body:name": "x" });
+    expect(r.body).toBeUndefined();
+    expect(curlEquivalent(r, "OPENAPI_API_KEY")).not.toContain(" -d ");
+  });
+
+  it("builds a JSON body from entered fields only, coercing documented types", () => {
+    const str = named("string");
+    const int = named("integer");
+    expect(str && int).toBeTruthy();
+    const r = body({ [`body:${str!.name}`]: "Support", [`body:${int!.name}`]: "7", "body:ignored": "x" });
+    expect(r.body?.json).toEqual({ [str!.name]: "Support", [int!.name]: 7 });
+    expect(r.headers?.["Content-Type"]).toBe("application/json");
+  });
+
+  it("omits empty fields and keeps a non-numeric integer as a string (never guessed)", () => {
+    const int = named("integer")!;
+    expect(body({ [`body:${int.name}`]: "  " }).body).toBeUndefined();
+    expect(body({ [`body:${int.name}`]: "abc" }).body?.json).toEqual({ [int.name]: "abc" });
+  });
+
+  it("parses array/object text as JSON and keeps invalid JSON as text", () => {
+    const arr = named("array")!;
+    expect(body({ [`body:${arr.name}`]: '[{"a":1}]' }).body?.json).toEqual({ [arr.name]: [{ a: 1 }] });
+    expect(body({ [`body:${arr.name}`]: "[{" }).body?.json).toEqual({ [arr.name]: "[{" });
+  });
+
+  it("masks secret-named body fields in the preview and the cURL, and never turns them into the API-key env var", () => {
+    const ext = getEndpoint("openapi", "extensions-create")!;
+    const secret = ext.requestBody!.find((p) => /pass|secret|pin/i.test(p.name))!;
+    expect(secret).toBeDefined();
+    const r = sanitizedRequest(openapiApi, ext, { [`body:${secret.name}`]: "hunter2-REAL" });
+    const curl = curlEquivalent(r, "OPENAPI_API_KEY");
+    expect(JSON.stringify(r)).not.toContain("hunter2-REAL");
+    expect(curl).not.toContain("hunter2-REAL");
+    expect(bodyDisplay(r.body!)).toContain(BODY_SECRET_MASK);
+    // Only the header credential becomes the env var; the body secret does not.
+    expect(curl.match(/\$OPENAPI_API_KEY/g)).toHaveLength(1);
+  });
+
+  it("renders a JSON body in cURL with a Content-Type header and single-quote escaping", () => {
+    const str = named("string")!;
+    const curl = curlEquivalent(body({ [`body:${str.name}`]: "O'Brien" }), "OPENAPI_API_KEY");
+    expect(curl).toContain("-X POST");
+    expect(curl).toContain('-H "Content-Type: application/json"');
+    // Shell single-quote escaping: ' becomes '\''
+    expect(curl).toContain("-d '{\"" + str.name + "\":\"O'\\''Brien\"}'");
+  });
+
+  it("sends a form-json-field body as --data-urlencode without a JSON Content-Type", () => {
+    const add = getEndpoint("proxy", "managedb-custom-add")!;
+    const field = add.requestBody![0];
+    const r = sanitizedRequest(proxyApi, add, { [`body:${field.name}`]: "v" });
+    const curl = curlEquivalent(r, "PROXY_API_KEY");
+    expect(r.body?.formField).toBe("jsondata");
+    expect(curl).toContain("--data-urlencode 'jsondata=");
+    expect(curl).not.toContain("Content-Type: application/json");
+  });
+
+  it("shows the request, body included, for an unavailable Demo result and never fetches", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const str = named("string")!;
+    const result = await demoProvider.execute(
+      { api: openapiApi, endpoint: queuesCreate, fieldValues: { [`body:${str.name}`]: "Support" }, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "DEMO", unavailable: true });
+    expect(result).toHaveProperty("request.body.json", { [str.name]: "Support" });
+    expect(JSON.stringify(result)).not.toContain(KEY);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("never puts a body in the Live portal request (the protocol has no body field)", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const str = named("string")!;
+    await liveProvider.execute(
+      { api: openapiApi, endpoint: queuesCreate, fieldValues: { [`body:${str.name}`]: "Support" }, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(fetchMock).not.toHaveBeenCalled(); // a write is refused before any request
+  });
+});
+
 describe("liveProvider and writes", () => {
   it("never sends a write, for any API, even a Live-allowlisted id (SEC-REQ-27)", async () => {
     const fetchMock = vi.fn();
@@ -208,7 +301,9 @@ describe("demoProvider", () => {
       { api: proxyApi, endpoint: cdrGet, fieldValues: {}, credential: "", simulateError: false },
       new AbortController().signal,
     );
-    expect(result).toEqual({ source: "DEMO", unavailable: true });
+    expect(result).toMatchObject({ source: "DEMO", unavailable: true });
+    // The request it would have made is still shown (Phase 8C), credential masked.
+    expect(result).toHaveProperty("request.url", expect.stringContaining(MASK));
   });
 
   it("never answers a write operation, even one whose API or endpoint would otherwise have Demo data", async () => {
@@ -222,7 +317,8 @@ describe("demoProvider", () => {
         { api, endpoint, fieldValues: { "query:tenant": "EXAMPLE", "query:format": "json" }, credential: "", simulateError: false },
         new AbortController().signal,
       );
-      expect(result).toEqual({ source: "DEMO", unavailable: true });
+      expect(result).toMatchObject({ source: "DEMO", unavailable: true });
+      expect(result).toHaveProperty("request.method");
     }
   });
 
