@@ -1,0 +1,89 @@
+{
+  "$comment": "Operations in the approved documentation baselines that are deliberately NOT part of the customer-facing portal. The baseline inventories (source-docs/openapi/operations.json, source-docs/proxy-api/operations.json, resources.json) stay untouched; tests and status scripts reconcile them against this list. Decision: user, 2026-10-01, Phase 8E (docs/phases/08E-customer-change-brief.md, brief item 3).",
+  "reason": "Requires an administrative (global / Admin) API Key: system-wide administration, not customer integration.",
+  "openapi": {
+    "resources": [
+      "source-docs/openapi/auth-token.md",
+      "source-docs/openapi/providers.md",
+      "source-docs/openapi/routingprofiles.md",
+      "source-docs/openapi/tenants.md",
+      "source-docs/openapi/userprofiles.md",
+      "source-docs/openapi/users.md"
+    ],
+    "operations": [
+      "auth-token-create",
+      "auth-token-delete",
+      "providers-list",
+      "providers-get",
+      "providers-create",
+      "providers-update",
+      "providers-delete",
+      "routingprofiles-list",
+      "routingprofiles-get",
+      "routingprofiles-create",
+      "routingprofiles-update",
+      "routingprofiles-delete",
+      "tenants-list",
+      "tenants-get",
+      "tenants-create",
+      "tenants-update",
+      "tenants-delete",
+      "userprofiles-list",
+      "userprofiles-get",
+      "userprofiles-create",
+      "userprofiles-update",
+      "userprofiles-delete",
+      "users-list",
+      "users-get",
+      "users-create",
+      "users-update",
+      "users-delete"
+    ]
+  },
+  "proxy": {
+    "reqtypes": [
+      "MANAGEDB"
+    ],
+    "operations": [
+      "managedb-customtypes-list",
+      "managedb-custom-list",
+      "managedb-custom-get",
+      "managedb-custom-add",
+      "managedb-custom-update",
+      "managedb-phone-list",
+      "managedb-phone-get",
+      "managedb-phone-add",
+      "managedb-phone-update",
+      "managedb-mediafile-list",
+      "managedb-mediafile-get",
+      "managedb-mediafile-getbinary",
+      "managedb-mediafile-update",
+      "managedb-mediafile-updatebinary",
+      "managedb-huntlist-get",
+      "managedb-huntlist-getextensions",
+      "managedb-huntlist-setextensions",
+      "managedb-extension-list",
+      "managedb-extension-update",
+      "managedb-extension-add",
+      "managedb-conference-add",
+      "managedb-routingprofile-update",
+      "managedb-did-list",
+      "managedb-did-get",
+      "managedb-did-update",
+      "managedb-destination-list",
+      "managedb-destination-replace",
+      "managedb-ivr-list",
+      "managedb-ivr-get",
+      "managedb-ivr-getdestinations",
+      "managedb-condition-list",
+      "managedb-condition-getdestinations",
+      "managedb-condition-get",
+      "managedb-condition-getextendedinfos",
+      "managedb-condition-replaceextendedinfos"
+    ]
+  },
+  "guides": [
+    "managedb-writes"
+  ],
+  "examples": "Official Open API examples made with a global key (keyKind \"global\") are not shown (src/content/examples.ts)."
+}

@@ -65,10 +65,9 @@ export const mediafileGetaudio = proxyOperation({
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
-    "Distinct from MANAGEDB object=MEDIAFILE (managedb.ts), which is the broader CRUD form (list/get/getbinary/update/updatebinary). This is the narrower single-action \"retrieve a file by its id\" form.",
     "Observed (A-74): without objectid, returns an empty 200 body (0 bytes) rather than an error string. The binary shape itself remains unconfirmed.",
   ],
-  related: ["managedb-mediafile-getbinary"],
+  related: [],
 });
 
 export const mediafileCategory: Category = { id: "mediafile", title: "MEDIAFILE", endpoints: [mediafileGetaudio] };
@@ -127,7 +126,7 @@ export const phonebookAdd = proxyOperation({
   requestBodyEncoding: { kind: "form-json-field", field: "values" },
   requestExample: { NAME: "Ross", PHONE1: "3564732920" },
   notes: [
-    "Uses a values form field, not jsondata like every ManageDB write example — the source does not explain why PHONEBOOK diverges from the ManageDB convention.",
+    "The entry travels in a `values` form field whose value is the entry encoded as JSON.",
     "Response not documented.",
   ],
   related: ["phonebook-query", "phonebook-delete"],

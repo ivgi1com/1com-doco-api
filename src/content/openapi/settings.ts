@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/settings",
   idField: "se_id",
   tenantScoped: true,
-  globalFlag: true,
   fields: [
     f("code", "Free-form settings key. No enum is documented. Maps to `se_code`.", { required: true, example: "DEMO_SETTING" }),
     f("value", "Free string value. Example values `\"enabled\"`/`\"disabled\"`. Maps to `se_value`.", { example: "enabled" }),
@@ -26,7 +25,7 @@ const [list, get, create, update, remove] = openapiResource({
   updateExample: { value: "disabled" },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Security (SEC-REQ-17): `se_code`/`se_value` is a generic, unenumerated key/value slot; risk depends entirely on which settings a real PBX stores here. Before Live: enumerate actual `se_code` values in use and apply a default-deny allowlist by code, not just by response field name. The `global=1` list falls under SEC-REQ-28 (tenant isolation).",
+    "Security (SEC-REQ-17): `se_code`/`se_value` is a generic, unenumerated key/value slot; risk depends entirely on which settings a real PBX stores here. Before Live: enumerate actual `se_code` values in use and apply a default-deny allowlist by code, not just by response field name.",
   ],
 });
 

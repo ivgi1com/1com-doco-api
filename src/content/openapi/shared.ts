@@ -56,26 +56,19 @@ export function tenantParam(required: Requirement, description?: string): Parame
     description ??
       (required === true
         ? "Tenant code."
-        : "Tenant code. API Keys require it; with a global key, omitting it lists across tenants."), // ov:18
+        : "Tenant code."), // ov:18
     {
       required,
       example: "TESTTENANT",
-      ...(required === true ? {} : { condition: "Required with a API Key" }),
+      ...(required === true ? {} : { condition: "Required with your API Key" }),
     },
   );
 }
 
-/** `global=1`, only on the 8 objects the Overview lists as supporting it (ov:38). */
-export const globalParam: Parameter = q(
-  "global",
-  "With a global API Key, `global=1` addresses the shared/global record set instead of a tenant's. The portal's Playground never sends it.",
-  { enum: ["1"] },
-);
-
 /** Official wording for each documented error code (`_common.md` §6). */
 const ERROR_TEXT = {
   missing_api_key: "No API Key was supplied in the query string, `X-API-Key`, or bearer token.",
-  invalid_api_key: "The supplied key does not match the tenant or global API Key.",
+  invalid_api_key: "The supplied API Key does not match the tenant.",
   tenant_required: "A tenant code is required for tenant-scoped writes or tenant-key reads.",
   read_only_api_key: "The key can read data but cannot create, update, or delete objects.",
   missing_required_field: "A required create field is missing.",
@@ -86,10 +79,6 @@ const ERROR_TEXT = {
   uniqueid_required: "The request did not include a usable `uniqueid` value.",
   invalid_format: "The `format` value is not `json` or `csv`.",
   api_ip_not_allowed: "IP filtering is enabled and the client address is not in the key's allowed IP or network list.",
-  admin_required: "A global API Key is required.",
-  missing_user: "The request body did not include a user value.",
-  user_not_found: "No supported web user or extension identity matched the requested user value.",
-  invalid_validity: "The validity value was not ONCE and could not be parsed as a date/time.",
 } as const;
 
 export type ErrorCode = keyof typeof ERROR_TEXT;
@@ -150,10 +139,8 @@ export interface ResourceSpec {
   plural: string;
   path: string;
   idField: string;
-  /** False for global-key-only objects (no `tenant` parameter). */
+  /** False for objects that take no `tenant` parameter. */
   tenantScoped: boolean;
-  /** Accepts `global=1` (ov:38). */
-  globalFlag?: boolean;
   /** Documented path aliases, recorded as a note. */
   aliases?: string[];
   /**
@@ -190,14 +177,8 @@ export function openapiResource(r: ResourceSpec): Endpoint[] {
     description: `Internal ID (\`${r.idField}\`). Its type is not documented; the official examples use the placeholder OBJECT_ID.`,
     example: "OBJECT_ID",
   };
-  const readQuery = [
-    ...(r.tenantScoped ? [tenantParam(false)] : []),
-    ...(r.globalFlag ? [globalParam] : []),
-  ];
-  const writeQuery = [
-    ...(r.tenantScoped ? [tenantParam(true, "Tenant code. Tenant writes require it.")] : []),
-    ...(r.globalFlag ? [globalParam] : []),
-  ];
+  const readQuery = r.tenantScoped ? [tenantParam(false)] : [];
+  const writeQuery = r.tenantScoped ? [tenantParam(true, "Tenant code. Writes require it.")] : [];
   const aliasNote = r.aliases?.length ? [`Documented path aliases: ${r.aliases.map((a) => `\`${a}\``).join(", ")}.`] : [];
   const pick = (kind: "list" | "get" | "create" | "update" | "delete") =>
     errors(

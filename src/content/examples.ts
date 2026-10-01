@@ -16,6 +16,9 @@ interface ExampleRow extends EndpointExample {
 
 const byEndpoint = new Map<string, EndpointExample[]>();
 for (const row of openapiExamples.examples as unknown as ExampleRow[]) {
+  // Examples made with a global (administrative) key are not customer
+  // content (Phase 8E, docs/phases/08E-customer-change-brief.md).
+  if (row.keyKind === "global") continue;
   const key = `openapi/${row.operationId}`;
   const list = byEndpoint.get(key) ?? [];
   list.push({

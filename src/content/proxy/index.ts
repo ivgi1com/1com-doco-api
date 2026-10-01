@@ -20,7 +20,6 @@ import {
   virtualextCategory,
 } from "./extensions";
 import { infoCategory } from "./info";
-import { managedbCategory } from "./managedb";
 import {
   faxCategory,
   helpCategory,
@@ -71,7 +70,6 @@ export const proxyApi: ApiDefinition = {
     flowsCategory,
     hangupCategory,
     helpCategory,
-    managedbCategory,
     mediafileCategory,
     peersCategory,
     phonebookCategory,

@@ -9,6 +9,7 @@ import { listLiveTargetIds } from "@/server/playground/allowlist";
 import { buildSample, exampleEndpoint, sampleLanguages } from "@/lib/code-samples";
 import examplesDoc from "../../source-docs/openapi/examples.json";
 import inventory from "../../source-docs/openapi/operations.json";
+import { EXCLUDED_OPENAPI_OPS } from "./helpers/exclusions";
 
 /**
  * Phase 8 coverage guard: source-docs/openapi/operations.json (one row per
@@ -213,9 +214,13 @@ describe("OpenAPI content ↔ inventory", () => {
     }
   });
 
-  it(ROLLOUT_COMPLETE ? "every inventory operation has an endpoint" : "reports operations still without an endpoint", () => {
+  it(ROLLOUT_COMPLETE ? "every inventory operation has an endpoint, or is excluded from the portal" : "reports operations still without an endpoint", () => {
     const have = new Set(endpoints.map((e) => e.id));
-    const missing = rows.filter((r) => !have.has(r.id)).map((r) => r.id);
+    const missing = rows.filter((r) => !have.has(r.id) && !EXCLUDED_OPENAPI_OPS.has(r.id)).map((r) => r.id);
+    // An excluded operation must really be gone from the portal (Phase 8E).
+    expect(rows.filter((r) => EXCLUDED_OPENAPI_OPS.has(r.id) && have.has(r.id)).map((r) => r.id)).toEqual([]);
+    expect(EXCLUDED_OPENAPI_OPS.size).toBe(27);
+    expect(endpoints).toHaveLength(rows.length - EXCLUDED_OPENAPI_OPS.size);
     if (ROLLOUT_COMPLETE) expect(missing).toEqual([]);
     else expect(missing.length).toBeLessThan(rows.length);
   });
@@ -231,8 +236,11 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
     path: string;
     query: Record<string, string>;
     body?: unknown;
+    keyKind: "tenant" | "global";
     source: string;
   }>;
+  // What the portal shows: no excluded operation, no global-key example (Phase 8E).
+  const shownRows = exampleRows.filter((ex) => !EXCLUDED_OPENAPI_OPS.has(ex.operationId) && ex.keyKind !== "global");
 
   it("maps every named official example to an operation, and every operation has one", () => {
     expect(examplesDoc.counts.matched).toBe(exampleRows.length);
@@ -240,12 +248,13 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
     expect(examplesDoc.unmatched.map((u: { source: string }) => u.source)).toEqual([
       "source-docs/raw/mirta-openapi/overview-and-examples.md",
     ]);
-    for (const ex of exampleRows) {
+    for (const ex of exampleRows) expect(rows.some((r) => r.id === ex.operationId), `${ex.title}: unknown operation ${ex.operationId}`).toBe(true);
+    for (const ex of shownRows) {
       const e = byIdEp.get(ex.operationId);
       expect(e, `${ex.title}: unknown operation ${ex.operationId}`).toBeDefined();
       expect(ex.method, ex.title).toBe(e!.method);
     }
-    const withExamples = new Set(exampleRows.map((x) => x.operationId));
+    const withExamples = new Set(shownRows.map((x) => x.operationId));
     expect(endpoints.filter((e) => !withExamples.has(e.id)).map((e) => e.id)).toEqual([]);
   });
 
@@ -280,7 +289,7 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
 
   it("models every query parameter an official example uses", () => {
     const missing: string[] = [];
-    for (const ex of exampleRows) {
+    for (const ex of shownRows) {
       const e = byIdEp.get(ex.operationId)!;
       const names = new Set(e.queryParameters.map((p) => p.name));
       for (const k of Object.keys(ex.query)) if (!names.has(k)) missing.push(`${ex.operationId}: ${k} (${ex.title})`);
@@ -306,7 +315,7 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
       return false;
     };
     const missing: string[] = [];
-    for (const ex of exampleRows) {
+    for (const ex of shownRows) {
       if (!ex.body || Array.isArray(ex.body) || typeof ex.body !== "object") continue;
       const e = byIdEp.get(ex.operationId)!;
       const fieldNames = new Set((e.requestBody ?? []).map((p) => p.name));
@@ -319,7 +328,7 @@ describe("OpenAPI Reference completeness (Phase 8A)", () => {
   });
 
   it("renders every example with the header credential and the portal base URL", () => {
-    for (const ex of exampleRows) {
+    for (const ex of shownRows) {
       const e = byIdEp.get(ex.operationId)!;
       for (const example of getEndpointExamples("openapi", e.id)) {
         const curl = buildSample(exampleEndpoint(e, example), openapi.baseUrl, "curl");

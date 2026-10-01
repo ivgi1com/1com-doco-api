@@ -1,5 +1,4 @@
 import type { ApiDefinition, Category } from "../types";
-import { authTokenCategory } from "./auth-token";
 import { calleridblacklistCategory } from "./calleridblacklists";
 import { campaignCategory } from "./campaigns";
 import { campaignnumberCategory } from "./campaignnumbers";
@@ -19,16 +18,11 @@ import { musiconholdCategory } from "./musiconholds";
 import { paginggroupCategory } from "./paginggroups";
 import { phonebookCategory } from "./phonebooks";
 import { phonebookentryCategory } from "./phonebookentries";
-import { providerCategory } from "./providers";
 import { provisioningphoneCategory } from "./provisioningphones";
 import { queueCategory } from "./queues";
-import { routingprofileCategory } from "./routingprofiles";
 import { settingCategory } from "./settings";
 import { shortnumberCategory } from "./shortnumbers";
-import { tenantCategory } from "./tenants";
 import { tenantvariableCategory } from "./tenantvariables";
-import { userCategory } from "./users";
-import { userprofileCategory } from "./userprofiles";
 import { voicemailCategory } from "./voicemails";
 import { extensionCategory } from "./extensions";
 import { aianalysisCategory, ailogsCategory, cdrCategory, simplecdrCategory } from "./reporting";
@@ -78,18 +72,12 @@ const categories: Category[] = [
   provisioningphoneCategory,
   // Numbers & dialing (continued)
   shortnumberCategory,
-  // System / admin
+  // System
   cronjobCategory,
   settingCategory,
   tenantvariableCategory,
-  providerCategory,
-  routingprofileCategory,
-  tenantCategory,
-  userprofileCategory,
-  userCategory,
   // Actions
   dialCategory,
-  authTokenCategory,
 ];
 
 export const openapiApi: ApiDefinition = {

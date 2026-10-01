@@ -52,9 +52,6 @@ const OBSERVED_NOTES: Record<string, string[]> = {
   "extensions-list": [
     "Observed on the test PBX: an invalid key returned HTTP 401 with `{\"error\": {\"code\": \"invalid_api_key\", \"message\": ...}}`. Omitting `tenant`, or sending an unknown tenant, also returned 401 `invalid_api_key` — the source documents `tenant_required` and `tenant_not_found` for those cases (source-docs/DOCS_AUDIT.md OA-15).",
   ],
-  "tenants-list": [
-    "Observed on the test PBX: a tenant-scoped key returned HTTP 403 `admin_required`, in the `{\"error\": {\"code\", \"message\"}}` envelope.",
-  ],
   "campaigns-get": [
     "Observed on the test PBX: a nonexistent ID returned HTTP 404 `object_not_found`, an error code the source does not list (source-docs/DOCS_AUDIT.md OA-16).",
   ],

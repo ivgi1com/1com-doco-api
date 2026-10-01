@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/mediafiles",
   idField: "me_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/media_files", "/media_file"],
   fields: [
     f("name", "Maps to `me_name`.", { required: true, example: "Demo Welcome Prompt" }),

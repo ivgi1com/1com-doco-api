@@ -9,8 +9,7 @@ import { errors, openapiAuth, openapiOperation, q, tenantParam } from "./shared"
  * for one.
  */
 
-const wildcardTenant = (extra: string) =>
-  tenantParam(false, `Tenant code or name. Tenant keys must include it. Global keys can ${extra}.`);
+const reportTenant = () => tenantParam(false, "Tenant code or name.");
 
 // --- CDR ---
 
@@ -94,10 +93,9 @@ const cdr = openapiOperation({
   title: "List CDRs",
   summary: "Read-only call detail record (CDR) reporting. Filters by date range, ID(s) or a set of call fields.",
   authentication: openapiAuth({
-    extra: "Global keys can query one tenant by code/name or use a `%` SQL-style wildcard across tenants.",
   }),
   queryParameters: [
-    wildcardTenant("query one tenant by code/name or use a `%` SQL-style wildcard across tenants"),
+    reportTenant(),
     q("start", "Start date/time filter. Defaults to today 00:00:00. The source states two rules: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00" }),
     q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same two rules as `start`.", { example: "2026-01-01 23:59:59" }),
     q("id", "Comma-separated CDR row IDs. A path segment (`/cdrs/123`) also maps here."),
@@ -135,10 +133,9 @@ const simplecdr = openapiOperation({
   title: "List simple CDRs",
   summary: "A simplified, read-only call-history reporting endpoint: fewer and renamed fields than CDR.",
   authentication: openapiAuth({
-    extra: "Global keys can query one tenant by code/name or use a `%` SQL-style wildcard across tenants.",
   }),
   queryParameters: [
-    wildcardTenant("query one tenant by code/name or use a `%` SQL-style wildcard across tenants"),
+    reportTenant(),
     q("start", "Start date/time filter. Defaults to today 00:00:00. Applied when neither `id` nor `uniqueid` is supplied.", {
       example: "2026-01-01 00:00:00",
     }),
@@ -200,10 +197,9 @@ const aianalysis = openapiOperation({
   summary:
     "Returns transcript, AI-generated summary, and sentiment-analysis data for recorded calls, keyed by Asterisk uniqueid. Distinct from AI Logs (Talk-with-AI conversation logs).",
   authentication: openapiAuth({
-    extra: "Global keys can query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants.",
   }),
   queryParameters: [
-    wildcardTenant("query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants"),
+    reportTenant(),
     q("uniqueid", "Comma-separated Asterisk unique IDs. A path value (`/aianalysis/<id>`) also maps here.", { required: true, example: "1700000000.42" }),
     q("key", "API Key. The header or bearer transport is preferred for new integrations."),
   ],
@@ -305,10 +301,10 @@ const ailogs = openapiOperation({
     "Exports records of conversations handled by the \"Talk with AI\" custom destination: conversation text, duration, caller ID and token usage. Distinct from AI Analysis (recorded-call transcripts/summaries/sentiment).",
   authentication: openapiAuth({
     extra:
-      "Accepts all four key kinds: tenant full, tenant read-only, global full, global read-only. Global keys can query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants. An optional per-key IP allowlist may also apply.",
+      "Accepts full and read-only API Keys. An optional per-key IP allowlist may also apply.",
   }),
   queryParameters: [
-    wildcardTenant("query one tenant by code/name, use a `%` wildcard, or omit `tenant` to search all tenants"),
+    reportTenant(),
     q("start", "Applied to `ai_start`. Defaults to today 00:00:00. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 00:00:00" }),
     q("end", "Applied to `ai_start`. Defaults to today 23:59:59. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 23:59:59" }),
     q("id", "Comma-separated `ai_id` values. A path segment (`/ailogs/123`) also maps here."),

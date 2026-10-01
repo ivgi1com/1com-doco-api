@@ -910,12 +910,31 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
     });
 
-    test("a ManageDB write documents its jsondata body, admin key, and a form-encoded POST sample", async ({ page }) => {
-      await page.goto("/en/reference/proxy/managedb-custom-add");
-      await expect(page.getByText(/with one field, jsondata, whose value is the object below encoded as JSON/)).toBeVisible();
+    test("a form-encoded write documents its values body and a form-encoded POST sample", async ({ page }) => {
+      await page.goto("/en/reference/proxy/phonebook-add");
+      await expect(page.getByText(/with one field, values, whose value is the object below encoded as JSON/)).toBeVisible();
       const panel = await requestPanel(page);
-      await expect(panel.getByText(/--url-query "reqtype=MANAGEDB"/)).toBeVisible();
-      await expect(panel.getByText(/--data-urlencode 'jsondata=/)).toBeVisible();
+      await expect(panel.getByText(/--url-query "reqtype=PHONEBOOK"/)).toBeVisible();
+      await expect(panel.getByText(/--data-urlencode 'values=/)).toBeVisible();
+    });
+
+    test("administrative content is not reachable: removed pages 404 and are absent from nav and search (8E)", async ({ page }) => {
+      for (const path of [
+        "/en/reference/openapi/tenants-list",
+        "/en/reference/openapi/auth-token-create",
+        "/en/reference/proxy/managedb-custom-add",
+        "/en/guides/managedb-writes",
+      ]) {
+        const res = await page.goto(path);
+        expect(res?.status(), path).toBe(404);
+      }
+      await page.goto("/en/reference/openapi");
+      // "Tenant Variable" stays (a tenant-scoped resource); only the global-key-only ones are gone.
+      await expect(page.locator("aside").getByText("Tenant", { exact: true })).toHaveCount(0);
+      await expect(page.locator("aside").getByRole("link", { name: /^List tenants$/ })).toHaveCount(0);
+      await page.goto("/en/reference/proxy");
+      await expect(page.locator("aside")).not.toContainText("MANAGEDB");
+      await expect(page.locator("body")).not.toContainText(/global API Key|Admin key/i);
     });
 
     test("a binary response says so instead of 'No response body'", async ({ page }) => {
@@ -960,14 +979,15 @@ test.describe("interactions", () => {
       await expect(page.getByText("No example body documented.", { exact: false }).first()).toBeAttached();
       // Named examples, rendered with the portal base URL and the header credential.
       const examples = page.getByTestId("endpoint-examples");
-      await expect(examples.locator(":scope > li")).toHaveCount(10);
+      // 10 official examples; the one made with a global key is not shown (Phase 8E).
+      await expect(examples.locator(":scope > li")).toHaveCount(9);
       const byLinkedId = examples.locator("details").filter({ hasText: "CDR by Linked ID" });
       await byLinkedId.locator("summary").click();
       const code = byLinkedId.locator("pre").first();
       await expect(code).toContainText("pbx6webserver.1com.co.il/pbx/openapi.php/cdrs?tenant=TESTTENANT&linkedid=");
       await expect(code).toContainText("X-API-Key: $OPENAPI_API_KEY");
       await expect(code).not.toContainText("CANISTRACCI");
-      await expect(examples.locator("details").filter({ hasText: "CDR Global Tenant Wildcard" })).toContainText("Global key");
+      await expect(examples.locator("details").filter({ hasText: "CDR Global Tenant Wildcard" })).toHaveCount(0);
     });
 
     test("a path-parameter endpoint documents its example placeholder and prefills it in the Playground", async ({ page }) => {

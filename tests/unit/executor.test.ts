@@ -211,8 +211,17 @@ describe("request bodies (Phase 8C)", () => {
   });
 
   it("sends a form-json-field body as --data-urlencode without a JSON Content-Type", () => {
-    const add = getEndpoint("proxy", "managedb-custom-add")!;
-    const field = add.requestBody![0];
+    // Synthetic form-encoded write (no portal endpoint uses this encoding since
+    // ManageDB left the customer portal, Phase 8E; the executor still supports it).
+    const add = {
+      ...infoExtensions,
+      id: "form-post",
+      method: "POST" as const,
+      operationClass: "write" as const,
+      requestBodyEncoding: { kind: "form-json-field" as const, field: "jsondata" },
+      requestBody: [{ name: "cu_name", location: "body" as const, type: "string", required: false, description: "" }],
+    };
+    const field = add.requestBody[0];
     const r = sanitizedRequest(proxyApi, add, { [`body:${field.name}`]: "v" });
     const curl = curlEquivalent(r, "PROXY_API_KEY");
     expect(r.body?.formField).toBe("jsondata");

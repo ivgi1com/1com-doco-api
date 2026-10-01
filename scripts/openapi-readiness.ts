@@ -39,6 +39,12 @@ const rows = (JSON.parse(readFileSync(resolve(root, "source-docs/openapi/operati
 const pages = (JSON.parse(readFileSync(resolve(root, "source-docs/openapi/resources.json"), "utf8")) as { pages: Page[] }).pages.filter(
   (p) => p.pageType === "resource",
 );
+const portalExclusions = JSON.parse(readFileSync(resolve(root, "source-docs/portal-exclusions.json"), "utf8")) as {
+  reason: string;
+  openapi: { operations: string[]; resources: string[] };
+};
+/** Baseline operations deliberately left out of the customer portal (Phase 8E). */
+const EXCLUDED = new Set(portalExclusions.openapi.operations);
 const api = getApi("openapi")!;
 const eps = listEndpoints(api);
 const epById = new Map(eps.map((e) => [e.id, e]));
@@ -81,15 +87,14 @@ type Category =
   | "out of scope by explicit decision"
   | "UNEXPLAINED";
 
-const GLOBAL_KEY_ONLY = /^(providers|routingprofiles|tenants|userprofiles|users)-/;
 function demoGap(r: OpRow): { category: Category; reason: string } | null {
   if (demoOps.includes(r)) return null;
+  if (EXCLUDED.has(r.id)) return { category: "out of scope by explicit decision", reason: "excluded from the customer portal (administrative API Key; source-docs/portal-exclusions.json)" };
   if (r.operationClass === "write") {
     return /^(auth-token|dial)/.test(r.id)
-      ? { category: "security-blocked", reason: "SEC-REQ-05/06: categorically never Demo- or Live-reachable" }
+      ? { category: "security-blocked", reason: "SEC-REQ-06: categorically never Demo- or Live-reachable" }
       : { category: "documentation UNKNOWN", reason: "no documented success response to simulate (SEC-REQ-27, amended 8C)" };
   }
-  if (GLOBAL_KEY_ONLY.test(r.id)) return { category: "security-blocked", reason: "global-key-only resource, excluded from the probe (SEC-REQ-28 §4)" };
   if (r.id === "cdrs-list") return { category: "intentionally unsupported", reason: "not probed: documented possible side effect (CDR metadata repair)" };
   if (r.id === "ailogs-list") return { category: "documentation UNKNOWN", reason: "HTTP 404 on the test PBX, no observable success response" };
   if (/^tenantvariables-/.test(r.id)) return { category: "documentation UNKNOWN", reason: "empty on the test PBX, no fixturable data" };
@@ -101,7 +106,8 @@ for (const { g } of gaps) byCategory.set(g.category, (byCategory.get(g.category)
 
 const implGaps: string[] = [];
 for (const r of rows) {
-  if (!epById.has(r.id)) implGaps.push(`${r.id}: no Reference/Playground endpoint`);
+  if (!epById.has(r.id) && !EXCLUDED.has(r.id)) implGaps.push(`${r.id}: no Reference/Playground endpoint`);
+  if (epById.has(r.id) && EXCLUDED.has(r.id)) implGaps.push(`${r.id}: excluded from the customer portal but still present`);
 }
 for (const f of files) if (!pageByFile.has(f)) implGaps.push(`${f}: no baseline resource page`);
 
@@ -195,6 +201,7 @@ const table = [
   "| Metric | Baseline | API Reference | Demo | Playground | Live |",
   "|---|---:|---:|---:|---:|---:|",
   `| Resources | ${pages.length} | ${resourcesAll(referenceOps)} | ${resourcesWith(demoOps)} with ≥1 operation | ${resourcesAll(playgroundOps)} | ${resourcesWith(rows.filter((r) => live.includes(`openapi/${r.id}`)))} |`,
+  `| Excluded from the customer portal (explicit decision) | ${EXCLUDED.size} operations, ${portalExclusions.openapi.resources.length} resources | — | — | — | — |`,
   `| Operations | ${rows.length} | ${referenceOps.length} | ${demoOps.length} (reads ${demoReads.length}, writes ${demoWrites.length}) | ${playgroundOps.length} | ${live.length} |`,
   `| Response schemas documented (vendor) | ${baselineDocumented.length} (resource-level, see note) | ${vendorRaw.length} | n/a (fixtures are synthetic) | ${vendorRaw.length} | 0 |`,
   `| Response schemas observed (sanitized probe) | 0 | ${refObservedOnly.length} (Reference only) | ${demoReads.filter((r) => observedIds.has(r.id)).length} fixtures mirror an observed shape | 0 (observed layer not applied) | 0 |`,

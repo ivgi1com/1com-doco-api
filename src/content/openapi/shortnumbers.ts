@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/shortnumbers",
   idField: "sn_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/short_numbers", "/short_number"],
   fields: [
     f("number", "Maps to `sn_number`.", { required: true, example: "901" }),

@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/cronjobs",
   idField: "cr_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/cronjob", "/cron_job", "/cron_jobs"],
   fields: [
     f("name", "Maps to `cr_name`.", { required: true, example: "Demo Nightly Job" }),

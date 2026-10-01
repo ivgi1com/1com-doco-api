@@ -66,14 +66,15 @@ Both fields are optional and additive; the Sample API sets neither.
 - `requestBodyEncoding`: how the body travels.
   - `json` (the default when omitted): a JSON document body.
   - `form-json-field` + `field`: a form-urlencoded body with one field
-    whose value is `requestExample` encoded as JSON (Proxy ManageDB
-    `jsondata`, PHONEBOOK `values`).
-  - `multipart` + `fileField` + `exampleFile`: a file upload (FAX, ManageDB
-    `updatebinary`).
+    whose value is `requestExample` encoded as JSON (Proxy PHONEBOOK
+    `values`; formerly also ManageDB `jsondata`, removed from the customer
+    portal in Phase 8E).
+  - `multipart` + `fileField` + `exampleFile`: a file upload (FAX; formerly
+    also ManageDB `updatebinary`).
 - Code samples follow it. Query-auth POSTs keep the credential and
   selectors in the query string (curl `--url-query`) and put only the
   body field in the body.
-- `requestExample` may be an array (ManageDB destination-tag lists).
+- `requestExample` may be an array (formerly ManageDB destination-tag lists).
 - `operationClass: "write"` marks an operation that changes state. Such
   operations are Reference-only:
   - the reference page shows a warning callout and no "Try in Playground"

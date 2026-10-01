@@ -121,7 +121,7 @@ const getState = openapiOperation({
     extra: "Which key kinds are accepted (read-only or full) is not documented.",
   }),
   queryParameters: [
-    tenantParam(true, "Tenant code or tenant name. Required even with a global API Key."),
+    tenantParam(true, "Tenant code or tenant name."),
     q("number", "Extension number to check.", { condition: "Required unless `ext` is used", example: "100" }),
     q("ext", "Compatibility alias for `number`.", { condition: "Required unless `number` is used" }),
   ],

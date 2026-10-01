@@ -8,7 +8,7 @@ import { proxyOperation, q } from "./shared";
 
 const peerCountTenantParam = q(
   "tenant",
-  "Optional if using the Admin API Key, returns only peers from the selected tenant. Omitting it with an Admin key returns every tenant's peers.",
+  "Returns only peers from the selected tenant.",
   { required: false },
 );
 

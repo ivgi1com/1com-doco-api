@@ -6,6 +6,7 @@ import { demoProvider, isSecretField, liveProvider } from "@/components/playgrou
 import { listLiveTargetIds } from "@/server/playground/allowlist";
 import operationsDoc from "../../source-docs/openapi/operations.json";
 import resourcesDoc from "../../source-docs/openapi/resources.json";
+import { EXCLUDED_OPENAPI_OPS, EXCLUDED_OPENAPI_RESOURCE_FILES } from "./helpers/exclusions";
 
 /**
  * Phase 8D readiness gate (docs/phases/08D-pre-stage6-readiness-gate.md §5):
@@ -23,11 +24,11 @@ afterEach(() => {
 });
 
 describe("Demo never reaches a network (all OpenAPI operations)", () => {
-  it("makes no fetch for any of the 159 operations, fixtured or not, with its first scenario applied", async () => {
+  it("makes no fetch for any portal operation, fixtured or not, with its first scenario applied", async () => {
     vi.useFakeTimers();
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
-    expect(endpoints).toHaveLength(operationsDoc.operations.length);
+    expect(endpoints).toHaveLength(operationsDoc.operations.length - EXCLUDED_OPENAPI_OPS.size);
     for (const endpoint of endpoints) {
       const preset = getDemoFixtures("openapi", endpoint.id)?.cases[0].preset ?? {};
       const fieldValues = Object.fromEntries(Object.entries(preset).map(([k, v]) => [`query:${k}`, v]));
@@ -74,8 +75,9 @@ describe("Live allowlist", () => {
 describe("SEC-REQ-05 (Auth Token) and SEC-REQ-06 (Dial) categorical exclusions", () => {
   const ids = endpoints.filter((e) => /^(auth-token|dial)/.test(e.id)).map((e) => e.id);
 
-  it("covers the three operations", () => {
-    expect(ids.sort()).toEqual(["auth-token-create", "auth-token-delete", "dial"]);
+  it("keeps Dial and removes Auth Token from the portal entirely (Phase 8E)", () => {
+    expect(ids.sort()).toEqual(["dial"]);
+    expect(EXCLUDED_OPENAPI_OPS.has("auth-token-create") && EXCLUDED_OPENAPI_OPS.has("auth-token-delete")).toBe(true);
   });
 
   it.each(ids)("%s has no Demo fixture, is not Demo-simulatable, and is not Live-allowlisted", (id) => {
@@ -150,8 +152,11 @@ describe("Baseline ↔ inventory ↔ content reconciliation", () => {
     const files = new Set(ops.map((o) => o.file));
     for (const p of pages) expect(files.has(p.file), p.slug).toBe(true);
     const ids = new Set(endpoints.map((e) => e.id));
-    for (const op of ops) expect(ids.has(op.id), op.id).toBe(true);
-    expect(ids.size).toBe(ops.length);
+    // Every baseline operation is either in the portal or deliberately excluded (Phase 8E), never both.
+    for (const op of ops) expect(ids.has(op.id) !== EXCLUDED_OPENAPI_OPS.has(op.id), op.id).toBe(true);
+    expect(ids.size).toBe(ops.length - EXCLUDED_OPENAPI_OPS.size);
+    // Excluded resources are excluded whole.
+    for (const op of ops) expect(EXCLUDED_OPENAPI_RESOURCE_FILES.has(op.file), op.id).toBe(EXCLUDED_OPENAPI_OPS.has(op.id));
   });
 
   it("BLOCK LIVE operations are never Live-enabled or Demo-simulated writes", () => {

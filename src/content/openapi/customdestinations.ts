@@ -20,7 +20,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/customdestinations",
   idField: "cu_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/custom", "/customs", "/custom_destinations", "/custom_destination"],
   fields: [
     f("name", "Maps to `cu_name`.", { required: true, example: "Demo Custom Destination" }),
@@ -47,7 +46,7 @@ const [list, get, create, update, remove] = openapiResource({
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
     "28 destination types are documented in total; only the non-random ones are modeled individually here. `RANDOMDESTINATION` (aliases `randomdestination`/`random_destination`) through `RANDOMDESTINATION20` (aliases `randomdestination[N]`/`random_destination[N]`) are not.",
-    "Security (SEC-REQ-29): `extended_infos` (`ce_name`/`ce_value`) is an unenumerated key/value store whose valid names depend on the undocumented `cu_ct_id` type — the same risk class as Setting (SEC-REQ-17) and Tenant Variable (SEC-REQ-21). Before Live: enumerate the custom types and their extended names, then allowlist by name. The `global=1` list falls under SEC-REQ-28 (tenant isolation).",
+    "Security (SEC-REQ-29): `extended_infos` (`ce_name`/`ce_value`) is an unenumerated key/value store whose valid names depend on the undocumented `cu_ct_id` type — the same risk class as Setting (SEC-REQ-17) and Tenant Variable (SEC-REQ-21). Before Live: enumerate the custom types and their extended names, then allowlist by name.",
   ],
 });
 

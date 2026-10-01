@@ -289,7 +289,6 @@ const infoDids: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the Proxy API INFO reqtype (info=DIDS). Full audit: source-docs/proxy-api/info.md.",
-    "Omitting tenant may return every tenant's DIDs with an admin key (the source shows this by example), but that form is not offered or tested here — see source-docs/unresolved.md U-12/U-13 (base host and tenant-placeholder ambiguity).",
     "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-53): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array; format=csv returned an empty body on the tenant tested.",
     "format=json here shows only the DID's own fields, never the joined tenant record the real API also returns in the same item.",
     "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
@@ -1091,7 +1090,7 @@ export const infoCdrs = proxyOperation({
     },
   ],
   notes: [
-    "Response column names/order are not documented for either CSV variant. Site line 194: getting the CSV for a single tenant uses \"the tenant\" format; for multiple tenants it uses \"the Admin\" format — two different, undocumented column layouts.",
+    "Response column names/order are not documented for the CSV output.",
     "The plain (no-format) response shown in the Site's own examples is not reproduced here: its structure is not independently characterised, unlike SIMPLECDRS.",
     "Compare SIMPLECDRS, a separate, simpler call-history source with its own (partially observed) shape.",
   ],

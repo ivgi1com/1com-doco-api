@@ -3,10 +3,12 @@ import { apis, listEndpoints } from "@/content";
 import { openapiDemoFixtures } from "@/content/demo/openapi";
 import { proxyDemoFixtures } from "@/content/demo/proxy";
 import { guides } from "@/content/guides";
+import { getEndpointExamples } from "@/content/examples";
 import { withObserved } from "@/content/observed";
+import { buildSearchIndex } from "@/lib/search-index";
+import { EXCLUDED_GUIDES, EXCLUDED_OPENAPI_OPS, EXCLUDED_PROXY_OPS } from "./helpers/exclusions";
 import en from "../../messages/en.json";
 import he from "../../messages/he.json";
-import examplesDoc from "../../source-docs/openapi/examples.json";
 
 /**
  * Phase 8E customer-copy guard (docs/phases/08E-customer-change-brief.md):
@@ -42,11 +44,14 @@ function collect(value: unknown, path: string, out: Hit[], apiOutput = false) {
 const hits: Hit[] = [];
 for (const api of apis) {
   collect({ name: api.name, summary: api.summary, categories: api.categories.map((c) => c.title) }, `api:${api.id}`, hits);
-  for (const e of listEndpoints(api)) collect(withObserved(api.id, e), `${api.id}/${e.id}`, hits);
+  for (const e of listEndpoints(api)) {
+    collect(withObserved(api.id, e), `${api.id}/${e.id}`, hits);
+    // Only the examples the Reference actually renders (global-key ones are filtered).
+    collect(getEndpointExamples(api.id, e.id), `${api.id}/${e.id}#examples`, hits);
+  }
 }
 for (const g of guides) collect(g, `guide:${g.slug}`, hits);
 for (const set of [...proxyDemoFixtures, ...openapiDemoFixtures]) collect(set, `demo:${set.endpoint}`, hits);
-collect(examplesDoc.examples, "examples", hits);
 collect(en, "messages:en", hits);
 collect(he, "messages:he", hits);
 
@@ -78,6 +83,28 @@ describe("customer-visible copy", () => {
 
   it("has no Sample / Tenant API Key qualifier on the ordinary customer key", () => {
     expect(offenders((h) => /\b(sample|tenant) api key/i.test(h.text))).toEqual([]);
+  });
+
+  it("documents no administrative (global / Admin) API Key usage (brief item 3)", () => {
+    const ADMIN_TEXT = /\b(global|admin(istrator)?|sysadmin)\s+(api\s+)?keys?\b|global=1|\bacross (every |all )?tenants\b|`tenant=%`/i;
+    expect(offenders((h) => !h.apiOutput && ADMIN_TEXT.test(h.text))).toEqual([]);
+  });
+
+  it("makes no excluded operation or guide discoverable (navigation, search, routes)", () => {
+    const ids = new Set(apis.flatMap((a) => listEndpoints(a).map((e) => `${a.id}/${e.id}`)));
+    for (const id of EXCLUDED_OPENAPI_OPS) expect(ids.has(`openapi/${id}`), id).toBe(false);
+    for (const id of EXCLUDED_PROXY_OPS) expect(ids.has(`proxy/${id}`), id).toBe(false);
+    for (const slug of EXCLUDED_GUIDES) expect(guides.some((g) => g.slug === slug), slug).toBe(false);
+    const hrefs = buildSearchIndex().map((i) => i.href);
+    const leaked = hrefs.filter((h) =>
+      [...EXCLUDED_OPENAPI_OPS].some((id) => h.endsWith(`/openapi/${id}`)) ||
+      [...EXCLUDED_PROXY_OPS].some((id) => h.endsWith(`/proxy/${id}`)) ||
+      [...EXCLUDED_GUIDES].some((slug) => h.endsWith(`/guides/${slug}`)),
+    );
+    expect(leaked).toEqual([]);
+    // No kept operation or guide links to a removed one.
+    const related = apis.flatMap((a) => listEndpoints(a).flatMap((e) => e.related.map((r) => `${a.id}/${r}`)));
+    expect(related.filter((r) => !ids.has(r))).toEqual([]);
   });
 
   it("names the OpenAPI product '1com Open API' in selectors", () => {

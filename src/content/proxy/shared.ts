@@ -43,14 +43,6 @@ export const authScopeUndocumented: Authentication = {
   parameter: "key",
 };
 
-/** Site line 225: "Any ManageDB action requires an admin key". */
-export const authAdmin: Authentication = {
-  type: "API Key",
-  description: "Admin API Key, sent as the key query parameter. The source states that any ManageDB action requires an admin key.",
-  location: "query",
-  parameter: "key",
-};
-
 export const tenantParam: Parameter = {
   name: "tenant",
   location: "query",

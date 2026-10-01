@@ -183,7 +183,7 @@ const calleridblacklistsListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -196,7 +196,7 @@ const calleridblacklistsListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "calleridblacklists.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -225,7 +225,7 @@ const calleridblacklistsGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -238,7 +238,7 @@ const calleridblacklistsGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "calleridblacklists.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -734,7 +734,7 @@ const cronjobsListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -747,7 +747,7 @@ const cronjobsListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "cronjobs.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -790,7 +790,7 @@ const cronjobsGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -803,7 +803,7 @@ const cronjobsGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "cronjobs.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -858,7 +858,7 @@ const customdestinationsListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -871,7 +871,7 @@ const customdestinationsListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "customdestinations.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -899,7 +899,7 @@ const customdestinationsGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -912,7 +912,7 @@ const customdestinationsGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "customdestinations.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1154,7 +1154,7 @@ const featurecodesListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1167,7 +1167,7 @@ const featurecodesListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "featurecodes.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1196,7 +1196,7 @@ const featurecodesGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1209,7 +1209,7 @@ const featurecodesGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "featurecodes.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1584,7 +1584,7 @@ const mediafilesListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1597,7 +1597,7 @@ const mediafilesListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "mediafiles.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1631,7 +1631,7 @@ const mediafilesGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1644,7 +1644,7 @@ const mediafilesGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "mediafiles.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1678,7 +1678,7 @@ const musiconholdsListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1691,7 +1691,7 @@ const musiconholdsListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "musiconholds.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -1721,7 +1721,7 @@ const musiconholdsGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -1734,7 +1734,7 @@ const musiconholdsGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "musiconholds.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -2113,7 +2113,7 @@ const settingsListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -2126,7 +2126,7 @@ const settingsListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "settings.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -2154,7 +2154,7 @@ const settingsGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -2167,7 +2167,7 @@ const settingsGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "settings.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -2195,7 +2195,7 @@ const shortnumbersListFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -2208,7 +2208,7 @@ const shortnumbersListFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "shortnumbers.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -2238,7 +2238,7 @@ const shortnumbersGetFixtures: DemoFixtureSet = {
       id: "tenant-omitted-json",
       label: "Tenant omitted",
       basis: "Observed on the test PBX: omitting `tenant` returned HTTP 401 `invalid_api_key`, the same code and (per _common.md ov:42) message documented for a mismatched key, not the documented `tenant_required` (source-docs/DOCS_AUDIT.md OA-15). Probed directly on one representative endpoint (extensions-list); applied here because the same auth check runs in front of every OpenAPI resource.",
-      when: { tenant: [""], global: "*" },
+      when: { tenant: [""] },
       preset: { tenant: "" },
       response: {
         status: 401,
@@ -2251,7 +2251,7 @@ const shortnumbersGetFixtures: DemoFixtureSet = {
       id: "found-json",
       label: "Found",
       basis: "shortnumbers.md documents no response; field names/shape are a legible subset of the Phase 8B Stage 2 probe's observed shape (source-docs/DOCS_AUDIT.md OA-14, OA-18), trimmed of fields the probe observed as empty/null on every row and of long numbered-field runs (kept to their first 2 members) — the full observed schema is on the Reference page itself (src/content/observed.ts). Fabricated example values.",
-      when: { tenant: "*", global: "*" },
+      when: { tenant: "*" },
       preset: { tenant: TENANT },
       response: {
         status: 200,
@@ -2999,7 +2999,7 @@ const aianalysisFixtures: DemoFixtureSet = {
     {
       id: "invalid-key-json",
       label: "Invalid API Key",
-      basis: "_common.md ov:42, `invalid_api_key`: \"The supplied key does not match the tenant or global API Key\" (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the source.",
+      basis: "_common.md ov:42 documents `invalid_api_key` for a key that does not match the tenant (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the source.",
       when: { tenant: "*", uniqueid: "*", key: ["DEMO_INVALID_KEY"] },
       preset: { tenant: TENANT, key: "DEMO_INVALID_KEY" },
       response: {

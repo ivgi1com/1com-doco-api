@@ -51,7 +51,7 @@ Out of scope (cancelled in the brief): the Playground/Demo audit for missing JSO
 
 ## 5. Acceptance criteria
 
-The acceptance criteria of each brief item, shown by tests (customer-copy guard, exclusion, ordering, picker serialization, navigation) and by UI checks on desktop, tablet, mobile and Hebrew; `npm run check`, `npm run build` and the full Playwright suite pass; the 8D readiness script has zero unexplained gaps against the new expected counts (OpenAPI 132 operations / 32 resources, Proxy 74 operations); no secrets or customer data introduced.
+The acceptance criteria of each brief item, shown by tests (customer-copy guard, exclusion, ordering, picker serialization, navigation) and by UI checks on desktop, tablet, mobile and Hebrew; `npm run check`, `npm run build` and the full Playwright suite pass; the 8D readiness script has zero unexplained gaps against the new expected counts (OpenAPI 132 operations / 31 resources, Proxy 74 operations); no secrets or customer data introduced.
 
 ## 6. Git
 

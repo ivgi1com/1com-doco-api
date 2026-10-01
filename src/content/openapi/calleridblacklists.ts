@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/calleridblacklists",
   idField: "bl_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/calleridblacklist", "/callerid_blacklist", "/callerid_blacklists", "/blacklist", "/blacklists"],
   fields: [
     f("callerid", "Phone number being blocked. Maps to `bl_callerid`.", { required: true, example: "5550100" }),

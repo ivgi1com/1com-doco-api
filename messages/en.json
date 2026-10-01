@@ -111,7 +111,6 @@
     "bodyMultipart": "Sent as a multipart/form-data upload, with the file in the {field} field.",
     "examples": "Examples",
     "examplesHelp": "Named examples from the official documentation. Code samples use this portal's base URL and send the key from an environment variable; example values are synthetic.",
-    "globalKeyExample": "Global key",
     "noExampleSchemaOnly": "No example body documented. The response fields are listed under Responses."
   },
   "lifecycle": {

@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/musiconholds",
   idField: "mu_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/moh", "/music", "/music_on_hold", "/music_on_holds"],
   fields: [
     f("name", "Maps to `mu_name`.", { required: true, example: "Demo Music On Hold" }),
@@ -38,7 +37,7 @@ const [list, get, create, update, remove] = openapiResource({
     f("entries", "Distinct PATCH-only write shape replacing the playlist: an array of `{me_id, order}`.", { type: "array" }),
     f(
       "default",
-      "Distinct PATCH-only write shape marking this class as the default. Its relationship to the `global=1` scope (per-tenant or per-global-set default) is not documented.",
+      "Distinct PATCH-only write shape marking this class as the default.",
       { type: "boolean" },
     ),
   ],
@@ -52,7 +51,7 @@ const [list, get, create, update, remove] = openapiResource({
   },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Security (SEC-REQ-30): `application`/`streamengine` are raw, free-form fields with no documented meaning; before Live, establish their semantics from the spec or the vendor. Writes are already excluded from Live by SEC-REQ-27; a read would expose the configured value. The `global=1` list falls under SEC-REQ-28 (tenant isolation).",
+    "Security (SEC-REQ-30): `application`/`streamengine` are raw, free-form fields with no documented meaning; before Live, establish their semantics from the spec or the vendor. Writes are already excluded from Live by SEC-REQ-27; a read would expose the configured value.",
   ],
 });
 

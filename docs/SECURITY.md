@@ -330,6 +330,8 @@ Closing needs the user's explicit approval.
 
 ### SEC-REQ-05 — OpenAPI Auth Token (BLOCKING, exclusion not allowlist, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/auth-token.md`.
 
 `POST/DELETE /auth/token` mints or resets a real login token/password-substitute for a web user or extension identity. This is credential issuance, not data exposure, so a field allowlist does not apply. Must never be reachable from Demo or Live, categorically, not merely allowlist-gated. Closing needs explicit user approval and is out of scope for the standard Live-enablement checklist.
@@ -366,9 +368,13 @@ Recorded 2026-09-26. Evidence: `source-docs/openapi/ailogs.md`.
 
 ### SEC-REQ-11 — OpenAPI Tenant response schema (REVIEW REQUIRED, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/tenants.md`. No response example exists; `te_billingcode` is business-sensitive. Confirm schema before any Live read; writes excluded from Live regardless.
 
 ### SEC-REQ-12 — OpenAPI User (BLOCKING, open)
+
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/users.md`.
 
@@ -376,11 +382,15 @@ Create/update writes `us_password` (a real login password) plus 2FA/IP-filter se
 
 ### SEC-REQ-13 — OpenAPI User Profile (REVIEW REQUIRED, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/userprofiles.md`.
 
 Controls privilege/authorization assignment for Users; a write vulnerability has systemic (privilege-escalation) impact. No response schema documented. Confirm schema and treat any Live read cautiously given the privilege-control role.
 
 ### SEC-REQ-14 — OpenAPI Provider (BLOCK LIVE, open)
+
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/providers.md`.
 
@@ -474,6 +484,8 @@ Any future OpenAPI Live path must:
 3. Reject `global=1`, `%` tenant wildcards, and any omitted-tenant request (the cross-tenant search that AI Logs and the reporting pages document).
 4. Exclude global-key-only resources (Tenant, User, User Profile, Routing Profile, Provider, Auth Token) from Live entirely.
 
+Phase 8E (2026-10-01): items 3 and 4 also hold for documentation — `global=1`, the global-key wording and the six global-key-only resources are no longer shown in the customer portal at all (`source-docs/portal-exclusions.json`). The rules above are unchanged.
+
 ### SEC-REQ-29 — OpenAPI Custom Destination `extended_infos` (REVIEW REQUIRED, open)
 
 Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/openapi/customdestinations.md`.
@@ -497,6 +509,15 @@ These come from a single masked, structure-only probe on one test PBX (`source-d
 - **SEC-REQ-15 (partly observed):** the Voicemail list and single read returned no `password` field. They did return `email` (populated, PII) and `imapuser` (null). As with SEC-REQ-26, this is one observation, not proof of exclusion.
 - **SEC-REQ-18 (partly observed):** the Media File single read did **not** return `me_data`. It did return `me_voiceapiusername` and `me_voiceapihost`, which no official page documents. Their names suggest a TTS-service account, so review them before any Live read.
 - **SEC-REQ-03 (still unresolved):** the probed extension was a virtual extension. Its single read carries the technology row under `tech_details.virtualextension` (`ve_securitypin` present, empty). No SIP/PJSIP row was observed, so whether a GET returns the technology secret remains UNKNOWN. `ex_email` and the other `ex_*email` fields are returned (empty on this extension).
+
+## Customer portal exclusions (Phase 8E, 2026-10-01)
+
+User decision (`docs/phases/08E-customer-change-brief.md`, brief item 3): content that requires an administrative API Key is not part of the customer-facing portal.
+
+- Removed: 27 OpenAPI operations (Tenant, User, User Profile, Routing Profile, Provider, Auth Token) and 35 Proxy API `MANAGEDB` operations (Admin key), the ManageDB guide, the Admin/global sections of both authentication guides, the `global=1` parameter, global-key examples, and the global/Admin wording on customer resources.
+- Source of truth: `source-docs/portal-exclusions.json`. The approved baseline inventories are unchanged; tests (`tests/unit/helpers/exclusions.ts`, `openapi-coverage`, `proxy-coverage`, `phase8-readiness`, `customer-copy`) and the status scripts reconcile the baseline against it.
+- Enforcement: `tests/unit/customer-copy.test.ts` fails if any excluded operation or guide is reachable through the content registry, search index or `related` links, or if global/Admin key wording returns to customer-visible copy (verbatim API error bodies in Demo are the only exception).
+- Not a security control: removing documentation does not change what the real API accepts. The Live boundary is unchanged (Live allowlist: the three approved Proxy reads; no Open API operation).
 
 ## Open action items
 

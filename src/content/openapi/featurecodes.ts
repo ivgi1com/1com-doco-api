@@ -17,7 +17,6 @@ const [list, get, create, update, remove] = openapiResource({
   path: "/featurecodes",
   idField: "fe_id",
   tenantScoped: true,
-  globalFlag: true,
   aliases: ["/feature", "/features", "/feature_codes", "/feature_code"],
   fields: [
     f("code", "Maps to `fe_code`. Example value `\"*880\"`.", { required: true, example: "*880" }),

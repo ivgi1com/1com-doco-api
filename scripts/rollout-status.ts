@@ -31,7 +31,20 @@ interface OperationRow {
 
 const root = resolve(__dirname, "..");
 const srcDir = resolve(root, "source-docs/proxy-api");
-const rows = (JSON.parse(readFileSync(resolve(srcDir, "operations.json"), "utf8")) as { operations: OperationRow[] }).operations;
+
+/** Baseline operations deliberately left out of the customer portal (Phase 8E). */
+const portalExclusions = JSON.parse(readFileSync(resolve(root, "source-docs/portal-exclusions.json"), "utf8")) as {
+  reason: string;
+  openapi: { operations: string[] };
+  proxy: { operations: string[] };
+};
+const PORTAL_EXCLUDED_PROXY = new Set(portalExclusions.proxy.operations);
+const PORTAL_EXCLUDED_OPENAPI = new Set(portalExclusions.openapi.operations);
+const PORTAL_REASON = `excluded from the customer portal — ${portalExclusions.reason} (source-docs/portal-exclusions.json)`;
+
+const rows = (JSON.parse(readFileSync(resolve(srcDir, "operations.json"), "utf8")) as { operations: OperationRow[] }).operations.map(
+  (r) => (PORTAL_EXCLUDED_PROXY.has(r.id) && !r.excluded ? { ...r, excluded: PORTAL_REASON } : r),
+);
 const endpoints = listEndpoints(getApi("proxy")!);
 const byId = new Map(endpoints.map((e) => [e.id, e]));
 
@@ -111,8 +124,10 @@ interface OpenapiOperationRow {
 }
 
 const oaSrcDir = resolve(root, "source-docs/openapi");
-const oaRows = (JSON.parse(readFileSync(resolve(oaSrcDir, "operations.json"), "utf8")) as { operations: OpenapiOperationRow[] })
+const oaBaselineRows = (JSON.parse(readFileSync(resolve(oaSrcDir, "operations.json"), "utf8")) as { operations: OpenapiOperationRow[] })
   .operations;
+// Everything below counts the customer portal surface; the baseline total and the exclusions are reported separately.
+const oaRows = oaBaselineRows.filter((r) => !PORTAL_EXCLUDED_OPENAPI.has(r.id));
 const oaEndpoints = listEndpoints(getApi("openapi")!);
 const oaById = new Map(oaEndpoints.map((e) => [e.id, e]));
 
@@ -126,16 +141,10 @@ for (const [k, v] of Object.entries(probeFile.followup)) {
   if (v.status === 200 || !probedStatus.has(base)) probedStatus.set(base, v.status);
 }
 
-// Global-key-only resources (SEC-REQ-28 §4): excluded from the probe by
-// design, not merely unfixtured — see docs/DECISIONS.md "Phase 8B planning
-// and probe decisions".
-const GLOBAL_KEY_ONLY = new Set(["providers", "routingprofiles", "tenants", "userprofiles", "users"]);
 
 function oaReason(r: OpenapiOperationRow): string {
   if (r.operationClass === "write") return "write (Reference-only, SEC-REQ-27)";
   if (getDemoFixtures("openapi", r.id)) return "Demo-supported";
-  const slug = r.id.replace(/-(list|get)(-.*)?$/, "");
-  if (GLOBAL_KEY_ONLY.has(slug)) return "not probed (global-key-only resource)";
   if (r.id === "cdrs-list") return "not probed (docs: may repair CDR metadata; a possible side effect)";
   const status = probedStatus.get(r.id);
   if (status === undefined) return "not probed";
@@ -155,7 +164,8 @@ const oaLines = [
   "",
   "## Counts",
   "",
-  `- Total OpenAPI operations: ${oaRows.length}`,
+  `- Baseline OpenAPI operations: ${oaBaselineRows.length} (${oaBaselineRows.length - oaRows.length} ${PORTAL_REASON})`,
+  `- Total OpenAPI operations in the portal: ${oaRows.length}`,
   `- Reference pages: ${oaRows.length - oaMissingPage.length} / ${oaRows.length}`,
   `- Write operations (Reference-only, never Demo-supported): ${oaWrites.length}`,
   `- Read operations: ${oaReads.length}`,
@@ -207,7 +217,6 @@ const REPRESENTATIVE: [string, string][] = [
   ["campaigns-create", "CRUD-style resource, write (string, integer and array body fields)"],
   ["extensions-create", "mutating operation that must stay Live-disabled (secret-named body field)"],
   ["cdrs-list", "operation with no documented or observed response schema in Demo"],
-  ["tenants-list", "global/admin-scoped resource (global API key)"],
 ];
 const oaMissingRepresentative = REPRESENTATIVE.filter(([id]) => !oaById.has(id)).map(([id]) => id);
 
@@ -218,10 +227,11 @@ const pgLines = [
   "",
   "## Representation",
   "",
-  `- Documented resources (distinct official pages in the inventory): ${oaResources.length}`,
+  `- Resources in the portal: ${oaResources.length} (baseline ${new Set(oaBaselineRows.map(sourceOf)).size}; the rest excluded from the customer portal)`,
   `- Resources represented in the Playground: ${oaRepresentedResources.length} / ${oaResources.length}`,
   `- Picker categories: ${oaCategories.length}${oaSharedCategories.length ? ` (${oaSharedCategories.join("; ")})` : ""}`,
-  `- Documented operations: ${oaRows.length}`,
+  `- Documented operations (baseline): ${oaBaselineRows.length}; excluded from the customer portal: ${oaBaselineRows.length - oaRows.length}`,
+  `- Portal operations: ${oaRows.length}`,
   `- Operations represented in the Playground: ${oaRepresentedOps.length} / ${oaRows.length}`,
   "",
   "## Execution",

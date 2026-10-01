@@ -33,7 +33,6 @@ const [list, get, create, update, remove] = openapiResource({
   updateExample: { value: "demo-value-updated" },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Unlike Setting, this object has no `global=1` option documented.",
     "Security (SEC-REQ-21): the same generic key/value risk as Setting (SEC-REQ-17) — enumerate the \"allowed variable\" (`tv_al_id`) definitions before Live and allowlist by definition, not just by field name.",
   ],
 });

@@ -207,13 +207,13 @@ export const countchannels = proxyOperation({
   source: "countchannels.md",
   queryParameters: [
     q("nodename", "Count only this node's channels.", { required: false }),
-    q("tenant", "Optional if using the Admin API Key, returns only channels from the selected tenant.", { required: false }),
+    q("tenant", "Returns only channels from the selected tenant.", { required: false }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
     {
       status: 200,
-      description: "Success response not documented — neither observed variant resolved to one (A-69). Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/HELP. With tenant (but no nodename): \"Wrong or missing tenant\" instead — a different error from the other three, suggesting this operation actually wants nodename and/or an Admin key rather than a tenant key.",
+      description: "Success response not documented — neither observed variant resolved to one (A-69). Without tenant: the shared \"tenant required\" error also seen on CHANNEL/COUNTCALLS/HELP. With tenant (but no nodename): \"Wrong or missing tenant\" instead — a different error from the other three, suggesting this operation actually wants nodename.",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -222,7 +222,7 @@ export const countchannels = proxyOperation({
   ],
   notes: [
     "No example and no response sample in either source; the method is not stated.",
-    "A probe found two distinct error responses depending on whether tenant is supplied, neither of them a success (source-docs/DOCS_AUDIT.md A-69) — this operation may need nodename and/or an Admin key instead of a tenant key.",
+    "A probe found two distinct error responses depending on whether tenant is supplied, neither of them a success (source-docs/DOCS_AUDIT.md A-69) — this operation may need nodename.",
   ],
   related: ["countpeers", "countcalls"],
 });

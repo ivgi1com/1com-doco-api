@@ -1762,3 +1762,58 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   Playwright 192 passed / 2 WebKit skips / 0 failed after updating the chip
   label test; browser spot check (en/he, desktop/mobile): no Mirta, no key
   scope, no `API key`, no SRV, no overflow.
+
+## Phase 8E Stage 2 — admin-keyed content removed (2026-10-01, Opus 5.5)
+
+- **Removed from the customer portal:** 27 Open API operations (Tenant,
+  User, User Profile, Routing Profile, Provider, Auth Token — 6 resources),
+  35 Proxy `MANAGEDB` operations, the `managedb-writes` guide, the
+  Admin/global sections of both authentication guides (rewritten), the
+  `global=1` parameter (`globalParam`/`globalFlag`), the admin-only error
+  texts (`admin_required`, Auth Token codes), the `authAdmin` auth object,
+  global/Admin wording on customer resources (tenant parameter, reporting
+  pages, Extension State, Proxy COUNTCHANNELS/COUNTPEERS/PEERS/INFO
+  DIDS/CDRS), the `tenant=%` wildcard mention, and the 11 official Open API
+  examples made with a global key (filtered in `src/content/examples.ts`;
+  the "Global key" badge and its i18n key are gone).
+- **Exclusion mechanism (the approved baselines stay untouched):**
+  `source-docs/portal-exclusions.json` lists the excluded operations,
+  resources, reqtype and guide with the reason. `tests/unit/helpers/exclusions.ts`
+  exposes it to tests; `openapi-coverage`, `proxy-coverage` and
+  `phase8-readiness` now assert that every baseline operation is either in
+  the portal or excluded, **never both**, and that excluded resources are
+  excluded whole. `scripts/rollout-status.ts` and
+  `scripts/openapi-readiness.ts` report baseline vs portal counts and
+  classify the 27 as "out of scope by explicit decision" (readiness: 0
+  implementation gaps, 0 unexplained, all boundary checks PASS).
+- **Counts:** Open API 159 -> **132** operations, 37 -> **31** resources
+  (the plan's "32" was an arithmetic slip: Auth Token is its own resource);
+  Proxy 109 -> **74** operations (110 inventory rows: 35 portal-excluded + 1
+  previously excluded); 576 -> 450 static pages.
+- **Guards:** `tests/unit/customer-copy.test.ts` also fails on
+  global/Admin/SysAdmin key wording, `global=1`, cross-tenant phrasing or
+  `tenant=%` in customer-visible copy (verbatim Demo API error bodies
+  excepted), on any excluded operation or guide in the content registry or
+  search index, and on any `related` link to a removed page. New e2e: the
+  removed pages return 404 and are absent from the Reference navigation.
+- **Security docs:** `docs/SECURITY.md` SEC-REQ-05/11/12/13/14 annotated
+  "not reachable from the customer portal" (kept, not closed — they apply
+  again if a resource is ever re-added); SEC-REQ-28 notes the
+  documentation-level effect; new section "Customer portal exclusions".
+  Removing documentation is explicitly **not** a security control; the
+  Live boundary is unchanged (3 Proxy reads, no Open API operation).
+- **Kept by design:** the form-encoded body support in `executor.ts` and
+  `code-samples.ts` (still used by Proxy PHONEBOOK add); the executor test
+  now uses a synthetic endpoint. Fixed a Stage 1 wording slip ("Required
+  with a API Key" -> "Required with your API Key").
+- **Validation:** `npm run check` 375/375; build clean (450 pages);
+  `rollout:status` and `readiness:openapi` clean; full Playwright 192
+  passed / 2 WebKit skips, then the 2 failures (the CDR example count and
+  its removed global-key example) updated and re-run green.
+- **Noted, out of scope:** `phonebook-add`'s vendor example
+  (`NAME: "Ross"`, `PHONE1: "3564732920"`) looks like real-world data; it
+  predates this phase and is not part of the brief — flag for a later
+  decision.
+- **Model note:** the plan routed only the mechanism and SECURITY.md notes
+  to Opus; the removals were done in the same Opus session because the
+  exclusion list, deletions and test reconciliation only pass together.

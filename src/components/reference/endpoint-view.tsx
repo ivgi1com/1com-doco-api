@@ -269,11 +269,6 @@ export function EndpointView({
                         <span lang="en" className="min-w-0 flex-1">
                           {ex.title}
                         </span>
-                        {ex.keyKind === "global" && (
-                          <span className="shrink-0 rounded border border-border px-1.5 py-0.5 text-xs font-medium text-ink-muted">
-                            {t("globalKeyExample")}
-                          </span>
-                        )}
                       </summary>
                       <div className="space-y-3 border-t border-border px-3 py-3">
                         {ex.description && (
