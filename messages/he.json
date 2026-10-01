@@ -173,6 +173,8 @@
     "liveBlockedText": "הרצת Live אינה מופעלת עבור פעולה זו. דבר אינו נשלח.",
     "endpointNotFoundTitle": "נקודת הקצה לא נמצאה",
     "endpointNotFoundBody": "אין נקודת קצה \"{endpoint}\". מוצגת במקומה \"{fallback}\".",
+"clearDate": "ניקוי",
+"timeOf": "שעה עבור {name}",
 "requestPreview": "תצוגת בקשה",
     "requestPreviewNote": "נבנית מהערכים שהזנתם ומתעדכנת תוך כדי הקלדה. אישורי גישה ושדות גוף בעלי שם סודי מוסתרים. ה-Playground לעולם אינו שולח גוף בקשה.",
     "emptyTitle": "עדיין אין תגובה",

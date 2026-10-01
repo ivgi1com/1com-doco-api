@@ -173,6 +173,8 @@
     "liveBlockedText": "Live execution is not enabled for this operation. Nothing is sent.",
     "endpointNotFoundTitle": "Endpoint not found",
     "endpointNotFoundBody": "There is no endpoint \"{endpoint}\". Showing \"{fallback}\" instead.",
+"clearDate": "Clear",
+"timeOf": "Time for {name}",
 "requestPreview": "Request preview",
     "requestPreviewNote": "Built from the values you enter, updating as you type. Credentials and secret-named body fields are masked. The Playground never sends a body.",
     "emptyTitle": "No response yet",

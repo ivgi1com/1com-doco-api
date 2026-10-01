@@ -315,6 +315,7 @@ const simplecdrsStartParam: Parameter = {
   required: "undocumented",
   description: "Start date/time filter, observed as YYYY-MM-DD.",
   example: "2026-01-01",
+  format: "date",
   source: "source-docs/proxy-api/info.md",
 };
 
@@ -323,6 +324,7 @@ const simplecdrsEndParam: Parameter = {
   name: "end",
   description: "End date/time filter, observed as YYYY-MM-DD.",
   example: "2026-01-31",
+  format: "date",
 };
 
 const simplecdrsFormatParam: Parameter = {
@@ -1075,8 +1077,8 @@ export const infoCdrs = proxyOperation({
     q("phone", "Filters across whoanswered, calleridnum and dialednum. Comma-separated for multiple values (Doc line 138)."),
     cdrsFormatParam,
     q("template", "Name of a server-defined XML output template (configured under Configuration/Settings → XML Template). Only meaningful with format=xml.", { example: "Test_CSV" }),
-    q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01" }),
-    q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31" }),
+    q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01", format: "date" }),
+    q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31", format: "date" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [

@@ -1839,3 +1839,39 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   Playwright 190 passed / 2 WebKit skips / 0 failed; browser check en/he ×
   desktop/tablet/mobile: no Console or Changelog text, no overflow, no
   console errors.
+
+## Phase 8E Stage 4 — date/time pickers (2026-10-02, Sonnet 5)
+
+- **Approach (user decision):** native `<input type="date">` plus, for
+  date-times, `<input type="time" step="1">`, composed into the exact
+  documented string, no timezone conversion, a Clear button. Display follows
+  the browser locale; the Request preview shows the exact string sent.
+- **Content model:** additive `Parameter.format?: "date" | "datetime"`
+  (`docs/API_CONTENT_MODEL.md`), set only where the source documents an
+  exact format: Open API `start`/`end` on `cdrs-list`, `simplecdrs-list`,
+  `ailogs-list` (`YYYY-MM-DD HH:MM:SS`) and Proxy `start`/`end` on
+  `info-simplecdrs`, `info-queuelogs`, `info-cdrs` (`YYYY-MM-DD`) — 12
+  fields. A unit test pins that list, so no format can be added without a
+  decision. Campaign (`datestart`/`dateend`), conference-room
+  (`startdate`/`enddate`) and `inserted` have no documented format and stay
+  text; the auth-token `validity` field went with the admin content.
+- **Logic:** `src/lib/date-value.ts` (`parseDateValue`, `composeDateValue`,
+  `defaultTimeFor`). A date chosen without a time gets the documented
+  default (start 00:00:00, end 23:59:59). A value not in the documented
+  format makes the field fall back to plain text, so a typed value is never
+  rewritten. The picker writes into the same `fieldKey`, so Demo matching
+  (date params are `"*"` in every fixture), scenario chips, the Request
+  preview and cURL are unchanged. No date parameter is Live-allowlisted.
+- **Tests:** unit +7 (parse/compose/default time/round-trip, the 12-field
+  list, every example parses); e2e: date-time pickers compose
+  `start=2026-03-05+09%3A15%3A30` (not ISO) and the documented default end
+  time, Clear removes `start`, Demo still sends; date-only Proxy field has
+  no time input; undocumented-format fields have no picker; narrow mobile in
+  Hebrew. The mobile test needed a state-derived retry (same hydration race
+  as earlier tests). Full Playwright 197 passed / 2 WebKit skips / 1
+  known parallel-load flake that passes alone.
+- **Visual:** the first layout stacked each control full-width because the
+  shared `w-full` class beat `w-auto`; fixed to one row (date, time, Clear),
+  mirrored correctly in RTL, no overflow, no console errors.
+- **Not covered:** the native picker popup itself (browser UI) is not
+  automated; values are driven through the inputs.

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { InlineMarkup } from "@/components/reference/inline-markup";
 import type { Parameter } from "@/content/types";
+import { composeDateValue, defaultTimeFor, parseDateValue } from "@/lib/date-value";
 
 /** One request-builder field: label always visible, LTR value, documented details below, error last (MASTER.md "Form controls"). */
 export function ParamField({
@@ -29,8 +30,16 @@ export function ParamField({
   // resolves.
   const placeholder =
     param.example !== undefined ? String(param.example) : param.default !== undefined ? param.default : undefined;
+  // Date/time controls sit side by side, so they must not inherit the full-width class.
+  const inlineControlClass = controlClass.replace("w-full ", "");
   const describedBy = [helpId, error ? errorId : null].filter(Boolean).join(" ");
   const jsonField = param.type === "array" || param.type === "object";
+  const tp = useTranslations("playground");
+  // A picker only when the field documents an exact format AND the current
+  // value is in it (or empty); anything else stays an editable text box so a
+  // typed value is never rewritten.
+  const dateParts = param.format ? parseDateValue(value, param.format) : null;
+  const timeId = `${id}-time`;
 
   return (
     <div>
@@ -64,6 +73,50 @@ export function ParamField({
             </option>
           ))}
         </select>
+      ) : param.format && dateParts ? (
+        <div className="flex flex-wrap items-center gap-2" data-testid={`date-field-${param.name}`}>
+          <input
+            id={id}
+            type="date"
+            dir="ltr"
+            value={dateParts.date}
+            onChange={(e) =>
+              onChange(composeDateValue({ ...dateParts, date: e.target.value }, param.format!, defaultTimeFor(param.name)))
+            }
+            aria-invalid={!!error}
+            aria-describedby={describedBy}
+            className={`${inlineControlClass} h-8 min-w-[9.5rem] flex-1`}
+          />
+          {param.format === "datetime" && (
+            <>
+              <label htmlFor={timeId} className="sr-only">
+                {tp("timeOf", { name: param.name })}
+              </label>
+              <input
+                id={timeId}
+                type="time"
+                step={1}
+                dir="ltr"
+                value={dateParts.time}
+                disabled={!dateParts.date}
+                onChange={(e) => {
+                  // A time input yields HH:MM when the seconds are 00; the API wants HH:MM:SS.
+                  const t = e.target.value.length === 5 ? `${e.target.value}:00` : e.target.value;
+                  onChange(composeDateValue({ ...dateParts, time: t }, param.format!, defaultTimeFor(param.name)));
+                }}
+                className={`${inlineControlClass} h-8 min-w-[8rem] flex-1`}
+              />
+            </>
+          )}
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            disabled={!value}
+            className="h-8 rounded-md border border-border-control px-2.5 text-xs font-medium text-ink-muted transition-colors duration-150 hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {tp("clearDate")}
+          </button>
+        </div>
       ) : jsonField ? (
         <textarea
           id={id}

@@ -96,8 +96,8 @@ const cdr = openapiOperation({
   }),
   queryParameters: [
     reportTenant(),
-    q("start", "Start date/time filter. Defaults to today 00:00:00. The source states two rules: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00" }),
-    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same two rules as `start`.", { example: "2026-01-01 23:59:59" }),
+    q("start", "Start date/time filter. Defaults to today 00:00:00. The source states two rules: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00", format: "datetime" }),
+    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same two rules as `start`.", { example: "2026-01-01 23:59:59", format: "datetime" }),
     q("id", "Comma-separated CDR row IDs. A path segment (`/cdrs/123`) also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
     q("linkedid", "Comma-separated linked IDs. Groups call legs of the same call."),
@@ -138,8 +138,9 @@ const simplecdr = openapiOperation({
     reportTenant(),
     q("start", "Start date/time filter. Defaults to today 00:00:00. Applied when neither `id` nor `uniqueid` is supplied.", {
       example: "2026-01-01 00:00:00",
+      format: "datetime",
     }),
-    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same rule as `start`.", { example: "2026-01-01 23:59:59" }),
+    q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same rule as `start`.", { example: "2026-01-01 23:59:59", format: "datetime" }),
     q("id", "Comma-separated simple-CDR row IDs. A path segment also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
     q("calleridnum", "Comma-separated caller ID numbers."),
@@ -305,8 +306,8 @@ const ailogs = openapiOperation({
   }),
   queryParameters: [
     reportTenant(),
-    q("start", "Applied to `ai_start`. Defaults to today 00:00:00. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 00:00:00" }),
-    q("end", "Applied to `ai_start`. Defaults to today 23:59:59. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 23:59:59" }),
+    q("start", "Applied to `ai_start`. Defaults to today 00:00:00. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 00:00:00", format: "datetime" }),
+    q("end", "Applied to `ai_start`. Defaults to today 23:59:59. Ignored when `id` or `uniqueid` is supplied.", { example: "2026-01-01 23:59:59", format: "datetime" }),
     q("id", "Comma-separated `ai_id` values. A path segment (`/ailogs/123`) also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
     q("callerid", "Comma-separated exact caller ID values."),

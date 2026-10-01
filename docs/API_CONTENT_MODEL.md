@@ -59,6 +59,15 @@ related: []
 - There are no Proxy-specific components. The same components render both
   kinds.
 
+### Date and date-time fields (Phase 8E)
+
+`Parameter.format?: "date" | "datetime"` is optional and additive. Set it
+**only** where the source documents an exact format: `date` is
+`YYYY-MM-DD`, `datetime` is `YYYY-MM-DD HH:MM:SS`. The Playground then
+offers native date (and time, with seconds) inputs that compose exactly
+that string, with no timezone conversion. A field without a documented
+format (e.g. campaign or conference-room dates) is never given one.
+
 ### Request body encoding and operation class (Phase 7)
 
 Both fields are optional and additive; the Sample API sets neither.

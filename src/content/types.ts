@@ -42,6 +42,12 @@ export interface Parameter {
   constraints?: string;
   /** Condition under which the field is present, e.g. "Only when status is completed". */
   condition?: string;
+  /**
+   * Set only where the source documents an exact date or date-time format
+   * (`date`: `YYYY-MM-DD`; `datetime`: `YYYY-MM-DD HH:MM:SS`). The Playground
+   * then offers a picker that composes that exact string (Phase 8E).
+   */
+  format?: "date" | "datetime";
   children?: Parameter[];
   source?: string;
 }

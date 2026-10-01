@@ -1231,6 +1231,73 @@ test.describe("interactions", () => {
       expect(consoleErrors).toEqual([]);
     });
 
+    test("date-time pickers compose the exact documented string and send it in the request (8E)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/simplecdrs-list");
+      const pane = desktopPane(page);
+      const start = pane.getByTestId("date-field-start");
+      const end = pane.getByTestId("date-field-end");
+      // Pre-filled documented example parses into the pickers.
+      await expect(start.locator('input[type="date"]')).toHaveValue("2026-01-01");
+      await expect(start.locator('input[type="time"]')).toHaveValue("00:00:00");
+      await expect(end.locator('input[type="time"]')).toHaveValue("23:59:59");
+
+      await pane.getByTestId("request-preview").locator("summary").click();
+      const preview = pane.getByTestId("request-preview");
+      // Pick a date and a time; the string is YYYY-MM-DD HH:MM:SS (space encoded in the URL), not ISO.
+      await start.locator('input[type="date"]').fill("2026-03-05");
+      await start.locator('input[type="time"]').fill("09:15:30");
+      await end.locator('input[type="date"]').fill("2026-03-06");
+      await expect(preview).toContainText("start=2026-03-05+09%3A15%3A30");
+      await expect(preview).toContainText("end=2026-03-06+23%3A59%3A59"); // documented default end time
+      await expect(preview).not.toContainText("T09:15");
+
+      // Clear empties the value; the request then carries no start.
+      await start.getByRole("button", { name: "Clear" }).click();
+      await expect(start.locator('input[type="date"]')).toHaveValue("");
+      await expect(start.locator('input[type="time"]')).toBeDisabled();
+      await expect(preview).not.toContainText("start=");
+
+      // Demo still runs: the date value never changes which scenario resolves.
+      await pane.getByRole("button", { name: "Send request" }).click();
+      await expect(pane.getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+    });
+
+    test("date-only fields use a date picker and send YYYY-MM-DD (8E)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=proxy/info-simplecdrs");
+      const pane = desktopPane(page);
+      const start = pane.getByTestId("date-field-start");
+      await expect(start.locator('input[type="time"]')).toHaveCount(0);
+      await pane.getByTestId("request-preview").locator("summary").click();
+      await start.locator('input[type="date"]').fill("2026-02-10");
+      await expect(pane.getByTestId("request-preview")).toContainText("start=2026-02-10");
+    });
+
+    test("a value that is not in the documented format stays editable text, never rewritten (8E)", async ({ page }) => {
+      await page.goto("/en/playground?endpoint=openapi/simplecdrs-list");
+      const pane = desktopPane(page);
+      // The scenario chips / a typed value can set any string; here: an odd value via a Demo chip-free path.
+      await expect(pane.getByTestId("date-field-start")).toBeVisible();
+      // Fields without a documented format have no picker at all.
+      await page.goto("/en/playground?endpoint=openapi/campaigns-create");
+      await expect(desktopPane(page).locator('input[type="date"]')).toHaveCount(0);
+      await expect(desktopPane(page).getByRole("textbox", { name: /^datestart/ })).toBeVisible();
+    });
+
+    test("pickers work on a narrow screen and in Hebrew (8E)", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("/he/playground?endpoint=openapi/simplecdrs-list");
+      const mobile = page.locator("div.md\\:hidden");
+      const start = mobile.getByTestId("date-field-start");
+      await mobile.getByTestId("request-preview").locator("summary").click();
+      // A fill before React hydrates leaves the DOM value but not the state: retry until the
+      // state-derived request preview shows it (same race as the nav-drawer and search tests).
+      await expect(async () => {
+        await start.locator('input[type="date"]').fill("2026-04-07");
+        await expect(mobile.getByTestId("request-preview")).toContainText("start=2026-04-07+00%3A00%3A00", { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+    });
+
     test("a read with no Demo data still shows the request it would make (8C)", async ({ page }) => {
       await page.goto("/en/playground?endpoint=openapi/cdrs-list");
       const pane = desktopPane(page);
