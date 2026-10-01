@@ -19,6 +19,7 @@ export function EndpointPicker({
   onSelectApi: (apiId: string) => void;
 }) {
   const t = useTranslations("playground");
+  const tn = useTranslations("nav");
   const [query, setQuery] = useState("");
   const filterId = useId();
   const apiSelectId = useId();
@@ -49,7 +50,7 @@ export function EndpointPicker({
         >
           {apis.map((a) => (
             <option key={a.id} value={a.id}>
-              {a.name}
+              {a.legacy ? tn("legacyApi", { name: a.name }) : a.name}
             </option>
           ))}
         </select>

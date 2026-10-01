@@ -238,12 +238,27 @@ test.describe("interactions", () => {
       ).toBeVisible();
     });
 
-    test("API reference redirects to the Proxy API (the default API) and the sidebar matches it", async ({
+    test("API reference redirects to the Open API (the default API, 8E) and the sidebar matches it", async ({
       page,
     }) => {
       await page.goto("/en/reference");
-      await expect(page).toHaveURL(/\/reference\/proxy$/);
-      await expect(page.getByRole("combobox").first()).toHaveValue("proxy");
+      await expect(page).toHaveURL(/\/reference\/openapi$/);
+      const select = page.getByRole("combobox").first();
+      await expect(select).toHaveValue("openapi");
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample API"]);
+    });
+
+    test("the Playground opens on the Open API's Simple CDR by default (8E)", async ({ page }) => {
+      await page.goto("/en/playground");
+      await expect(desktopPane(page).getByLabel("API", { exact: true })).toHaveValue("openapi");
+      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("List simple CDRs");
+      await expect(page.getByTestId("endpoint-not-found")).toHaveCount(0);
+    });
+
+    test("the home page lists Open API before the legacy Proxy API (8E)", async ({ page }) => {
+      await page.goto("/en");
+      const chips = page.getByLabel("APIs", { exact: true }).getByRole("link");
+      await expect(chips).toHaveText(["1com Open API", "Proxy API (legacy)"]);
     });
 
     test("Try in Playground opens the Playground on this endpoint with the Proxy API's own samples", async ({

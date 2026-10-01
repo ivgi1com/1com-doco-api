@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PlaygroundApp } from "@/components/playground/playground-app";
 import { Callout } from "@/components/ui/callout";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
-import { apis, getApi, getEndpoint, listEndpoints } from "@/content";
+import { apis, defaultEndpoint, getApi, getEndpoint } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
 import { listLiveTargetIds } from "@/server/playground/allowlist";
 import { getPlaygroundConfig } from "@/server/playground/config";
@@ -30,9 +30,9 @@ export default async function PlaygroundPage({
   // Try It link from a non-default API would render with the wrong API's
   // samples and base URL.
   const api = requestedApi ?? apis[0];
-  const endpoint = requestedEndpoint ?? listEndpoints(api)[0];
+  const endpoint = requestedEndpoint ?? defaultEndpoint(api);
   // A deep link that names an endpoint that does not exist falls back to the
-  // first one, but says so instead of silently showing a different operation.
+  // API's default one, but says so instead of silently showing a different operation.
   const endpointNotFound = typeof endpointParam === "string" && endpointParam !== "" && !requestedEndpoint;
 
   const samplesByEndpoint = await buildPlaygroundSamples(api);

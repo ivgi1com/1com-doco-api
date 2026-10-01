@@ -68,7 +68,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               href={`/reference/${a.id}`}
               className="rounded-sm border border-accent/40 bg-accent-tint px-2 py-0.5 text-xs font-semibold text-accent hover:border-accent"
             >
-              {a.name}
+              {a.legacy ? tn("legacyApi", { name: a.name }) : a.name}
             </Link>
           ))}
       </div>

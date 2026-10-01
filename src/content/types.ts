@@ -178,6 +178,10 @@ export interface ApiDefinition {
   baseUrl: string;
   /** True for fabricated prototype content that must be labelled as such. */
   synthetic: boolean;
+  /** Older API kept for existing integrations; selectors show a "legacy" qualifier. */
+  legacy?: boolean;
+  /** Endpoint id the Playground opens on for this API; falls back to the first endpoint. */
+  defaultEndpoint?: string;
   /** Shown on the API overview page. */
   summary: string;
   categories: Category[];

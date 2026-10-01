@@ -21,7 +21,8 @@
     "gettingStarted": "צעדים ראשונים",
     "api": "API",
     "version": "גרסה",
-    "latest": "עדכנית"
+    "latest": "עדכנית",
+    "legacyApi": "{name} (מורשת)"
   },
   "theme": {
     "label": "ערכת צבעים",

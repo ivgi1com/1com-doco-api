@@ -36,7 +36,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
         >
           {apis.map((a) => (
             <option key={a.id} value={a.id}>
-              {a.name}
+              {a.legacy ? t("legacyApi", { name: a.name }) : a.name}
             </option>
           ))}
         </select>

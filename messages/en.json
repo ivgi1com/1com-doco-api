@@ -21,7 +21,8 @@
     "gettingStarted": "Getting started",
     "api": "API",
     "version": "Version",
-    "latest": "latest"
+    "latest": "latest",
+    "legacyApi": "{name} (legacy)"
   },
   "theme": {
     "label": "Theme",

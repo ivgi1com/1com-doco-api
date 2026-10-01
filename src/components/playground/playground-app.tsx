@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { RenderedSample } from "@/components/code/code-tabs";
-import { getApi, listEndpoints } from "@/content";
+import { defaultEndpoint, getApi } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { useRouter } from "@/i18n/navigation";
@@ -36,8 +36,8 @@ export function PlaygroundApp({
   const selectApi = useCallback(
     (nextApiId: string) => {
       const next = getApi(nextApiId);
-      const first = next && listEndpoints(next)[0];
-      if (next && first) router.push(`/playground?endpoint=${next.id}/${first.id}`);
+      const target = next && defaultEndpoint(next);
+      if (next && target) router.push(`/playground?endpoint=${next.id}/${target.id}`);
     },
     [router],
   );

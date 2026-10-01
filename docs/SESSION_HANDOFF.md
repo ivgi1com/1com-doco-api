@@ -1,7 +1,31 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-4 DONE and
-committed, Stage 5 NOT started; read this first)
+Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-5 DONE and
+committed, Stage 6 NOT started; read this first)
+
+## Phase 8E — Stage 5 done (Open API first/default), STOPPED before Stage 6 (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 5 commit on top of `abced17`. Not
+  pushed/merged/tagged.
+- **Done:** `apis = [openapiApi, proxyApi, sampleApi]`; additive
+  `ApiDefinition.legacy` (Proxy) and `defaultEndpoint` (Open API:
+  `simplecdrs-list`) + `defaultEndpoint(api)` helper in
+  `src/content/index.ts`, used by the Playground landing and the
+  Playground API switcher. "{name} (legacy)" (`nav.legacyApi`, he DRAFT)
+  in the sidebar select, Playground API select and home API chips.
+  `/reference` now redirects to `/reference/openapi`.
+- **Tests:** new `tests/unit/api-order.test.ts` (4); e2e redirect test
+  updated, 2 new (Playground default, home chip order).
+- **Validation:** `npm run check` 386/386; build clean (448 pages);
+  targeted Playwright 26 passed / 2 WebKit skips; 60-load visual pass
+  (chromium + webkit × en/he × desktop/tablet/mobile × 5 routes): zero
+  console errors, no overflow; screenshots reviewed. Full suite deferred
+  to Stage 7.
+- **Model:** Stage 5 ran on Opus 5.5 by user choice (routing says Sonnet).
+- **Next:** Stage 6 — Guides API selector + "Most Used Cases" guide
+  (inbound-call popup and post-call delivery still wait for the user's
+  description) + landing card; revisit the home "getting started" button
+  (hard-codes the Sample guide). Sonnet 5.
 
 ## Phase 8E — customer-facing change brief: Stages 0-4 done, STOPPED before Stage 5 (2026-10-02)
 

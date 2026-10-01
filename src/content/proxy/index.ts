@@ -50,6 +50,7 @@ export const proxyApi: ApiDefinition = {
   version: "legacy",
   baseUrl: PROXY_BASE_URL,
   synthetic: false,
+  legacy: true,
   summary:
     "1com's HTTP API for the PBX (proxyapi.php). One URL; the reqtype query parameter (plus an action, info, object or subreqtype value) selects the operation. Operations are grouped by reqtype. Operations that change state are documented here but never sent from the Playground.",
   // INFO first (it holds the Phase 4–6 Live/Demo operations), then alphabetical.
