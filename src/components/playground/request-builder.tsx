@@ -55,12 +55,16 @@ export function RequestBuilder({
     setKeyRevealed,
     setSimulateError,
     send,
+    writeDemoSupported,
   } = state;
 
   const hasErrors = Object.keys(errors).length > 0;
   const envVar = authEnvVar(endpoint);
-  const writeOnly = endpoint.operationClass === "write";
-  const liveBlocked = mode === "live" && !liveAvailable && !writeOnly;
+  const isWrite = endpoint.operationClass === "write";
+  // SEC-REQ-27: a write is never sent in Live; in Demo it runs only from a
+  // documented-example fixture set (writeDemoSupported).
+  const writeOnly = isWrite && (mode === "live" || !writeDemoSupported);
+  const liveBlocked = mode === "live" && !liveAvailable && !isWrite;
 
   const applyScenario = (preset: Readonly<Record<string, string>>) => {
     for (const [name, value] of Object.entries(preset)) setField(fieldKey("query", name), value);
@@ -73,12 +77,12 @@ export function RequestBuilder({
         <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{resolveLivePath(endpoint, fieldValues)}</code>
       </div>
 
-      {writeOnly && (
+      {isWrite && (
         <p
           data-testid="write-only-note"
           className="rounded-md border border-warning-ink/30 bg-warning-tint px-3 py-2 text-xs text-warning-ink"
         >
-          {t("writeOnlyNote")}
+          {writeDemoSupported ? t("writeDemoNote") : t("writeOnlyNote")}
         </p>
       )}
 

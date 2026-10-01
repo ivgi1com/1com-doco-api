@@ -1,4 +1,4 @@
-import { getDemoFixtures, resolveDemoCase } from "@/content/demo";
+import { getDemoFixtures, isDemoSimulatedWrite, resolveDemoCase } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { byteSize } from "@/lib/json-path";
 import {
@@ -147,6 +147,11 @@ function parseBody(text: string): { format: "json" | "text"; body: unknown } {
 export const liveProvider: ApiExecutor = {
   async execute({ api, endpoint, fieldValues, credential }, signal) {
     const request = sanitizedRequest(api, endpoint, fieldValues);
+    // SEC-REQ-27: Live never sends a write. The UI and the server allowlist
+    // (GET-only) already block this; this is the client-side last layer.
+    if (endpoint.operationClass === "write") {
+      return { source: "LIVE", kind: "portal-error", code: "endpoint_not_allowed", request };
+    }
     const payload: LiveRequestBody = {
       endpoint: `${api.id}/${endpoint.id}`,
       params: liveQueryParams(endpoint, fieldValues),
@@ -240,9 +245,12 @@ export const demoProvider: ApiExecutor = {
     await delay(400 + Math.random() * 500, signal);
     const request = sanitizedRequest(api, endpoint, fieldValues);
 
-    // Write operations are Reference-only (types.ts OperationClass): no
-    // Demo response exists for them, even if a fixture were added by mistake.
-    if (endpoint.operationClass === "write") return { source: "DEMO", unavailable: true };
+    // Writes are Reference-only (types.ts OperationClass) unless SEC-REQ-27's
+    // documented-example Demo applies (isDemoSimulatedWrite); a fixture added
+    // by mistake on any other API still never answers.
+    if (endpoint.operationClass === "write" && !isDemoSimulatedWrite(api.id, endpoint)) {
+      return { source: "DEMO", unavailable: true };
+    }
 
     const fixtures = getDemoFixtures(api.id, endpoint.id);
     if (fixtures) {

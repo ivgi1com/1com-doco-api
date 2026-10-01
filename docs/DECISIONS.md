@@ -1456,3 +1456,31 @@ tagged, not pushed (none requested). **Next: Phase 8C — OpenAPI
 Playground.** Not started; waiting for its own plan to be presented and
 separately approved. Do not begin 8C planning or implementation without
 that approval.
+
+## Phase 8C planning and SEC-REQ-27 amendment (2026-10-01)
+
+- **Plan approved 2026-10-01**
+  (`C:\Users\ivgi-pc\.claude\plans\magical-zooming-sutton.md`,
+  Stages 0–7). Branch `phase/open-api` (already pushed and in sync with
+  `origin` before this phase — the 8B handoff's "not pushed" was stale).
+- **User decisions (AskUserQuestion, this session):**
+  1. OpenAPI writes get a **synthetic Demo**, **documented-only**: only
+     the vendor's documented example responses and the observed generic
+     error envelope; a write with no documented response shows "Demo data
+     not available". This **supersedes** the "writes stay Reference-only"
+     wording in "Phase 8 planning", "Phase 8 Stage 3 complete", "Phase 8
+     Stage 5 complete" and "Phase 8B planning and probe decisions" — for
+     Demo only. Live is unchanged: no write of any API is ever sent.
+  2. 8C Playground changes go into the **shared** components (Proxy
+     pages gain them too; Proxy regression pass required).
+  3. The SEC-REQ-27 change runs on **Opus** (Stage 0); the rest of 8C on
+     Sonnet 5.
+- **Stage 0 (Opus) implementation:** `DEMO_WRITE_APIS` (`openapi` only)
+  and `isDemoSimulatedWrite()` in `src/content/demo/index.ts` are the
+  single predicate used by `demoProvider`, `use-playground.ts` `send`,
+  `request-builder.tsx` and `response-viewer.tsx`. `liveProvider` gained
+  a defensive write block (`endpoint_not_allowed`, no fetch). New
+  `playground.writeDemoNote` string (en; he DRAFT). No write fixture
+  exists yet (Stage 2), so the visible behavior is unchanged until then.
+  `docs/SECURITY.md` SEC-REQ-27 and "Demo mode guarantees" amended.
+  `npm run check` 352/352.

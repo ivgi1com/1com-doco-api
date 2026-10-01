@@ -99,7 +99,8 @@ function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest;
 export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; endpoint: Endpoint }) {
   const t = useTranslations("playground");
   const [tab, setTab] = useState<"body" | "headers" | "request">("body");
-  const { response, sending, elapsedMs } = state;
+  const { response, sending, elapsedMs, writeDemoSupported } = state;
+  const writeOnly = endpoint.operationClass === "write" && (state.mode === "live" || !writeDemoSupported);
 
   if (sending) {
     return (
@@ -117,10 +118,10 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
       <div className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 px-6 text-center">
         <Inbox className="size-6 text-ink-muted" aria-hidden />
         <p className="text-sm font-semibold text-ink">
-          {endpoint.operationClass === "write" ? t("writeOnlyTitle") : t("emptyTitle")}
+          {writeOnly ? t("writeOnlyTitle") : t("emptyTitle")}
         </p>
         <p className="max-w-[28rem] text-sm text-ink-muted">
-          {endpoint.operationClass === "write" ? t("writeOnlyNote") : t("emptyBody")}
+          {writeOnly ? (writeDemoSupported ? t("writeDemoNote") : t("writeOnlyNote")) : t("emptyBody")}
         </p>
       </div>
     );

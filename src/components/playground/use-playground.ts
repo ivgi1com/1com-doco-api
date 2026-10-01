@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { isDemoSimulatedWrite } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { demoProvider, liveProvider, type PlaygroundResponse } from "./executor";
 
@@ -159,6 +160,8 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     setPendingMode(null);
   }, [pendingMode, setApiKey, abandonInFlightSend, withSharedFields]);
 
+  const writeDemoSupported = isDemoSimulatedWrite(api.id, endpoint);
+
   const validate = useCallback((): Record<string, string> => {
     const next: Record<string, string> = {};
     if (mode === "live" && !apiKey.trim()) next.apiKey = "apiKey";
@@ -182,6 +185,9 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
 
   const send = useCallback(() => {
     if (mode === "live" && !liveAvailable) return;
+    // SEC-REQ-27: a write is never sent in Live, and runs in Demo only when
+    // it has a documented-example fixture set.
+    if (endpoint.operationClass === "write" && (mode === "live" || !writeDemoSupported)) return;
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -218,7 +224,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
         clearInterval(timerRef.current);
         setSending(false);
       });
-  }, [api, apiKey, endpoint, fieldValues, liveAvailable, mode, simulateError, validate]);
+  }, [api, apiKey, endpoint, fieldValues, liveAvailable, mode, simulateError, validate, writeDemoSupported]);
 
   return {
     mode,
@@ -231,6 +237,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     sending,
     elapsedMs,
     response,
+    writeDemoSupported,
     mobileStep,
     setField,
     setApiKey,

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getApi, getEndpoint } from "@/content";
-import { getDemoFixtures } from "@/content/demo";
+import { getDemoFixtures, isDemoSimulatedWrite } from "@/content/demo";
 import { proxyApi } from "@/content/proxy";
 import { sampleApi } from "@/content/sample-api";
 import {
@@ -153,6 +153,26 @@ describe("liveProvider", () => {
   });
 });
 
+describe("liveProvider and writes", () => {
+  it("never sends a write, for any API, even a Live-allowlisted id (SEC-REQ-27)", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    for (const [api, endpoint] of [
+      [proxyApi, { ...infoExtensions, operationClass: "write" as const }],
+      [openapiApi, getEndpoint("openapi", "campaigns-delete")!],
+      [openapiApi, getEndpoint("openapi", "dial")!],
+    ] as const) {
+      const result = await liveProvider.execute(
+        { api, endpoint, fieldValues: { "query:tenant": "EXAMPLE" }, credential: KEY, simulateError: false },
+        new AbortController().signal,
+      );
+      expect(result).toMatchObject({ source: "LIVE", kind: "portal-error", code: "endpoint_not_allowed" });
+      expect(JSON.stringify(result)).not.toContain(KEY);
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe("demoProvider", () => {
   it("never makes a network request", async () => {
     const fetchMock = vi.fn();
@@ -204,6 +224,32 @@ describe("demoProvider", () => {
       );
       expect(result).toEqual({ source: "DEMO", unavailable: true });
     }
+  });
+
+  it("answers an OpenAPI write from its fixture set without any network request (SEC-REQ-27, amended)", async () => {
+    // No write fixture exists yet (Phase 8C Stage 2); a fixtured read flagged
+    // as a write stands in, which is exactly the path a write fixture takes.
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const id = "extensions-state-get";
+    const endpoint = { ...getEndpoint("openapi", id)!, operationClass: "write" as const };
+    expect(isDemoSimulatedWrite("openapi", endpoint)).toBe(true);
+    const preset = getDemoFixtures("openapi", id)!.cases[0].preset;
+    const values = Object.fromEntries(Object.entries(preset).map(([k, v]) => [`query:${k}`, v]));
+    const result = await demoProvider.execute(
+      { api: openapiApi, endpoint, fieldValues: values, credential: KEY, simulateError: false },
+      new AbortController().signal,
+    );
+    expect(result.source).toBe("DEMO");
+    expect("unavailable" in result && result.unavailable).toBeFalsy();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(JSON.stringify(result)).not.toContain(KEY);
+  });
+
+  it("keeps a write Reference-only on an API outside DEMO_WRITE_APIS, even with a fixture set", () => {
+    expect(isDemoSimulatedWrite("proxy", { ...infoExtensions, operationClass: "write" })).toBe(false);
+    expect(isDemoSimulatedWrite("openapi", getEndpoint("openapi", "campaigns-delete")!)).toBe(false);
+    expect(isDemoSimulatedWrite("openapi", getEndpoint("openapi", "extensions-state-get")!)).toBe(false);
   });
 
   it("returns a synthetic success response for the synthetic Sample API", async () => {

@@ -189,6 +189,7 @@
     "demoUnavailableNote": "Demo data for this endpoint isn't available yet (planned for a later phase).",
     "writeOnlyTitle": "Reference only",
     "writeOnlyNote": "This operation changes state on the PBX, so the Playground never sends it, in Live or Demo mode. Use the code preview from your own environment.",
+    "writeDemoNote": "This operation changes state on the PBX. Live mode never sends it. Demo mode answers with the vendor's documented example response; nothing is sent anywhere.",
     "demoUnavailableTitle": "Demo data not available yet",
     "demoUnavailableBody": "Demo mode for this endpoint is built in a later phase. It will never replay real observed responses shown elsewhere on this page.",
     "demoFixtureNote": "Demo responses are synthetic data built to match this endpoint's real, observed behavior — never a copy of a real response.",

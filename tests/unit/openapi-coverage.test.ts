@@ -1,8 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { getApi, listEndpoints } from "@/content";
-import { getDemoFixtures } from "@/content/demo";
+import { getApi, getEndpoint, listEndpoints } from "@/content";
+import { getDemoFixtures, isDemoSimulatedWrite } from "@/content/demo";
 import { getEndpointExamples } from "@/content/examples";
 import type { Parameter } from "@/content/types";
 import { listLiveTargetIds } from "@/server/playground/allowlist";
@@ -155,11 +155,22 @@ describe("OpenAPI content ↔ inventory", () => {
     expect(live.filter((id) => id.startsWith("openapi/"))).toEqual([]);
   });
 
-  it("gives Demo fixtures only to the approved read endpoints", () => {
+  it("gives Demo fixtures only to the approved endpoints", () => {
+    // Writes may be Demo-simulated from documented examples only (SEC-REQ-27,
+    // amended 2026-10-01); each still has to be listed in DEMO_ALLOWED.
     for (const e of endpoints) {
       const fixtures = getDemoFixtures("openapi", e.id);
       if (!DEMO_ALLOWED.has(e.id)) expect(fixtures, `${e.id} has Demo fixtures`).toBeUndefined();
-      if (e.operationClass === "write") expect(fixtures, `${e.id} is a write with Demo fixtures`).toBeUndefined();
+      expect(isDemoSimulatedWrite("openapi", e), e.id).toBe(e.operationClass === "write" && fixtures !== undefined);
+    }
+  });
+
+  it("never puts a write of any API on the Live allowlist (SEC-REQ-27)", () => {
+    for (const id of listLiveTargetIds()) {
+      const [apiId, endpointId] = id.split("/");
+      const endpoint = getEndpoint(apiId, endpointId);
+      expect(endpoint, id).toBeDefined();
+      expect(endpoint?.operationClass, id).not.toBe("write");
     }
   });
 

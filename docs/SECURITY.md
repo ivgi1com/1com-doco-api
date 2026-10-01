@@ -49,6 +49,7 @@ Demo mode:
 - never contains copied production records
 - uses clearly synthetic data
 - never silently replaces a Live failure with Demo output
+- never sends a write operation anywhere; a simulated write (SEC-REQ-27, amended) is answered locally from documented examples only
 
 ## SSRF defense
 
@@ -461,7 +462,7 @@ Create/update writes two credential-shaped fields directly: `ph_password` and `p
 
 Recorded 2026-09-26 (Stage C review, user decision). Applies to every OpenAPI resource.
 
-Every OpenAPI `POST`, `PATCH`, `PUT` and `DELETE` stays out of the Live Playground, and out of any Demo path that could send a request. This matches the Proxy precedent, where writes are Reference-only in the UI and in the executor. Enabling any single write operation needs its own explicit security decision; it is not part of the read-allowlist checklist. This rule also covers write-side risks that don't warrant a per-resource entry of their own: Cron Job and Flow (they change call routing), Feature Code and Short Number (dialing behavior), Campaign state (SEC-REQ-23), and Music On Hold `application` (SEC-REQ-30). Documentation and code samples for writes are unaffected.
+Every OpenAPI `POST`, `PATCH`, `PUT` and `DELETE` stays out of the Live Playground, and out of any Demo path that could send a request. **Amended 2026-10-01 (Phase 8C, user decision):** an OpenAPI write may be *simulated* in Demo, under all of these conditions: (1) its fixture set is built only from the vendor's documented example responses and the observed generic error envelope (no invented bodies; a write with no documented response stays "Demo data not available"); (2) the simulation is local (`demoProvider`, `src/components/playground/executor.ts`) and never reaches `/api/playground` or any upstream host; (3) only APIs listed in `DEMO_WRITE_APIS` (`src/content/demo/index.ts`, currently `openapi` only) qualify, so Proxy writes stay Reference-only in the UI and in the executor, even if a fixture were added by mistake; (4) Live never sends a write of any API: blocked in the UI, in `use-playground.ts` `send`, in `liveProvider` itself (`endpoint_not_allowed`, no fetch), and on the server (GET-only allowlist). Enforced by `tests/unit/executor.test.ts` ("liveProvider and writes", the write-Demo cases) and `tests/unit/openapi-coverage.test.ts` (no write on the Live allowlist; `isDemoSimulatedWrite` only for fixtured writes). The Proxy precedent (writes Reference-only in the UI and in the executor) is unchanged. Enabling any single write operation needs its own explicit security decision; it is not part of the read-allowlist checklist. This rule also covers write-side risks that don't warrant a per-resource entry of their own: Cron Job and Flow (they change call routing), Feature Code and Short Number (dialing behavior), Campaign state (SEC-REQ-23), and Music On Hold `application` (SEC-REQ-30). Documentation and code samples for writes are unaffected.
 
 ### SEC-REQ-28 — OpenAPI tenant isolation for Live (cross-cutting, BLOCK LIVE, open)
 
