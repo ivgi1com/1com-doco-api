@@ -1652,3 +1652,13 @@ that approval.
 - **Regenerated reports:** `npm run rollout:status` produced no change to
   `OPENAPI_PLAYGROUND_STATUS.md`, `OPENAPI_DEMO_STATUS.md` or
   `ROLLOUT_STATUS.md`.
+
+## Phase 8C — at the approval gate (2026-10-01)
+
+Stages 0–6 are done (Stage 2 dropped by decision); validation results are
+in "Phase 8C Stage 6". The phase is **not approved and not marked
+complete**: it waits for the user's A/B/C/D choice. 8D (pre-Stage-6
+readiness gate, Sonnet 5) and the Phase 8 Stage 6 review (Opus) have not
+started. Stale notes corrected in `docs/CURRENT_STATUS.md` and
+`docs/SESSION_HANDOFF.md`: the branch is pushed through the 8B approval
+(`f56151b`), and the 8B "present the report" instruction is obsolete.

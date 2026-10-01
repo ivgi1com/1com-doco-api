@@ -1,5 +1,8 @@
 # Phase 8C — OpenAPI Playground
 
+> **Status (2026-10-01): implemented and validated, AT THE APPROVAL GATE — not approved, not marked complete.**
+> Stages 0–6 done (Stage 2, write fixtures, dropped by decision). Details: `docs/DECISIONS.md` "Phase 8C planning and SEC-REQ-27 amendment" through "Phase 8C Stage 6", `docs/SESSION_HANDOFF.md`, coverage `source-docs/OPENAPI_PLAYGROUND_STATUS.md`.
+
 > **Parent phase:** Phase 8 — MiRTA OpenAPI rollout  
 > **Position:** After API Reference completeness and Demo, before pre-Stage-6 readiness gate  
 > **Primary model:** Sonnet 5  

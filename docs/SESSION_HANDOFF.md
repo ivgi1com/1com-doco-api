@@ -1,9 +1,54 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (Phase 8B — OpenAPI Demo: Stages 1–5 APPROVED,
-gate B — stop here; next phase (8C) NOT started; read this first)
+Last updated: 2026-10-01 (Phase 8C — OpenAPI Playground: implemented and
+validated, AT THE APPROVAL GATE, awaiting the user's A/B/C/D choice; 8D
+NOT started; read this first)
 
-## Phase 8B — APPROVED (2026-09-26, gate B: approve, save, and stop)
+## Phase 8C — AT THE APPROVAL GATE (2026-10-01; not approved, not complete)
+
+- Branch `phase/open-api` @ `d39de1a`. 6 commits on top of the pushed 8B
+  approval `f56151b` (`82dfa68`, `f1ee0ae`, `e9cc599`, `1e40931`,
+  `103bab5`, `d39de1a`) plus this docs commit; all local, **not pushed**.
+  `main` is still `be23fb2`; nothing merged or tagged.
+- **Done (Stages 0–6; Stage 2 dropped):**
+  - Stage 0 (Opus): SEC-REQ-27 amended — OpenAPI writes may be Demo-
+    simulated from documented examples only; Live never sends a write
+    (UI, `use-playground` send, `liveProvider`, server GET-only).
+    `DEMO_WRITE_APIS` + `isDemoSimulatedWrite()` in `src/content/demo/index.ts`.
+  - Stage 1: only 3/93 writes document a success response (dial,
+    auth-token-create/delete), all SEC-REQ-05/06-excluded → 0 simulatable.
+    Stage 2 (write fixtures) dropped by user decision; the Stage 0 guard
+    stays as dormant, tested machinery.
+  - Stage 3: request body + cURL (`sanitizedRequest`, `curlEquivalent`),
+    secret-named body fields masked `<REDACTED>`, collapsed "Request
+    preview" in the shared form, request shown for unavailable Demo.
+  - Stage 4: field details, `OperationHeader`, API switcher, unknown-
+    `?endpoint=` notice, no key field and an explicit message where Live
+    cannot send, neutral Demo-unavailable copy. Defaults are placeholders,
+    not pre-filled (deviation, recorded).
+  - Stage 5: `source-docs/OPENAPI_PLAYGROUND_STATUS.md` via
+    `npm run rollout:status` (now `tsx --conditions=react-server`).
+  - Stage 6: narrow-mobile e2e + full validation.
+- **Validation:** `npm run check` 361/361; `npm run build` clean (576
+  pages); full Playwright 192 passed / 2 WebKit skips / 0 failed (194);
+  96-load sweep clean; secret/PII scan clean.
+- **Known limitations:** writes are not Demo-executable (0/93) and Send is
+  blocked for them; 14 reads have no Demo data; Live is 0/159; Hebrew
+  strings are DRAFT and API prose stays English; the WebKit `selectOption`
+  gap leaves the optional-enum reset and API-switcher tests Chromium-only;
+  the coverage report is generated, so re-run `npm run rollout:status` if
+  content changes; TEST API key rotation still open (`docs/SECURITY.md`).
+- **Environment:** the dev server may still be running on port 3000 (started
+  at the user's request); no production server is left running.
+- **Models:** 8C ran Opus (Stage 0) then Sonnet 5. Next phase 8D is routed
+  to Sonnet 5 (`docs/phases/08-substages-README.md`); the Phase 8 Stage 6
+  cross-API consistency and security review after it is Opus.
+- **First action next session:** `git status`, `git log -3`; if the user
+  has chosen A/B/C/D, follow it; if not, re-present the Phase 8C Completion
+  Report and ask the gate question. Do not start 8D or Stage 6 without the
+  user's explicit approval.
+
+## (Superseded by the entry above) Phase 8B — APPROVED (2026-09-26, gate B: approve, save, and stop)
 
 - Branch `phase/open-api`, HEAD (after the approval commit) on top of
   `c086c14`. Not pushed, not merged, not tagged.
@@ -90,10 +135,8 @@ gate B — stop here; next phase (8C) NOT started; read this first)
 - **Model:** Sonnet 5 for all of this session's Stage 4/5 work, per the
   project's routing rule (routine fixture/test/validation work). The
   Stage 6 review, whenever it starts, is Opus per the existing plan.
-- **First action next session:** `git status`, `git log -3`, confirm
-  the tree is clean, then present (or re-present, if the user already
-  saw it and this is a fresh session) the Phase 8B §16 completion
-  report and wait for the A/B/C/D decision below. Do not start 8C.
+- **(Stale as of 2026-10-01 — 8B was approved and pushed; see the 8C entry above.)**
+  First action had been: present the 8B completion report. Do not start 8C.
 
 ## (Superseded by the entry above) Phase 8B — Stage 4 + Stage 5 coverage report: WIP checkpoint committed (2026-09-26, Sonnet 5); STOP, Stage 5 validation not finished
 

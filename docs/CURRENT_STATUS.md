@@ -1,6 +1,27 @@
 # Current Status
 
 Current work:
+**Phase 8C — OpenAPI Playground: implemented and validated, AT THE
+APPROVAL GATE (2026-10-01) — NOT approved, NOT marked complete; 8D has
+not started.** Branch `phase/open-api` @ `d39de1a` (6 commits on top of
+the pushed 8B approval `f56151b`; those 6 are local, not pushed). Stages
+0–6 done: SEC-REQ-27 amended (a write may be Demo-simulated from a
+documented example only, never Live — Stage 0, Opus); the write-response
+audit found only 3 of 93 writes document a success response, all excluded
+by SEC-REQ-05/06, so **0 writes are simulatable** and Stage 2 (write
+fixtures) was dropped by user decision; request body + cURL + live
+"Request preview"; field details, operation header (kind/auth/key scope),
+API switcher, unknown-endpoint notice and an explicit Live-not-enabled
+state; Playground coverage report. Coverage: 37/37 resources, 159/159
+operations in the Playground; Demo 52 (52/66 reads, 0/93 writes); Live 0;
+Live-disabled 159. Validation: `npm run check` 361/361, `npm run build`
+clean (576 pages), full Playwright 192 passed / 2 WebKit skips / 0 failed
+(194), a 96-load sweep (2 engines × 2 locales × 3 viewports × 8
+operations) clean, secret/PII scan clean. Full detail: `docs/DECISIONS.md`
+"Phase 8C ..." entries, `docs/SESSION_HANDOFF.md`. Open: TEST API key
+rotation still pending; Hebrew strings still DRAFT.
+
+Previous Phase 8 summary (history, kept for context):
 **Phase 8 — Open API rollout: Stages 0–5 done. A manual product review
 on 2026-09-26 found the OpenAPI implementation was not actually
 feature-complete before Stage 6** (the API Reference didn't expose all
@@ -51,7 +72,7 @@ Plan approved 2026-09-26
 in `docs/DECISIONS.md` "Phase 8 planning", "Phase 8 Stage 1 complete",
 "Phase 8 Stage 3 complete", "Phase 8 Stage 4 complete", "Phase 8 Stage 5
 complete"). `main` fast-forwarded to `be23fb2` and tagged
-`v0.5-proxy-complete`. Branch `phase/open-api`, not pushed. Scope:
+`v0.5-proxy-complete`. Branch `phase/open-api` (pushed through the 8B approval; 8C commits local). Scope:
 Reference pages for all 159 operations (OA-13) complete —
 `ROLLOUT_COMPLETE = true` in `tests/unit/openapi-coverage.test.ts`.
 Demo fixtures for the 3 approved GETs; every write Reference-only. One
