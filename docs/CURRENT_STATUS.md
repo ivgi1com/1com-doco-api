@@ -1,7 +1,17 @@
 # Current Status
 
 Current work:
-**Phase 8C — OpenAPI Playground: APPROVED (2026-10-01, gate A —
+**Phase 8D — pre-Stage-6 readiness gate: validation run 2026-10-01, result
+PASS — ready for Stage 6 (checkpoint commit, not an approval).** Phase 8
+and Stage 6 are NOT complete; Stage 6 (Opus cross-API consistency and
+security review) has NOT started and needs the user to switch to Opus 5.
+Evidence: `source-docs/OPENAPI_READINESS.md`, `tests/unit/phase8-readiness.test.ts`
+(15 new tests), `docs/DECISIONS.md` "Phase 8D". `npm run check` 376/376,
+`npm run build` clean (576 pages), full Playwright 192 passed / 2 WebKit
+skips / 0 failed, all boundary checks PASS, zero unexplained gaps.
+Remaining limitations: see `docs/SESSION_HANDOFF.md`.
+
+Previous: **Phase 8C — OpenAPI Playground: APPROVED (2026-10-01, gate A —
 approve, save, and continue to planning the next phase). 8D (pre-Stage-6
 readiness gate, Sonnet 5) is in PLAN MODE only: planning, no
 implementation until its plan is separately approved.** Branch

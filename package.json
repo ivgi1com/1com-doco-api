@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "rollout:status": "tsx --conditions=react-server scripts/rollout-status.ts"
+    "rollout:status": "tsx --conditions=react-server scripts/rollout-status.ts",
+    "readiness:openapi": "tsx --conditions=react-server scripts/openapi-readiness.ts"
   },
   "dependencies": {
     "lucide-react": "^1.48.0",

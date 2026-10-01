@@ -113,7 +113,7 @@ export const BODY_SECRET_MASK = "<REDACTED>";
 const SECRET_FIELD = /(pass|secret|pin$|_pin|pin_|securitypin|token|md5|imap|apikey|api_key)/i;
 const NOT_SECRET_FIELD = /validity|locked|meid$/i;
 
-function isSecretField(name: string): boolean {
+export function isSecretField(name: string): boolean {
   return SECRET_FIELD.test(name) && !NOT_SECRET_FIELD.test(name);
 }
 

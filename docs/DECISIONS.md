@@ -1674,3 +1674,30 @@ not pushed (none requested). **Next: Phase 8D — pre-Stage-6 readiness
 gate** (Sonnet 5): plan mode only; no implementation until its plan is
 separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
 8D.
+
+## Phase 8D — pre-Stage-6 readiness gate: PASS (2026-10-01, Sonnet 5)
+
+- **Plan decisions (user, 2026-10-01):** the approved baseline files are
+  left untouched; CDR/Simple CDR being PARTIAL there while 8A documents
+  their field tables is reported as a classified discrepancy. OA-15, U-17,
+  U-18, the TEST-key rotation and Proxy-era U-03/05/06/15 are known
+  limitations, not gate blockers.
+- **Added (no product behavior change):** `tests/unit/phase8-readiness.test.ts`
+  (15 tests), `scripts/openapi-readiness.ts` (`npm run readiness:openapi`,
+  `tsx --conditions=react-server`) and the generated
+  `source-docs/OPENAPI_READINESS.md`; `isSecretField` is now exported from
+  `executor.ts` so the test and the executor share one name rule.
+- **Gate result: PASS.** Reconciled coverage, mismatch classification (93
+  documentation UNKNOWN, 13 security-blocked, 1 intentionally unsupported;
+  0 implementation gaps, 0 unexplained) and boundary checks are in
+  `OPENAPI_READINESS.md`. The secret scan initially flagged two documented
+  placeholders (`generated-token-value`, `REPLACE_WITH_A_STRONG_SECRET`);
+  the pattern now excludes placeholder-named values (verified they are the
+  vendor/Proxy example strings, not credentials).
+- **Validation:** `npm run check` 376/376; build clean (576 pages); full
+  Playwright 192 passed / 2 WebKit skips / 0 failed (no flake this run);
+  Phase 8 diff secret + customer-data scans clean; server, Live and
+  tenant-isolation code (`src/server`, `src/app/api`,
+  `src/lib/playground-protocol.ts`) has no diff versus `main`.
+- **Not done / by design:** Phase 8 and Stage 6 are not marked complete;
+  nothing merged, pushed or tagged. Stage 6 needs Opus 5.

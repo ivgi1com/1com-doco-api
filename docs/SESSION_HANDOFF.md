@@ -1,7 +1,47 @@
 # Session Handoff
 
-Last updated: 2026-10-01 (Phase 8C — OpenAPI Playground: APPROVED, gate A;
-8D is in plan mode only, NOT implemented; read this first)
+Last updated: 2026-10-01 (Phase 8D readiness gate: result PASS, checkpoint
+committed; Stage 6 NOT started; read this first)
+
+## Phase 8D — readiness gate PASS (2026-10-01; checkpoint, not an approval)
+
+- Branch `phase/open-api`. 8C approval `b9069e7` plus the 8D checkpoint
+  commit; local only, **not pushed, merged or tagged**. Phase 8 and
+  Stage 6 are **not** complete.
+- **Result: PASS — ready for Stage 6.** Switch to **Opus 5** before the
+  Stage 6 cross-API consistency and security review (review-first).
+- **What 8D added (no product behavior change):**
+  `tests/unit/phase8-readiness.test.ts` (Demo never fetches for all 159
+  operations; Live refuses writes; SEC-REQ-05/06 exclusions; secret-named
+  fields in Demo fixtures; baseline ↔ inventory ↔ content reconciliation;
+  Live allowlist = 3 Proxy reads), `scripts/openapi-readiness.ts` +
+  `npm run readiness:openapi` -> `source-docs/OPENAPI_READINESS.md`, and
+  `isSecretField` exported from `executor.ts`.
+- **Reconciled numbers:** 37 resources / 159 operations in Reference and
+  Playground; Demo 52 (reads; 0 writes); Live 0; vendor response schemas 8
+  (+50 observed, Reference only); UNKNOWN response schemas 101 on the
+  Reference; BLOCK LIVE 47; mismatches: documentation UNKNOWN 93,
+  security-blocked 13, intentionally unsupported 1, implementation gaps 0,
+  unexplained 0. Baseline predates 8A for CDR/Simple CDR (reported, baseline
+  untouched, by decision).
+- **Validation:** `npm run check` 376/376; `npm run build` clean (576);
+  Playwright 192 passed / 2 skipped / 0 failed; boundary checks all PASS
+  (no OpenAPI Live id, Live = the 3 approved Proxy reads, server/Live/
+  tenant code unchanged since `main`, secret scan 23,111 added lines clean,
+  customer-data scan clean, client bundle clean).
+- **Known limitations / not blockers (user decision 2026-10-01):** CONFLICT
+  none in the baseline, one observed (OA-15, record both); U-18 (spec not
+  supplied), U-17 (base URL never called), Proxy-era U-03/05/06/15; the
+  TEST API key rotation is **still open** (`docs/SECURITY.md`); Hebrew
+  strings DRAFT; writes not Demo-executable (0/93); 14 reads without Demo
+  data; the bundle scan's env-value check is vacuous here because
+  `.env.local` holds only `PLAYGROUND_LIVE_ENABLED`.
+- **Environment:** no server is running (the dev server was stopped for
+  the production test run); start it with `npm run dev` if wanted.
+- **Exact next step:** the user switches to Opus 5, then Stage 6 starts
+  (`docs/phases/08-open-api.md`, review-first). Do not start it on Sonnet.
+
+## (Superseded by the entry above) Phase 8C approved; 8D in plan mode
 
 ## Phase 8C — APPROVED (2026-10-01, gate A: approve, save, continue to planning 8D)
 
