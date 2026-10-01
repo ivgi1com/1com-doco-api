@@ -1656,9 +1656,21 @@ that approval.
 ## Phase 8C — at the approval gate (2026-10-01)
 
 Stages 0–6 are done (Stage 2 dropped by decision); validation results are
-in "Phase 8C Stage 6". The phase is **not approved and not marked
-complete**: it waits for the user's A/B/C/D choice. 8D (pre-Stage-6
+in "Phase 8C Stage 6". The phase was **at the gate** here; it is now approved (see
+"Phase 8C — APPROVED" below). 8D (pre-Stage-6
 readiness gate, Sonnet 5) and the Phase 8 Stage 6 review (Opus) have not
 started. Stale notes corrected in `docs/CURRENT_STATUS.md` and
 `docs/SESSION_HANDOFF.md`: the branch is pushed through the 8B approval
 (`f56151b`), and the 8B "present the report" instruction is obsolete.
+
+## Phase 8C — APPROVED (2026-10-01, gate A)
+
+Approved: approve, save, and continue to planning the next phase. Stages
+0–6 complete (Stage 2 dropped by decision); coverage 37/37 resources,
+159/159 operations, Demo 52, Live 0, Live-disabled 159; validation clean
+(check 361/361, build clean, Playwright 192/194 with 2 WebKit skips, 96-
+load sweep and secret scan clean). Not merged into `main`, not tagged,
+not pushed (none requested). **Next: Phase 8D — pre-Stage-6 readiness
+gate** (Sonnet 5): plan mode only; no implementation until its plan is
+separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
+8D.

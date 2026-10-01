@@ -1,10 +1,12 @@
 # Current Status
 
 Current work:
-**Phase 8C — OpenAPI Playground: implemented and validated, AT THE
-APPROVAL GATE (2026-10-01) — NOT approved, NOT marked complete; 8D has
-not started.** Branch `phase/open-api` @ `d39de1a` (6 commits on top of
-the pushed 8B approval `f56151b`; those 6 are local, not pushed). Stages
+**Phase 8C — OpenAPI Playground: APPROVED (2026-10-01, gate A —
+approve, save, and continue to planning the next phase). 8D (pre-Stage-6
+readiness gate, Sonnet 5) is in PLAN MODE only: planning, no
+implementation until its plan is separately approved.** Branch
+`phase/open-api` (the 8C commits sit on top of the pushed 8B approval
+`f56151b`; they are local, not pushed, not merged, not tagged). Stages
 0–6 done: SEC-REQ-27 amended (a write may be Demo-simulated from a
 documented example only, never Live — Stage 0, Opus); the write-response
 audit found only 3 of 93 writes document a success response, all excluded

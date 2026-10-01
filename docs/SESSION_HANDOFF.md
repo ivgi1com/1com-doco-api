@@ -1,10 +1,16 @@
 # Session Handoff
 
-Last updated: 2026-10-01 (Phase 8C — OpenAPI Playground: implemented and
-validated, AT THE APPROVAL GATE, awaiting the user's A/B/C/D choice; 8D
-NOT started; read this first)
+Last updated: 2026-10-01 (Phase 8C — OpenAPI Playground: APPROVED, gate A;
+8D is in plan mode only, NOT implemented; read this first)
 
-## Phase 8C — AT THE APPROVAL GATE (2026-10-01; not approved, not complete)
+## Phase 8C — APPROVED (2026-10-01, gate A: approve, save, continue to planning 8D)
+
+- **Approved by the user, option A.** The next phase, 8D (pre-Stage-6
+  readiness gate, `docs/phases/08D-pre-stage6-readiness-gate.md`, Sonnet
+  5), enters PLAN MODE only. Nothing of 8D is implemented; its plan needs
+  separate approval. The Phase 8 Stage 6 Opus review stays on hold behind
+  8D.
+- Pushed / merged / tagged: none (not requested).
 
 - Branch `phase/open-api` @ `d39de1a`. 6 commits on top of the pushed 8B
   approval `f56151b` (`82dfa68`, `f1ee0ae`, `e9cc599`, `1e40931`,
@@ -43,10 +49,10 @@ NOT started; read this first)
 - **Models:** 8C ran Opus (Stage 0) then Sonnet 5. Next phase 8D is routed
   to Sonnet 5 (`docs/phases/08-substages-README.md`); the Phase 8 Stage 6
   cross-API consistency and security review after it is Opus.
-- **First action next session:** `git status`, `git log -3`; if the user
-  has chosen A/B/C/D, follow it; if not, re-present the Phase 8C Completion
-  Report and ask the gate question. Do not start 8D or Stage 6 without the
-  user's explicit approval.
+- **First action next session:** `git status`, `git log -3`, then read
+  `docs/phases/08D-pre-stage6-readiness-gate.md` and continue the 8D plan
+  (or re-enter plan mode for it). Do not implement 8D or start Stage 6
+  until the 8D plan is approved.
 
 ## (Superseded by the entry above) Phase 8B — APPROVED (2026-09-26, gate B: approve, save, and stop)
 
