@@ -1,7 +1,17 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-7 DONE;
-at the Stage 8 gate (report + A/B/C/D, awaiting the user); read this first)
+Last updated: 2026-10-02 (Phase 8E APPROVED, gate A; Phase 8 Stage 6 review
+planning is next, Opus 5.5; read this first)
+
+## Phase 8E — APPROVED (2026-10-02, gate A: approve, save, continue to planning)
+
+- Branch `phase/customer-brief` (from `phase/open-api`), approval commit on top
+  of `f084710`. Not pushed, merged or tagged; `main` unchanged.
+- Next: Phase 8 Stage 6 cross-API consistency and security review
+  (`docs/phases/08-open-api.md`, review-first). **Switch to Opus 5.5**, then
+  enter plan mode; do not implement before its plan is approved. Ordinary
+  remediation afterwards returns to Sonnet 5.
+- Everything in the Stage 7 entry below stays valid.
 
 ## Phase 8E — Stage 7 DONE (full validation, 8D re-run), at the Stage 8 gate (2026-10-02)
 

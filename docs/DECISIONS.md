@@ -1875,3 +1875,15 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   mirrored correctly in RTL, no overflow, no console errors.
 - **Not covered:** the native picker popup itself (browser UI) is not
   automated; values are driven through the inputs.
+
+## Phase 8E APPROVED (2026-10-02, gate A: approve, save, continue to planning)
+
+- The user approved Phase 8E (customer-facing change brief, Stages 0-7) at
+  `f084710` with option A. Final validation: check 395/395, build clean (450
+  pages), Playwright 205 passed / 3 WebKit skips / 0 failed, 8D readiness
+  PASS (6/6 boundary checks, 0 unexplained gaps).
+- Carried forward, not blockers: inbound-call popup and post-call delivery
+  guides await the user's description; Hebrew DRAFT; TEST API key rotation
+  open; `phonebook-add` vendor example looks like real data (out of scope).
+- Next: Phase 8 Stage 6 (cross-API consistency and security review, Opus
+  5.5, review-first) enters PLAN MODE only. Not pushed, merged or tagged.

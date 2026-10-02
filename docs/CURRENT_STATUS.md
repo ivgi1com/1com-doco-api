@@ -1,7 +1,7 @@
 # Current Status
 
 Current work:
-**Phase 8E — customer-facing change brief (before Phase 8 Stage 6): Stages
+**Phase 8E APPROVED (2026-10-02, gate A). Next: Phase 8 Stage 6 review, Opus 5.5, plan mode only. Phase 8E detail: customer-facing change brief (before Phase 8 Stage 6): Stages
 0-7 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
 5 made Open API first/default (Proxy "legacy", Playground opens on
 `simplecdrs-list`). Stage 6 (Guides selector, Most Used Cases) done: check
