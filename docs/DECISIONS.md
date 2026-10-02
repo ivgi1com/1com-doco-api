@@ -1887,3 +1887,39 @@ separately approved. The Phase 8 Stage 6 Opus review stays on hold behind
   open; `phonebook-add` vendor example looks like real data (out of scope).
 - Next: Phase 8 Stage 6 (cross-API consistency and security review, Opus
   5.5, review-first) enters PLAN MODE only. Not pushed, merged or tagged.
+
+## Phase 8 Stage 6 — review findings (2026-10-02, Opus 5.5) — awaiting user decision
+
+Branch `phase/open-api-review` (from `053e4cd`). Security: no high or medium
+findings; L-1..L-3 are in `docs/SECURITY.md` "Security review — Phase 8
+Stage 6". Consistency review over Proxy / Open API / Sample (8
+representative Reference pages, en + he, plus the selectors):
+
+- **Consistent:**
+  - Section order (Authentication → parameters → body → Responses →
+    Examples [Open API only] → Errors → Notes → Related).
+  - Writes have no "Try in Playground" link on either real API.
+  - One shared mechanism for evidence and verification labels ("Not
+    documented", "Observed", "Verification: …").
+  - The "Legacy" badge and "(legacy)" qualifier are Proxy-only.
+  - Open API comes first in every selector; "API Key" wording on Open API
+    and Proxy.
+- **C-1 (Medium, customer-facing copy):** Reference notes show internal
+  evidence references to customers:
+  - "Source: source-docs/…md" (all 206 en Reference pages)
+  - SEC-REQ-nn (99 pages)
+  - DOCS_AUDIT / A-nn / OA-nn (36)
+  - U-nn and "Site line N" / "Doc line N"
+  - "Phase 7" (4)
+  - `src/server/playground/allowlist.ts` (2)
+
+  Shared by both APIs, so it is consistent but not customer-ready.
+  Options: keep; strip from rendered notes; or move them to a collapsed
+  "Evidence" block. The 8E brief did not cover it.
+- **C-2 (Low):** the selectors show "Sample API"; 8E spec
+  (`08E-customer-change-brief.md:23`) says "Sample (prototype)".
+- **C-3 (Low):** Sample auth still says "Keys are scoped to one tenant",
+  although 8E removed key-scope display from Open API and Proxy. The Sample
+  API is synthetic.
+- **C-4 (Info):** Sample lists `Authorization` under "Headers"; Open API's
+  `X-API-Key` appears only under Authentication.

@@ -544,3 +544,56 @@ Rotate the key before that tenant/key pair is reused for any further
 probing or verification work. Not itself blocking for Phase 7 approval
 (no code or committed artifact depends on the key remaining valid), but
 track it until closed.
+
+## Security review — Phase 8 Stage 6 (2026-10-02, Opus 5.5)
+
+Scope: `main (be23fb2)...phase/open-api-review` (Phase 8, 8A-8E). Manual
+review plus the `security-review` skill as a second pass. **No high or
+medium findings.**
+
+Verified:
+
+- **Live boundary unchanged.** No diff since `main` in `src/server/**`,
+  `src/app/api/**`, `src/lib/playground-protocol.ts` or `next.config.ts`.
+  The allowlist is server-only, hard-wired to `proxyApi` and GET-only, so Live
+  still reaches only `proxy/info-extensions`, `proxy/info-agents` and
+  `proxy/cdr-get`. `liveAvailable` comes from `listLiveTargetIds()` on the
+  server, behind `PLAYGROUND_LIVE_ENABLED`. The 8E edits to Proxy content
+  change only wording and examples; auth (`query`/`key`) and paths are
+  unchanged.
+- **Writes are never sent.** `send()` (`use-playground.ts`) and `liveProvider`
+  refuse writes in Live. `isDemoSimulatedWrite` needs a write fixture set, and
+  Open API has none.
+- **Demo isolation.** `demoProvider` makes no network request, and there is
+  no Live-to-Demo fallback. Fixtures use only synthetic values (`TESTTENANT`,
+  `SYNTHETIC_SECRET`, 555 numbers, `demo@example.com`). The masked probe file
+  holds only type descriptors and error codes.
+- **Credentials.** The request preview and cURL mask the credential for
+  query, header and Bearer auth. Secret-named body fields become
+  `<REDACTED>`. None of the 491 query/path parameters is secret-named. Only
+  `?endpoint=` is read from the URL, so no field is pre-filled from a link.
+- **HTML sinks.** Four `dangerouslySetInnerHTML` sinks: a constant theme
+  script, and shiki HTML generated on the server from static content.
+  `InlineMarkup` builds React elements.
+- **Exposure.** `.next/static` and the prerendered HTML contain no excluded
+  admin operation ids, `ManageDB`, `MiRTA`, `CANISTRACCI` or `srv02`
+  (positive-control strings were found, so the scan works).
+
+Low / accepted (each needs a user decision before any change):
+
+- **L-1 Vendor example that looks real:** `src/content/proxy/misc.ts:127`
+  `phonebook-add` `{ NAME: "Ross", PHONE1: "3564732920" }`. Pre-existing on
+  `main`; it now also appears in the Playground request preview and body
+  defaults, and ships in 8 prerendered pages. Option: replace it with
+  synthetic values, as the Open API examples do.
+- **L-2 Defense in depth:** `src/content/examples.ts` and
+  `src/content/observed.ts` have no `import "server-only"`. Their data is
+  masked or synthetic, so nothing is exposed today.
+- **L-3 Self-only:** a path value the user types is substituted raw inside
+  the double-quoted URL of the copied cURL (`$(...)` would expand when
+  pasted). Only the user can enter it. Accepted unless the user decides
+  otherwise.
+
+Still open from earlier phases: TEST API key rotation (Phase 8B), no CSP,
+the shared rate-limit bucket and the Origin-vs-Host check (Phase 5,
+deployment decisions).
