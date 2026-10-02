@@ -1,9 +1,44 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-6 DONE;
-STOPPED before Stage 7; read this first)
+Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-7 DONE;
+at the Stage 8 gate (report + A/B/C/D, awaiting the user); read this first)
 
-## Phase 8E — Stage 6 DONE (Guides API selector, Most Used Cases), STOPPED before Stage 7 (2026-10-02)
+## Phase 8E — Stage 7 DONE (full validation, 8D re-run), at the Stage 8 gate (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 7 commit on top of `455da05`. Not
+  pushed/merged/tagged. Stage 8 (Phase Completion Report + A/B/C/D) is the
+  next step; the user has NOT approved the phase.
+- **Validation at this HEAD (fresh):** `npm run check` typecheck + lint
+  clean, 395/395 unit; `npm run build` clean (450 pages); full Playwright
+  205 passed / 3 skipped / 0 failed (208; the 3 skips are the documented
+  WebKit `selectOption` gap; the previous full run listed 2 — the third
+  was not reconciled against an earlier count, all three carry the same
+  recorded reason in `tests/e2e/smoke.spec.ts` L273/1024/1200); the known
+  parallel-load flake did not fire this run.
+- **8D re-run (`npm run readiness:openapi`, `phase8-readiness.test.ts`
+  11/11):** all 6 boundary checks PASS (no OpenAPI id on the Live
+  allowlist; Live = exactly the 3 approved Proxy reads; server/Live/tenant
+  code unchanged since `main`; secret scan of 24,869 added lines clean;
+  customer-data scan clean; client bundle clean). Reduced surface: 159
+  baseline operations, 132 in Reference/Playground, 27 excluded by
+  decision; Demo 52 reads / 0 writes; Live 0; implementation gaps 0,
+  unexplained 0. Only change to `source-docs/OPENAPI_READINESS.md` is the
+  scan's added-line count.
+- Regression sweep covered by the unit/e2e suites: customer-copy guard,
+  Open API default + legacy ordering, Guides selector / Most Used Cases,
+  date pickers, removed Console / Change Log / admin pages (404).
+- **Note:** the e2e webserver log shows `Error: Internal: NoFallbackError`
+  twice, probably from the intentional 404 tests (`no-such-page`, removed
+  admin routes); origin not verified, no test failed.
+- **Known limitations unchanged:** Hebrew strings DRAFT; TEST API key
+  rotation still open (`docs/SECURITY.md`); inbound-call popup and
+  post-call delivery guides wait for the user's description; `phonebook-add`
+  vendor example looks like real data (flagged, out of scope).
+- Environment: no server running; ports 3000/3101 free.
+- **Next:** present the Stage 8 gate report and the A/B/C/D question. Then
+  the Phase 8 Stage 6 Opus review (separately approved; Opus 5.5).
+
+## (Superseded) Phase 8E — Stage 6 DONE (Guides API selector, Most Used Cases), STOPPED before Stage 7 (2026-10-02)
 
 - Branch `phase/customer-brief`, Stage 6 commit on top of `6d86e9f`. Not
   pushed/merged/tagged.

@@ -2,12 +2,12 @@
 
 Current work:
 **Phase 8E — customer-facing change brief (before Phase 8 Stage 6): Stages
-0-6 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
+0-7 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
 5 made Open API first/default (Proxy "legacy", Playground opens on
 `simplecdrs-list`). Stage 6 (Guides selector, Most Used Cases) done: check
 395/395, build clean, targeted e2e 69 passed, 60-load visual pass clean
 (0 errors, 0 overflow; earlier 500/404 were a stale-server artifact).
-Stage 7 (regression, 8D re-run, full validation) NOT started.
+Stage 7 done: check 395/395, build clean (450 pages), Playwright 205 passed / 3 WebKit skips / 0 failed, 8D readiness PASS (6/6 boundary checks, 0 unexplained gaps). Awaiting the Stage 8 gate (A/B/C/D).
 Nothing pushed/merged/tagged.** Spec `docs/phases/08E-customer-change-brief.md`;
 detail `docs/DECISIONS.md` "Phase 8E ..." and `docs/SESSION_HANDOFF.md`.
 Open API now 132 operations / 31 resources, Proxy 74 operations (admin
