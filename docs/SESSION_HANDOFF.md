@@ -1,7 +1,26 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E APPROVED, gate A; Phase 8 Stage 6 review
-planning is next, Opus 5.5; read this first)
+Last updated: 2026-10-02 (Phase 8 Stage 6 review + remediation DONE on
+`phase/open-api-review`; at the Phase 8 gate, awaiting the user; read this first)
+
+## Phase 8 Stage 6 — review and remediation DONE, at the Phase 8 gate (2026-10-02)
+
+- Branch `phase/open-api-review` (from `053e4cd`). Commits: review findings
+  `2c49915`, L-1/L-2/C-2/C-3 `2f0b75c`, C-1 + docs (this checkpoint). Not
+  pushed, merged or tagged; `main` still `be23fb2`.
+- Security: no high/medium; L-1 and L-2 fixed, L-3 accepted. Consistency:
+  C-1..C-3 fixed. Detail: `docs/SECURITY.md` "Security review — Phase 8
+  Stage 6", `docs/DECISIONS.md` "Phase 8 Stage 6 — remediation done".
+- Validation: check 405/405, build clean (450), Playwright 207 passed / 3
+  WebKit skips / 0 failed, readiness 6/6 PASS, visual pass clean.
+- Residual: raw internal references still in three client JS chunks (not
+  rendered); vendor-doc wording ("Doc-only purpose line") in a few Proxy notes.
+- Open from earlier: TEST API key rotation, Hebrew DRAFT, the two Most Used
+  Cases guides awaiting the user's description, CSP / rate-limit header /
+  Origin-vs-Host (deployment decisions).
+- Next: the user answers the Phase 8 gate (A/B/C/D). Merge to `main` and a
+  tag (e.g. `v1.0-developer-portal`) only on explicit approval. Branch chain:
+  `phase/open-api` -> `phase/customer-brief` -> `phase/open-api-review`.
 
 ## Phase 8E — APPROVED (2026-10-02, gate A: approve, save, continue to planning)
 

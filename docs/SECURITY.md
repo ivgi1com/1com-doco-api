@@ -581,12 +581,12 @@ Verified:
 
 Low / accepted (each needs a user decision before any change):
 
-- **L-1 Vendor example that looks real:** `src/content/proxy/misc.ts:127`
+- **L-1 (FIXED, Stage 6 remediation) Vendor example that looks real:** `src/content/proxy/misc.ts:127`
   `phonebook-add` `{ NAME: "Ross", PHONE1: "3564732920" }`. Pre-existing on
   `main`; it now also appears in the Playground request preview and body
   defaults, and ships in 8 prerendered pages. Option: replace it with
   synthetic values, as the Open API examples do.
-- **L-2 Defense in depth:** `src/content/examples.ts` and
+- **L-2 (FIXED) Defense in depth:** `src/content/examples.ts` and
   `src/content/observed.ts` have no `import "server-only"`. Their data is
   masked or synthetic, so nothing is exposed today.
 - **L-3 Self-only:** a path value the user types is substituted raw inside
@@ -597,3 +597,7 @@ Low / accepted (each needs a user decision before any change):
 Still open from earlier phases: TEST API key rotation (Phase 8B), no CSP,
 the shared rate-limit bucket and the Origin-vs-Host check (Phase 5,
 deployment decisions).
+
+Stage 6 remediation (2026-10-02): L-1 and L-2 fixed; L-3 accepted (self-only).
+See `docs/DECISIONS.md` "Phase 8 Stage 6 — remediation done". Residual: raw
+internal references remain in client JS chunks (never rendered).

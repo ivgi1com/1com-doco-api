@@ -146,7 +146,7 @@ Definitions:
 - PASS — No OpenAPI id on the Live allowlist: Live allowlist: proxy/info-extensions, proxy/info-agents, proxy/cdr-get
 - PASS — Live allowlist is exactly the three approved Proxy reads: no new Live entry since approval
 - PASS — Server / Live / tenant-isolation code unchanged since main: src/server, src/app/api, src/lib/playground-protocol.ts: no diff
-- PASS — Secret scan of the Phase 8 diff (24869 added lines vs main): no hits
+- PASS — Secret scan of the Phase 8 diff (25047 added lines vs main): no hits
 - PASS — Customer-data scan of the Phase 8 diff (emails, Israeli numbers): no hits
 - PASS — Client bundle scan (.next/static, 18 files, 0 env values checked, values never printed): no env value, key pattern or probe file in the client bundle
 

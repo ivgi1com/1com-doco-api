@@ -1923,3 +1923,41 @@ representative Reference pages, en + he, plus the selectors):
   API is synthetic.
 - **C-4 (Info):** Sample lists `Authorization` under "Headers"; Open API's
   `X-API-Key` appears only under Authentication.
+
+## Phase 8 Stage 6 — remediation done (2026-10-02, Sonnet 5)
+
+User decisions: fix L-1, L-2, C-2, C-3, and C-1 with option A (strip the
+internal references and hide the internal notes).
+
+- **L-1:** `phonebook-add` example is now `Demo User` / `5550100`
+  (`src/content/proxy/misc.ts`). Deviation from the vendor example, by
+  decision.
+- **L-2:** `import "server-only"` in `src/content/examples.ts` and
+  `observed.ts`. Production build confirms no client import; vitest aliases
+  the stub; the readiness script already runs with `react-server`.
+- **C-2:** the third API is named "Sample (prototype)" (`sample-api.ts`).
+- **C-3:** the Sample auth text no longer states a key scope.
+- **C-1:** `src/lib/customer-text.ts`. `customerText` strips audit ids
+  (A-/OA-/U-nn), SEC-REQ ids, source-docs paths, "Doc/Site line N" citations,
+  "Phase N" and "see A-nn" pointers; applied inside `InlineMarkup`, so every
+  content description, summary and note. `isInternalNote` hides whole notes in
+  the Reference Notes list: "Security (SEC-REQ-..." and "SECURITY:" review
+  notes, "Source: source-docs/..." lines, notes naming `src/` paths, and any
+  note whose references cannot be removed cleanly (286 notes hidden). The
+  references stay in the content files and tests (readiness and coverage
+  tests read them). 24,688 rendered strings checked: 0 leftovers; all 127
+  changed strings reviewed before/after. Prerendered Reference and
+  Playground HTML: 0 hits (was 206 / 99 / 36 pages).
+- **Residual (not fixed, by scope):** the raw strings still sit in three
+  client JavaScript chunks (the content registry is imported by client
+  components), so they are readable in the bundle source but never rendered.
+  Vendor-doc wording such as "Doc-only purpose line" and "the Site's own
+  example" remains in a few Proxy notes (no identifiers). The 8E-spec
+  "Sample (prototype)" label now appears wherever the API name does.
+- **Validation:** `npm run check` 405/405 (+10 new tests in
+  `customer-text.test.ts`); build clean (450); full Playwright 207 passed /
+  3 WebKit skips / 0 failed (the new e2e `Reference pages show no internal
+  evidence references` passes on both engines); readiness 6/6 PASS, 0
+  unexplained gaps; 56-load visual pass (chromium + webkit, en/he, desktop +
+  mobile) 0 overflow, 0 leaks, 0 real errors (WebKit logs the known RSC
+  prefetch-abort message in some loads).

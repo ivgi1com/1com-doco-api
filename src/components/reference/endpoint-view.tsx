@@ -9,6 +9,7 @@ import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-b
 import { getEndpoint } from "@/content";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { Link } from "@/i18n/navigation";
+import { isInternalNote } from "@/lib/customer-text";
 import { Feedback } from "./feedback";
 import { InlineMarkup } from "./inline-markup";
 import { ParamList } from "./param-list";
@@ -59,6 +60,8 @@ export function EndpointView({
   const replacement = endpoint.deprecation?.replacement
     ? getEndpoint(api.id, endpoint.deprecation.replacement)
     : undefined;
+  // Internal review/provenance notes stay in the content files; customers do not see them (customer-text.ts).
+  const customerNotes = (endpoint.notes ?? []).filter((note) => !isInternalNote(note));
   const successSchema = endpoint.responses.find((r) => r.status < 300 && r.schema);
   const bodyEncoding = endpoint.requestBodyEncoding?.kind === "json" ? undefined : endpoint.requestBodyEncoding;
   const fixedQueryString = endpoint.fixedQuery
@@ -323,10 +326,10 @@ export function EndpointView({
             )}
           </Section>
 
-          {endpoint.notes && endpoint.notes.length > 0 && (
+          {customerNotes.length > 0 && (
             <Section id="notes" title={t("notes")}>
               <ul className="list-disc space-y-1.5 ps-5 text-sm text-ink-muted">
-                {endpoint.notes.map((note, i) => (
+                {customerNotes.map((note, i) => (
                   <li key={i}>
                     <ContentText className="inline">
                       <InlineMarkup text={note} />

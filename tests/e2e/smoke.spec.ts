@@ -1347,5 +1347,25 @@ test.describe("interactions", () => {
       await expect(pane.getByText(/openapi\.php\/cdrs/).filter({ visible: true }).first()).toBeVisible();
       await expect(pane.getByText("X-API-Key: ••••").filter({ visible: true }).first()).toBeVisible();
     });
+
+    test("Reference pages show no internal evidence references or internal notes (Stage 6 C-1)", async ({ page }) => {
+      const INTERNAL = /source-docs|SEC-REQ|DOCS_AUDIT|\b(?:OA|A|U)-\d+\b|\b(?:Site|Doc) lines? \d|docs\/SECURITY|\bsrc\/server/;
+      for (const path of [
+        "/en/reference/openapi/cdrs-list",
+        "/en/reference/openapi/extensions-get",
+        "/en/reference/proxy/info-extensions",
+        "/en/reference/proxy/info-queuelogs",
+        "/he/reference/proxy/voicemail-list",
+      ]) {
+        await page.goto(path);
+        const text = await page.locator("main").innerText();
+        expect(text, path).not.toMatch(INTERNAL);
+      }
+      // Customer-useful notes survive; the internal "Security (SEC-REQ-..)" note does not.
+      await page.goto("/en/reference/openapi/dial");
+      await expect(page.getByText("This places a real phone call.").first()).toBeVisible();
+      await page.goto("/en/reference/proxy/info-extensions");
+      await expect(page.getByText(/Response formats are observed, not vendor-documented/).first()).toBeVisible();
+    });
   });
 });
