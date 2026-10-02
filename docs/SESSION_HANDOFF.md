@@ -1,9 +1,32 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-5 DONE;
-Stage 6 implemented and WIP-committed, visual pass NOT yet clean; read this first)
+Last updated: 2026-10-02 (Phase 8E customer brief: Stages 0-6 DONE;
+STOPPED before Stage 7; read this first)
 
-## Phase 8E — Stage 6 implemented, WIP checkpoint, visual validation open (2026-10-02)
+## Phase 8E — Stage 6 DONE (Guides API selector, Most Used Cases), STOPPED before Stage 7 (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 6 commit on top of `6d86e9f`. Not
+  pushed/merged/tagged.
+- **Visual validation closed.** Fresh `npm run build` clean; `next start -p
+  3101` ("Ready" confirmed); 60-load pass (chromium + webkit × en/he ×
+  desktop/tablet/mobile × `/`, `/guides`, `/guides/most-used-cases`,
+  `/guides/call-history`, `/guides/getting-started`): 0 overflow, **0
+  console/HTTP errors** with a network-idle wait before each navigation.
+  The earlier 500/404 were a stale-server artifact (EADDRINUSE on 3100), as
+  suspected. Separately, with only a 400 ms wait, WebKit logs
+  "Fetch API cannot load ...?_rsc=... due to access control checks" (RSC
+  prefetches aborted by the next `goto`; no HTTP >= 400, chromium clean) —
+  test-harness artifact, vanishes once the page settles.
+- Screenshots reviewed: home 4-card grid + "Proxy API (legacy)" chip,
+  Guides sidebar selector, Most Used Cases page (en desktop), Hebrew RTL
+  home (mobile) and guide (desktop). No issues. Mobile drawer selector
+  covered by the e2e tests, not separately screenshotted.
+- **Next:** Stage 7 (regression, 8D readiness re-run against the reduced
+  surface, full validation incl. full Playwright), then Stage 8 gate report.
+  Not started. Model: Sonnet 5.
+- Environment: no server running; ports 3000/3101 free.
+
+## (Superseded) Phase 8E — Stage 6 implemented, WIP checkpoint, visual validation open (2026-10-02)
 
 - Branch `phase/customer-brief`, WIP checkpoint commit on top of `e7f48a1`
   (Stage 5). Not pushed/merged/tagged. Stage 6 is NOT marked done.
