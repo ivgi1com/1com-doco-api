@@ -245,7 +245,7 @@ test.describe("interactions", () => {
       await expect(page).toHaveURL(/\/reference\/openapi$/);
       const select = page.getByRole("combobox").first();
       await expect(select).toHaveValue("openapi");
-      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample API"]);
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
     });
 
     test("the Playground opens on the Open API's Simple CDR by default (8E)", async ({ page }) => {
@@ -267,7 +267,7 @@ test.describe("interactions", () => {
       const sidebar = page.locator("aside").first();
       const select = sidebar.getByRole("combobox");
       await expect(select).toHaveValue("openapi");
-      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample API"]);
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
       await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toBeVisible();
       await expect(sidebar.getByRole("link", { name: "Call history" })).toHaveCount(0);
       test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");

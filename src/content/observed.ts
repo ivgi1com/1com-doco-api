@@ -1,3 +1,4 @@
+import "server-only";
 import probe from "../../source-docs/observed/openapi/probe-2026-09-26.masked.json";
 import type { Endpoint, Parameter, ResponseSpec } from "./types";
 

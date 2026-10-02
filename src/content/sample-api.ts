@@ -17,7 +17,7 @@ const notVerified = {
 const bearer = {
   type: "Bearer token",
   description:
-    "Send your API Key in the Authorization header. Keys are scoped to one tenant.",
+    "Send your API Key in the Authorization header.",
 };
 
 const authHeader: Parameter = {
@@ -326,7 +326,7 @@ const deleteContact: Endpoint = {
 
 export const sampleApi: ApiDefinition = {
   id: "sample",
-  name: "Sample API",
+  name: "Sample (prototype)",
   version: "v1",
   baseUrl: "https://api.example.com",
   synthetic: true,

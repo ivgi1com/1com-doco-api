@@ -124,7 +124,7 @@ export const phonebookAdd = proxyOperation({
     { name: "PHONE1", location: "body", type: "string", required: "undocumented", description: "Phone number. The full set of accepted field names is not documented." },
   ],
   requestBodyEncoding: { kind: "form-json-field", field: "values" },
-  requestExample: { NAME: "Ross", PHONE1: "3564732920" },
+  requestExample: { NAME: "Demo User", PHONE1: "5550100" },
   notes: [
     "The entry travels in a `values` form field whose value is the entry encoded as JSON.",
     "Response not documented.",

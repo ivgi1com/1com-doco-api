@@ -1,3 +1,4 @@
+import "server-only";
 import openapiExamples from "../../source-docs/openapi/examples.json";
 import type { EndpointExample } from "./types";
 
