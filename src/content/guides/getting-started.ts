@@ -9,18 +9,18 @@ import type { Guide } from "./types";
 export const gettingStarted: Guide = {
   slug: "getting-started",
   title: "Getting started",
-  summary: "Create an API key, send your first request and read the response.",
+  summary: "Create an API Key, send your first request and read the response.",
   synthetic: true,
   apiId: "sample",
   sources: [],
   sections: [
     {
       id: "create-a-key",
-      title: "Create an API key",
+      title: "Create an API Key",
       blocks: [
         {
           kind: "paragraph",
-          text: "Every request authenticates with a tenant API key sent as a bearer token. Create a key for your tenant and store it in an environment variable — never commit it to source control.",
+          text: "Every request authenticates with a API Key sent as a bearer token. Create a key for your tenant and store it in an environment variable — never commit it to source control.",
         },
         { kind: "code", lang: "bash", title: "shell", code: `export ${API_KEY_ENV}="<YOUR_API_KEY>"` },
       ],
@@ -61,7 +61,7 @@ export const gettingStarted: Guide = {
           kind: "code",
           lang: "json",
           title: "401 response",
-          code: `{\n  "error": {\n    "code": "unauthorized",\n    "message": "The API key is missing or invalid.",\n    "request_id": "req_sample_7f3a"\n  }\n}`,
+          code: `{\n  "error": {\n    "code": "unauthorized",\n    "message": "The API Key is missing or invalid.",\n    "request_id": "req_sample_7f3a"\n  }\n}`,
         },
       ],
     },

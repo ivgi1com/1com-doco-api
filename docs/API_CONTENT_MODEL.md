@@ -59,6 +59,15 @@ related: []
 - There are no Proxy-specific components. The same components render both
   kinds.
 
+### Date and date-time fields (Phase 8E)
+
+`Parameter.format?: "date" | "datetime"` is optional and additive. Set it
+**only** where the source documents an exact format: `date` is
+`YYYY-MM-DD`, `datetime` is `YYYY-MM-DD HH:MM:SS`. The Playground then
+offers native date (and time, with seconds) inputs that compose exactly
+that string, with no timezone conversion. A field without a documented
+format (e.g. campaign or conference-room dates) is never given one.
+
 ### Request body encoding and operation class (Phase 7)
 
 Both fields are optional and additive; the Sample API sets neither.
@@ -66,14 +75,15 @@ Both fields are optional and additive; the Sample API sets neither.
 - `requestBodyEncoding`: how the body travels.
   - `json` (the default when omitted): a JSON document body.
   - `form-json-field` + `field`: a form-urlencoded body with one field
-    whose value is `requestExample` encoded as JSON (Proxy ManageDB
-    `jsondata`, PHONEBOOK `values`).
-  - `multipart` + `fileField` + `exampleFile`: a file upload (FAX, ManageDB
-    `updatebinary`).
+    whose value is `requestExample` encoded as JSON (Proxy PHONEBOOK
+    `values`; formerly also ManageDB `jsondata`, removed from the customer
+    portal in Phase 8E).
+  - `multipart` + `fileField` + `exampleFile`: a file upload (FAX; formerly
+    also ManageDB `updatebinary`).
 - Code samples follow it. Query-auth POSTs keep the credential and
   selectors in the query string (curl `--url-query`) and put only the
   body field in the body.
-- `requestExample` may be an array (ManageDB destination-tag lists).
+- `requestExample` may be an array (formerly ManageDB destination-tag lists).
 - `operationClass: "write"` marks an operation that changes state. Such
   operations are Reference-only:
   - the reference page shows a warning callout and no "Try in Playground"
@@ -99,6 +109,12 @@ Where the source is silent, the model records that instead of guessing:
   sending in the Playground.
 - `Endpoint.errors: "undocumented"` is rendered as "Not documented by the
   source".
+- `ErrorSpec.status: "undocumented"` (Phase 8): the source names an error
+  code but not its HTTP status (every MiRTA OpenAPI error). It renders as
+  "—" with an accessible "HTTP status not documented" label.
+- A success response whose HTTP status the source never states is still
+  entered at `200`, with a note saying so (Proxy and OpenAPI vendor
+  examples alike): the response viewer keys responses by status code.
 - `Endpoint.methodBasis: "inferred"` renders a note that the method comes
   from the source's examples.
 
@@ -159,6 +175,34 @@ assuming a plain object.
 a query parameter such as the Proxy API's `key`. `scope` states the minimum
 key scope. Samples always read the credential from an environment variable
 and never contain a realistic value.
+
+- Header auth with a named `parameter` (MiRTA OpenAPI: `X-API-Key`) sends
+  `<parameter>: $<API>_API_KEY`. With no parameter (the Sample API), it
+  sends `Authorization: Bearer $SAMPLE_API_KEY`.
+- The env var is `<API id>_API_KEY` whenever the API names its credential
+  parameter (`PROXY_API_KEY`, `OPENAPI_API_KEY`). Otherwise it is
+  `SAMPLE_API_KEY`.
+
+### MiRTA OpenAPI content (Phase 8)
+
+`src/content/openapi/` has one module per official resource page and one
+sidebar category per resource. `shared.ts` contains:
+
+- the base URL;
+- `openapiAuth(scope)`;
+- the `tenantParam`/`globalParam` helpers;
+- the official error table (`errors(...codes)`);
+- `openapiOperation()`, the defaults for one operation;
+- `openapiResource(spec)`, which expands a resource descriptor into its
+  documented list/get/create/update/delete operations.
+
+Rules for OpenAPI operations:
+
+- Every non-GET operation is `write`, so it is Reference-only.
+- Endpoint ids are `<primary path>-list|get|create|update|delete`. The few
+  non-standard operations have named ids.
+- `source-docs/openapi/operations.json` has one row per documented method
+  and path, and is checked by `tests/unit/openapi-coverage.test.ts`.
 
 ## Lifecycle metadata
 

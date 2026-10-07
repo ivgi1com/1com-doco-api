@@ -42,6 +42,12 @@ export interface Parameter {
   constraints?: string;
   /** Condition under which the field is present, e.g. "Only when status is completed". */
   condition?: string;
+  /**
+   * Set only where the source documents an exact date or date-time format
+   * (`date`: `YYYY-MM-DD`; `datetime`: `YYYY-MM-DD HH:MM:SS`). The Playground
+   * then offers a picker that composes that exact string (Phase 8E).
+   */
+  format?: "date" | "datetime";
   children?: Parameter[];
   source?: string;
 }
@@ -63,14 +69,17 @@ export interface Authentication {
   description: string;
   /** Where the credential travels. Code samples follow this; defaults to header. */
   location?: "header" | "query";
-  /** Header or query-parameter name carrying the credential, e.g. "key". */
+  /**
+   * Header or query-parameter name carrying the credential, e.g. "key" or
+   * "X-API-Key". With header auth and no parameter, samples send
+   * `Authorization: Bearer`.
+   */
   parameter?: string;
-  /** Key scope needed for this endpoint, e.g. "Tenant key (read-only is sufficient)". */
-  scope?: string;
 }
 
 export interface ErrorSpec {
-  status: number;
+  /** `"undocumented"`: the source names the error code but not its HTTP status. */
+  status: number | "undocumented";
   code: string;
   description: string;
 }
@@ -138,6 +147,24 @@ export interface Endpoint {
   related: string[];
 }
 
+/**
+ * A named request example taken from the official source page (title,
+ * description, and the request it shows), with real-looking values
+ * normalized. Shown in the Reference; the code sample is rendered from
+ * these fields, never copied, so it always uses the portal's base URL and
+ * auth convention. `path` is literal (placeholders already substituted).
+ */
+export interface EndpointExample {
+  title: string;
+  description: string;
+  path: string;
+  query: Record<string, string>;
+  body?: Record<string, unknown> | unknown[];
+  /** Which key the source's example uses: a tenant key or a global key. */
+  keyKind: "tenant" | "global";
+  source: string;
+}
+
 export interface Category {
   id: string;
   title: string;
@@ -151,6 +178,10 @@ export interface ApiDefinition {
   baseUrl: string;
   /** True for fabricated prototype content that must be labelled as such. */
   synthetic: boolean;
+  /** Older API kept for existing integrations; selectors show a "legacy" qualifier. */
+  legacy?: boolean;
+  /** Endpoint id the Playground opens on for this API; falls back to the first endpoint. */
+  defaultEndpoint?: string;
   /** Shown on the API overview page. */
   summary: string;
   categories: Category[];

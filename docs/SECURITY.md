@@ -49,6 +49,7 @@ Demo mode:
 - never contains copied production records
 - uses clearly synthetic data
 - never silently replaces a Live failure with Demo output
+- never sends a write operation anywhere; a simulated write (SEC-REQ-27, amended) is answered locally from documented examples only
 
 ## SSRF defense
 
@@ -329,6 +330,8 @@ Closing needs the user's explicit approval.
 
 ### SEC-REQ-05 — OpenAPI Auth Token (BLOCKING, exclusion not allowlist, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/auth-token.md`.
 
 `POST/DELETE /auth/token` mints or resets a real login token/password-substitute for a web user or extension identity. This is credential issuance, not data exposure, so a field allowlist does not apply. Must never be reachable from Demo or Live, categorically, not merely allowlist-gated. Closing needs explicit user approval and is out of scope for the standard Live-enablement checklist.
@@ -365,9 +368,13 @@ Recorded 2026-09-26. Evidence: `source-docs/openapi/ailogs.md`.
 
 ### SEC-REQ-11 — OpenAPI Tenant response schema (REVIEW REQUIRED, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/tenants.md`. No response example exists; `te_billingcode` is business-sensitive. Confirm schema before any Live read; writes excluded from Live regardless.
 
 ### SEC-REQ-12 — OpenAPI User (BLOCKING, open)
+
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/users.md`.
 
@@ -375,11 +382,15 @@ Create/update writes `us_password` (a real login password) plus 2FA/IP-filter se
 
 ### SEC-REQ-13 — OpenAPI User Profile (REVIEW REQUIRED, open)
 
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
+
 Recorded 2026-09-26. Evidence: `source-docs/openapi/userprofiles.md`.
 
 Controls privilege/authorization assignment for Users; a write vulnerability has systemic (privilege-escalation) impact. No response schema documented. Confirm schema and treat any Live read cautiously given the privilege-control role.
 
 ### SEC-REQ-14 — OpenAPI Provider (BLOCK LIVE, open)
+
+**Phase 8E (2026-10-01): not reachable from the customer portal.** The resource needs an administrative (global) API Key and was removed from every customer-facing page, search result, route, Demo set and example (`source-docs/portal-exclusions.json`). This requirement stays recorded and applies again if the resource is ever added back; it is not closed.
 
 Recorded 2026-09-26. Evidence: `source-docs/openapi/providers.md`.
 
@@ -461,7 +472,7 @@ Create/update writes two credential-shaped fields directly: `ph_password` and `p
 
 Recorded 2026-09-26 (Stage C review, user decision). Applies to every OpenAPI resource.
 
-Every OpenAPI `POST`, `PATCH`, `PUT` and `DELETE` stays out of the Live Playground, and out of any Demo path that could send a request. This matches the Proxy precedent, where writes are Reference-only in the UI and in the executor. Enabling any single write operation needs its own explicit security decision; it is not part of the read-allowlist checklist. This rule also covers write-side risks that don't warrant a per-resource entry of their own: Cron Job and Flow (they change call routing), Feature Code and Short Number (dialing behavior), Campaign state (SEC-REQ-23), and Music On Hold `application` (SEC-REQ-30). Documentation and code samples for writes are unaffected.
+Every OpenAPI `POST`, `PATCH`, `PUT` and `DELETE` stays out of the Live Playground, and out of any Demo path that could send a request. **Amended 2026-10-01 (Phase 8C, user decision):** an OpenAPI write may be *simulated* in Demo, under all of these conditions: (1) its fixture set is built only from the vendor's documented example responses and the observed generic error envelope (no invented bodies; a write with no documented response stays "Demo data not available"); (2) the simulation is local (`demoProvider`, `src/components/playground/executor.ts`) and never reaches `/api/playground` or any upstream host; (3) only APIs listed in `DEMO_WRITE_APIS` (`src/content/demo/index.ts`, currently `openapi` only) qualify, so Proxy writes stay Reference-only in the UI and in the executor, even if a fixture were added by mistake; (4) Live never sends a write of any API: blocked in the UI, in `use-playground.ts` `send`, in `liveProvider` itself (`endpoint_not_allowed`, no fetch), and on the server (GET-only allowlist). Enforced by `tests/unit/executor.test.ts` ("liveProvider and writes", the write-Demo cases) and `tests/unit/openapi-coverage.test.ts` (no write on the Live allowlist; `isDemoSimulatedWrite` only for fixtured writes). The Proxy precedent (writes Reference-only in the UI and in the executor) is unchanged. Enabling any single write operation needs its own explicit security decision; it is not part of the read-allowlist checklist. This rule also covers write-side risks that don't warrant a per-resource entry of their own: Cron Job and Flow (they change call routing), Feature Code and Short Number (dialing behavior), Campaign state (SEC-REQ-23), and Music On Hold `application` (SEC-REQ-30). Documentation and code samples for writes are unaffected.
 
 ### SEC-REQ-28 — OpenAPI tenant isolation for Live (cross-cutting, BLOCK LIVE, open)
 
@@ -472,6 +483,8 @@ Any future OpenAPI Live path must:
 2. Have the server set and enforce `tenant`. The browser never picks a tenant outside the caller's own.
 3. Reject `global=1`, `%` tenant wildcards, and any omitted-tenant request (the cross-tenant search that AI Logs and the reporting pages document).
 4. Exclude global-key-only resources (Tenant, User, User Profile, Routing Profile, Provider, Auth Token) from Live entirely.
+
+Phase 8E (2026-10-01): items 3 and 4 also hold for documentation — `global=1`, the global-key wording and the six global-key-only resources are no longer shown in the customer portal at all (`source-docs/portal-exclusions.json`). The rules above are unchanged.
 
 ### SEC-REQ-29 — OpenAPI Custom Destination `extended_infos` (REVIEW REQUIRED, open)
 
@@ -485,7 +498,39 @@ Recorded 2026-09-26 (Stage C review, user decision). Evidence: `source-docs/open
 
 Both are raw, free-form fields with no documented meaning. In Asterisk MOH configuration, `application` can name an external program the server runs. That is domain knowledge, not documented MiRTA behavior. Before Live: establish their semantics from the spec or the vendor. Writes are excluded by SEC-REQ-27; a read would expose the configured value.
 
+### Phase 8B probe observations (2026-09-26)
+
+These come from a single masked, structure-only probe on one test PBX (`source-docs/DOCS_AUDIT.md` §14; `source-docs/observed/openapi/probe-2026-09-26.masked.json`). Only field names and value-type classes were stored, so "populated" means a non-empty value was present; the value itself was never recorded. No label changes. Every entry below stays open. The Reference examples built from this probe (`src/content/observed.ts`) show `SYNTHETIC_SECRET` or a synthetic placeholder for these fields, never an observed value.
+
+- **SEC-REQ-19 (confirmed exposure):** `pa_pin` is returned, populated, by both the Paging Group list and the single read.
+- **SEC-REQ-20 (confirmed exposure):** the Conference Room single read returns `related.meetme.pin` and `related.meetme.adminpin`, both populated. List rows did not include `related`.
+- **SEC-REQ-22 (confirmed exposure):** `ds_pin` is returned, populated, by both the DISA list and the single read.
+- **SEC-REQ-26 (partly observed):** `ph_mac` is returned, populated, by the list and the single read. `ph_password` and `ph_http_password` were **not** returned; `ph_http_user` was returned, empty. One observation doesn't prove the passwords are always excluded.
+- **SEC-REQ-15 (partly observed):** the Voicemail list and single read returned no `password` field. They did return `email` (populated, PII) and `imapuser` (null). As with SEC-REQ-26, this is one observation, not proof of exclusion.
+- **SEC-REQ-18 (partly observed):** the Media File single read did **not** return `me_data`. It did return `me_voiceapiusername` and `me_voiceapihost`, which no official page documents. Their names suggest a TTS-service account, so review them before any Live read.
+- **SEC-REQ-03 (still unresolved):** the probed extension was a virtual extension. Its single read carries the technology row under `tech_details.virtualextension` (`ve_securitypin` present, empty). No SIP/PJSIP row was observed, so whether a GET returns the technology secret remains UNKNOWN. `ex_email` and the other `ex_*email` fields are returned (empty on this extension).
+
+## Customer portal exclusions (Phase 8E, 2026-10-01)
+
+User decision (`docs/phases/08E-customer-change-brief.md`, brief item 3): content that requires an administrative API Key is not part of the customer-facing portal.
+
+- Removed: 27 OpenAPI operations (Tenant, User, User Profile, Routing Profile, Provider, Auth Token) and 35 Proxy API `MANAGEDB` operations (Admin key), the ManageDB guide, the Admin/global sections of both authentication guides, the `global=1` parameter, global-key examples, and the global/Admin wording on customer resources.
+- Source of truth: `source-docs/portal-exclusions.json`. The approved baseline inventories are unchanged; tests (`tests/unit/helpers/exclusions.ts`, `openapi-coverage`, `proxy-coverage`, `phase8-readiness`, `customer-copy`) and the status scripts reconcile the baseline against it.
+- Enforcement: `tests/unit/customer-copy.test.ts` fails if any excluded operation or guide is reachable through the content registry, search index or `related` links, or if global/Admin key wording returns to customer-visible copy (verbatim API error bodies in Demo are the only exception).
+- Not a security control: removing documentation does not change what the real API accepts. The Live boundary is unchanged (Live allowlist: the three approved Proxy reads; no Open API operation).
+
 ## Open action items
+
+### Phase 8B OpenAPI probe key rotation (2026-09-26, not yet done)
+
+The Phase 8B Stage 2 probe (masked, structure-only, GET-only) used a
+user-supplied tenant-scoped TEST OpenAPI key, passed only as a process
+environment variable to a throwaway scratchpad script. The key was
+shared in the chat transcript (same method as Phase 6/7). Only masked
+shapes were stored (`source-docs/observed/openapi/probe-2026-09-26.masked.json`,
+verified to contain neither the key nor the tenant). **Rotate this key.**
+Whether the key was read-only was not confirmed; the script only ever
+issued GET requests.
 
 ### Stage 4 TEST API key rotation (2026-09-26, not yet done)
 
@@ -499,3 +544,60 @@ Rotate the key before that tenant/key pair is reused for any further
 probing or verification work. Not itself blocking for Phase 7 approval
 (no code or committed artifact depends on the key remaining valid), but
 track it until closed.
+
+## Security review — Phase 8 Stage 6 (2026-10-02, Opus 5.5)
+
+Scope: `main (be23fb2)...phase/open-api-review` (Phase 8, 8A-8E). Manual
+review plus the `security-review` skill as a second pass. **No high or
+medium findings.**
+
+Verified:
+
+- **Live boundary unchanged.** No diff since `main` in `src/server/**`,
+  `src/app/api/**`, `src/lib/playground-protocol.ts` or `next.config.ts`.
+  The allowlist is server-only, hard-wired to `proxyApi` and GET-only, so Live
+  still reaches only `proxy/info-extensions`, `proxy/info-agents` and
+  `proxy/cdr-get`. `liveAvailable` comes from `listLiveTargetIds()` on the
+  server, behind `PLAYGROUND_LIVE_ENABLED`. The 8E edits to Proxy content
+  change only wording and examples; auth (`query`/`key`) and paths are
+  unchanged.
+- **Writes are never sent.** `send()` (`use-playground.ts`) and `liveProvider`
+  refuse writes in Live. `isDemoSimulatedWrite` needs a write fixture set, and
+  Open API has none.
+- **Demo isolation.** `demoProvider` makes no network request, and there is
+  no Live-to-Demo fallback. Fixtures use only synthetic values (`TESTTENANT`,
+  `SYNTHETIC_SECRET`, 555 numbers, `demo@example.com`). The masked probe file
+  holds only type descriptors and error codes.
+- **Credentials.** The request preview and cURL mask the credential for
+  query, header and Bearer auth. Secret-named body fields become
+  `<REDACTED>`. None of the 491 query/path parameters is secret-named. Only
+  `?endpoint=` is read from the URL, so no field is pre-filled from a link.
+- **HTML sinks.** Four `dangerouslySetInnerHTML` sinks: a constant theme
+  script, and shiki HTML generated on the server from static content.
+  `InlineMarkup` builds React elements.
+- **Exposure.** `.next/static` and the prerendered HTML contain no excluded
+  admin operation ids, `ManageDB`, `MiRTA`, `CANISTRACCI` or `srv02`
+  (positive-control strings were found, so the scan works).
+
+Low / accepted (each needs a user decision before any change):
+
+- **L-1 (FIXED, Stage 6 remediation) Vendor example that looks real:** `src/content/proxy/misc.ts:127`
+  `phonebook-add` `{ NAME: "Ross", PHONE1: "3564732920" }`. Pre-existing on
+  `main`; it now also appears in the Playground request preview and body
+  defaults, and ships in 8 prerendered pages. Option: replace it with
+  synthetic values, as the Open API examples do.
+- **L-2 (FIXED) Defense in depth:** `src/content/examples.ts` and
+  `src/content/observed.ts` have no `import "server-only"`. Their data is
+  masked or synthetic, so nothing is exposed today.
+- **L-3 Self-only:** a path value the user types is substituted raw inside
+  the double-quoted URL of the copied cURL (`$(...)` would expand when
+  pasted). Only the user can enter it. Accepted unless the user decides
+  otherwise.
+
+Still open from earlier phases: TEST API key rotation (Phase 8B), no CSP,
+the shared rate-limit bucket and the Origin-vs-Host check (Phase 5,
+deployment decisions).
+
+Stage 6 remediation (2026-10-02): L-1 and L-2 fixed; L-3 accepted (self-only).
+See `docs/DECISIONS.md` "Phase 8 Stage 6 — remediation done". Residual: raw
+internal references remain in client JS chunks (never rendered).

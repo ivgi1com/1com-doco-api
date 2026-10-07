@@ -1,6 +1,127 @@
 # Current Status
 
 Current work:
+**Phase 8 (Open API rollout) APPROVED (2026-10-07) and merged to `main`, tagged
+`v1.0-developer-portal`, pushed.** Before the merge, GitHub `main` (sub-path
+deployment `NEXT_PUBLIC_BASE_PATH`, v0.2.0, README revision) was merged into
+`phase/open-api-review` (`040bc78`; one e2e conflict resolved). Validation on
+the merge: check 408/408, build clean (450 pages), Playwright 206 passed /
+3 WebKit skips / 1 flaky (extensions-get prefill, mobile-safari; 6/6 pass in
+isolation). No next phase started; any further work awaits the user.
+
+Previous:
+**Phase 8 Stage 6 (cross-API consistency and security review) DONE with remediation on `phase/open-api-review` (2026-10-02); at the Phase 8 gate, awaiting the user (A/B/C/D). Check 405/405, Playwright 207/0 failed, readiness 6/6 PASS. Phase 8E (approved) detail: customer-facing change brief (before Phase 8 Stage 6): Stages
+0-7 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
+5 made Open API first/default (Proxy "legacy", Playground opens on
+`simplecdrs-list`). Stage 6 (Guides selector, Most Used Cases) done: check
+395/395, build clean, targeted e2e 69 passed, 60-load visual pass clean
+(0 errors, 0 overflow; earlier 500/404 were a stale-server artifact).
+Stage 7 done: check 395/395, build clean (450 pages), Playwright 205 passed / 3 WebKit skips / 0 failed, 8D readiness PASS (6/6 boundary checks, 0 unexplained gaps). Awaiting the Stage 8 gate (A/B/C/D).
+Nothing pushed/merged/tagged.** Spec `docs/phases/08E-customer-change-brief.md`;
+detail `docs/DECISIONS.md` "Phase 8E ..." and `docs/SESSION_HANDOFF.md`.
+Open API now 132 operations / 31 resources, Proxy 74 operations (admin
+content excluded via `source-docs/portal-exclusions.json`). Validation at
+`ce30196`: check 382/382, build clean, Playwright 197 passed / 2 skips / 1
+known flake that passes alone.
+
+Previous: **Phase 8D — pre-Stage-6 readiness gate: validation run 2026-10-01, result
+PASS — ready for Stage 6 (checkpoint commit, not an approval).** Phase 8
+and Stage 6 are NOT complete; Stage 6 (Opus cross-API consistency and
+security review) has NOT started and needs the user to switch to Opus 5.
+Evidence: `source-docs/OPENAPI_READINESS.md`, `tests/unit/phase8-readiness.test.ts`
+(15 new tests), `docs/DECISIONS.md` "Phase 8D". `npm run check` 376/376,
+`npm run build` clean (576 pages), full Playwright 192 passed / 2 WebKit
+skips / 0 failed, all boundary checks PASS, zero unexplained gaps.
+Remaining limitations: see `docs/SESSION_HANDOFF.md`.
+
+Previous: **Phase 8C — OpenAPI Playground: APPROVED (2026-10-01, gate A —
+approve, save, and continue to planning the next phase). 8D (pre-Stage-6
+readiness gate, Sonnet 5) is in PLAN MODE only: planning, no
+implementation until its plan is separately approved.** Branch
+`phase/open-api` (the 8C commits sit on top of the pushed 8B approval
+`f56151b`; they are local, not pushed, not merged, not tagged). Stages
+0–6 done: SEC-REQ-27 amended (a write may be Demo-simulated from a
+documented example only, never Live — Stage 0, Opus); the write-response
+audit found only 3 of 93 writes document a success response, all excluded
+by SEC-REQ-05/06, so **0 writes are simulatable** and Stage 2 (write
+fixtures) was dropped by user decision; request body + cURL + live
+"Request preview"; field details, operation header (kind/auth/key scope),
+API switcher, unknown-endpoint notice and an explicit Live-not-enabled
+state; Playground coverage report. Coverage: 37/37 resources, 159/159
+operations in the Playground; Demo 52 (52/66 reads, 0/93 writes); Live 0;
+Live-disabled 159. Validation: `npm run check` 361/361, `npm run build`
+clean (576 pages), full Playwright 192 passed / 2 WebKit skips / 0 failed
+(194), a 96-load sweep (2 engines × 2 locales × 3 viewports × 8
+operations) clean, secret/PII scan clean. Full detail: `docs/DECISIONS.md`
+"Phase 8C ..." entries, `docs/SESSION_HANDOFF.md`. Open: TEST API key
+rotation still pending; Hebrew strings still DRAFT.
+
+Previous Phase 8 summary (history, kept for context):
+**Phase 8 — Open API rollout: Stages 0–5 done. A manual product review
+on 2026-09-26 found the OpenAPI implementation was not actually
+feature-complete before Stage 6** (the API Reference didn't expose all
+baseline-documented information; the OpenAPI Demo and Playground were
+missing/incomplete). **Four sub-phases were inserted before Stage 6:
+8A (API Reference completeness), 8B (Demo), 8C (Playground), 8D
+(pre-Stage-6 readiness gate) — all Sonnet 5. **8A is APPROVED
+(2026-09-26, gate A):** 325 official named examples in the Reference
+(`source-docs/openapi/examples.json`), CDR/Simple CDR response field
+tables, 2 list filters, a full alias/notes audit (6 fixes) with a new
+request-body-key coverage test, and a shared-component rendering fix
+(`endpoint-view.tsx` now passes notes/error/response/example
+descriptions through `InlineMarkup`, so documented backtick spans
+render as inline code instead of literal text — also benefits Proxy
+pages). `npm run check` 285/285, `npm run build` clean, Playwright
+162/164 (1 known flake confirmed to pass alone, 1 WebKit skip), a
+40-load visual pass and a secret scan, all clean. Full detail:
+`docs/DECISIONS.md` "Phase 8A — APPROVED", `docs/SESSION_HANDOFF.md`.
+**Phase 8B (OpenAPI Demo): Stages 1–5 COMPLETE, APPROVED (2026-09-26,
+gate B — approve, save, and stop; next phase (8C) not started, waiting
+for separate approval before planning begins).** Stage 1
+(Demo fixes and documented cases), Stage 2 (masked OpenAPI GET probe),
+Stage 3 (observed Reference responses wired via
+`src/content/observed.ts`, `DOCS_AUDIT.md` §14 OA-14..OA-18,
+SECURITY.md probe observations), Stage 4 (Demo fixtures for all 52
+Demo-supported OpenAPI GETs), and Stage 5 (labeling, the
+`source-docs/OPENAPI_DEMO_STATUS.md` coverage report, and full
+validation) are all done. After a PC crash mid-session lost the running
+handoff, the Stage 4 scope was recovered from raw session transcripts
+and reconfirmed with the user; one real bug found during Stage 5's own
+visual validation (an unreachable "Unique ID missing" Demo case, since
+its field is client-side-required) was fixed. `npm run check` 348/348,
+`npm run build` clean (576 pages), a dedicated 76-test Playwright pass
+across both engines/locales/desktop+narrow-mobile all green, the full
+Playwright suite 176/178 (the one failure unrelated, confirmed to pass
+alone), and a secret/PII scan, all clean. Full detail:
+`docs/SESSION_HANDOFF.md` "Phase 8B — Stages 1–5 complete, at the
+approval gate", `docs/DECISIONS.md` "Phase 8B Stage 4–5 completion,
+recovered scope, and generalized decisions". TEST key rotation still
+pending. Stage 6 (Opus cross-API consistency and security review — the
+Phase 8 gate item) is on hold until 8C and 8D pass.** Full
+detail: `docs/phases/08-open-api.md` "Pre-Stage-6 sub-phases",
+`docs/phases/08-substages-README.md`, `docs/DECISIONS.md` "Phase 8
+pre-Stage-6 sub-phases inserted". This supersedes the "FEATURE-COMPLETE"
+status previously recorded here.
+Plan approved 2026-09-26
+(`C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`; decisions
+in `docs/DECISIONS.md` "Phase 8 planning", "Phase 8 Stage 1 complete",
+"Phase 8 Stage 3 complete", "Phase 8 Stage 4 complete", "Phase 8 Stage 5
+complete"). `main` fast-forwarded to `be23fb2` and tagged
+`v0.5-proxy-complete`. Branch `phase/open-api` (pushed through the 8B approval; 8C commits local). Scope:
+Reference pages for all 159 operations (OA-13) complete —
+`ROLLOUT_COMPLETE = true` in `tests/unit/openapi-coverage.test.ts`.
+Demo fixtures for the 3 approved GETs; every write Reference-only. One
+guide, "OpenAPI authentication and scope" (a real pre-existing CSS grid
+bug found and fixed while authoring it). New e2e coverage: API
+switching, a path-param endpoint, write-blocking, the 3 Demo fixtures,
+2 negative states (2 real test-only issues found and fixed along the
+way, not product bugs — see "Phase 8 Stage 5 complete"). `npm run
+check` 277/277, `npm run build` clean (546 endpoint pages), full
+Playwright suite 160/162 (1 WebKit-only skip, 1 pre-existing-class
+flake confirmed to pass alone), a 48-page-load visual pass (3 viewports
+× 2 locales) and a secret scan, both clean.
+
+Previous work (approved):
 **MiRTA OpenAPI documentation baseline: Stage C (security review +
 second-pass audit) done — APPROVED 2026-09-26 (gate A: approve, save,
 and continue to planning the next phase).** Not merged, not pushed, not
@@ -200,8 +321,9 @@ Full detail: `docs/DECISIONS.md` "Phase 5 UX fixes",
 
 
 Current branch:
-`phase/proxy-rollout` (Phase 7, Stages 0–7 complete and APPROVED at gate A,
-2026-09-26; see the top of this file and `docs/SESSION_HANDOFF.md`). Not
+`phase/open-api` (Phase 8, see the top of this file). The Phase 7 note
+that follows is history: `phase/proxy-rollout`, Stages 0–7 APPROVED at
+gate A on 2026-09-26. Not
 merged into `main`, not tagged, not pushed. The `phase/demo-mode` @
 `0631a95` line this section used to show is stale history from before the
 Phase 6 approval and the Phase 7 branch — kept below only as

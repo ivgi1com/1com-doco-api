@@ -11,15 +11,14 @@ import { expect, test, type Page } from "@playwright/test";
  */
 
 const routes = [
-  "/en",
-  "/en/reference/proxy/info-extensions",
-  "/en/reference/sample/list-call-records",
-  "/en/guides/getting-started",
-  "/en/playground",
-  "/en/changelog",
-  "/en/no-such-page",
-  "/he",
-  "/he/reference/proxy/info-extensions",
+  "./en",
+  "./en/reference/proxy/info-extensions",
+  "./en/reference/sample/list-call-records",
+  "./en/guides/getting-started",
+  "./en/playground",
+  "./en/no-such-page",
+  "./he",
+  "./he/reference/proxy/info-extensions",
 ];
 
 const viewports = [
@@ -67,9 +66,30 @@ for (const viewport of viewports) {
 test.describe("interactions", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
+  test("the header and drawer show neither Console nor Changelog, and the route is gone (8E)", async ({ page }) => {
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("./en");
+      if (width < 640) {
+        const dialog = page.getByRole("dialog", { name: "Main" });
+        await expect(async () => {
+          await page.getByRole("button", { name: "Open navigation" }).click();
+          await expect(dialog).toBeVisible({ timeout: 500 });
+        }).toPass({ timeout: 10_000 });
+        await expect(dialog.getByRole("link", { name: "Changelog" })).toHaveCount(0);
+      }
+      await expect(page.getByRole("link", { name: "Changelog" })).toHaveCount(0);
+      await expect(page.getByText("Console", { exact: true })).toHaveCount(0);
+      await expect(page.getByText("Console is not available yet")).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+    }
+    const res = await page.goto("./en/changelog");
+    expect(res?.status()).toBe(404);
+  });
+
   test("mobile nav drawer (sidebar) opens and closes", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/en");
+    await page.goto("./en");
     const dialog = page.getByRole("dialog", { name: "Main" });
     // Same hydration race as the search-palette test below: a locator
     // .click() retries the click itself until the element is actionable,
@@ -86,7 +106,7 @@ test.describe("interactions", () => {
   });
 
   test("search palette: keyboard shortcut opens it, Escape closes it", async ({ page }) => {
-    await page.goto("/en");
+    await page.goto("./en");
     const dialog = page.getByRole("dialog", { name: "Search docs" });
     // SearchPalette wires up its document keydown listener in a useEffect,
     // which only runs after hydration. page.keyboard.press is a single
@@ -106,7 +126,7 @@ test.describe("interactions", () => {
   });
 
   test("endpoint page: code tabs switch and copy button works", async ({ page }) => {
-    await page.goto("/en/reference/sample/list-call-records");
+    await page.goto("./en/reference/sample/list-call-records");
     await page.getByRole("tab", { name: "Python" }).click();
     await expect(page.getByRole("tab", { name: "Python" })).toHaveAttribute("aria-selected", "true");
   });
@@ -118,8 +138,19 @@ test.describe("interactions", () => {
   // its CSS-hidden mobile twin.
   const desktopPane = (page: Page) => page.locator(".md\\:grid");
 
+  // The Reference page's own request panel is mounted twice (desktop
+  // <aside>, mobile <details>); open and target whichever copy this
+  // viewport shows. Shared by the Proxy and Open API reference-page tests.
+  const requestPanel = async (page: Page) => {
+    if ((page.viewportSize()?.width ?? 0) < 768) {
+      await page.locator("summary", { hasText: "Request example" }).click();
+      return page.locator("details").first();
+    }
+    return page.locator("aside");
+  };
+
   test("playground: empty state, then Demo send shows loading then a response", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await expect(desktopPane(page).getByText("No response yet")).toBeVisible();
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/ms$/)).toBeVisible(); // loading: elapsed-ms readout
@@ -127,7 +158,8 @@ test.describe("interactions", () => {
   });
 
   test("playground: switching to Live requires confirmation and shows the key field", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    // An allowlisted endpoint: the key field is shown only where Live can send (8C).
+    await page.goto("./en/playground?endpoint=proxy/info-extensions");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await expect(page.getByRole("heading", { name: "Switch to Live mode?" })).toBeVisible();
     await page.getByRole("button", { name: "Switch mode" }).click();
@@ -138,18 +170,18 @@ test.describe("interactions", () => {
   // U-08); the Sample API is never allowlisted, so Send must stay disabled
   // rather than attempt (and fail) a request, as the old prototype stub did.
   test("playground: Live is not allowlisted for the Sample API, so Send stays disabled", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
     await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
-    await expect(
-      desktopPane(page).getByText("Live requests aren't available for this endpoint in this deployment yet."),
-    ).toBeVisible();
+    await expect(desktopPane(page).getByText(/Live execution is not enabled for this operation/)).toBeVisible();
+    // No key field where Live cannot send (8C): a key typed there would go nowhere.
+    await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
     await expect(desktopPane(page).getByText(/DEMO|LIVE/)).toHaveCount(0);
   });
 
   test("playground: required-field validation blocks Send with a missing path parameter", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/get-call-record");
+    await page.goto("./en/playground?endpoint=sample/get-call-record");
     // Path params are prefilled from the endpoint's documented example value;
     // clear it to exercise the required-field path.
     await desktopPane(page).getByLabel("call_id").fill("");
@@ -159,7 +191,7 @@ test.describe("interactions", () => {
   });
 
   test("JSON viewer: collapses a node and search filters", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
     await desktopPane(page).getByPlaceholder("Search JSON").fill("outbound");
@@ -171,7 +203,7 @@ test.describe("interactions", () => {
     test("reference page shows the legacy badge, fixed query params, and undocumented states truthfully", async ({
       page,
     }) => {
-      await page.goto("/en/reference/proxy/info-extensions");
+      await page.goto("./en/reference/proxy/info-extensions");
       await expect(page.getByRole("heading", { name: "List extensions" })).toBeVisible();
       await expect(page.getByText("Legacy endpoint")).toBeVisible();
       // The header's own path line; the request panel (desktop + mobile,
@@ -206,22 +238,65 @@ test.describe("interactions", () => {
       ).toBeVisible();
     });
 
-    test("API reference redirects to the Proxy API (the default API) and the sidebar matches it", async ({
+    test("API reference redirects to the Open API (the default API, 8E) and the sidebar matches it", async ({
       page,
     }) => {
-      await page.goto("/en/reference");
-      await expect(page).toHaveURL(/\/reference\/proxy$/);
-      await expect(page.getByRole("combobox").first()).toHaveValue("proxy");
+      await page.goto("./en/reference");
+      await expect(page).toHaveURL(/\/reference\/openapi$/);
+      const select = page.getByRole("combobox").first();
+      await expect(select).toHaveValue("openapi");
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
+    });
+
+    test("the Playground opens on the Open API's Simple CDR by default (8E)", async ({ page }) => {
+      await page.goto("./en/playground");
+      await expect(desktopPane(page).getByLabel("API", { exact: true })).toHaveValue("openapi");
+      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("List simple CDRs");
+      await expect(page.getByTestId("endpoint-not-found")).toHaveCount(0);
+    });
+
+    test("the home page lists Open API before the legacy Proxy API (8E)", async ({ page }) => {
+      await page.goto("./en");
+      const chips = page.getByLabel("APIs", { exact: true }).getByRole("link");
+      await expect(chips).toHaveText(["1com Open API", "Proxy API (legacy)"]);
+    });
+
+    test("Guides open in Open API mode; Proxy guides only after selecting it (8E)", async ({ page, browserName }) => {
+      await page.goto("./en/guides");
+      await expect(page).toHaveURL(/\/guides\/openapi-authentication$/);
+      const sidebar = page.locator("aside").first();
+      const select = sidebar.getByRole("combobox");
+      await expect(select).toHaveValue("openapi");
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
+      await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toBeVisible();
+      await expect(sidebar.getByRole("link", { name: "Call history" })).toHaveCount(0);
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");
+      await select.selectOption("proxy");
+      await expect(page).toHaveURL(/\/guides\/authentication$/);
+      await expect(sidebar.getByRole("link", { name: "Call history" })).toBeVisible();
+      await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toHaveCount(0);
+    });
+
+    test("the home Most Used Cases card and primary button lead to Open API guides (8E)", async ({ page }) => {
+      await page.goto("./en");
+      await expect(page.getByRole("link", { name: "Get started with the Open API" })).toHaveAttribute("href", /\/guides\/openapi-authentication$/);
+      await page.getByRole("link", { name: /Most Used Cases/ }).click();
+      await expect(page).toHaveURL(/\/guides\/most-used-cases$/);
+      await expect(page.getByRole("heading", { level: 1, name: "Most Used Cases" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Click to Call" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Viewing call history (CDRs)" })).toBeVisible();
     });
 
     test("Try in Playground opens the Playground on this endpoint with the Proxy API's own samples", async ({
       page,
     }) => {
-      await page.goto("/en/reference/proxy/info-extensions");
+      await page.goto("./en/reference/proxy/info-extensions");
       await page.getByRole("link", { name: "Try in Playground" }).click();
       await expect(page).toHaveURL(/\/playground\?endpoint=proxy\/info-extensions$/);
       await desktopPane(page).getByText("Code preview").click();
-      await expect(desktopPane(page).getByText("PROXY_API_KEY")).toBeVisible();
+      // Scoped to the cURL tab panel: the Request preview (Phase 8C) renders
+      // the same env var name in its own collapsed curl line.
+      await expect(desktopPane(page).getByRole("tabpanel", { name: "cURL" }).getByText("$PROXY_API_KEY")).toBeVisible();
     });
 
     // info-extensions gained Demo fixtures in Phase 6 (see "Demo Mode (Phase
@@ -229,14 +304,14 @@ test.describe("interactions", () => {
     // exercises the no-fixture-set fallback ("unavailable" — never a
     // fabricated or replayed response).
     test("Demo mode never fabricates or replays data for an endpoint with no fixtures", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/cdr-get");
+      await page.goto("./en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
     });
 
     test("undocumented-required query parameters never block Send", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/cdr-get");
+      await page.goto("./en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByLabel("tenant").fill("");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toHaveCount(0);
@@ -264,7 +339,7 @@ test.describe("interactions", () => {
     }
 
     async function goLive(page: Page) {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
@@ -281,7 +356,7 @@ test.describe("interactions", () => {
         called = true;
         return route.abort();
       });
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
@@ -313,7 +388,8 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByText("content-type:")).toBeVisible();
 
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
-      await expect(desktopPane(page).getByText(/key=••••/)).toBeVisible();
+      // `.last()`: the request-pane Request preview (Phase 8C) precedes the response pane in the DOM.
+      await expect(desktopPane(page).getByText(/key=••••/).last()).toBeVisible();
       // "$PROXY_API_KEY" also appears in the always-present static "Code
       // preview" curl sample (Phase 4), which renders it unmasked as
       // documentation; that one mounts first, so this Request tab's own
@@ -394,7 +470,7 @@ test.describe("interactions", () => {
 
     // Phase 5 adjustment (A-42/A-43): two more allowlisted endpoints.
     async function goLiveOn(page: Page, endpoint: string) {
-      await page.goto(`/en/playground?endpoint=${endpoint}`);
+      await page.goto(`./en/playground?endpoint=${endpoint}`);
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
@@ -565,7 +641,7 @@ test.describe("interactions", () => {
       // field is fixed to userfield: shown as a fixed parameter, never editable.
       await expect(desktopPane(page).getByLabel("field", { exact: true })).toHaveCount(0);
       await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveCount(0);
-      await desktopPane(page).getByLabel("uniqueid", { exact: true }).fill("srv02-1701011773.4670");
+      await desktopPane(page).getByLabel("uniqueid", { exact: true }).fill("PBX-1701011773.4670");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("customer-note-e2e")).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText(/upstream returned an empty body/)).toHaveCount(0);
@@ -581,7 +657,7 @@ test.describe("interactions", () => {
       const headers = { origin: baseURL!, "sec-fetch-site": "same-origin", "content-type": "application/json" };
       const override = await request.post("/api/playground", {
         headers,
-        data: { endpoint: "proxy/cdr-get", params: { uniqueid: "srv02-1.2", field: "src" }, credential: "x" },
+        data: { endpoint: "proxy/cdr-get", params: { uniqueid: "PBX-1.2", field: "src" }, credential: "x" },
       });
       expect(override.status()).toBe(400);
       const listqueues = await request.post("/api/playground", {
@@ -607,7 +683,7 @@ test.describe("interactions", () => {
           bodyText: JSON.stringify({ "1": { ex_id: "1", ex_name: "X", ex_number: "1" } }),
         },
       });
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       // The desktop 3-pane layout and the mobile step flow are both mounted
@@ -674,7 +750,7 @@ test.describe("interactions", () => {
 
     for (const { endpoint, label } of defaultResolves) {
       test(`${endpoint}: default field values resolve a real Demo scenario, not Not simulated`, async ({ page }) => {
-        await page.goto(`/en/playground?endpoint=${endpoint}`);
+        await page.goto(`./en/playground?endpoint=${endpoint}`);
         await desktopPane(page).getByRole("button", { name: "Send request" }).click();
         await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
         // Scoped to the response's own "Scenario: <label>" line (a single
@@ -705,7 +781,7 @@ test.describe("interactions", () => {
     // meaningful: scenario chips still switch between the endpoint's
     // distinct fixture cases (json/csv, matched/unmatched).
     test("info-simplecdrs: scenario chips switch between the JSON and CSV fixture cases", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-simplecdrs");
+      await page.goto("./en/playground?endpoint=proxy/info-simplecdrs");
 
       await desktopPane(page).getByRole("button", { name: "Calls, phone match (JSON)" }).click();
       await expect(desktopPane(page).getByLabel("phone", { exact: true })).toHaveValue("5550101001");
@@ -734,7 +810,7 @@ test.describe("interactions", () => {
     test("a scenario chip fills the endpoint's own query fields, then Send reflects that exact scenario", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await page.goto("./en/playground?endpoint=proxy/info-agents");
       await desktopPane(page).getByRole("button", { name: "Unknown queue (JSON null)" }).click();
       await expect(desktopPane(page).getByLabel("queue", { exact: true })).toHaveValue("999999");
       await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
@@ -749,10 +825,13 @@ test.describe("interactions", () => {
     test("Simulate error is hidden once an endpoint has fixtures, unlike the fixture-less Sample API", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
-      await page.goto("/en/playground?endpoint=sample/list-call-records");
+      await page.goto("./en/playground?endpoint=sample/list-call-records");
       await expect(desktopPane(page).getByText("Simulate error response")).toBeVisible();
+      // A real API endpoint without fixtures has no error example to simulate (8B).
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
     });
 
     test("Demo mode makes no network request, across a scenario-chip + Send flow", async ({ page }) => {
@@ -761,7 +840,7 @@ test.describe("interactions", () => {
         called = true;
         return route.abort();
       });
-      await page.goto("/en/playground?endpoint=proxy/info-dids");
+      await page.goto("./en/playground?endpoint=proxy/info-dids");
       await desktopPane(page).getByRole("button", { name: "CSV (empty)" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
@@ -769,12 +848,13 @@ test.describe("interactions", () => {
     });
 
     test("the Request tab is available for Demo too, explicitly marked not sent", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
       await expect(
-        desktopPane(page).getByText("Not sent — Demo. This shows what the equivalent Live request would look like."),
+        // `.last()`: the request-pane Request preview (Phase 8C) says the same, earlier in the DOM.
+        desktopPane(page).getByText("Not sent — Demo. This shows what the equivalent Live request would look like.").last(),
       ).toBeVisible();
       // `.first()` reaches the endpoint-path <code> element; the same substring
       // also appears in the full-URL and curl-command lines below it.
@@ -792,7 +872,7 @@ test.describe("interactions", () => {
     // resolved to, which is what broke silently before this fix.
     test("mobile: a Demo scenario resolves through the step flow", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await page.goto("./en/playground?endpoint=proxy/info-agents");
       await page.getByRole("button", { name: "Send request" }).first().click();
       await page.getByRole("tab", { name: "Response" }).click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
@@ -806,7 +886,7 @@ test.describe("interactions", () => {
     // assertion below intentionally keeps checking for the "(plain)" chip,
     // which still exists as a non-default scenario option.
     test("he: scenario labels and the response stay English while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("/he/playground?endpoint=proxy/info-dids");
+      await page.goto("./he/playground?endpoint=proxy/info-dids");
       // Mobile step-flow and desktop grid are both mounted (CSS-hidden, not
       // JS-unmounted), each with its own legend; scope to the desktop pane
       // (this test uses the default desktop-sized viewport) like the rest of
@@ -832,7 +912,7 @@ test.describe("interactions", () => {
     // (matched → no-match), still verifying Hebrew chrome around an
     // English-labelled scenario.
     test("he: a scenario chip switch stays English-labelled while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("/he/playground?endpoint=proxy/info-simplecdrs");
+      await page.goto("./he/playground?endpoint=proxy/info-simplecdrs");
       await page.getByRole("button", { name: "Calls, phone match (JSON)" }).first().click();
       await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
@@ -850,7 +930,7 @@ test.describe("interactions", () => {
     test("info-queuelogs: the default-resolved abandoned-call scenario has the observed record's content", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await page.goto("./en/playground?endpoint=proxy/info-queuelogs");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText("Abandoned call (JSON)").last()).toBeVisible();
@@ -858,7 +938,7 @@ test.describe("interactions", () => {
     });
 
     test("info-queuelogs: the no-data JSON chip reproduces the single-byte ] body", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await page.goto("./en/playground?endpoint=proxy/info-queuelogs");
       await desktopPane(page).getByRole("button", { name: "No data (JSON)" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
@@ -869,18 +949,8 @@ test.describe("interactions", () => {
 
   // Phase 7: write operations, form/multipart bodies, binary responses.
   test.describe("Proxy rollout (Phase 7)", () => {
-    // The request panel is mounted twice (desktop <aside>, mobile <details>);
-    // open and target whichever copy this viewport shows.
-    const requestPanel = async (page: Page) => {
-      if ((page.viewportSize()?.width ?? 0) < 768) {
-        await page.locator("summary", { hasText: "Request example" }).click();
-        return page.locator("details").first();
-      }
-      return page.locator("aside");
-    };
-
     test("a write operation is reference-only: warning callout, no Try link, vendor response sample", async ({ page }) => {
-      await page.goto("/en/reference/proxy/dial");
+      await page.goto("./en/reference/proxy/dial");
       await expect(page.getByRole("heading", { name: "Place a call" })).toBeVisible();
       await expect(page.getByText("Changes state — reference only")).toBeVisible();
       await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
@@ -891,7 +961,7 @@ test.describe("interactions", () => {
     });
 
     test("a write operation never sends from the Playground, in Demo or Live", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/dial");
+      await page.goto("./en/playground?endpoint=proxy/dial");
       const send = desktopPane(page).getByRole("button", { name: "Send request" });
       await expect(send).toBeDisabled();
       await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
@@ -901,20 +971,401 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
     });
 
-    test("a ManageDB write documents its jsondata body, admin key, and a form-encoded POST sample", async ({ page }) => {
-      await page.goto("/en/reference/proxy/managedb-custom-add");
-      await expect(page.getByText(/with one field, jsondata, whose value is the object below encoded as JSON/)).toBeVisible();
-      await expect(page.locator('section[aria-labelledby="authentication"]').getByText("Key scope: Admin key")).toBeVisible();
+    test("a form-encoded write documents its values body and a form-encoded POST sample", async ({ page }) => {
+      await page.goto("./en/reference/proxy/phonebook-add");
+      await expect(page.getByText(/with one field, values, whose value is the object below encoded as JSON/)).toBeVisible();
       const panel = await requestPanel(page);
-      await expect(panel.getByText(/--url-query "reqtype=MANAGEDB"/)).toBeVisible();
-      await expect(panel.getByText(/--data-urlencode 'jsondata=/)).toBeVisible();
+      await expect(panel.getByText(/--url-query "reqtype=PHONEBOOK"/)).toBeVisible();
+      await expect(panel.getByText(/--data-urlencode 'values=/)).toBeVisible();
+    });
+
+    test("administrative content is not reachable: removed pages 404 and are absent from nav and search (8E)", async ({ page }) => {
+      for (const path of [
+        "./en/reference/openapi/tenants-list",
+        "./en/reference/openapi/auth-token-create",
+        "./en/reference/proxy/managedb-custom-add",
+        "./en/guides/managedb-writes",
+      ]) {
+        const res = await page.goto(path);
+        expect(res?.status(), path).toBe(404);
+      }
+      await page.goto("./en/reference/openapi");
+      // "Tenant Variable" stays (a tenant-scoped resource); only the global-key-only ones are gone.
+      await expect(page.locator("aside").getByText("Tenant", { exact: true })).toHaveCount(0);
+      await expect(page.locator("aside").getByRole("link", { name: /^List tenants$/ })).toHaveCount(0);
+      await page.goto("./en/reference/proxy");
+      await expect(page.locator("aside")).not.toContainText("MANAGEDB");
+      await expect(page.locator("body")).not.toContainText(/global API Key|Admin key/i);
     });
 
     test("a binary response says so instead of 'No response body'", async ({ page }) => {
-      await page.goto("/en/reference/proxy/info-recording");
+      await page.goto("./en/reference/proxy/info-recording");
       const panel = await requestPanel(page);
       await expect(panel.getByText("Binary body (for example audio). Not shown here.")).toBeVisible();
       await expect(panel.getByText("--output response.bin")).toBeVisible();
+    });
+  });
+
+  // Phase 8 Stage 5: cross-API switching, a path-parameter endpoint, write
+  // blocking, and Demo fixtures, for the MiRTA OpenAPI rollout.
+  test.describe("Open API rollout (Phase 8)", () => {
+    // The desktop sidebar's own API select only renders past the `xl`
+    // breakpoint (sidebar-nav.tsx); a second copy lives in the mobile nav
+    // drawer (site-header.tsx, hidden until opened) — set the viewport
+    // explicitly so this test exercises the always-visible one regardless
+    // of which project (desktop/mobile) runs it. WebKit-only: this
+    // React-controlled <select>'s onChange (and hence the navigation) never
+    // fires from Playwright's WebKit `selectOption`, confirmed directly
+    // against a plain (non-mobile-emulated) WebKit instance and unrelated
+    // to this endpoint's content — the identical call works on Chromium.
+    // Real Safari/iOS users interacting with the native picker aren't
+    // affected; this is a Playwright/WebKit automation gap.
+    test("the sidebar API select switches from Proxy to Open API", async ({ page, browserName }) => {
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption — see comment above.");
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto("./en/reference/proxy");
+      await expect(page.getByRole("heading", { name: "Proxy" }).first()).toBeVisible();
+      await page.locator("aside").getByLabel("API").selectOption("openapi");
+      await expect(page).toHaveURL(/\/en\/reference\/openapi$/);
+      await expect(page.getByRole("heading", { name: "1com Open API" }).first()).toBeVisible();
+    });
+
+    test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {
+      await page.goto("./en/reference/openapi/cdrs-list");
+      await expect(page.getByRole("heading", { name: "List CDRs" })).toBeVisible();
+      // Response Fields table from the official page: 30 fields, types undocumented.
+      await expect(page.locator('[id^="response-200"]')).toHaveCount(30);
+      await expect(page.locator('[id="response-200.pincode"]')).toBeAttached();
+      // The panel says the example is missing, not that the body is empty.
+      await expect(page.getByText("No example body documented.", { exact: false }).first()).toBeAttached();
+      // Named examples, rendered with the portal base URL and the header credential.
+      const examples = page.getByTestId("endpoint-examples");
+      // 10 official examples; the one made with a global key is not shown (Phase 8E).
+      await expect(examples.locator(":scope > li")).toHaveCount(9);
+      const byLinkedId = examples.locator("details").filter({ hasText: "CDR by Linked ID" });
+      await byLinkedId.locator("summary").click();
+      const code = byLinkedId.locator("pre").first();
+      await expect(code).toContainText("pbx6webserver.1com.co.il/pbx/openapi.php/cdrs?tenant=TESTTENANT&linkedid=");
+      await expect(code).toContainText("X-API-Key: $OPENAPI_API_KEY");
+      await expect(code).not.toContainText("CANISTRACCI");
+      await expect(examples.locator("details").filter({ hasText: "CDR Global Tenant Wildcard" })).toHaveCount(0);
+    });
+
+    test("a path-parameter endpoint documents its example placeholder and prefills it in the Playground", async ({ page }) => {
+      await page.goto("./en/reference/openapi/extensions-get");
+      await expect(page.getByRole("heading", { name: "Get extension" })).toBeVisible();
+      const panel = await requestPanel(page);
+      // The example value the code sample substitutes into the path.
+      await expect(panel.getByText(/\/extensions\/OBJECT_ID/)).toBeVisible();
+      await panel.getByRole("link", { name: "Try in Playground" }).click();
+      await expect(page).toHaveURL(/endpoint=openapi\/extensions-get/);
+      await expect(desktopPane(page).getByLabel("ex_id")).toHaveValue("OBJECT_ID");
+    });
+
+    test("a write operation is reference-only: warning callout, no Try link, no Send", async ({ page }) => {
+      await page.goto("./en/reference/openapi/dial");
+      await expect(page.getByRole("heading", { name: "Originate a call" })).toBeVisible();
+      await expect(page.getByText("Changes state — reference only")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
+      const panel = await requestPanel(page);
+      await expect(panel.getByTestId("reference-only")).toBeVisible();
+
+      await page.goto("./en/playground?endpoint=openapi/dial");
+      await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+      await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
+    });
+
+    const demoFixtures: { endpoint: string; label: string }[] = [
+      { endpoint: "openapi/extensions-state-get", label: "Registered, active channel" },
+      { endpoint: "openapi/queues-list", label: "Queues found" },
+      { endpoint: "openapi/queues-get", label: "Queue found" },
+      { endpoint: "openapi/aianalysis-get", label: "Analysis found (JSON)" },
+    ];
+
+    for (const { endpoint, label } of demoFixtures) {
+      test(`${endpoint}: default field values resolve its documented-example Demo scenario`, async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+        const scenarioLine = desktopPane(page).locator("p", { hasText: "Scenario:" });
+        await expect(scenarioLine).toBeVisible();
+        await expect(scenarioLine).toContainText(label);
+        await expect(desktopPane(page).getByText("Not simulated")).toHaveCount(0);
+      });
+    }
+
+    test("ailogs-list: dropped from Demo (404 on the test PBX, 8B) shows Demo data not available, not a guess", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/ailogs-list");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+    });
+
+    const documentedChips: { endpoint: string; chip: string; expect: RegExp }[] = [
+      { endpoint: "openapi/extensions-state-get", chip: "Not registered", expect: /Extension not registered/ },
+      { endpoint: "openapi/aianalysis-get", chip: "One of two unique IDs unknown", expect: /1700000000\.42/ },
+      { endpoint: "openapi/aianalysis-get", chip: "Invalid API Key", expect: /invalid_api_key/ },
+      { endpoint: "openapi/queues-get", chip: "Queue found", expect: /allowed_members/ },
+    ];
+
+    for (const { endpoint, chip, expect: body } of documentedChips) {
+      test(`${endpoint}: the "${chip}" chip resolves its documented case, with no network request (8B)`, async ({ page }) => {
+        let called = false;
+        await page.route("**/api/playground", (route) => {
+          called = true;
+          return route.abort();
+        });
+        await page.goto(`./en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: chip }).click();
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).locator("p", { hasText: "Scenario:" })).toContainText(chip, { timeout: 3000 });
+        await expect(desktopPane(page).getByTestId("json-content")).toContainText(body);
+        expect(called).toBe(false);
+      });
+    }
+
+    test('openapi/simplecdrs-list: the "No matching calls" chip resolves an empty array, with no network request (8B Stage 4)', async ({ page }) => {
+      let called = false;
+      await page.route("**/api/playground", (route) => {
+        called = true;
+        return route.abort();
+      });
+      await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
+      await desktopPane(page).getByRole("button", { name: "No matching calls" }).click();
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await expect(desktopPane(page).locator("p", { hasText: "Scenario:" })).toContainText("No matching calls");
+      expect(called).toBe(false);
+    });
+
+    test("OpenAPI Request tab substitutes path values and masks the X-API-Key header (8B)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/extensions-state-get");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+      await desktopPane(page).getByRole("tab", { name: "Request" }).click();
+      // `.last()`: the request-pane Request preview (Phase 8C) renders the same lines earlier in the DOM.
+      await expect(desktopPane(page).getByText("X-API-Key: ••••").last()).toBeVisible();
+      await expect(desktopPane(page).getByText(/^curl ".*" -H "X-API-Key: \$OPENAPI_API_KEY"$/).last()).toBeVisible();
+    });
+
+    test("cdrs-list: a GET with no fixture shows Demo data not available, never a guess", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+      await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+    });
+
+    test("a write shows its request preview with the typed body, never sends, and masks secret fields (8C)", async ({ page }) => {
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      await page.goto("./en/playground?endpoint=openapi/extensions-create");
+      const pane = desktopPane(page);
+      await expect(pane.getByTestId("write-only-note")).toBeVisible();
+      await expect(pane.getByRole("button", { name: "Send request" })).toBeDisabled();
+      await pane.getByTestId("request-preview").locator("summary").click();
+      const body = pane.getByTestId("request-preview").getByTestId("request-body");
+      await expect(body).toContainText('"number": "100"');
+      await pane.getByRole("textbox", { name: /^name( \*)?$/ }).fill("Typed Name");
+      await expect(body).toContainText('"name": "Typed Name"');
+      await pane.getByRole("textbox", { name: /^password( \*)?$/ }).fill("hunter2-REAL");
+      const preview = pane.getByTestId("request-preview");
+      await expect(body).toContainText("<REDACTED>");
+      await expect(preview).not.toContainText("hunter2-REAL");
+      await expect(preview).not.toContainText("SYNTHETIC_SECRET");
+      await expect(preview).toContainText("Content-Type: application/json");
+      await expect(preview).toContainText("-X POST");
+      expect(sent).toEqual([]);
+    });
+
+    test("the operation header shows kind and auth, and no key scope (8C)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      const header = desktopPane(page).getByTestId("operation-header");
+      await expect(header.getByTestId("op-kind")).toHaveText("Read-only");
+      await expect(header).toContainText("X-API-Key header");
+      await expect(header).not.toContainText("Key scope");
+      await page.goto("./en/playground?endpoint=openapi/extensions-create");
+      await expect(desktopPane(page).getByTestId("operation-header").getByTestId("op-kind")).toHaveText("Changes state");
+    });
+
+    test("fields show their documented type and description, and JSON fields are text areas (8C)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/extensions-create");
+      const pane = desktopPane(page);
+      await expect(pane.getByText("Extension number.", { exact: false }).first()).toBeVisible();
+      const aors = pane.getByRole("textbox", { name: /^ps_aors/ });
+      expect(await aors.evaluate((el) => el.tagName)).toBe("TEXTAREA");
+      await expect(aors).toHaveValue('{"max_contacts":1}');
+    });
+
+    test("the Playground API select moves to another API's first endpoint (8C)", async ({ page, browserName }) => {
+      test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
+      await desktopPane(page).getByLabel("API", { exact: true }).selectOption("openapi");
+      await expect(page).toHaveURL(/endpoint=openapi\//);
+      await expect(desktopPane(page).getByTestId("operation-header")).toContainText("X-API-Key header");
+    });
+
+    test("an unknown ?endpoint= says so instead of silently showing another operation (8C)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/does-not-exist");
+      await expect(page.getByTestId("endpoint-not-found")).toContainText("openapi/does-not-exist");
+      await page.goto("./en/playground");
+      await expect(page.getByTestId("endpoint-not-found")).toHaveCount(0);
+    });
+
+    test("Live on an OpenAPI operation is explicitly not enabled: no key field, nothing sendable (8C)", async ({ page }) => {
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      await page.goto("./en/playground?endpoint=openapi/extensions-list");
+      await page.getByRole("button", { name: "Switch to Live" }).click();
+      await page.getByRole("button", { name: "Switch mode" }).click();
+      const pane = desktopPane(page);
+      await expect(page.getByText("Live execution is not enabled for this operation. Nothing is sent.")).toBeVisible();
+      await expect(pane.getByLabel("API key")).toHaveCount(0);
+      await expect(pane.getByRole("button", { name: "Send request" })).toBeDisabled();
+      await expect(pane.getByText(/default-deny/)).toBeVisible();
+      expect(sent).toEqual([]);
+    });
+
+    test("narrow mobile: select a resource, enter a parameter, preview the request, run Demo, and a write stays unsendable (8C)", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      const sent: string[] = [];
+      page.on("request", (r) => {
+        if (r.url().includes("/api/playground")) sent.push(r.url());
+      });
+      const consoleErrors: string[] = [];
+      page.on("console", (m) => {
+        if (m.type() === "error") consoleErrors.push(m.text());
+      });
+      // The stepper (md:hidden) is the only pane rendered at this width; the
+      // desktop grid stays in the DOM but hidden, so scope to the stepper.
+      const mobile = page.locator(".md\\:hidden");
+      const step = (name: string) => mobile.getByRole("tab", { name, exact: true });
+
+      await page.goto("./en/playground?endpoint=openapi/extensions-list");
+      await expect(mobile.getByTestId("operation-header")).toContainText("X-API-Key header");
+      await mobile.getByTestId("request-preview").locator("summary").click();
+      // A fill sent before React hydrates is overwritten by the controlled
+      // value (same race as the search-palette and nav-drawer tests above):
+      // retry until the preview, which is derived from state, shows it.
+      await expect(async () => {
+        await mobile.getByRole("textbox", { name: /^tenant/ }).fill("MOBILETENANT");
+        await expect(mobile.getByTestId("request-preview")).toContainText("tenant=MOBILETENANT", { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+
+      await mobile.getByRole("button", { name: "Send request" }).click();
+      await step("Response").click();
+      await expect(mobile.getByText(/source: DEMO/)).toBeVisible({ timeout: 3000 });
+      await expect(mobile.getByText(/status: 401|status: 200/)).toBeVisible();
+
+      // Resource selection through the Endpoint step, onto a write.
+      await step("Endpoint").click();
+      await mobile.getByPlaceholder("Filter endpoints").fill("Create extension");
+      await mobile.getByRole("button", { name: /Create extension/ }).click();
+      await step("Request").click();
+      await expect(mobile.getByTestId("op-kind")).toHaveText("Changes state");
+      await expect(mobile.getByTestId("write-only-note")).toBeVisible();
+      await expect(mobile.getByRole("button", { name: "Send request" })).toBeDisabled();
+
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+      expect(sent).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    });
+
+    test("date-time pickers compose the exact documented string and send it in the request (8E)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
+      const pane = desktopPane(page);
+      const start = pane.getByTestId("date-field-start");
+      const end = pane.getByTestId("date-field-end");
+      // Pre-filled documented example parses into the pickers.
+      await expect(start.locator('input[type="date"]')).toHaveValue("2026-01-01");
+      await expect(start.locator('input[type="time"]')).toHaveValue("00:00:00");
+      await expect(end.locator('input[type="time"]')).toHaveValue("23:59:59");
+
+      await pane.getByTestId("request-preview").locator("summary").click();
+      const preview = pane.getByTestId("request-preview");
+      // Pick a date and a time; the string is YYYY-MM-DD HH:MM:SS (space encoded in the URL), not ISO.
+      await start.locator('input[type="date"]').fill("2026-03-05");
+      await start.locator('input[type="time"]').fill("09:15:30");
+      await end.locator('input[type="date"]').fill("2026-03-06");
+      await expect(preview).toContainText("start=2026-03-05+09%3A15%3A30");
+      await expect(preview).toContainText("end=2026-03-06+23%3A59%3A59"); // documented default end time
+      await expect(preview).not.toContainText("T09:15");
+
+      // Clear empties the value; the request then carries no start.
+      await start.getByRole("button", { name: "Clear" }).click();
+      await expect(start.locator('input[type="date"]')).toHaveValue("");
+      await expect(start.locator('input[type="time"]')).toBeDisabled();
+      await expect(preview).not.toContainText("start=");
+
+      // Demo still runs: the date value never changes which scenario resolves.
+      await pane.getByRole("button", { name: "Send request" }).click();
+      await expect(pane.getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+    });
+
+    test("date-only fields use a date picker and send YYYY-MM-DD (8E)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=proxy/info-simplecdrs");
+      const pane = desktopPane(page);
+      const start = pane.getByTestId("date-field-start");
+      await expect(start.locator('input[type="time"]')).toHaveCount(0);
+      await pane.getByTestId("request-preview").locator("summary").click();
+      await start.locator('input[type="date"]').fill("2026-02-10");
+      await expect(pane.getByTestId("request-preview")).toContainText("start=2026-02-10");
+    });
+
+    test("a value that is not in the documented format stays editable text, never rewritten (8E)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
+      const pane = desktopPane(page);
+      // The scenario chips / a typed value can set any string; here: an odd value via a Demo chip-free path.
+      await expect(pane.getByTestId("date-field-start")).toBeVisible();
+      // Fields without a documented format have no picker at all.
+      await page.goto("./en/playground?endpoint=openapi/campaigns-create");
+      await expect(desktopPane(page).locator('input[type="date"]')).toHaveCount(0);
+      await expect(desktopPane(page).getByRole("textbox", { name: /^datestart/ })).toBeVisible();
+    });
+
+    test("pickers work on a narrow screen and in Hebrew (8E)", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("./he/playground?endpoint=openapi/simplecdrs-list");
+      const mobile = page.locator("div.md\\:hidden");
+      const start = mobile.getByTestId("date-field-start");
+      await mobile.getByTestId("request-preview").locator("summary").click();
+      // A fill before React hydrates leaves the DOM value but not the state: retry until the
+      // state-derived request preview shows it (same race as the nav-drawer and search tests).
+      await expect(async () => {
+        await start.locator('input[type="date"]').fill("2026-04-07");
+        await expect(mobile.getByTestId("request-preview")).toContainText("start=2026-04-07+00%3A00%3A00", { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+    });
+
+    test("a read with no Demo data still shows the request it would make (8C)", async ({ page }) => {
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      const pane = desktopPane(page);
+      await pane.getByRole("button", { name: "Send request" }).click();
+      await expect(pane.getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
+      await expect(pane.getByText(/openapi\.php\/cdrs/).filter({ visible: true }).first()).toBeVisible();
+      await expect(pane.getByText("X-API-Key: ••••").filter({ visible: true }).first()).toBeVisible();
+    });
+
+    test("Reference pages show no internal evidence references or internal notes (Stage 6 C-1)", async ({ page }) => {
+      const INTERNAL = /source-docs|SEC-REQ|DOCS_AUDIT|\b(?:OA|A|U)-\d+\b|\b(?:Site|Doc) lines? \d|docs\/SECURITY|\bsrc\/server/;
+      for (const path of [
+        "./en/reference/openapi/cdrs-list",
+        "./en/reference/openapi/extensions-get",
+        "./en/reference/proxy/info-extensions",
+        "./en/reference/proxy/info-queuelogs",
+        "./he/reference/proxy/voicemail-list",
+      ]) {
+        await page.goto(path);
+        const text = await page.locator("main").innerText();
+        expect(text, path).not.toMatch(INTERNAL);
+      }
+      // Customer-useful notes survive; the internal "Security (SEC-REQ-..)" note does not.
+      await page.goto("./en/reference/openapi/dial");
+      await expect(page.getByText("This places a real phone call.").first()).toBeVisible();
+      await page.goto("./en/reference/proxy/info-extensions");
+      await expect(page.getByText(/Response formats are observed, not vendor-documented/).first()).toBeVisible();
     });
   });
 });

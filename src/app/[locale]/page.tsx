@@ -1,10 +1,8 @@
-import { ArrowRight, BookOpen, FlaskConical, Library } from "lucide-react";
+import { ArrowRight, BookOpen, FlaskConical, Library, Zap } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { apis } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
-
-const plannedApis = ["Open API"];
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -14,6 +12,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const api = apis[0];
 
   const cards = [
+    { href: "/guides/most-used-cases", icon: Zap, title: t("mostUsedTitle"), body: t("mostUsedBody") },
     { href: "/reference", icon: Library, title: t("referenceTitle"), body: t("referenceBody") },
     { href: "/guides", icon: BookOpen, title: t("guidesTitle"), body: t("guidesBody") },
     { href: "/playground", icon: FlaskConical, title: t("playgroundTitle"), body: t("playgroundBody") },
@@ -31,7 +30,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <p className="max-w-[60ch] text-md text-ink-muted">{t("lead")}</p>
         <div className="flex flex-wrap gap-3 pt-1">
           <Link
-            href="/guides/getting-started"
+            href="/guides/openapi-authentication"
             className="flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
           >
             {t("startGuide")}
@@ -46,7 +45,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </header>
 
-      <nav aria-label={t("entriesLabel")} className="grid gap-4 sm:grid-cols-3">
+      <nav aria-label={t("entriesLabel")} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map(({ href, icon: Icon, title, body }) => (
           <Link
             key={href}
@@ -62,17 +61,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       <div aria-label={t("apisLabel")} className="flex flex-wrap items-center gap-2 border-t border-border pt-6">
         <span className="text-xs font-semibold text-ink-muted">{tn("api")}</span>
-        <span className="rounded-sm border border-accent/40 bg-accent-tint px-2 py-0.5 text-xs font-semibold text-accent">
-          {api.name}
-        </span>
-        {plannedApis.map((name) => (
-          <span
-            key={name}
-            className="rounded-sm border border-border px-2 py-0.5 text-xs text-ink-muted"
-          >
-            {name} · {t("comingLater")}
-          </span>
-        ))}
+        {apis
+          .filter((a) => !a.synthetic)
+          .map((a) => (
+            <Link
+              key={a.id}
+              href={`/reference/${a.id}`}
+              className="rounded-sm border border-accent/40 bg-accent-tint px-2 py-0.5 text-xs font-semibold text-accent hover:border-accent"
+            >
+              {a.legacy ? tn("legacyApi", { name: a.name }) : a.name}
+            </Link>
+          ))}
       </div>
     </div>
   );

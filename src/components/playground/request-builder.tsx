@@ -7,16 +7,16 @@ import type { RenderedSample } from "@/components/code/code-tabs";
 import { CodeTabs } from "@/components/code/code-tabs";
 import { MethodBadge } from "@/components/ui/method-badge";
 import type { DemoFixtureSet } from "@/content/demo";
-import type { Endpoint } from "@/content/types";
+import type { ApiDefinition, Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
+import { sanitizedRequest, substitutePathParams } from "./executor";
+import { OperationHeader } from "./operation-header";
 import { ParamField } from "./param-field";
+import { RequestTab } from "./response-viewer";
 import { fieldKey, type PlaygroundState } from "./use-playground";
 
 function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
-  const path = endpoint.pathParameters.reduce((path, p) => {
-    const v = values[fieldKey("path", p.name)];
-    return v ? path.replaceAll(`{${p.name}}`, v) : path;
-  }, endpoint.path);
+  const path = substitutePathParams(endpoint, values);
   if (!endpoint.fixedQuery) return path;
   const fixed = Object.entries(endpoint.fixedQuery)
     .map(([k, v]) => `${k}=${v}`)
@@ -25,6 +25,7 @@ function resolveLivePath(endpoint: Endpoint, values: Record<string, string>) {
 }
 
 export function RequestBuilder({
+  api,
   endpoint,
   samples,
   state,
@@ -32,6 +33,7 @@ export function RequestBuilder({
   liveAvailable,
   demoFixtures,
 }: {
+  api: ApiDefinition;
   endpoint: Endpoint;
   samples: RenderedSample[];
   state: PlaygroundState;
@@ -57,12 +59,16 @@ export function RequestBuilder({
     setKeyRevealed,
     setSimulateError,
     send,
+    writeDemoSupported,
   } = state;
 
   const hasErrors = Object.keys(errors).length > 0;
   const envVar = authEnvVar(endpoint);
-  const writeOnly = endpoint.operationClass === "write";
-  const liveBlocked = mode === "live" && !liveAvailable && !writeOnly;
+  const isWrite = endpoint.operationClass === "write";
+  // SEC-REQ-27: a write is never sent in Live; in Demo it runs only from a
+  // documented-example fixture set (writeDemoSupported).
+  const writeOnly = isWrite && (mode === "live" || !writeDemoSupported);
+  const liveBlocked = mode === "live" && !liveAvailable && !isWrite;
 
   const applyScenario = (preset: Readonly<Record<string, string>>) => {
     for (const [name, value] of Object.entries(preset)) setField(fieldKey("query", name), value);
@@ -70,21 +76,24 @@ export function RequestBuilder({
 
   return (
     <div className="space-y-5 p-4">
+      <OperationHeader endpoint={endpoint} />
+
       <div dir="ltr" className="flex items-center gap-2 rounded-md border border-border bg-surface-2 px-3 py-2">
         <MethodBadge method={endpoint.method} />
         <code className="min-w-0 flex-1 truncate font-mono text-sm text-ink">{resolveLivePath(endpoint, fieldValues)}</code>
       </div>
 
-      {writeOnly && (
+      {isWrite && (
         <p
           data-testid="write-only-note"
           className="rounded-md border border-warning-ink/30 bg-warning-tint px-3 py-2 text-xs text-warning-ink"
         >
-          {t("writeOnlyNote")}
+          {writeDemoSupported ? t("writeDemoNote") : t("writeOnlyNote")}
         </p>
       )}
 
-      {mode === "live" && (
+      {/* No key field when this operation cannot be sent in Live: a key typed here would go nowhere. */}
+      {mode === "live" && liveAvailable && (
         <div>
           <label htmlFor={keyId} className="mb-1 block text-xs font-semibold text-ink">
             {t("apiKey")}
@@ -174,6 +183,20 @@ export function RequestBuilder({
         </fieldset>
       )}
 
+      <details data-testid="request-preview" className="group rounded-md border border-border">
+        <summary className="flex h-9 cursor-pointer list-none items-center px-3 text-xs font-semibold text-ink-muted [&::-webkit-details-marker]:hidden">
+          {t("requestPreview")}
+        </summary>
+        <div className="space-y-2 border-t border-border p-3">
+          <p className="text-xs text-ink-muted">{t("requestPreviewNote")}</p>
+          <RequestTab
+            request={sanitizedRequest(api, endpoint, fieldValues)}
+            endpoint={endpoint}
+            notSent={mode === "demo" || isWrite}
+          />
+        </div>
+      </details>
+
       <details className="group rounded-md border border-border">
         <summary className="flex h-9 cursor-pointer list-none items-center px-3 text-xs font-semibold text-ink-muted [&::-webkit-details-marker]:hidden">
           {t("codePreview")}
@@ -202,7 +225,7 @@ export function RequestBuilder({
       )}
 
       <div className="space-y-3 border-t border-border pt-4">
-        {mode === "demo" && !demoFixtures && (
+        {mode === "demo" && synthetic && !demoFixtures && (
           <label className="flex items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"

@@ -22,36 +22,25 @@ export const PROXY_PATH = "/pbx/proxyapi.php";
 
 export const legacyDeprecation: Deprecation = {
   note:
-    "The vendor documentation for proxyapi.php recommends the OpenAPI endpoint for new integrations. OpenAPI-based Proxy API documentation is not yet available in this portal.",
+    "The vendor documentation for proxyapi.php recommends the Open API endpoint for new integrations. See the 1com Open API reference in this portal; the two APIs are separate and their operations do not map one to one.",
 };
 
 /** U-09: decided for info-extensions (tenant key, read-only suffices); applied unchanged to the Phase 4–6 operations. */
 export const auth: Authentication = {
-  type: "API key",
+  type: "API Key",
   description:
-    "Tenant API key, sent as a query parameter. A tenant read-only key is sufficient for this read-only operation.",
+    "API Key, sent as a query parameter. A read-only API Key is sufficient for this read-only operation.",
   location: "query",
   parameter: "key",
-  scope: "Tenant key (read-only is sufficient)",
 };
 
 /** Key scope not stated by the source for this operation (U-09 remains open for the catalogue). */
 export const authScopeUndocumented: Authentication = {
-  type: "API key",
+  type: "API Key",
   description:
-    "API key, sent as the key query parameter. The source says a key is either an Admin key or a Tenant key, and that tenant keys come in read/write and read-only kinds; it does not say which kind this operation requires.",
+    "API Key, sent as the key query parameter. The source says keys come in read/write and read-only kinds; it does not say which kind this operation requires.",
   location: "query",
   parameter: "key",
-  scope: "Not documented",
-};
-
-/** Site line 225: "Any ManageDB action requires an admin key". */
-export const authAdmin: Authentication = {
-  type: "API key",
-  description: "Admin API key, sent as the key query parameter. The source states that any ManageDB action requires an admin key.",
-  location: "query",
-  parameter: "key",
-  scope: "Admin key",
 };
 
 export const tenantParam: Parameter = {

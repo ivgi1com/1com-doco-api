@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { RenderedSample } from "@/components/code/code-tabs";
+import { defaultEndpoint, getApi } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { useRouter } from "@/i18n/navigation";
@@ -32,6 +33,15 @@ export function PlaygroundApp({
   const samples = samplesByEndpoint[endpoint.id] ?? [];
   const demoFixtures = getDemoFixtures(api.id, endpoint.id);
 
+  const selectApi = useCallback(
+    (nextApiId: string) => {
+      const next = getApi(nextApiId);
+      const target = next && defaultEndpoint(next);
+      if (next && target) router.push(`/playground?endpoint=${next.id}/${target.id}`);
+    },
+    [router],
+  );
+
   const selectEndpoint = useCallback(
     (next: Endpoint) => {
       setEndpoint(next);
@@ -40,9 +50,10 @@ export function PlaygroundApp({
     [api.id, router],
   );
 
-  const endpointPane = <EndpointPicker api={api} selected={endpoint} onSelect={selectEndpoint} />;
+  const endpointPane = <EndpointPicker api={api} selected={endpoint} onSelect={selectEndpoint} onSelectApi={selectApi} />;
   const requestPane = (
     <RequestBuilder
+      api={api}
       endpoint={endpoint}
       samples={samples}
       state={state}
@@ -55,7 +66,7 @@ export function PlaygroundApp({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <ModeBar mode={state.mode} sending={state.sending} onRequestSwitch={state.requestModeSwitch} />
+      <ModeBar mode={state.mode} sending={state.sending} liveAvailable={liveAvailable} onRequestSwitch={state.requestModeSwitch} />
       <ModeConfirmDialog target={state.pendingMode} onCancel={state.cancelModeSwitch} onConfirm={state.confirmModeSwitch} />
 
       <MobileSteps state={state} endpointPane={endpointPane} requestPane={requestPane} responsePane={responsePane} />

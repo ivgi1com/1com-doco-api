@@ -1,0 +1,1442 @@
+{
+  "$comment": "Generated from the 'Operations' section of each source-docs/openapi/<resource>.md (Phase 8 Stage 1). One entry per documented method + path. tests/unit/openapi-coverage.test.ts checks src/content/openapi against it.",
+  "counts": {
+    "resources": 37,
+    "operations": 159,
+    "read": 66,
+    "write": 93
+  },
+  "operations": [
+    {
+      "id": "aianalysis-get",
+      "method": "GET",
+      "path": "/aianalysis",
+      "operationClass": "read",
+      "file": "source-docs/openapi/aianalysis.md",
+      "page": "ai-analysis",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "ailogs-list",
+      "method": "GET",
+      "path": "/ailogs",
+      "operationClass": "read",
+      "file": "source-docs/openapi/ailogs.md",
+      "page": "ai-logs",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "auth-token-create",
+      "method": "POST",
+      "path": "/auth/token",
+      "operationClass": "write",
+      "file": "source-docs/openapi/auth-token.md",
+      "page": "auth-token",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "auth-token-delete",
+      "method": "DELETE",
+      "path": "/auth/token",
+      "operationClass": "write",
+      "file": "source-docs/openapi/auth-token.md",
+      "page": "auth-token",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "calleridblacklists-list",
+      "method": "GET",
+      "path": "/calleridblacklists",
+      "operationClass": "read",
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "page": "caller-id-blacklist",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "calleridblacklists-get",
+      "method": "GET",
+      "path": "/calleridblacklists/{bl_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "page": "caller-id-blacklist",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "calleridblacklists-create",
+      "method": "POST",
+      "path": "/calleridblacklists",
+      "operationClass": "write",
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "page": "caller-id-blacklist",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "calleridblacklists-update",
+      "method": "PATCH",
+      "path": "/calleridblacklists/{bl_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "page": "caller-id-blacklist",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "calleridblacklists-delete",
+      "method": "DELETE",
+      "path": "/calleridblacklists/{bl_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/calleridblacklists.md",
+      "page": "caller-id-blacklist",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "campaignnumbers-list",
+      "method": "GET",
+      "path": "/campaignnumbers",
+      "operationClass": "read",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "page": "campaign-number",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaignnumbers-get",
+      "method": "GET",
+      "path": "/campaignnumbers/{cn_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "page": "campaign-number",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaignnumbers-create",
+      "method": "POST",
+      "path": "/campaignnumbers",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "page": "campaign-number",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaignnumbers-update",
+      "method": "PATCH",
+      "path": "/campaignnumbers/{cn_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "page": "campaign-number",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaignnumbers-delete",
+      "method": "DELETE",
+      "path": "/campaignnumbers/{cn_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaignnumbers.md",
+      "page": "campaign-number",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaigns-list",
+      "method": "GET",
+      "path": "/campaigns",
+      "operationClass": "read",
+      "file": "source-docs/openapi/campaigns.md",
+      "page": "campaign",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaigns-get",
+      "method": "GET",
+      "path": "/campaigns/{ca_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/campaigns.md",
+      "page": "campaign",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaigns-create",
+      "method": "POST",
+      "path": "/campaigns",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaigns.md",
+      "page": "campaign",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaigns-update",
+      "method": "PATCH",
+      "path": "/campaigns/{ca_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaigns.md",
+      "page": "campaign",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "campaigns-delete",
+      "method": "DELETE",
+      "path": "/campaigns/{ca_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/campaigns.md",
+      "page": "campaign",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "cdrs-list",
+      "method": "GET",
+      "path": "/cdrs",
+      "operationClass": "read",
+      "file": "source-docs/openapi/cdrs.md",
+      "page": "cdr",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "conditions-list",
+      "method": "GET",
+      "path": "/conditions",
+      "operationClass": "read",
+      "file": "source-docs/openapi/conditions.md",
+      "page": "condition",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "conditions-get",
+      "method": "GET",
+      "path": "/conditions/{co_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/conditions.md",
+      "page": "condition",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "conditions-create",
+      "method": "POST",
+      "path": "/conditions",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conditions.md",
+      "page": "condition",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "conditions-update",
+      "method": "PATCH",
+      "path": "/conditions/{co_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conditions.md",
+      "page": "condition",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "conditions-delete",
+      "method": "DELETE",
+      "path": "/conditions/{co_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conditions.md",
+      "page": "condition",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "conferencerooms-list",
+      "method": "GET",
+      "path": "/conferencerooms",
+      "operationClass": "read",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "page": "conference-room",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "conferencerooms-get",
+      "method": "GET",
+      "path": "/conferencerooms/{cr_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "page": "conference-room",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "conferencerooms-create",
+      "method": "POST",
+      "path": "/conferencerooms",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "page": "conference-room",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "conferencerooms-update",
+      "method": "PATCH",
+      "path": "/conferencerooms/{cr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "page": "conference-room",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "conferencerooms-delete",
+      "method": "DELETE",
+      "path": "/conferencerooms/{cr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/conferencerooms.md",
+      "page": "conference-room",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "cronjobs-list",
+      "method": "GET",
+      "path": "/cronjobs",
+      "operationClass": "read",
+      "file": "source-docs/openapi/cronjobs.md",
+      "page": "cron-job",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "cronjobs-get",
+      "method": "GET",
+      "path": "/cronjobs/{cr_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/cronjobs.md",
+      "page": "cron-job",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "cronjobs-create",
+      "method": "POST",
+      "path": "/cronjobs",
+      "operationClass": "write",
+      "file": "source-docs/openapi/cronjobs.md",
+      "page": "cron-job",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "cronjobs-update",
+      "method": "PATCH",
+      "path": "/cronjobs/{cr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/cronjobs.md",
+      "page": "cron-job",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "cronjobs-delete",
+      "method": "DELETE",
+      "path": "/cronjobs/{cr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/cronjobs.md",
+      "page": "cron-job",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "customdestinations-list",
+      "method": "GET",
+      "path": "/customdestinations",
+      "operationClass": "read",
+      "file": "source-docs/openapi/customdestinations.md",
+      "page": "custom-destination",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "customdestinations-get",
+      "method": "GET",
+      "path": "/customdestinations/{cu_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/customdestinations.md",
+      "page": "custom-destination",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "customdestinations-create",
+      "method": "POST",
+      "path": "/customdestinations",
+      "operationClass": "write",
+      "file": "source-docs/openapi/customdestinations.md",
+      "page": "custom-destination",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "customdestinations-update",
+      "method": "PATCH",
+      "path": "/customdestinations/{cu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/customdestinations.md",
+      "page": "custom-destination",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "customdestinations-delete",
+      "method": "DELETE",
+      "path": "/customdestinations/{cu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/customdestinations.md",
+      "page": "custom-destination",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "dial",
+      "method": "POST",
+      "path": "/dial",
+      "operationClass": "write",
+      "file": "source-docs/openapi/dial.md",
+      "page": "dial",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "dids-list",
+      "method": "GET",
+      "path": "/dids",
+      "operationClass": "read",
+      "file": "source-docs/openapi/dids.md",
+      "page": "did",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "dids-get",
+      "method": "GET",
+      "path": "/dids/{di_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/dids.md",
+      "page": "did",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "dids-create",
+      "method": "POST",
+      "path": "/dids",
+      "operationClass": "write",
+      "file": "source-docs/openapi/dids.md",
+      "page": "did",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "dids-update",
+      "method": "PATCH",
+      "path": "/dids/{di_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/dids.md",
+      "page": "did",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "dids-delete",
+      "method": "DELETE",
+      "path": "/dids/{di_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/dids.md",
+      "page": "did",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "disas-list",
+      "method": "GET",
+      "path": "/disas",
+      "operationClass": "read",
+      "file": "source-docs/openapi/disas.md",
+      "page": "disa",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "disas-get",
+      "method": "GET",
+      "path": "/disas/{ds_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/disas.md",
+      "page": "disa",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "disas-create",
+      "method": "POST",
+      "path": "/disas",
+      "operationClass": "write",
+      "file": "source-docs/openapi/disas.md",
+      "page": "disa",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "disas-update",
+      "method": "PATCH",
+      "path": "/disas/{ds_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/disas.md",
+      "page": "disa",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "disas-delete",
+      "method": "DELETE",
+      "path": "/disas/{ds_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/disas.md",
+      "page": "disa",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-state-get",
+      "method": "GET",
+      "path": "/extensions/state",
+      "operationClass": "read",
+      "file": "source-docs/openapi/extensions-state.md",
+      "page": "extension-state",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "extensions-list",
+      "method": "GET",
+      "path": "/extensions",
+      "operationClass": "read",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-get",
+      "method": "GET",
+      "path": "/extensions/{ex_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-get-by-number",
+      "method": "GET",
+      "path": "/extensions/number/{number}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-create",
+      "method": "POST",
+      "path": "/extensions",
+      "operationClass": "write",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-update",
+      "method": "PATCH",
+      "path": "/extensions/{ex_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "extensions-delete",
+      "method": "DELETE",
+      "path": "/extensions/{ex_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/extensions.md",
+      "page": "extension",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "featurecodes-list",
+      "method": "GET",
+      "path": "/featurecodes",
+      "operationClass": "read",
+      "file": "source-docs/openapi/featurecodes.md",
+      "page": "feature-code",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "featurecodes-get",
+      "method": "GET",
+      "path": "/featurecodes/{fe_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/featurecodes.md",
+      "page": "feature-code",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "featurecodes-create",
+      "method": "POST",
+      "path": "/featurecodes",
+      "operationClass": "write",
+      "file": "source-docs/openapi/featurecodes.md",
+      "page": "feature-code",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "featurecodes-update",
+      "method": "PATCH",
+      "path": "/featurecodes/{fe_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/featurecodes.md",
+      "page": "feature-code",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "featurecodes-delete",
+      "method": "DELETE",
+      "path": "/featurecodes/{fe_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/featurecodes.md",
+      "page": "feature-code",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "flows-list",
+      "method": "GET",
+      "path": "/flows",
+      "operationClass": "read",
+      "file": "source-docs/openapi/flows.md",
+      "page": "flow",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "flows-get",
+      "method": "GET",
+      "path": "/flows/{fl_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/flows.md",
+      "page": "flow",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "flows-create",
+      "method": "POST",
+      "path": "/flows",
+      "operationClass": "write",
+      "file": "source-docs/openapi/flows.md",
+      "page": "flow",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "flows-update",
+      "method": "PATCH",
+      "path": "/flows/{fl_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/flows.md",
+      "page": "flow",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "flows-delete",
+      "method": "DELETE",
+      "path": "/flows/{fl_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/flows.md",
+      "page": "flow",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "huntlists-list",
+      "method": "GET",
+      "path": "/huntlists",
+      "operationClass": "read",
+      "file": "source-docs/openapi/huntlists.md",
+      "page": "hunt-list",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "huntlists-get",
+      "method": "GET",
+      "path": "/huntlists/{hu_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/huntlists.md",
+      "page": "hunt-list",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "huntlists-create",
+      "method": "POST",
+      "path": "/huntlists",
+      "operationClass": "write",
+      "file": "source-docs/openapi/huntlists.md",
+      "page": "hunt-list",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "huntlists-update",
+      "method": "PATCH",
+      "path": "/huntlists/{hu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/huntlists.md",
+      "page": "hunt-list",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "huntlists-delete",
+      "method": "DELETE",
+      "path": "/huntlists/{hu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/huntlists.md",
+      "page": "hunt-list",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "ivrs-list",
+      "method": "GET",
+      "path": "/ivrs",
+      "operationClass": "read",
+      "file": "source-docs/openapi/ivrs.md",
+      "page": "ivr",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "ivrs-get",
+      "method": "GET",
+      "path": "/ivrs/{iv_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/ivrs.md",
+      "page": "ivr",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "ivrs-create",
+      "method": "POST",
+      "path": "/ivrs",
+      "operationClass": "write",
+      "file": "source-docs/openapi/ivrs.md",
+      "page": "ivr",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "ivrs-update",
+      "method": "PATCH",
+      "path": "/ivrs/{iv_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/ivrs.md",
+      "page": "ivr",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "ivrs-delete",
+      "method": "DELETE",
+      "path": "/ivrs/{iv_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/ivrs.md",
+      "page": "ivr",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "mediafiles-list",
+      "method": "GET",
+      "path": "/mediafiles",
+      "operationClass": "read",
+      "file": "source-docs/openapi/mediafiles.md",
+      "page": "media-file",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "mediafiles-get",
+      "method": "GET",
+      "path": "/mediafiles/{me_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/mediafiles.md",
+      "page": "media-file",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "mediafiles-create",
+      "method": "POST",
+      "path": "/mediafiles",
+      "operationClass": "write",
+      "file": "source-docs/openapi/mediafiles.md",
+      "page": "media-file",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "mediafiles-update",
+      "method": "PATCH",
+      "path": "/mediafiles/{me_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/mediafiles.md",
+      "page": "media-file",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "mediafiles-delete",
+      "method": "DELETE",
+      "path": "/mediafiles/{me_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/mediafiles.md",
+      "page": "media-file",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "musiconholds-list",
+      "method": "GET",
+      "path": "/musiconholds",
+      "operationClass": "read",
+      "file": "source-docs/openapi/musiconholds.md",
+      "page": "music-on-hold",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "musiconholds-get",
+      "method": "GET",
+      "path": "/musiconholds/{mu_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/musiconholds.md",
+      "page": "music-on-hold",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "musiconholds-create",
+      "method": "POST",
+      "path": "/musiconholds",
+      "operationClass": "write",
+      "file": "source-docs/openapi/musiconholds.md",
+      "page": "music-on-hold",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "musiconholds-update",
+      "method": "PATCH",
+      "path": "/musiconholds/{mu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/musiconholds.md",
+      "page": "music-on-hold",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "musiconholds-delete",
+      "method": "DELETE",
+      "path": "/musiconholds/{mu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/musiconholds.md",
+      "page": "music-on-hold",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "paginggroups-list",
+      "method": "GET",
+      "path": "/paginggroups",
+      "operationClass": "read",
+      "file": "source-docs/openapi/paginggroups.md",
+      "page": "paging-group",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "paginggroups-get",
+      "method": "GET",
+      "path": "/paginggroups/{pa_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/paginggroups.md",
+      "page": "paging-group",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "paginggroups-create",
+      "method": "POST",
+      "path": "/paginggroups",
+      "operationClass": "write",
+      "file": "source-docs/openapi/paginggroups.md",
+      "page": "paging-group",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "paginggroups-update",
+      "method": "PATCH",
+      "path": "/paginggroups/{pa_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/paginggroups.md",
+      "page": "paging-group",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "paginggroups-delete",
+      "method": "DELETE",
+      "path": "/paginggroups/{pa_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/paginggroups.md",
+      "page": "paging-group",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "phonebookentries-list",
+      "method": "GET",
+      "path": "/phonebookentries",
+      "operationClass": "read",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "page": "phone-book-entry",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "phonebookentries-get",
+      "method": "GET",
+      "path": "/phonebookentries/{pe_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "page": "phone-book-entry",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "phonebookentries-create",
+      "method": "POST",
+      "path": "/phonebookentries",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "page": "phone-book-entry",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "phonebookentries-update",
+      "method": "PATCH",
+      "path": "/phonebookentries/{pe_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "page": "phone-book-entry",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "phonebookentries-delete",
+      "method": "DELETE",
+      "path": "/phonebookentries/{pe_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebookentries.md",
+      "page": "phone-book-entry",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "phonebooks-list",
+      "method": "GET",
+      "path": "/phonebooks",
+      "operationClass": "read",
+      "file": "source-docs/openapi/phonebooks.md",
+      "page": "phone-book",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "phonebooks-get",
+      "method": "GET",
+      "path": "/phonebooks/{pb_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/phonebooks.md",
+      "page": "phone-book",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "phonebooks-create",
+      "method": "POST",
+      "path": "/phonebooks",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebooks.md",
+      "page": "phone-book",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "phonebooks-update",
+      "method": "PATCH",
+      "path": "/phonebooks/{pb_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebooks.md",
+      "page": "phone-book",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "phonebooks-delete",
+      "method": "DELETE",
+      "path": "/phonebooks/{pb_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/phonebooks.md",
+      "page": "phone-book",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "providers-list",
+      "method": "GET",
+      "path": "/providers",
+      "operationClass": "read",
+      "file": "source-docs/openapi/providers.md",
+      "page": "provider",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "providers-get",
+      "method": "GET",
+      "path": "/providers/{pr_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/providers.md",
+      "page": "provider",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "providers-create",
+      "method": "POST",
+      "path": "/providers",
+      "operationClass": "write",
+      "file": "source-docs/openapi/providers.md",
+      "page": "provider",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "providers-update",
+      "method": "PATCH",
+      "path": "/providers/{pr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/providers.md",
+      "page": "provider",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "providers-delete",
+      "method": "DELETE",
+      "path": "/providers/{pr_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/providers.md",
+      "page": "provider",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "provisioningphones-list",
+      "method": "GET",
+      "path": "/provisioningphones",
+      "operationClass": "read",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "page": "provisioning-phone",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "provisioningphones-get",
+      "method": "GET",
+      "path": "/provisioningphones/{ph_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "page": "provisioning-phone",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "provisioningphones-create",
+      "method": "POST",
+      "path": "/provisioningphones",
+      "operationClass": "write",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "page": "provisioning-phone",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "provisioningphones-update",
+      "method": "PATCH",
+      "path": "/provisioningphones/{ph_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "page": "provisioning-phone",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "provisioningphones-delete",
+      "method": "DELETE",
+      "path": "/provisioningphones/{ph_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/provisioningphones.md",
+      "page": "provisioning-phone",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "queues-list",
+      "method": "GET",
+      "path": "/queues",
+      "operationClass": "read",
+      "file": "source-docs/openapi/queues.md",
+      "page": "queue",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "queues-get",
+      "method": "GET",
+      "path": "/queues/{qu_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/queues.md",
+      "page": "queue",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "queues-create",
+      "method": "POST",
+      "path": "/queues",
+      "operationClass": "write",
+      "file": "source-docs/openapi/queues.md",
+      "page": "queue",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "queues-update",
+      "method": "PATCH",
+      "path": "/queues/{qu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/queues.md",
+      "page": "queue",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "queues-delete",
+      "method": "DELETE",
+      "path": "/queues/{qu_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/queues.md",
+      "page": "queue",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "routingprofiles-list",
+      "method": "GET",
+      "path": "/routingprofiles",
+      "operationClass": "read",
+      "file": "source-docs/openapi/routingprofiles.md",
+      "page": "routing-profile",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "routingprofiles-get",
+      "method": "GET",
+      "path": "/routingprofiles/{rp_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/routingprofiles.md",
+      "page": "routing-profile",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "routingprofiles-create",
+      "method": "POST",
+      "path": "/routingprofiles",
+      "operationClass": "write",
+      "file": "source-docs/openapi/routingprofiles.md",
+      "page": "routing-profile",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "routingprofiles-update",
+      "method": "PATCH",
+      "path": "/routingprofiles/{rp_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/routingprofiles.md",
+      "page": "routing-profile",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "routingprofiles-delete",
+      "method": "DELETE",
+      "path": "/routingprofiles/{rp_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/routingprofiles.md",
+      "page": "routing-profile",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "settings-list",
+      "method": "GET",
+      "path": "/settings",
+      "operationClass": "read",
+      "file": "source-docs/openapi/settings.md",
+      "page": "setting",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "settings-get",
+      "method": "GET",
+      "path": "/settings/{se_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/settings.md",
+      "page": "setting",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "settings-create",
+      "method": "POST",
+      "path": "/settings",
+      "operationClass": "write",
+      "file": "source-docs/openapi/settings.md",
+      "page": "setting",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "settings-update",
+      "method": "PATCH",
+      "path": "/settings/{se_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/settings.md",
+      "page": "setting",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "settings-delete",
+      "method": "DELETE",
+      "path": "/settings/{se_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/settings.md",
+      "page": "setting",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "shortnumbers-list",
+      "method": "GET",
+      "path": "/shortnumbers",
+      "operationClass": "read",
+      "file": "source-docs/openapi/shortnumbers.md",
+      "page": "short-number",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "shortnumbers-get",
+      "method": "GET",
+      "path": "/shortnumbers/{sn_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/shortnumbers.md",
+      "page": "short-number",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "shortnumbers-create",
+      "method": "POST",
+      "path": "/shortnumbers",
+      "operationClass": "write",
+      "file": "source-docs/openapi/shortnumbers.md",
+      "page": "short-number",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "shortnumbers-update",
+      "method": "PATCH",
+      "path": "/shortnumbers/{sn_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/shortnumbers.md",
+      "page": "short-number",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "shortnumbers-delete",
+      "method": "DELETE",
+      "path": "/shortnumbers/{sn_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/shortnumbers.md",
+      "page": "short-number",
+      "securityReview": "UNKNOWN"
+    },
+    {
+      "id": "simplecdrs-list",
+      "method": "GET",
+      "path": "/simplecdrs",
+      "operationClass": "read",
+      "file": "source-docs/openapi/simplecdrs.md",
+      "page": "simple-cdr",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "tenants-list",
+      "method": "GET",
+      "path": "/tenants",
+      "operationClass": "read",
+      "file": "source-docs/openapi/tenants.md",
+      "page": "tenant",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenants-get",
+      "method": "GET",
+      "path": "/tenants/{te_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/tenants.md",
+      "page": "tenant",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenants-create",
+      "method": "POST",
+      "path": "/tenants",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenants.md",
+      "page": "tenant",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenants-update",
+      "method": "PATCH",
+      "path": "/tenants/{te_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenants.md",
+      "page": "tenant",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenants-delete",
+      "method": "DELETE",
+      "path": "/tenants/{te_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenants.md",
+      "page": "tenant",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenantvariables-list",
+      "method": "GET",
+      "path": "/tenantvariables",
+      "operationClass": "read",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "page": "tenant-variable",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenantvariables-get",
+      "method": "GET",
+      "path": "/tenantvariables/{tv_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "page": "tenant-variable",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenantvariables-create",
+      "method": "POST",
+      "path": "/tenantvariables",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "page": "tenant-variable",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenantvariables-update",
+      "method": "PATCH",
+      "path": "/tenantvariables/{tv_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "page": "tenant-variable",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "tenantvariables-delete",
+      "method": "DELETE",
+      "path": "/tenantvariables/{tv_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/tenantvariables.md",
+      "page": "tenant-variable",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "userprofiles-list",
+      "method": "GET",
+      "path": "/userprofiles",
+      "operationClass": "read",
+      "file": "source-docs/openapi/userprofiles.md",
+      "page": "user-profile",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "userprofiles-get",
+      "method": "GET",
+      "path": "/userprofiles/{up_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/userprofiles.md",
+      "page": "user-profile",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "userprofiles-create",
+      "method": "POST",
+      "path": "/userprofiles",
+      "operationClass": "write",
+      "file": "source-docs/openapi/userprofiles.md",
+      "page": "user-profile",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "userprofiles-update",
+      "method": "PATCH",
+      "path": "/userprofiles/{up_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/userprofiles.md",
+      "page": "user-profile",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "userprofiles-delete",
+      "method": "DELETE",
+      "path": "/userprofiles/{up_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/userprofiles.md",
+      "page": "user-profile",
+      "securityReview": "REVIEW REQUIRED"
+    },
+    {
+      "id": "users-list",
+      "method": "GET",
+      "path": "/users",
+      "operationClass": "read",
+      "file": "source-docs/openapi/users.md",
+      "page": "user",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "users-get",
+      "method": "GET",
+      "path": "/users/{us_id}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/users.md",
+      "page": "user",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "users-create",
+      "method": "POST",
+      "path": "/users",
+      "operationClass": "write",
+      "file": "source-docs/openapi/users.md",
+      "page": "user",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "users-update",
+      "method": "PATCH",
+      "path": "/users/{us_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/users.md",
+      "page": "user",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "users-delete",
+      "method": "DELETE",
+      "path": "/users/{us_id}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/users.md",
+      "page": "user",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "voicemails-list",
+      "method": "GET",
+      "path": "/voicemails",
+      "operationClass": "read",
+      "file": "source-docs/openapi/voicemails.md",
+      "page": "voicemail",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "voicemails-get",
+      "method": "GET",
+      "path": "/voicemails/{uniqueid}",
+      "operationClass": "read",
+      "file": "source-docs/openapi/voicemails.md",
+      "page": "voicemail",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "voicemails-create",
+      "method": "POST",
+      "path": "/voicemails",
+      "operationClass": "write",
+      "file": "source-docs/openapi/voicemails.md",
+      "page": "voicemail",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "voicemails-update",
+      "method": "PATCH",
+      "path": "/voicemails/{uniqueid}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/voicemails.md",
+      "page": "voicemail",
+      "securityReview": "BLOCK LIVE"
+    },
+    {
+      "id": "voicemails-delete",
+      "method": "DELETE",
+      "path": "/voicemails/{uniqueid}",
+      "operationClass": "write",
+      "file": "source-docs/openapi/voicemails.md",
+      "page": "voicemail",
+      "securityReview": "BLOCK LIVE"
+    }
+  ]
+}

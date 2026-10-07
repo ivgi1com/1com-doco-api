@@ -9,7 +9,7 @@ import { JsonViewer } from "@/components/json/json-viewer";
 import type { Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
 import { formatBytes } from "@/lib/json-path";
-import { curlEquivalent, type PlaygroundResponse, type SanitizedRequest } from "./executor";
+import { bodyDisplay, curlEquivalent, type PlaygroundResponse, type SanitizedRequest } from "./executor";
 import type { PlaygroundState } from "./use-playground";
 
 function statusTone(status: number) {
@@ -60,7 +60,7 @@ function PortalErrorCallout({
 }
 
 /** Shared by Live (actually sent) and Demo (shown for reference only) responses. */
-function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest; endpoint: Endpoint; notSent?: boolean }) {
+export function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest; endpoint: Endpoint; notSent?: boolean }) {
   const t = useTranslations("code");
   const tp = useTranslations("playground");
   const envVar = authEnvVar(endpoint);
@@ -76,6 +76,20 @@ function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest;
           <span className="min-w-0 flex-1 break-all">{request.url}</span>
           <CopyButton text={request.url} label={t("copy")} tone="code" />
         </div>
+        {request.headers &&
+          Object.entries(request.headers).map(([name, value]) => (
+            <p key={name} className="mt-1 font-mono text-xs text-code-muted">
+              {name}: {value}
+            </p>
+          ))}
+        {request.body && (
+          <pre
+            data-testid="request-body"
+            className="mt-1 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded-md border border-code-border bg-code-bg p-2 font-mono text-xs text-code-ink"
+          >
+            {bodyDisplay(request.body)}
+          </pre>
+        )}
       </div>
       <div>
         {/* "cURL" is a proper noun, not translated — matches the existing
@@ -93,7 +107,8 @@ function RequestTab({ request, endpoint, notSent }: { request: SanitizedRequest;
 export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; endpoint: Endpoint }) {
   const t = useTranslations("playground");
   const [tab, setTab] = useState<"body" | "headers" | "request">("body");
-  const { response, sending, elapsedMs } = state;
+  const { response, sending, elapsedMs, writeDemoSupported } = state;
+  const writeOnly = endpoint.operationClass === "write" && (state.mode === "live" || !writeDemoSupported);
 
   if (sending) {
     return (
@@ -111,10 +126,10 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
       <div className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 px-6 text-center">
         <Inbox className="size-6 text-ink-muted" aria-hidden />
         <p className="text-sm font-semibold text-ink">
-          {endpoint.operationClass === "write" ? t("writeOnlyTitle") : t("emptyTitle")}
+          {writeOnly ? t("writeOnlyTitle") : t("emptyTitle")}
         </p>
         <p className="max-w-[28rem] text-sm text-ink-muted">
-          {endpoint.operationClass === "write" ? t("writeOnlyNote") : t("emptyBody")}
+          {writeOnly ? (writeDemoSupported ? t("writeDemoNote") : t("writeOnlyNote")) : t("emptyBody")}
         </p>
       </div>
     );
@@ -130,6 +145,11 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
         <Callout kind="note" title={t("demoUnavailableTitle")}>
           <p>{t("demoUnavailableBody")}</p>
         </Callout>
+        {response.request && (
+          <div className="mt-3">
+            <RequestTab request={response.request} endpoint={endpoint} notSent />
+          </div>
+        )}
       </div>
     );
   }

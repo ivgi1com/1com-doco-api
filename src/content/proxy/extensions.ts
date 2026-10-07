@@ -8,7 +8,7 @@ import { proxyOperation, q } from "./shared";
 
 const peerCountTenantParam = q(
   "tenant",
-  "Optional if using the Admin API key, returns only peers from the selected tenant. Omitting it with an Admin key returns every tenant's peers.",
+  "Returns only peers from the selected tenant.",
   { required: false },
 );
 
@@ -87,7 +87,7 @@ export const countpeers = proxyOperation({
       verified: true,
       source: "source-docs/DOCS_AUDIT.md#a-70",
       schema: [{ name: "{node}", location: "body", type: "integer", required: true, description: "Peer count for this node." }],
-      example: { srv02: 12 },
+      example: { PBX: 12 },
     },
   ],
   notes: [
@@ -142,11 +142,11 @@ export const peers = proxyOperation({
           ],
         },
       ],
-      example: [{ node: "srv02", Name: "201/201", Host: "10.0.0.1", Dyn: "D", Forcerport: "Yes", Comedia: "Yes", ACL: "N", Port: "5060", Status: "OK (10 ms)", Description: "", Realtime: "no" }],
+      example: [{ node: "PBX", Name: "201/201", Host: "10.0.0.1", Dyn: "D", Forcerport: "Yes", Comedia: "Yes", ACL: "N", Port: "5060", Status: "OK (10 ms)", Description: "", Realtime: "no" }],
     },
   ],
   notes: [
-    "New in the 2026-09-25 source rebuild; the prior MiRTA-sourced audit documented a different reqtype, CHANSIPPEERS (chan_sip-specific, table-only). Whether PEERS supersedes, overlaps with, or is unrelated to CHANSIPPEERS is not stated by either current source.",
+    "New in the 2026-09-25 source rebuild; the prior audit documented a different reqtype, CHANSIPPEERS (chan_sip-specific, table-only). Whether PEERS supersedes, overlaps with, or is unrelated to CHANSIPPEERS is not stated by either current source.",
     "Response observed by probe (source-docs/DOCS_AUDIT.md A-71).",
   ],
   related: ["countpeers"],

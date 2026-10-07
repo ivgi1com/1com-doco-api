@@ -55,7 +55,8 @@ An evidence-based engineering reference for MiRTA PBX `openapi.php`. It is docum
 | RESOURCE PAGES | 37 |
 | UNIQUE RESOURCES | 37 |
 | ENDPOINT PATHS (documented so far) | 37 |
-| HTTP OPERATIONS (documented so far) | 128 |
+| HTTP METHODS (distinct per resource) | 128 |
+| OPERATIONS (distinct method + path; `operations.json`) | 159 |
 | DOCUMENTED | 5 |
 | PARTIAL | 32 |
 | UNKNOWN | 0 |

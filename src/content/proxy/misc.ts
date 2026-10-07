@@ -65,10 +65,9 @@ export const mediafileGetaudio = proxyOperation({
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
-    "Distinct from MANAGEDB object=MEDIAFILE (managedb.ts), which is the broader CRUD form (list/get/getbinary/update/updatebinary). This is the narrower single-action \"retrieve a file by its id\" form.",
     "Observed (A-74): without objectid, returns an empty 200 body (0 bytes) rather than an error string. The binary shape itself remains unconfirmed.",
   ],
-  related: ["managedb-mediafile-getbinary"],
+  related: [],
 });
 
 export const mediafileCategory: Category = { id: "mediafile", title: "MEDIAFILE", endpoints: [mediafileGetaudio] };
@@ -104,7 +103,7 @@ export const phonebookQuery = proxyOperation({
     },
   ],
   notes: [
-    "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior MiRTA-sourced audit and unchanged in this source.",
+    "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior audit and unchanged in this source.",
     "Response observed by probe without field/value (source-docs/DOCS_AUDIT.md A-75); the success shape remains undocumented.",
   ],
   related: ["phonebook-add"],
@@ -125,9 +124,9 @@ export const phonebookAdd = proxyOperation({
     { name: "PHONE1", location: "body", type: "string", required: "undocumented", description: "Phone number. The full set of accepted field names is not documented." },
   ],
   requestBodyEncoding: { kind: "form-json-field", field: "values" },
-  requestExample: { NAME: "Ross", PHONE1: "3564732920" },
+  requestExample: { NAME: "Demo User", PHONE1: "5550100" },
   notes: [
-    "Uses a values form field, not jsondata like every ManageDB write example — the source does not explain why PHONEBOOK diverges from the ManageDB convention.",
+    "The entry travels in a `values` form field whose value is the entry encoded as JSON.",
     "Response not documented.",
   ],
   related: ["phonebook-query", "phonebook-delete"],
@@ -260,7 +259,7 @@ export const responsepathGetlast = proxyOperation({
       verified: false,
       source: "source-docs/proxy-api/responsepath.md (Site lines 200-208)",
       example:
-        "UniqueID|Type|Type ID|Value|Type Name|Value Name\nsrv02-1509806457.625|START|0|2017-11-04 15:41:01||\nsrv02-1509806457.625|CALLERID|0|Susan <1132555678>||\nsrv02-1509806457.625|VARIABLE|85|36985||\nsrv02-1509806457.625|VARIABLE|144|56896||\nsrv02-1509806457.625|QUEUE|281|||\nsrv02-1509806457.625|ANSWER|0|105-DEMO||\nsrv02-1509806457.625|HANGUP|0|||",
+        "UniqueID|Type|Type ID|Value|Type Name|Value Name\nPBX-1509806457.625|START|0|2017-11-04 15:41:01||\nPBX-1509806457.625|CALLERID|0|Susan <1132555678>||\nPBX-1509806457.625|VARIABLE|85|36985||\nPBX-1509806457.625|VARIABLE|144|56896||\nPBX-1509806457.625|QUEUE|281|||\nPBX-1509806457.625|ANSWER|0|105-DEMO||\nPBX-1509806457.625|HANGUP|0|||",
     },
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },

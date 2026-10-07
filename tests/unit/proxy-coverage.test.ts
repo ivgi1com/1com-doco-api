@@ -5,6 +5,7 @@ import { getApi, listEndpoints } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
 import { listLiveTargetIds } from "@/server/playground/allowlist";
 import { buildSample } from "@/lib/code-samples";
+import { EXCLUDED_PROXY_OPS } from "./helpers/exclusions";
 import inventory from "../../source-docs/proxy-api/operations.json";
 
 /**
@@ -78,11 +79,10 @@ describe("content ↔ inventory", () => {
     }
   });
 
-  it("agrees on read/write class and key scope", () => {
+  it("agrees on read/write class", () => {
     for (const e of endpoints) {
       const row = byId.get(e.id)!;
       expect(e.operationClass === "write", `${e.id} operationClass`).toBe(row.class === "write");
-      if (row.keyScope === "admin") expect(e.authentication.scope, e.id).toBe("Admin key");
     }
   });
 
@@ -123,7 +123,11 @@ describe("content ↔ inventory", () => {
 
   it(ROLLOUT_COMPLETE ? "every non-excluded operation has an endpoint" : "reports operations still without an endpoint", () => {
     const have = new Set(endpoints.map((e) => e.id));
-    const missing = rows.filter((r) => !r.excluded && !have.has(r.id)).map((r) => r.id);
+    const missing = rows.filter((r) => !r.excluded && !EXCLUDED_PROXY_OPS.has(r.id) && !have.has(r.id)).map((r) => r.id);
+    // Admin-key operations are excluded from the customer portal (Phase 8E) and must be gone.
+    expect(rows.filter((r) => EXCLUDED_PROXY_OPS.has(r.id) && have.has(r.id)).map((r) => r.id)).toEqual([]);
+    expect([...EXCLUDED_PROXY_OPS].every((id) => rows.find((r) => r.id === id)?.keyScope === "admin")).toBe(true);
+    expect(rows.filter((r) => r.keyScope === "admin" && !EXCLUDED_PROXY_OPS.has(r.id))).toEqual([]);
     if (ROLLOUT_COMPLETE) expect(missing).toEqual([]);
     else expect(missing.length).toBeLessThanOrEqual(rows.length);
   });

@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { CodeTabs } from "@/components/code/code-tabs";
 import { Callout } from "@/components/ui/callout";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
@@ -8,6 +9,7 @@ import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-b
 import { getEndpoint } from "@/content";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { Link } from "@/i18n/navigation";
+import { isInternalNote } from "@/lib/customer-text";
 import { Feedback } from "./feedback";
 import { InlineMarkup } from "./inline-markup";
 import { ParamList } from "./param-list";
@@ -26,7 +28,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-function statusInk(status: number) {
+function statusInk(status: number | "undocumented") {
+  if (status === "undocumented") return "text-ink-muted";
   if (status < 300) return "text-success-ink";
   if (status < 500) return "text-warning-ink";
   return "text-danger-ink";
@@ -57,6 +60,8 @@ export function EndpointView({
   const replacement = endpoint.deprecation?.replacement
     ? getEndpoint(api.id, endpoint.deprecation.replacement)
     : undefined;
+  // Internal review/provenance notes stay in the content files; customers do not see them (customer-text.ts).
+  const customerNotes = (endpoint.notes ?? []).filter((note) => !isInternalNote(note));
   const successSchema = endpoint.responses.find((r) => r.status < 300 && r.schema);
   const bodyEncoding = endpoint.requestBodyEncoding?.kind === "json" ? undefined : endpoint.requestBodyEncoding;
   const fixedQueryString = endpoint.fixedQuery
@@ -99,7 +104,7 @@ export function EndpointView({
             {endpoint.status === "deprecated" && endpoint.deprecation && (
               <Callout kind="warning" title={t("deprecatedBanner", { date: endpoint.deprecation.date ?? "" })}>
                 <ContentText>
-                  {endpoint.deprecation.note}{" "}
+                  {endpoint.deprecation.note && <InlineMarkup text={endpoint.deprecation.note} />}{" "}
                   {replacement && (
                     <>
                       {t.rich("useInstead", {
@@ -115,7 +120,7 @@ export function EndpointView({
             )}
             {endpoint.status === "legacy" && endpoint.deprecation && (
               <Callout kind="note" title={t("legacyBanner")}>
-                <ContentText>{endpoint.deprecation.note}</ContentText>
+                <ContentText>{endpoint.deprecation.note && <InlineMarkup text={endpoint.deprecation.note} />}</ContentText>
               </Callout>
             )}
             <div className="flex flex-wrap items-center gap-3">
@@ -134,7 +139,9 @@ export function EndpointView({
             {endpoint.methodBasis === "inferred" && (
               <p className="text-xs text-ink-muted">{t("methodInferredNote")}</p>
             )}
-            <ContentText className="max-w-[70ch] text-md text-ink-muted">{endpoint.summary}</ContentText>
+            <ContentText className="max-w-[70ch] text-md text-ink-muted">
+              <InlineMarkup text={endpoint.summary} />
+            </ContentText>
             {endpoint.operationClass === "write" && (
               <Callout kind="warning" title={t("writeOperationTitle")}>
                 <p>{t("writeOperationBody")}</p>
@@ -161,15 +168,14 @@ export function EndpointView({
               <ContentText className="mt-1 text-ink-muted">
                 <InlineMarkup text={endpoint.authentication.description} />
               </ContentText>
-              {endpoint.authentication.scope && (
-                <p className="mt-2 text-xs text-ink-muted">
-                  <span className="font-semibold text-ink">{t("keyScope")}:</span>{" "}
-                  {endpoint.authentication.scope}
-                </p>
-              )}
               {endpoint.authentication.location === "query" && endpoint.authentication.parameter && (
                 <p className="mt-2 text-xs text-ink-muted">
-                  {t("authInQuery", { parameter: endpoint.authentication.parameter })}
+                  <InlineMarkup text={t("authInQuery", { parameter: endpoint.authentication.parameter })} />
+                </p>
+              )}
+              {endpoint.authentication.location === "header" && endpoint.authentication.parameter && (
+                <p className="mt-2 text-xs text-ink-muted">
+                  <InlineMarkup text={t("authInHeader", { parameter: endpoint.authentication.parameter })} />
                 </p>
               )}
             </div>
@@ -233,7 +239,9 @@ export function EndpointView({
                       <span dir="ltr" className={`w-10 shrink-0 font-mono font-semibold tabular ${statusInk(r.status)}`}>
                         {r.status}
                       </span>
-                      <ContentText className="text-ink">{r.description}</ContentText>
+                      <ContentText className="text-ink">
+                        <InlineMarkup text={r.description} />
+                      </ContentText>
                     </li>
                   ))}
                 </ul>
@@ -252,6 +260,34 @@ export function EndpointView({
             )}
           </Section>
 
+          {panel.examples.length > 0 && (
+            <Section id="examples" title={t("examples")}>
+              <ContentText className="mb-3 text-sm text-ink-muted">{t("examplesHelp")}</ContentText>
+              <ul className="space-y-2" data-testid="endpoint-examples">
+                {panel.examples.map((ex, i) => (
+                  <li key={i}>
+                    <details className="group rounded-md border border-border">
+                      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                        <ChevronRight className="icon-directional size-4 shrink-0 text-ink-muted transition-transform group-open:rotate-90" aria-hidden />
+                        <span lang="en" className="min-w-0 flex-1">
+                          {ex.title}
+                        </span>
+                      </summary>
+                      <div className="space-y-3 border-t border-border px-3 py-3">
+                        {ex.description && (
+                          <ContentText className="text-sm text-ink-muted">
+                            <InlineMarkup text={ex.description} />
+                          </ContentText>
+                        )}
+                        <CodeTabs samples={ex.samples} />
+                      </div>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
           <Section id="errors" title={t("errors")}>
             {!Array.isArray(endpoint.errors) || endpoint.errors.length === 0 ? (
               <ContentText className="text-ink-muted">{t("notDocumented")}</ContentText>
@@ -268,13 +304,20 @@ export function EndpointView({
                   {endpoint.errors.map((e) => (
                     <tr key={e.code} className="border-b border-border max-sm:grid max-sm:grid-cols-[auto_1fr] max-sm:gap-x-3 max-sm:py-2.5">
                       <td dir="ltr" className={`px-3 py-2.5 text-start font-mono font-semibold tabular max-sm:p-0 ${statusInk(e.status)}`}>
-                        {e.status}
+                        {e.status === "undocumented" ? (
+                          <span title={t("statusUndocumentedLabel")}>
+                            <span aria-hidden>{t("statusUndocumented")}</span>
+                            <span className="sr-only">{t("statusUndocumentedLabel")}</span>
+                          </span>
+                        ) : (
+                          e.status
+                        )}
                       </td>
                       <td className="px-3 py-2.5 max-sm:p-0">
                         <code className="prose-code">{e.code}</code>
                       </td>
                       <td lang="en" dir="auto" className="px-3 py-2.5 text-ink max-sm:col-span-2 max-sm:mt-1 max-sm:p-0">
-                        {e.description}
+                        <InlineMarkup text={e.description} />
                       </td>
                     </tr>
                   ))}
@@ -283,12 +326,14 @@ export function EndpointView({
             )}
           </Section>
 
-          {endpoint.notes && endpoint.notes.length > 0 && (
+          {customerNotes.length > 0 && (
             <Section id="notes" title={t("notes")}>
               <ul className="list-disc space-y-1.5 ps-5 text-sm text-ink-muted">
-                {endpoint.notes.map((note, i) => (
+                {customerNotes.map((note, i) => (
                   <li key={i}>
-                    <ContentText className="inline">{note}</ContentText>
+                    <ContentText className="inline">
+                      <InlineMarkup text={note} />
+                    </ContentText>
                   </li>
                 ))}
               </ul>

@@ -1,9 +1,1149 @@
 # Session Handoff
 
-Last updated: 2026-09-26 (MiRTA OpenAPI documentation baseline — Stage B
-[resource transcription] done, checkpoint committed, **not reviewed or
-approved** — Stage C [security review] and the completion report are
-next, on Opus — read this first)
+Last updated: 2026-10-07 (Phase 8 APPROVED, merged to `main`, tagged
+`v1.0-developer-portal`, pushed; read this first)
+
+## Phase 8 — APPROVED and merged (2026-10-07)
+
+- GitHub `main` had 3 commits not on this branch (sub-path deployment via
+  `NEXT_PUBLIC_BASE_PATH`, `src/lib/base-path.ts`, README). Merged into
+  `phase/open-api-review` as `040bc78`. Conflict in `tests/e2e/smoke.spec.ts`:
+  kept the Phase 8 tests, applied main's `"./en..."` baseURL-relative paths;
+  `/en/changelog` stays removed (8E).
+- Only `smoke.spec.ts` uses `./` paths; other e2e specs still use `/en...`
+  and would need the same rewrite to pass under a non-empty base path.
+- Validation: check 408/408, build clean, Playwright 206 passed / 3 skips /
+  1 flaky (`smoke.spec.ts` "path-parameter endpoint ... prefills",
+  mobile-safari; passes 6/6 in isolation).
+- `phase/open-api-review` merged to `main` (no-ff), tag
+  `v1.0-developer-portal`, both pushed. No next phase started.
+- Still open: TEST API key rotation, Hebrew DRAFT, two Most Used Cases guides
+  awaiting the user's description, CSP / rate-limit header / Origin-vs-Host.
+
+## Phase 8 Stage 6 — review and remediation DONE, at the Phase 8 gate (2026-10-02)
+
+- Branch `phase/open-api-review` (from `053e4cd`). Commits: review findings
+  `2c49915`, L-1/L-2/C-2/C-3 `2f0b75c`, C-1 + docs (this checkpoint). Not
+  pushed, merged or tagged; `main` still `be23fb2`.
+- Security: no high/medium; L-1 and L-2 fixed, L-3 accepted. Consistency:
+  C-1..C-3 fixed. Detail: `docs/SECURITY.md` "Security review — Phase 8
+  Stage 6", `docs/DECISIONS.md` "Phase 8 Stage 6 — remediation done".
+- Validation: check 405/405, build clean (450), Playwright 207 passed / 3
+  WebKit skips / 0 failed, readiness 6/6 PASS, visual pass clean.
+- Residual: raw internal references still in three client JS chunks (not
+  rendered); vendor-doc wording ("Doc-only purpose line") in a few Proxy notes.
+- Open from earlier: TEST API key rotation, Hebrew DRAFT, the two Most Used
+  Cases guides awaiting the user's description, CSP / rate-limit header /
+  Origin-vs-Host (deployment decisions).
+- Next: the user answers the Phase 8 gate (A/B/C/D). Merge to `main` and a
+  tag (e.g. `v1.0-developer-portal`) only on explicit approval. Branch chain:
+  `phase/open-api` -> `phase/customer-brief` -> `phase/open-api-review`.
+
+## Phase 8E — APPROVED (2026-10-02, gate A: approve, save, continue to planning)
+
+- Branch `phase/customer-brief` (from `phase/open-api`), approval commit on top
+  of `f084710`. Not pushed, merged or tagged; `main` unchanged.
+- Next: Phase 8 Stage 6 cross-API consistency and security review
+  (`docs/phases/08-open-api.md`, review-first). **Switch to Opus 5.5**, then
+  enter plan mode; do not implement before its plan is approved. Ordinary
+  remediation afterwards returns to Sonnet 5.
+- Everything in the Stage 7 entry below stays valid.
+
+## Phase 8E — Stage 7 DONE (full validation, 8D re-run), at the Stage 8 gate (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 7 commit on top of `455da05`. Not
+  pushed/merged/tagged. Stage 8 (Phase Completion Report + A/B/C/D) is the
+  next step; the user has NOT approved the phase.
+- **Validation at this HEAD (fresh):** `npm run check` typecheck + lint
+  clean, 395/395 unit; `npm run build` clean (450 pages); full Playwright
+  205 passed / 3 skipped / 0 failed (208; the 3 skips are the documented
+  WebKit `selectOption` gap; the previous full run listed 2 — the third
+  was not reconciled against an earlier count, all three carry the same
+  recorded reason in `tests/e2e/smoke.spec.ts` L273/1024/1200); the known
+  parallel-load flake did not fire this run.
+- **8D re-run (`npm run readiness:openapi`, `phase8-readiness.test.ts`
+  11/11):** all 6 boundary checks PASS (no OpenAPI id on the Live
+  allowlist; Live = exactly the 3 approved Proxy reads; server/Live/tenant
+  code unchanged since `main`; secret scan of 24,869 added lines clean;
+  customer-data scan clean; client bundle clean). Reduced surface: 159
+  baseline operations, 132 in Reference/Playground, 27 excluded by
+  decision; Demo 52 reads / 0 writes; Live 0; implementation gaps 0,
+  unexplained 0. Only change to `source-docs/OPENAPI_READINESS.md` is the
+  scan's added-line count.
+- Regression sweep covered by the unit/e2e suites: customer-copy guard,
+  Open API default + legacy ordering, Guides selector / Most Used Cases,
+  date pickers, removed Console / Change Log / admin pages (404).
+- **Note:** the e2e webserver log shows `Error: Internal: NoFallbackError`
+  twice, probably from the intentional 404 tests (`no-such-page`, removed
+  admin routes); origin not verified, no test failed.
+- **Known limitations unchanged:** Hebrew strings DRAFT; TEST API key
+  rotation still open (`docs/SECURITY.md`); inbound-call popup and
+  post-call delivery guides wait for the user's description; `phonebook-add`
+  vendor example looks like real data (flagged, out of scope).
+- Environment: no server running; ports 3000/3101 free.
+- **Next:** present the Stage 8 gate report and the A/B/C/D question. Then
+  the Phase 8 Stage 6 Opus review (separately approved; Opus 5.5).
+
+## (Superseded) Phase 8E — Stage 6 DONE (Guides API selector, Most Used Cases), STOPPED before Stage 7 (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 6 commit on top of `6d86e9f`. Not
+  pushed/merged/tagged.
+- **Visual validation closed.** Fresh `npm run build` clean; `next start -p
+  3101` ("Ready" confirmed); 60-load pass (chromium + webkit × en/he ×
+  desktop/tablet/mobile × `/`, `/guides`, `/guides/most-used-cases`,
+  `/guides/call-history`, `/guides/getting-started`): 0 overflow, **0
+  console/HTTP errors** with a network-idle wait before each navigation.
+  The earlier 500/404 were a stale-server artifact (EADDRINUSE on 3100), as
+  suspected. Separately, with only a 400 ms wait, WebKit logs
+  "Fetch API cannot load ...?_rsc=... due to access control checks" (RSC
+  prefetches aborted by the next `goto`; no HTTP >= 400, chromium clean) —
+  test-harness artifact, vanishes once the page settles.
+- Screenshots reviewed: home 4-card grid + "Proxy API (legacy)" chip,
+  Guides sidebar selector, Most Used Cases page (en desktop), Hebrew RTL
+  home (mobile) and guide (desktop). No issues. Mobile drawer selector
+  covered by the e2e tests, not separately screenshotted.
+- **Next:** Stage 7 (regression, 8D readiness re-run against the reduced
+  surface, full validation incl. full Playwright), then Stage 8 gate report.
+  Not started. Model: Sonnet 5.
+- Environment: no server running; ports 3000/3101 free.
+
+## (Superseded) Phase 8E — Stage 6 implemented, WIP checkpoint, visual validation open (2026-10-02)
+
+- Branch `phase/customer-brief`, WIP checkpoint commit on top of `e7f48a1`
+  (Stage 5). Not pushed/merged/tagged. Stage 6 is NOT marked done.
+- **Implemented (brief items 9-11):** `src/content/guides/index.ts`
+  registry reordered (Open API first) + `guidesForApi(apiId)` /
+  `guideApis()`; new `src/content/guides/most-used-cases.ts` (Click to
+  Call via `POST /dial`, CDRs via `simplecdrs-list` / `cdrs-list`; popup
+  and post-call cases deliberately absent); `GuidesNav` API selector in
+  `src/components/shell/sidebar-nav.tsx` (`idPrefix`, drawer uses
+  `"drawer"` in `site-header.tsx`); `/guides` redirects to the default
+  API's first guide; home: "Most Used Cases" card (4-card grid
+  sm:2 / lg:4), start button -> `/guides/openapi-authentication`
+  ("Get started with the Open API"); i18n keys `home.mostUsedTitle/Body`
+  (he DRAFT), indentation fix in en/he `playground` keys; tests in
+  `tests/unit/api-order.test.ts` and `tests/e2e/smoke.spec.ts`.
+- **Validation done:** `npm run check` 395/395; `npm run build` clean
+  (450 pages); targeted Playwright (`-g "8E|guide|Guide|loads without
+  console"`) 69 passed / 1 WebKit skip.
+- **Open issue:** the 60-load visual pass (scratchpad `visual.mjs`, port
+  3100) reported 3x "Failed to load resource: 500" on `/en` and
+  `/en/guides/getting-started`, 1x 404 on `/en/guides/most-used-cases`.
+  Probable cause (UNVERIFIED): its `next start -p 3100` failed with
+  EADDRINUSE, so the pass hit a stale Stage 5 server whose HTML referenced
+  chunks replaced by the Stage 6 rebuild and which had no
+  `most-used-cases` route. The e2e console-error tests were clean. Port
+  3100 was free at checkpoint time.
+- **Next task:** finish Stage 6 validation, then the Stage 6 commit; then
+  STOP before Stage 7. Model per routing: Sonnet 5.
+- **First action:** `npm run build`, `npx next start -p 3101` (confirm
+  "Ready" in its log), re-run the visual pass (2 engines × en/he ×
+  desktop/tablet/mobile × `/`, `/guides`, `/guides/most-used-cases`,
+  `/guides/call-history`, `/guides/getting-started`) against 3101. If
+  clean, review screenshots (home grid, Guides selector in sidebar + mobile
+  drawer, Hebrew RTL), stop only that server, update this file and
+  CURRENT_STATUS, commit Stage 6. If errors remain, capture the failing URLs
+  via `page.on("response")` and debug.
+
+## Phase 8E — Stage 5 done (Open API first/default), STOPPED before Stage 6 (2026-10-02)
+
+- Branch `phase/customer-brief`, Stage 5 commit on top of `abced17`. Not
+  pushed/merged/tagged.
+- **Done:** `apis = [openapiApi, proxyApi, sampleApi]`; additive
+  `ApiDefinition.legacy` (Proxy) and `defaultEndpoint` (Open API:
+  `simplecdrs-list`) + `defaultEndpoint(api)` helper in
+  `src/content/index.ts`, used by the Playground landing and the
+  Playground API switcher. "{name} (legacy)" (`nav.legacyApi`, he DRAFT)
+  in the sidebar select, Playground API select and home API chips.
+  `/reference` now redirects to `/reference/openapi`.
+- **Tests:** new `tests/unit/api-order.test.ts` (4); e2e redirect test
+  updated, 2 new (Playground default, home chip order).
+- **Validation:** `npm run check` 386/386; build clean (448 pages);
+  targeted Playwright 26 passed / 2 WebKit skips; 60-load visual pass
+  (chromium + webkit × en/he × desktop/tablet/mobile × 5 routes): zero
+  console errors, no overflow; screenshots reviewed. Full suite deferred
+  to Stage 7.
+- **Model:** Stage 5 ran on Opus 5.5 by user choice (routing says Sonnet).
+- **Next:** Stage 6 — Guides API selector + "Most Used Cases" guide
+  (inbound-call popup and post-call delivery still wait for the user's
+  description) + landing card; revisit the home "getting started" button
+  (hard-codes the Sample guide). Sonnet 5.
+
+## Phase 8E — customer-facing change brief: Stages 0-4 done, STOPPED before Stage 5 (2026-10-02)
+
+- **Branch `phase/customer-brief`** (from `phase/open-api` @ `4d1c8ab`),
+  work HEAD `ce30196` (+ this docs checkpoint), working tree clean, nothing
+  pushed/merged/tagged. Commits: `e3f3173` (S0), `38681c5` (S1), `fec48b3`
+  (S2), `1fdff96` (S3), `ce30196` (S4). Plan file:
+  `C:\Users\ivgi-pc\.claude\plans\magical-zooming-sutton.md`; spec and
+  decisions: `docs/phases/08E-customer-change-brief.md`, `docs/DECISIONS.md`
+  "Phase 8E ..." entries; source brief:
+  `docs/phases/1com_API_Documentation_App_Change_Brief.md`.
+- **Position:** 8E runs BEFORE the Phase 8 Stage 6 Opus review (the 8D PASS
+  counted content 8E removes; re-run the 8D checks at 8E Stage 7).
+- **Done:** S1 branding (1com Open API; no Mirta except the user-kept
+  `/mirtapbx/proxyapi.php` path in `proxy/info.ts:110`), "API Key" wording,
+  key-scope display removed, srv02->PBX, `tests/unit/customer-copy.test.ts`
+  guard. S2 (Opus) admin-keyed content removed (27 Open API + 35 Proxy
+  ManageDB ops, guides rewritten, `global=1`, global examples) with
+  `source-docs/portal-exclusions.json`; Open API 132 ops / 31 resources,
+  Proxy 74 ops. S3 Console button + Change Log removed. S4 native date/time
+  pickers (`Parameter.format`, `src/lib/date-value.ts`) on 12 documented
+  start/end fields.
+- **Validation at work HEAD `ce30196`:** `npm run check` 382/382; build
+  clean; Playwright 197 passed / 2 WebKit skips / 1 known parallel-load flake
+  (`a path-parameter endpoint documents its example placeholder...`, passes
+  alone).
+- **Stage 5 (NOT started, files only read):** Open API first/default (brief
+  item 8). Findings: `src/content/index.ts` has `apis = [proxyApi,
+  openapiApi, sampleApi]` (change to `[openapiApi, proxyApi, sampleApi]`);
+  `apis[0]` is used by `src/app/[locale]/page.tsx:12` (PrototypeBanner),
+  `reference/page.tsx:6` (redirect), `playground/page.tsx:32` (default API)
+  and `sidebar-nav.tsx:23` (fallback). Planned: a `defaultEndpoint` for the
+  Playground landing (`simplecdrs-list`), a "legacy" qualifier on Proxy in
+  selectors/chips, update the e2e that expects `/reference` to redirect to
+  `/reference/proxy` (~`smoke.spec.ts:221-227`), verify every selector. The
+  home "getting started" button hard-codes `/guides/getting-started`
+  (Sample guide) — revisit in Stage 6.
+- **Remaining 8E stages:** S5 Open API default; S6 Guides API selector
+  (Open API / Proxy API / Sample (prototype)) + "Most Used Cases" guide
+  (Click to Call via `dial`, Viewing CDRs; inbound-call popup and post-call
+  delivery wait for the user's description) + landing card; S7 regression,
+  8D readiness re-run, full validation; S8 gate report and A/B/C/D.
+- **Known notes:** Hebrew strings DRAFT; TEST API key rotation still open
+  (`docs/SECURITY.md`); `phonebook-add` vendor example (`Ross`/`3564732920`)
+  looks like real data (flagged, out of scope); after deleting a route,
+  clear the git-ignored `.next` before building (stale generated types).
+- **Environment:** no dev/start server is running; port 3000 free.
+- **Model:** Sonnet 5 for Stages 5-7; Opus 5 for the later Phase 8 Stage 6
+  review (separately approved).
+- **First action next session:** `git status`, `git log -3` (expect clean on
+  `phase/customer-brief`), then "go stage 5": reorder `apis`, update the
+  `apis[0]` consumers, add the Playground default endpoint, update tests,
+  validate.
+
+## (Superseded by the entry above) Phase 8D readiness gate PASS (2026-10-01)
+
+- Branch `phase/open-api`. 8C approval `b9069e7` plus the 8D checkpoint
+  commit; local only, **not pushed, merged or tagged**. Phase 8 and
+  Stage 6 are **not** complete.
+- **Result: PASS — ready for Stage 6.** Switch to **Opus 5** before the
+  Stage 6 cross-API consistency and security review (review-first).
+- **What 8D added (no product behavior change):**
+  `tests/unit/phase8-readiness.test.ts` (Demo never fetches for all 159
+  operations; Live refuses writes; SEC-REQ-05/06 exclusions; secret-named
+  fields in Demo fixtures; baseline ↔ inventory ↔ content reconciliation;
+  Live allowlist = 3 Proxy reads), `scripts/openapi-readiness.ts` +
+  `npm run readiness:openapi` -> `source-docs/OPENAPI_READINESS.md`, and
+  `isSecretField` exported from `executor.ts`.
+- **Reconciled numbers:** 37 resources / 159 operations in Reference and
+  Playground; Demo 52 (reads; 0 writes); Live 0; vendor response schemas 8
+  (+50 observed, Reference only); UNKNOWN response schemas 101 on the
+  Reference; BLOCK LIVE 47; mismatches: documentation UNKNOWN 93,
+  security-blocked 13, intentionally unsupported 1, implementation gaps 0,
+  unexplained 0. Baseline predates 8A for CDR/Simple CDR (reported, baseline
+  untouched, by decision).
+- **Validation:** `npm run check` 376/376; `npm run build` clean (576);
+  Playwright 192 passed / 2 skipped / 0 failed; boundary checks all PASS
+  (no OpenAPI Live id, Live = the 3 approved Proxy reads, server/Live/
+  tenant code unchanged since `main`, secret scan 23,111 added lines clean,
+  customer-data scan clean, client bundle clean).
+- **Known limitations / not blockers (user decision 2026-10-01):** CONFLICT
+  none in the baseline, one observed (OA-15, record both); U-18 (spec not
+  supplied), U-17 (base URL never called), Proxy-era U-03/05/06/15; the
+  TEST API key rotation is **still open** (`docs/SECURITY.md`); Hebrew
+  strings DRAFT; writes not Demo-executable (0/93); 14 reads without Demo
+  data; the bundle scan's env-value check is vacuous here because
+  `.env.local` holds only `PLAYGROUND_LIVE_ENABLED`.
+- **Environment:** no server is running (the dev server was stopped for
+  the production test run); start it with `npm run dev` if wanted.
+- **Exact next step:** the user switches to Opus 5, then Stage 6 starts
+  (`docs/phases/08-open-api.md`, review-first). Do not start it on Sonnet.
+
+## (Superseded by the entry above) Phase 8C approved; 8D in plan mode
+
+## Phase 8C — APPROVED (2026-10-01, gate A: approve, save, continue to planning 8D)
+
+- **Approved by the user, option A.** The next phase, 8D (pre-Stage-6
+  readiness gate, `docs/phases/08D-pre-stage6-readiness-gate.md`, Sonnet
+  5), enters PLAN MODE only. Nothing of 8D is implemented; its plan needs
+  separate approval. The Phase 8 Stage 6 Opus review stays on hold behind
+  8D.
+- Pushed / merged / tagged: none (not requested).
+
+- Branch `phase/open-api` @ `d39de1a`. 6 commits on top of the pushed 8B
+  approval `f56151b` (`82dfa68`, `f1ee0ae`, `e9cc599`, `1e40931`,
+  `103bab5`, `d39de1a`) plus this docs commit; all local, **not pushed**.
+  `main` is still `be23fb2`; nothing merged or tagged.
+- **Done (Stages 0–6; Stage 2 dropped):**
+  - Stage 0 (Opus): SEC-REQ-27 amended — OpenAPI writes may be Demo-
+    simulated from documented examples only; Live never sends a write
+    (UI, `use-playground` send, `liveProvider`, server GET-only).
+    `DEMO_WRITE_APIS` + `isDemoSimulatedWrite()` in `src/content/demo/index.ts`.
+  - Stage 1: only 3/93 writes document a success response (dial,
+    auth-token-create/delete), all SEC-REQ-05/06-excluded → 0 simulatable.
+    Stage 2 (write fixtures) dropped by user decision; the Stage 0 guard
+    stays as dormant, tested machinery.
+  - Stage 3: request body + cURL (`sanitizedRequest`, `curlEquivalent`),
+    secret-named body fields masked `<REDACTED>`, collapsed "Request
+    preview" in the shared form, request shown for unavailable Demo.
+  - Stage 4: field details, `OperationHeader`, API switcher, unknown-
+    `?endpoint=` notice, no key field and an explicit message where Live
+    cannot send, neutral Demo-unavailable copy. Defaults are placeholders,
+    not pre-filled (deviation, recorded).
+  - Stage 5: `source-docs/OPENAPI_PLAYGROUND_STATUS.md` via
+    `npm run rollout:status` (now `tsx --conditions=react-server`).
+  - Stage 6: narrow-mobile e2e + full validation.
+- **Validation:** `npm run check` 361/361; `npm run build` clean (576
+  pages); full Playwright 192 passed / 2 WebKit skips / 0 failed (194);
+  96-load sweep clean; secret/PII scan clean.
+- **Known limitations:** writes are not Demo-executable (0/93) and Send is
+  blocked for them; 14 reads have no Demo data; Live is 0/159; Hebrew
+  strings are DRAFT and API prose stays English; the WebKit `selectOption`
+  gap leaves the optional-enum reset and API-switcher tests Chromium-only;
+  the coverage report is generated, so re-run `npm run rollout:status` if
+  content changes; TEST API key rotation still open (`docs/SECURITY.md`).
+- **Environment:** the dev server may still be running on port 3000 (started
+  at the user's request); no production server is left running.
+- **Models:** 8C ran Opus (Stage 0) then Sonnet 5. Next phase 8D is routed
+  to Sonnet 5 (`docs/phases/08-substages-README.md`); the Phase 8 Stage 6
+  cross-API consistency and security review after it is Opus.
+- **First action next session:** `git status`, `git log -3`, then read
+  `docs/phases/08D-pre-stage6-readiness-gate.md` and continue the 8D plan
+  (or re-enter plan mode for it). Do not implement 8D or start Stage 6
+  until the 8D plan is approved.
+
+## (Superseded by the entry above) Phase 8B — APPROVED (2026-09-26, gate B: approve, save, and stop)
+
+- Branch `phase/open-api`, HEAD (after the approval commit) on top of
+  `c086c14`. Not pushed, not merged, not tagged.
+- **Approved by the user, gate B** (approve, save, and stop). The next
+  phase (8C — OpenAPI Playground) has **not started** and needs its own
+  plan presented and separately approved before any implementation.
+- **First action next session:** confirm the model — 8C's spec and
+  model routing (`docs/phases/08-substages-README.md`) have not been
+  read yet this session; read `docs/phases/08C-openapi-playground.md`
+  and re-check routing before entering plan mode for 8C. Do not
+  assume Sonnet 5 is still correct without checking.
+- Everything below is the completed Stage 4/5 work this approval
+  covers.
+- **This session fixed one real bug found during its own Stage 5
+  validation** (rule 6 — drive the real UI, don't trust unit tests
+  alone): `aianalysis-get`'s "Unique ID missing" case relied on
+  submitting an empty `uniqueid`, but that field is a documented
+  `required: true` query parameter, so the Playground's own client-side
+  validation (`use-playground.ts`) blocks Send before the Demo resolver
+  ever runs — the case was permanently unreachable. Removed (commit
+  `71fcc30`); the file's header comment now explains this alongside the
+  analogous, already-known get-by-ID 404 exclusion.
+- **Validation, now complete:**
+  - `npm run check`: 348/348 unit tests, typecheck, lint.
+  - `npm run build`: clean, 576 pages.
+  - A 76-test Playwright pass (not committed, scratch file deleted
+    after running) covering every new fixture's scenario resolution —
+    chromium-desktop + mobile-safari, en + he, at the 1440×900 viewport
+    this project's own `smoke.spec.ts` "interactions" block always
+    uses for these tests (its `test.use({viewport})` override applies
+    regardless of Playwright project name — "mobile-safari" there means
+    the WebKit engine, not a narrow viewport) — plus a narrow-mobile
+    (390px) layout/console/no-network smoke check on 4 representative
+    endpoints × 2 locales. All 76 passed: correct DEMO stamp, correct
+    status/scenario text, zero console errors, zero
+    `**/api/playground` requests, zero horizontal overflow. One
+    screenshot manually reviewed (rule 6).
+  - Full Playwright suite re-run fresh, twice: 176/178 both times. The
+    one failure each time (`Try in Playground opens the Playground on
+    this endpoint with the Proxy API's own samples`, unrelated to
+    OpenAPI or this work) passed cleanly when rerun alone — confirmed
+    as this project's documented parallel-load flake class.
+  - Secret/PII scan of `git diff 63aa91b..HEAD`: clean. Also checked
+    every literal string in the masked probe file itself: only already-
+    public MiRTA error codes and type/length descriptors, no PII or
+    secrets of any kind.
+  - `source-docs/OPENAPI_DEMO_STATUS.md` (Stage 5 coverage report):
+    52/66 read operations Demo-supported; the other 14 have a recorded
+    reason (global-key-only resource, not probed, or probed with no
+    fixturable data).
+- **Debugging note, in case it recurs:** while building the 76-test
+  pass, several confusing dead ends turned out to be test-script bugs,
+  not product bugs — worth knowing before assuming a "hang" or
+  "mobile-only failure" is real: (a) a stale `npm run start` background
+  process left running from an earlier build served pre-edit code,
+  producing a phantom "tenant field won't clear" symptom that a fresh
+  `rm -rf .next && npm run build` resolved; (b) `.md\:grid`
+  (`desktopPane`) is genuinely `display:none` below the 768px Tailwind
+  `md` breakpoint — the existing OpenAPI Demo e2e tests only appear to
+  validate mobile-safari because `test.use({viewport:{width:1440,
+  height:900}})` at the top of `smoke.spec.ts`'s "interactions" describe
+  block overrides the project's own device viewport; a genuine narrow
+  check needs an explicit `page.setViewportSize()`, matching that same
+  file's own "mobile nav drawer" test; (c) a chip's `preset` value only
+  reaches the real field after React flushes the state update — a
+  `chip.click()` immediately followed by `send.click()` with no wait
+  can race it (the same class of bug as the Phase 7 `info-extstate`
+  lesson).
+- **Untracked cleanup:** all scratch/diagnostic files from this and the
+  crashed prior session were deleted after use (`.diag-tmp.mjs`,
+  `.diag-aia.mjs`, `.diag-params.mjs`, the temporary Playwright spec,
+  and `test-results/`) — none were ever committed, and `.diag-tmp.mjs`'s
+  original question (a "Try in Playground" issue on `extensions-get`)
+  turned out to match the same parallel-load flake class confirmed
+  above, so its investigation is resolved, not abandoned.
+- **Not yet done (deliberately, per the plan):** Stage 6 (Opus
+  cross-API consistency and security review) stays on hold behind 8C
+  (Playground) and 8D (readiness gate), per the existing plan — this
+  session did not touch either. The TEST API key rotation from Phase
+  8B Stage 2 is still an open `docs/SECURITY.md` action.
+- **Environment:** the Playwright-managed `next start` server from the
+  last full-suite run was torn down when the run finished; port 3000
+  should be free. No dev/start server was left running by this session.
+- **Model:** Sonnet 5 for all of this session's Stage 4/5 work, per the
+  project's routing rule (routine fixture/test/validation work). The
+  Stage 6 review, whenever it starts, is Opus per the existing plan.
+- **(Stale as of 2026-10-01 — 8B was approved and pushed; see the 8C entry above.)**
+  First action had been: present the 8B completion report. Do not start 8C.
+
+## (Superseded by the entry above) Phase 8B — Stage 4 + Stage 5 coverage report: WIP checkpoint committed (2026-09-26, Sonnet 5); STOP, Stage 5 validation not finished
+
+- Branch `phase/open-api`, commit `2de5888` (WIP, not final). Not pushed.
+- **Why this entry exists — do not trust the entry below by itself:** the
+  user's PC crashed mid-session. The plan file this session needed
+  (`C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md`) had already
+  been overwritten by an earlier resume (see the STOP entry below), and
+  the working tree held **uncommitted** partial Stage 4 work from the
+  crashed session with no record of what scope had been decided. This
+  session recovered the original approved 8B plan text and every later
+  user decision **verbatim from the raw session transcripts**
+  (`~/.claude/projects/.../590e8438-....jsonl` and `9981270b-....jsonl`),
+  not from any handoff file, then asked the user to confirm the Stage 4
+  scope before continuing. The recovered plan and decisions are recorded
+  in full in `C:\Users\ivgi-pc\.claude\plans\compiled-spinning-hellman.md`
+  — read that file, not just this entry, if anything here is unclear.
+- **User's confirmed scope (this session):** every OpenAPI GET the Phase
+  8B masked probe (`source-docs/observed/openapi/probe-2026-09-26.masked
+  .json`) returned genuine data for gets a Demo fixture (not just the 4
+  the crashed session had produced), plus every observed error/empty
+  scenario on an endpoint that also has a success fixture.
+- **Done:**
+  - `src/content/demo/openapi.ts`: 48 new `DemoFixtureSet` consts (list
+    them all in the file's own export array) covering calleridblacklists,
+    campaignnumbers, campaigns, conditions, conferencerooms, cronjobs,
+    customdestinations, dids, disas, featurecodes, flows, huntlists,
+    ivrs, mediafiles, musiconholds, paginggroups, phonebooks,
+    provisioningphones, settings, shortnumbers, voicemails (list+get
+    each), extensions (list, get, get-by-number), simplecdrs-list (+ a
+    "no match" empty-array case), phonebookentries (list+get).
+    `openapiDemoFixtures` now has 52 sets (was 4).
+  - Each new set has two cases: "Tenant omitted" (401 `invalid_api_key`,
+    OA-15, applied on the premise that the same auth layer runs in front
+    of every resource — only probed directly on `extensions-list`,
+    flagged as such in each case's own `basis`) and "Found" (the probe's
+    observed field shape with fabricated values, generated by
+    reproducing `src/content/observed.ts`'s mask-to-example rules in a
+    scratch generator — not imported at runtime, so the probe file is
+    not shipped to the client bundle — so Demo and the Reference page's
+    observed schema agree). Long numbered-field runs (`paramN`, `fieldN`,
+    `lineN_ex_id`) are mechanically collapsed to their first 2 members,
+    and fields the probe observed as empty/null on every row are
+    dropped — both are evidence-based trims documented in the file's
+    header comment, not per-field guesses.
+  - `aianalysis-get` gains "Tenant omitted" (401), "Unique ID missing"
+    (400 `uniqueid_required`), and "No analysis for the unique ID" (200,
+    empty array) cases, alongside the existing invalid-key/one-unknown/
+    found cases.
+  - **Every get-by-ID endpoint's observed 404 `object_not_found` (OA-16)
+    stays unfixtured.** The id that selects it is a path parameter, and
+    `DemoCase.when` only matches query parameters (`types.ts`) — the
+    same limitation the crashed session already accepted for
+    `queues-get` ("Skip it for queues-get" per its own AskUserQuestion),
+    generalized here to every resource rather than asked again.
+  - `tests/unit/openapi-coverage.test.ts` (`DEMO_ALLOWED`) and
+    `tests/unit/demo-fixtures.test.ts` (`FIXTURE_ENDPOINTS`) extended to
+    the full 52-endpoint set.
+  - **Two real bugs found and fixed while validating, both now fixed in
+    the same commit:**
+    1. Every "Tenant omitted" case's `preset` was `{}`. `tenantParam()`
+       gives every `tenant` field a documented example value
+       (`TESTTENANT`), which the Playground pre-fills by default (the
+       same `info-extstate` lesson from Phase 7 Stage 5), so an empty
+       preset never actually cleared the field and the case could never
+       resolve through the real UI. Fixed to `preset: { tenant: "" }` on
+       all 49 cases (48 new + the added `aianalysis-get` one). Caught by
+       the existing "each scenario chip resolves to its own case, given
+       the Playground's prefilled defaults" unit test — not by manual UI
+       driving this time, since the story is identical to the documented
+       Phase 7 precedent.
+    2. `simplecdrs-list`'s generated `sc_calleridnum` fell back to the
+       generic `"example"` placeholder (the probe's masked shape had no
+       `digits` hint for that field) instead of the project's synthetic
+       555-exchange convention, failing the existing NANP-555 guard
+       test. Fixed to `"5550100"`.
+  - `messages/en.json` / `messages/he.json`: `demoText` now also states
+    "No credentials required" (Hebrew is a DRAFT translation, per the
+    project's standing Hebrew-strings status).
+  - `scripts/rollout-status.ts`: a new OpenAPI Demo coverage section
+    (Phase 8B §12), writing a new `source-docs/OPENAPI_DEMO_STATUS.md`
+    (52/66 read operations Demo-supported; the other 14 broken down by
+    reason: global-key-only resource, not probed — e.g. `cdrs-list`'s
+    possible side effect — or probed with no fixturable success data).
+    Kept as a second file alongside the existing Proxy-only
+    `ROLLOUT_STATUS.md` rather than merged into it, since that file's own
+    header and `docs/CURRENT_STATUS.md` both describe it as "Proxy-only,
+    generated" — a small, reversible choice, not asked separately.
+- **Validation done:**
+  - `npm run check`: 348/348 unit tests, typecheck, lint — all clean.
+  - `npm run build`: clean, 576 pages (unchanged count).
+  - Targeted Playwright (`-g "Open API"`, 30 tests, fresh build): 27
+    passed, 3 failed on the parallel run — "the sidebar API select
+    switches from Proxy to Open API" (chromium) and "a path-parameter
+    endpoint documents its example placeholder and prefills it in the
+    Playground" (chromium **and** mobile-safari). All 3 passed cleanly
+    when rerun alone (2-worker run, same test file). This session did
+    not touch the sidebar API-select or the "Try in Playground" link, so
+    this is this project's already-documented pre-existing parallel-load
+    flake class (Phase 5/Stage 3/Stage 4 history all describe the same
+    "different single test fails each run, passes alone" pattern), not
+    a regression from this work.
+- **Not yet done — Stage 5's validation checklist is unfinished:**
+  - The **full** Playwright suite has not been re-run fresh (only the
+    `-g "Open API"` subset above).
+  - No visual pass (desktop + mobile × en + he) over a sample of the 48
+    new fixtures — rule 6 (Visual validation) requires driving the real
+    UI, not trusting the unit tests alone.
+  - No explicit no-network check for the new endpoints (the existing
+    "no `**/api/playground` request for any OpenAPI Demo fixture" e2e
+    test covers the *3 already-parametrized* endpoints in
+    `smoke.spec.ts`'s `demoFixtures` list at ~L995 — it was not extended
+    to iterate the new 48; confirm whether that's necessary, since the
+    underlying `DemoProvider`/`executor.ts` code is unchanged and
+    API-shape-agnostic).
+  - No secret/PII scan of the diff has been run as an explicit step
+    (informally reviewed while writing this handoff: every new value is
+    a fabricated placeholder or the existing `TESTTENANT`/`5550100`/
+    `SYNTHETIC_SECRET` conventions; no probe value, key, or real tenant
+    appears).
+  - `.diag-tmp.mjs` (untracked, predates this session — from the crashed
+    session's own investigation of the "Try in Playground" issue on
+    `extensions-get`) and this session's own throwaway
+    `.diag-aia.mjs`/`.diag-params.mjs` are still sitting in the repo
+    root, uncommitted and not covered by `.gitignore`. Given the flake
+    finding above, `.diag-tmp.mjs`'s investigation may now be moot (the
+    failure reproduces on chromium too and passes alone — looks like the
+    parallel-flake class, not the WebKit-specific issue it was written
+    to chase) — worth confirming, then deleting all three with the
+    user's OK (terminal-safety rule).
+  - The Stage 4/5 completion report (coverage numbers, files, tests, git
+    status) has **not** been presented, and the Phase 8B approval gate
+    has **not** been opened. Do not skip straight to it — finish the
+    validation above first.
+- **Environment:** a `next start` server from the Playwright run may still
+  be bound to port 3000; check before starting another one.
+- **Model:** this session ran Stage 4/5 on **Sonnet 5** (switched from
+  Opus 5.5 after the plan-recovery/scope-confirmation step, per the
+  project's routing rule — routine fixture and validation work). Stay on
+  Sonnet 5 for the remaining Stage 5 validation.
+- **First action next session:** `git status` (expect the same dirty
+  state as this entry describes, `.diag-*.mjs` files included, unless the
+  user asked for a cleanup), `git log -2`, then read
+  `C:\Users\ivgi-pc\.claude\plans\compiled-spinning-hellman.md`, then
+  finish the "Not yet done" validation list above before presenting the
+  Stage 4/5 state to the user.
+
+## (Superseded by the entry above) Phase 8B — Stage 3 DONE (2026-09-26, Opus 5.5); STOP, Stage 4 not started
+
+- Branch `phase/open-api`, Stage 3 commit on top of `6a42faa`. Not pushed.
+- **Done:**
+  - `withObserved` is wired into
+    `src/app/[locale]/reference/[api]/[endpoint]/page.tsx`, which passes
+    the merged endpoint to `buildPanelData` and `EndpointView`. It runs
+    server-side only.
+  - `src/content/observed.ts` accuracy fixes, each checked against the
+    masked probe file:
+    - The generic-field sentence is now derived from the observed keys.
+      The old fixed wording was wrong for Simple CDR (none), Extension
+      (no `object`) and Phone Book Entry (no `name`).
+    - The Extension State note no longer claims "registered" or "caller
+      fields empty": `UniqueID`/`LinkedID` were non-empty.
+    - The Phone Book note no longer claims "20 seconds"; the duration is
+      not recorded.
+    - `*meid` fields (media-file IDs such as `cr_pinenteredmeid`) are no
+      longer masked as `SYNTHETIC_SECRET`.
+  - New `tests/unit/observed.test.ts` (6 tests):
+    - probed ids are documented GETs;
+    - an observed 200 is added only when no 2xx is documented, and
+      documented responses are kept;
+    - every masked field path, nested ones included, is in the schema;
+    - examples contain no probe markers and every secret-named field is
+      `SYNTHETIC_SECRET`;
+    - Proxy and unprobed endpoints are returned unchanged;
+    - every cited OA-nn exists in DOCS_AUDIT.
+  - `source-docs/DOCS_AUDIT.md` §14:
+    - OA-14: general conventions;
+    - OA-15: tenant errors CONFLICT;
+    - OA-16: `object_not_found` undocumented;
+    - OA-17: AI Logs 404;
+    - OA-18: endpoint-specific findings, including Media File not
+      returning `me_data` but returning undocumented
+      `me_voiceapiusername`/`me_voiceapihost`.
+  - `docs/SECURITY.md` "Phase 8B probe observations" (no label changes):
+    - confirmed exposures: SEC-REQ-19 `pa_pin`, SEC-REQ-20
+      `related.meetme.pin`/`adminpin`, SEC-REQ-22 `ds_pin`;
+    - partly observed: SEC-REQ-26 (`ph_mac` yes, passwords not
+      returned), SEC-REQ-15 (no `password`; `email` returned) and
+      SEC-REQ-18;
+    - still unresolved: SEC-REQ-03 (virtual extension only).
+- **Validation:**
+  - `npm run check`: 295/295.
+  - `npm run build`: clean, 576 pages.
+  - Throwaway Playwright pass against `next start` (fresh build): 8
+    pages (7 OpenAPI plus 1 Proxy) at desktop and mobile in en, plus
+    mobile he (all 8) and desktop he (1). 25 loads: zero console errors,
+    no overflow, no probe markers rendered, and observed content present
+    only on OpenAPI pages.
+  - Screenshots checked.
+  - Secret scan of the diff: clean.
+  - Full Playwright suite: not run (8B gate item).
+- **Discrepancy to resolve before Stage 4:** the approved 8B plan file
+  `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md` was
+  **overwritten** by the Stage 3 resume plan. The original Stage 4–5
+  text is gone. What survives is "Stage 4 (fixtures)" and the fixture
+  decisions in `docs/DECISIONS.md` "Phase 8B planning and probe
+  decisions": Queue GETs replace AI Logs; error chips only where a
+  success fixture exists. Stage 5's content is not recorded anywhere
+  found. **Ask the user to confirm the Stage 4–5 scope before starting.**
+- **Environment:** the port 3100 server is stopped and the port is free.
+- **Model:** Stage 3 ran on Opus 5.5 at the user's choice. Stages 4–5
+  route to **Sonnet 5**.
+- **First action next session:** `git status`, `git log -2`, then ask
+  the user for the Stage 4–5 scope (see the discrepancy above). Do not
+  start Stage 4 without approval.
+
+## (Superseded by the entry above) Phase 8B — STOP checkpoint (2026-09-26): Stages 1-2 done, Stage 3 just started
+
+- Branch `phase/open-api`. Plan (approved):
+  `C:\Users\ivgi-pc\.claude\plans\linked-rolling-seal.md` (Stages 1-5).
+  Decisions: `docs/DECISIONS.md` "Phase 8B planning and probe decisions".
+  Not pushed.
+- **Stage 1 done** (`f833747`):
+  - Request tab substitutes path values and shows the masked
+    `X-API-Key` header.
+  - "Simulate error" is shown only for the synthetic Sample API.
+  - Two documented Demo cases were added: Extension State "Not
+    registered", AI Analysis "One of two unique IDs unknown".
+  - Isolation tests were added.
+  - Validation: `npm run check` 289/289; targeted Playwright 31 passed
+    (plus the fixed Request-tab test, 2/2).
+- **Stage 2 done** (`e73e8c5`):
+  - Masked, structure-only GET probe (57 calls, 7 error checks and a
+    follow-up), stored in
+    `source-docs/observed/openapi/probe-2026-09-26.masked.json`
+    (verified to contain no key or tenant).
+  - `cdrs-list` was not probed. The user did not answer whether to probe
+    it; skipped because of a possible side effect.
+  - **The TEST key the user shared in chat must be rotated.** This is an
+    open action in `docs/SECURITY.md`.
+- **Decisions after the probe** (`16731db`):
+  - Tenant errors: record both the documented codes and the observed
+    behavior (401 `invalid_api_key`).
+  - Drop the AI Logs Demo fixture (the endpoint returns 404 on the test
+    PBX) and use the Queue GETs instead.
+  - Error chips only on endpoints that have a success fixture.
+- **Stage 3 partial (uncommitted until this checkpoint):**
+  - `src/content/observed.ts` is written but **not wired and not
+    type-checked or tested**. It is a server-side accessor
+    (`withObserved`, `observedOperationIds`) that turns the masked
+    shapes into observed 200 responses (schema, synthetic placeholder
+    example, `evidence: "observed-sanitized"`, `tested: true`) and
+    per-endpoint observed notes. It follows the 8A examples.ts pattern
+    so the client sidebar bundle doesn't ship the schemas. Its notes
+    cite DOCS_AUDIT OA-15/16/17, which **do not exist yet**.
+  - Still to do in Stage 3:
+    - Wire `withObserved` into
+      `src/app/[locale]/reference/[api]/[endpoint]/page.tsx` (pass the
+      merged endpoint to `buildPanelData` and `EndpointView`).
+    - Unit tests: probed ids gain an observed 200 when no documented 2xx
+      exists; no secret-shaped example values; every masked field
+      appears in the schema.
+    - Write `source-docs/DOCS_AUDIT.md` §14 (OA-14.. findings).
+      - General:
+        - error envelope `{"error":{"code","message"}}` (401/403/404/400);
+        - lists are top-level arrays with extra `id`/`name`;
+        - gets add `id`/`name`/`object`/`related`;
+        - most numerics are returned as strings;
+        - no pagination (campaignnumbers returned 5251 rows).
+      - OA-15: the tenant error mismatch.
+      - OA-16: `object_not_found` is undocumented.
+      - OA-17: ailogs returns 404.
+      - Endpoint-specific:
+        - extension list keys `id`/`number`/`name`/`tech`;
+        - aianalysis all-miss returns `[]`;
+        - Simple CDR no-match returns `[]`;
+        - phonebookentries without a filter timed out;
+        - tenantvariables returned empty.
+    - `docs/SECURITY.md`: observations confirming SEC-REQ-19 (`pa_pin`),
+      20 (meetme `pin`/`adminpin` on conference get), 22 (`ds_pin`),
+      26 (`ph_mac`) and 15 (voicemail email). SEC-REQ-03 is still
+      unresolved: the probed extension was VIRTUAL, so no SIP/PJSIP
+      secret was observed.
+    - Run `npm run check`, then commit, then **stop** (the user asked to
+      do Stage 3 and stop).
+- **Model:** the user kept Opus 5.5 for Stages 1-3. The plan routes
+  Stages 3-5 to Sonnet 5.
+- **First action next session:** `git status`, `git log -3`, then
+  `npx tsc --noEmit` to check `src/content/observed.ts`, then continue
+  the Stage 3 items above.
+
+## (Superseded by the entry above) Phase 8A — APPROVED (2026-09-26 ~17:55, gate A: approve, save, continue to planning 8B)
+
+- Branch `phase/open-api`. Approved on top of the two WIP checkpoints
+  below (`634f58b`, then this session's alias/notes-audit checkpoint),
+  plus one more fix made after approval was requested: every content-
+  model text spot in `src/components/reference/endpoint-view.tsx`
+  (notes, error/response/example descriptions, deprecation notes) now
+  passes through `InlineMarkup` instead of being rendered raw — found
+  by the user checking the official Campaign page's "Delete Campaign"
+  example against the app and seeing literal backticks
+  (e.g. `` `/campaign` ``) instead of inline code. `ParamList` already
+  did this correctly; only `endpoint-view.tsx`'s other text was wrong.
+  This is a shared component, so Proxy pages were affected too.
+  Examples' collapsed-by-default display was reviewed and **kept as
+  is** (user decision, not a defect).
+- Full detail, all 6 alias/notes-audit fixes, and the new
+  request-body-key coverage test: the superseded checkpoint entries
+  below and `docs/DECISIONS.md` "Phase 8A — APPROVED".
+- **Validation:** `npm run check` 285/285, `npm run build` clean (576
+  pages) — both fresh after the `InlineMarkup` fix. Full Playwright
+  (162 passed, 1 known flake confirmed to pass alone, 1 WebKit skip)
+  and a 40-load visual/console-error pass across representative OpenAPI
+  pages were run just before that fix; not re-run after it (narrow
+  rendering-only change, no test depends on literal backtick text, user
+  confirmed the render personally). Secret scan of the diff: clean.
+- **Not merged into `main`, not tagged, not pushed.**
+- **Next: Phase 8B — OpenAPI Demo** (`docs/phases/08B-openapi-demo.md`).
+  Planning has not started. **Switch to Opus 5.5 before planning 8B**
+  — the user asked to be prompted for this switch, and 8B's scope
+  question (its spec asks for Demo coverage beyond the 3 GETs already
+  decided — see `docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases
+  inserted", "Scope note") is a Demo-architecture decision, not routine
+  implementation.
+- **First action next session:** confirm the model is Opus 5.5, then
+  read `docs/phases/08B-openapi-demo.md` and enter plan mode.
+
+## (Superseded by the entry above) Phase 8A — second STOP checkpoint (2026-09-26 ~17:45): WIP, not finished, not approved
+
+- Branch `phase/open-api`. This session's work is committed as a WIP
+  checkpoint on top of `634f58b`. Not pushed.
+- **Done this session (Sonnet 5):**
+  - Remaining raw-page sections audited against the app: Accepted
+    Field Aliases, Destination Fields, path aliases, all 12 "Important
+    Notes"/"Notes" sections, Simple CDR Template Variables, auth-token
+    Supported Identities, dial Compatibility Notes, extension-state
+    Response.
+  - 6 content gaps fixed:
+    - `mediafiles.ts`: `format` now maps to `me_format`.
+    - `extensions.ts`: the full `EXT-*` destination alias table
+      (`onnoanswer`, `onbusy`, ... were missing).
+    - `ivrs.ts`: the `ivr_*` / `key_*` / `customivr_support` aliases.
+    - `customdestinations.ts`: the bare `randomdestination` /
+      `random_destination` aliases.
+    - `paginggroups.ts`: path alias `/paginggroup`.
+    - `reporting.ts`: the Simple CDR `start`/`end` rule "applied when
+      neither `id` nor `uniqueid` is supplied".
+  - New unit test in `tests/unit/openapi-coverage.test.ts`: every
+    request-body key used by an official example is a modeled field, a
+    documented alias, or a documented numbered template
+    (`condition[N]`, `ivr_<n>`).
+- **Validation:**
+  - `npm run check`: 285/285.
+  - `npm run build`: clean, 576 pages.
+  - Full Playwright suite (fresh build): 162 passed, 1 WebKit skip,
+    1 failure. The failure was the known "tenant and API key survive an
+    endpoint switch" flake; it passed when re-run alone. The 8A CDR e2e
+    test passed.
+  - Throwaway visual pass: 10 OpenAPI pages × desktop/mobile × en/he,
+    zero console errors, no overflow.
+  - Secret scan of the diff: clean.
+- **My earlier 8A gate report was premature. 8A is NOT finished.**
+  The user checked the official Campaign page's "Delete Campaign"
+  example against the app and found two open problems:
+  - **(a) Examples are collapsed.** The example exists on
+    `campaigns-delete` and its content matches, but every example
+    renders as a collapsed `<details>`
+    (`src/components/reference/endpoint-view.tsx` ~l.270), so only the
+    title shows. Display mode is **undecided**: the user rejected my
+    question (always expanded / expand when ≤3 / first expanded). Ask
+    again. Do not pick one silently.
+  - **(b) Literal backticks render as text.** Notes, error
+    descriptions, example descriptions and response descriptions use
+    `ContentText` instead of `InlineMarkup` (endpoint-view.tsx ~l.245,
+    ~l.283, ~l.322, ~l.336). Example: "Documented path aliases:
+    \`/campaign\`." on campaigns-delete. This is a real, visible defect.
+    Check first whether Proxy pages are affected too.
+- **Model:** the 8A work ran on Sonnet 5, and the user switched to Opus
+  5.5 at the stop. 8A routes to Sonnet.
+- **Environment:** the dev server started this session was stopped, and
+  port 3000 is free.
+- **Exact next task:** resolve (a) with the user, then fix (a) and (b).
+  Then re-run `npm run check`, `npm run build`, the Examples/Notes e2e
+  checks and a visual pass, and present the 8A gate.
+- **First action next session:** `git status`, `git log -2`, then ask
+  the user the Examples display question.
+
+## (Superseded by the entry above) Phase 8A — STOP checkpoint (2026-09-26): WIP, not finished, not approved
+
+- Branch `phase/open-api`, WIP checkpoint commit on top of `1f4c0df`
+  holding all 8A work so far. Not pushed.
+- **History this session:** a first 8A pass fixed only 2 unmodeled list
+  filters and was reported to the user as complete — **that report was
+  wrong**. The user compared the official CDR page
+  (manual.mirtapbx.com/books/api/page/cdr) with the app and said 8A is
+  not finished. A systematic comparison against all 38 raw official
+  snapshots (`source-docs/raw/mirta-openapi/*.md`) then found two
+  systemic gaps, now addressed:
+  1. **Named official examples (none were shown anywhere):** 326 curl
+     examples on the official pages. User chose "structured + generated"
+     (AskUserQuestion, this session). New `scripts/openapi-examples.mjs`
+     generates `source-docs/openapi/examples.json`: 325 matched to an
+     operation, 1 unmatched (the Overview's cross-resource auth example,
+     expected); all 159/159 operations have at least 1 example.
+     Real-looking values normalized via
+     `scripts/openapi-examples-normalize.json` (CANISTRACCI -> TESTTENANT,
+     CAN% -> TEST%, person names/emails -> Demo User, Kartoon Cars -> Demo
+     Corp, 39055123456 -> 5550100 — matching Stage 2 precedent); every
+     credential-shaped body key -> `SYNTHETIC_SECRET`. Accessor:
+     `src/content/examples.ts` (`getEndpointExamples`) — deliberately
+     not on `Endpoint`, so the client sidebar bundle does not ship them.
+     New `EndpointExample` type in `src/content/types.ts`;
+     `exampleEndpoint()` in `src/lib/code-samples.ts` renders each
+     example through the existing `buildSample` (portal base URL,
+     `X-API-Key: $OPENAPI_API_KEY`); server pre-render in
+     `src/lib/endpoint-panel.ts` (`buildExamples`); new collapsible
+     "Examples" section in `src/components/reference/endpoint-view.tsx`
+     with a "Global key" badge where the source used a global key.
+  2. **Response Fields tables not rendered:** CDR (30 fields) and Simple
+     CDR (12) now have a 200 response carrying the field table
+     (`type: "unknown"`, `required: "undocumented"`, no example) —
+     applies the Stage 1 "vendor examples go under status 200" decision
+     to field tables; the description states status, envelope and types
+     are undocumented. `response-examples.tsx` now says "No example body
+     documented. The response fields are listed under Responses."
+     instead of the misleading "No response body." (new `schemaOnly`
+     flag, new i18n key `noExampleSchemaOnly` in en + he).
+  3. CDR `start`/`end`: added the missing second date-range rule
+     (neither `id` nor `linkedid`).
+  4. Kept from the first pass: `ResourceSpec.listFilters`
+     (`src/content/openapi/shared.ts`), `phonebook_id` / `campaign_id`
+     list filters.
+- **Tests added** (`tests/unit/openapi-coverage.test.ts`, "OpenAPI
+  Reference completeness (Phase 8A)"): example <-> operation mapping and
+  159/159 coverage; total curl-heading count equals the raw pages;
+  normalization/credential guard; **every query key used by an official
+  example is a modeled query parameter**; rendered examples use the
+  portal base URL and header credential; every field of every official
+  "... Fields" table (CDR, Simple CDR, AI Analysis, AI Logs) appears in
+  the 2xx schema. One e2e test added in `tests/e2e/smoke.spec.ts`
+  ("CDR Reference shows the documented response fields and the official
+  named examples (8A)") — **not yet run**.
+- **Validation done:** `npm run check` 284/284, lint clean.
+  `npm run build` clean (576 static pages) — ran before the
+  `noExampleSchemaOnly` wording change; re-run. A throwaway Playwright
+  pass against `next dev` (desktop 1440 + mobile 390, en + he) over
+  cdrs-list, simplecdrs-list, extensions-create,
+  customdestinations-update and a Proxy page: examples render
+  (10/11/4/30), CDR shows 30 response anchors, zero console errors, no
+  overflow, no `pbx.example.com` / CANISTRACCI / `key=` in rendered
+  curl; Proxy unchanged (0 examples). Secret/PII scan of the diff: the
+  only hits are the normalize map's source keys and the tests' ban
+  lists — values already present in the committed public raw snapshots.
+- **Validation NOT done / incomplete:** the full Playwright suite was
+  **stopped at 80/164** by the user's stop request; the only failure
+  so far was the known Phase 5 "tenant and API key survive an endpoint
+  switch" chromium-desktop flake (same class as Stage 5; not re-run
+  alone this time). The new 8A e2e test was not reached.
+- **Not yet audited (possible remaining 8A gaps):** examples,
+  response-field tables and query-parameter coverage were checked
+  systematically; still to compare against the raw pages: "Endpoint
+  Patterns" tables; "Accepted Field Aliases" / "Destination Fields"
+  field by field (are all body fields and aliases modeled? — a test
+  comparing example body keys against `requestBody`, like the
+  query-key test, would answer this); Simple CDR "Template Variables"
+  (currently a notes line); auth-token "Supported Identities"; dial
+  "Compatibility Notes"; extension-state "Response"; "Important Notes"
+  on each page.
+- **Environment:** the dev server (was :3000) and the orphaned e2e
+  `next start` were both stopped; port 3000 is free. Chrome tabs opened
+  on localhost pages are dead until a server is restarted.
+- **Model:** the user switched to Opus 5.5 mid-8A and said "continue";
+  project routing puts 8A on Sonnet 5 (user override, deliberate).
+  Confirm with the user which model to use next session.
+- **Exact next task:** finish the 8A audit (the remaining sections
+  above), re-run `npm run build` and the full Playwright suite fresh,
+  then present the 8A STOP-gate report (coverage numbers, files, tests,
+  git status) and wait for approval before 8B. Record the
+  examples/normalization decision in `docs/DECISIONS.md` at the gate.
+- **First action next session:** `git status`, `git log -3`, then
+  `npx vitest run tests/unit/openapi-coverage.test.ts` (expect 22/22),
+  then continue the section-by-section comparison.
+
+## (Superseded by the entry above) Phase 8 — pre-Stage-6 sub-phases 8A–8D inserted (2026-09-26); 8A next, on SONNET
+
+A manual product review found Phase 8 was not actually
+feature-complete before the existing Stage 6 review: the OpenAPI API
+Reference did not expose all information available in the approved
+baseline, and the OpenAPI Demo and Playground were missing/incomplete.
+
+Four sub-phases were inserted between Stage 5 (below) and the existing
+Stage 6, each with its own STOP/approval gate, specified in
+`docs/phases/08A-openapi-api-reference-completeness.md`,
+`08B-openapi-demo.md`, `08C-openapi-playground.md`,
+`08D-pre-stage6-readiness-gate.md`, and ordered/routed in
+`docs/phases/08-substages-README.md`:
+
+1. **8A — OpenAPI API Reference completeness** (Sonnet 5) — next.
+2. **8B — OpenAPI Demo** (Sonnet 5) — after 8A is approved.
+3. **8C — OpenAPI Playground** (Sonnet 5) — after 8B is approved.
+4. **8D — Pre-Stage-6 readiness gate** (Sonnet 5, deterministic
+   validation) — after 8C is approved.
+5. **Existing Stage 6 — cross-API consistency and security review**
+   (Opus 5.5) — only after 8D passes.
+
+This supersedes the "Phase 8 is feature-complete" status below and in
+`docs/CURRENT_STATUS.md`. Stages 0–5 are unaffected and remain done;
+nothing about them is reopened. Full detail:
+`docs/DECISIONS.md` "Phase 8 pre-Stage-6 sub-phases inserted".
+
+## (Superseded by the entry above) Phase 8 — Stage 5 DONE (2026-09-26); Stage 6 next, on OPUS (gate item)
+
+- New e2e coverage in `tests/e2e/smoke.spec.ts` ("Open API rollout
+  (Phase 8)"): API-select switching, a path-param endpoint (`OBJECT_ID`
+  placeholder through both the code sample and the Playground field), a
+  write staying Reference-only (Reference page + Playground), all 3
+  Demo fixtures resolving, and 2 negative states
+  (`format=csv`→Not simulated, `cdrs-list`→unavailable). `requestPanel`
+  hoisted to shared scope for reuse across the Proxy and Open API
+  describe blocks.
+- **2 real issues found and fixed while writing this coverage, both
+  test/content-only, not product bugs**: a fixture's own `basis` prose
+  accidentally contained the literal string "Not simulated" (reworded);
+  Playwright's WebKit driver doesn't fire `onChange` for a
+  React-controlled `<select>` via `selectOption` (confirmed directly
+  against plain WebKit vs Chromium) — that one test is skipped on
+  `browserName === "webkit"` with the reasoning recorded inline. Full
+  detail: `docs/DECISIONS.md` "Phase 8 Stage 5 complete".
+- `source-docs/ROLLOUT_STATUS.md` (Proxy-only, generated) regenerated —
+  was stale since Stage 0 closed U-17/opened U-18.
+- Validation: `npm run check` 277/277, `npm run build` clean, full
+  Playwright suite fresh 160/162 (1 WebKit skip, 1 pre-existing-class
+  flake confirmed to pass alone), a visual pass at desktop/tablet/mobile
+  × en/he over 8 representative pages (48 loads, zero console errors,
+  no overflow), a secret scan of the full `main..HEAD` diff (clean).
+- **Phase 8 is now feature-complete.** Only Stage 6 remains: the Opus
+  cross-API consistency and security review — this is the Phase 8 gate
+  item, followed by the Phase Completion Report and the A/B/C/D
+  approval question. **Switch to Opus 5.5 before Stage 6.**
+
+## (Superseded by the entry above) Phase 8 — Stage 4 DONE (2026-09-26); Stage 5 next, on Sonnet
+
+- One new guide: "OpenAPI authentication and scope"
+  (`src/content/guides/openapi-authentication.ts`, slug
+  `openapi-authentication`), built only from
+  `source-docs/openapi/_common.md`. Registered in
+  `src/content/guides/index.ts`.
+- **A real, pre-existing layout bug found and fixed**: the guide page's
+  grid (`src/app/[locale]/guides/[slug]/page.tsx`) had no base column
+  definition below `xl`, so a CSS grid's default `min-width: auto` let
+  a long single content line stretch the whole mobile page instead of
+  scrolling inside its own code block. The 3 existing Proxy guides
+  never triggered it (their sample lines are shorter); this guide's
+  OpenAPI base-URL sample did. Fixed with Tailwind's `grid-cols-1` base
+  class. Also fixed in the new guide's own content: several
+  slash-joined inline-code runs (no wrap opportunity) switched to
+  comma-separated lists. Full detail: `docs/DECISIONS.md` "Phase 8
+  Stage 4 complete".
+- Validation: `npm run check` 277/277, `npm run build` clean, a
+  Playwright pass over the new guide (desktop/mobile, en/he) — before/
+  after the two fixes, confirming both were real and both are now
+  resolved — plus a regression check of the 3 existing guides (mobile,
+  unchanged). Full Playwright suite: 144/146 (2 chromium-desktop
+  failures, both unrelated to this stage, reproduced the project's
+  known parallel-load flake class and passed alone).
+- **Next: Stage 5 on Sonnet** — full validation pass per the plan:
+  `npm run check`, `npm run build`, the full Playwright suite (already
+  clean above, but re-run fresh per the plan's own step), new e2e tests
+  (API switcher, an OpenAPI page with a path param, a Reference-only
+  write, the 3 Demo fixtures, a GET without a fixture), a visual pass
+  at 3 viewports × 2 locales, and a secret scan of the diff.
+
+## (Superseded by the entry above) Phase 8 — Stage 3 DONE (2026-09-26); Stage 4 next, on Sonnet
+
+- Close-out (continuing from the STOP checkpoint below): `npm run
+  check` 272/272, `npm run build` clean (546 endpoint pages).
+- Playground validation (a throwaway Playwright script against a fresh
+  `build && start`, not committed): all 3 Demo endpoints
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`) resolve
+  their documented-example scenario at desktop 1440 + mobile 390, plus
+  one Hebrew page (English scenario label in Hebrew chrome) — zero
+  console errors, no overflow. 3 negative states confirmed: `ailogs-list
+  format=csv` → "Not simulated"; `cdrs-list` → "Demo data not
+  available"; `dial` (a write) → "Reference only", Send absent/disabled.
+- `docs/ARCHITECTURE.md` "Demo fixture system" updated for the per-API
+  merge; `docs/DECISIONS.md` "Phase 8 Stage 3 complete" has full detail.
+  `docs/API_CONTENT_MODEL.md` and `docs/SECURITY.md` "Demo mode
+  guarantees" were checked and need no change (already API-neutral).
+- **Next: Stage 4 on Sonnet** — one guide, "OpenAPI authentication and
+  scope", built only from `_common.md` (key kinds, `tenant`, `global=1`,
+  errors, the Live-never-uses-global-keys rule). Update
+  `docs/API_CONTENT_MODEL.md` if the guide content model needs it.
+
+## (Superseded by the entry above) Phase 8 — STOP checkpoint (2026-09-26): Stage 3 in progress, WIP, NOT committed
+
+- Branch `phase/open-api` @ `c353d4b` (Stage 2's final commit). Stage 3
+  work is **uncommitted** on top of it (`git status`: `src/content/demo/
+  index.ts` and `tests/unit/demo-fixtures.test.ts` modified,
+  `src/content/demo/openapi.ts` untracked — nothing else).
+- **Done:** `src/content/demo/openapi.ts` — 3 fixture sets
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`), one
+  documented-example case each, values reused from the endpoints' own
+  vendor examples (already synthetic per Stage 1/2). `src/content/demo/
+  index.ts` merges `openapiDemoFixtures` into the registry.
+  `tests/unit/demo-fixtures.test.ts` generalized per the plan ("the
+  fixtures test iterates over every API"): `fixtureSetFor` now takes
+  `(apiId, endpointId)`, `FIXTURE_ENDPOINTS` gained the 3 new
+  `openapi/*` rows, the synthetic-value guard now scans
+  `allFixtureSets` (Proxy + OpenAPI) and its phone-field list gained
+  `ai_callerid`/`Extension`/`OtherParty`/`Connected Line ID`.
+- **Validated so far:** `npm run check` — 272/272 (3 new exhaustiveness
+  tests for the OpenAPI endpoints pass; the existing Proxy tests are
+  unaffected).
+- **Not yet done/verified this session:**
+  - `npm run build` — started, not completed (session stopped mid-run,
+    no output captured; treat as **not verified**, not as failing).
+  - No Playground/Playwright pass on the 3 new Demo scenario chips yet
+    (the Stage 5/6 precedent is to drive the real UI, not just trust
+    the code — do this before calling Stage 3 done).
+  - `docs/DECISIONS.md`, `docs/ARCHITECTURE.md` "Demo provider",
+    `docs/API_CONTENT_MODEL.md` not yet updated for this stage.
+  - No checkpoint commit — the user stopped the session before one was
+    made; nothing here is safe to assume finished.
+- **First action next session:** confirm branch/`HEAD` above and
+  `git status` matches this description, then re-run `npm run build`
+  and the Playground visual check for the 3 Demo endpoints before
+  moving on.
+
+## (Superseded by the entry above) Phase 8 — Stage 2 DONE (2026-09-26); Stage 3 next, on Sonnet
+
+- All 34 remaining resources authored (159/159 operations total), in 5
+  commits by category batch, each with `npm run check` green:
+  Reporting + Auth Token; then config objects in batches of 6, 6, 6, 6,
+  and a final batch of 5 (Tenant, Tenant Variable, User Profile, User,
+  Voicemail). Every field, alias, error code, and security note is
+  transcribed only from `source-docs/openapi/*.md` — no invented
+  behavior.
+- `tests/unit/openapi-coverage.test.ts`: `ROLLOUT_COMPLETE` flipped to
+  `true`. Every inventory operation now resolves to exactly one
+  endpoint; the coverage/consistency assertions (unique titles, header
+  auth everywhere, no Live policy, no undocumented error status, no
+  duplicate response status, code samples resolve every path param)
+  all pass across the full 159-operation set.
+- Global-key-only resources (`tenantScoped: false`, per SEC-REQ-28 §4):
+  Tenant, User, User Profile, Routing Profile, Provider, Auth Token —
+  none accepts a `tenant` parameter, matching the Overview's own list.
+- Final validation: `npm run check` 269/269, `npm run build` clean (546
+  endpoint pages: 109 Proxy + 159 OpenAPI × 2 locales, plus Sample), a
+  Playwright console-error pass over 8 representative new pages
+  (desktop 1440 + mobile 390, including nested-schema and object-field
+  pages) — zero console errors. Full Playwright suite and the he-locale
+  visual pass are deferred to Stage 5 per the plan.
+- **Next: Stage 3 on Sonnet** — generalize the Demo fixture registry to
+  merge fixture sets per API, then add fixtures for the 3 approved GETs
+  (`extensions-state-get`, `ailogs-list`, `aianalysis-get`) in
+  `src/content/demo/openapi.ts`, derived only from the documented
+  vendor examples with synthetic values. Every other OpenAPI GET shows
+  "Demo data not available"; writes stay Reference-only.
+
+## (Superseded by the entry above) Phase 8 — Stage 1 DONE (2026-09-26); Stage 2 next, on Sonnet
+
+- Close-out: `npm run check` 269/269 (lint covers `scripts/*.mjs`,
+  verified), `npm run build` clean. No fixes needed after the WIP
+  checkpoint, so the visual pass was not re-run.
+- The user confirmed the per-resource sidebar (37 groups). Recorded
+  together with the 159 count and the status-200 vendor-example
+  convention in `docs/DECISIONS.md` "Phase 8 Stage 1 complete".
+- **Next: Stage 2 on Sonnet 5.** Write the remaining 34 resources as
+  `openapiResource()` descriptors, transcribed only from
+  `source-docs/openapi/*.md`. Stage 2 has not started.
+
+## (Superseded by the entry above) Phase 8 — STOP checkpoint (2026-09-26): Stage 1 mostly done, WIP commit, NOT final
+
+- Branch `phase/open-api`. Stage 0 done (`4cd738f`). Stage 1 (Opus) work
+  is saved in a WIP checkpoint commit on top of it, which is **not** a
+  completed stage.
+- **Done in Stage 1:**
+  - Model: `Authentication.parameter` names a header (`X-API-Key`), and
+    `ErrorSpec.status` accepts `"undocumented"` (`src/content/types.ts`).
+  - `code-samples.ts`: named-header auth, and `authEnvVar` returns
+    `<API>_API_KEY` whenever a parameter is named.
+  - `endpoint-view.tsx`: auth-header note; undocumented error status
+    shown as "—" with an sr-only label; inline markup in the summary and
+    auth notes. This also fixes literal backticks on existing Proxy
+    pages.
+  - Sidebar API/version selects stacked. This fixes truncation, which
+    also affected Proxy ("Proxy /").
+  - "Open API (coming later)" removed from the sidebar and home. Home
+    now links every non-synthetic API.
+  - Proxy legacy note now points to the OpenAPI reference.
+  - `src/content/openapi/` (`shared.ts` with `openapiAuth`, `tenantParam`,
+    `globalParam`, `errors()`, `openapiOperation()`, `openapiResource()`;
+    `extensions.ts`; `dial.ts`; `index.ts`), registered second in
+    `src/content/index.ts`. Pilots: Extension (6 operations) plus
+    Extension State, and Dial. That is 8 of 159 endpoints.
+  - `source-docs/openapi/operations.json`, generated by
+    `scripts/openapi-operations.mjs`: **159** operations, not 128
+    (OA-13 in `DOCS_AUDIT.md`; the README now shows both counters).
+  - `tests/unit/openapi-coverage.test.ts` (`ROLLOUT_COMPLETE = false`),
+    plus new OpenAPI cases in `tests/unit/code-samples.test.ts`.
+  - `docs/API_CONTENT_MODEL.md` updated.
+- **Deviation from the plan (reversible, not asked):** sidebar categories
+  are one per resource (37 groups, like Proxy's one per reqtype), not the
+  planned ~9 domain groups. The domain order is kept in
+  `openapi/index.ts`.
+- **Validation:**
+  - Before the final small edits: `npm run check` passed (269/269 unit
+    tests, typecheck, lint); `npm run build` was clean (272 pages); a
+    Playwright visual pass of 10 pages × desktop/mobile (en + one he)
+    showed 0 console errors and 0 overflow, confirmed by screenshots.
+  - **Not re-run after the last edits:** the `ov:18`/`SEC-REQ-28`
+    citations removed from user-facing strings in `openapi/shared.ts`,
+    the docs edits, and the new `scripts/openapi-operations.mjs`. The
+    user interrupted the re-run, and whether ESLint covers `scripts/*.mjs`
+    is unverified.
+- **Remaining Stage 1 work:**
+  1. Re-run `npm run check` and `npm run build`, and fix anything found.
+  2. Update `docs/DECISIONS.md`: the per-resource category choice, the
+     159 count, and the 200-placeholder convention for vendor examples.
+  3. Update `docs/CURRENT_STATUS.md` and create the final Stage 1
+     checkpoint commit.
+  4. Tell the user to switch to **Sonnet** for Stage 2 (remaining 34
+     resources via `openapiResource()` descriptors, transcribed only from
+     `source-docs/openapi/*.md`).
+- **First action next session:** confirm branch `phase/open-api` and a
+  clean tree, then run `npm run check`.
+
+## Phase 8 — Open API rollout: Stage 0 done, Stage 1 next (Opus) (superseded by the STOP checkpoint above)
+
+- Plan: `C:\Users\ivgi-pc\.claude\plans\zany-fluttering-dewdrop.md`
+  (Stages 0–6). Decisions: `docs/DECISIONS.md` "Phase 8 planning".
+- Stage 0: `main` fast-forwarded `0cbd7ba`→`be23fb2`, tagged
+  `v0.5-proxy-complete`, branch `phase/open-api` created. U-17 closed on
+  the user's confirmation (base URL
+  `https://pbx6webserver.1com.co.il/pbx/openapi.php`; nothing tested).
+- Next: Stage 1 on Opus. It covers:
+  - header-auth parameter support in `code-samples.ts` and a per-API env var;
+  - `src/content/openapi/` (`shared.ts`, the `openapiResource()` helper, `index.ts`);
+  - `source-docs/openapi/operations.json` and `tests/unit/openapi-coverage.test.ts`;
+  - the pilots `extensions-state`, `extensions` and `dial`;
+  - removing "Open API" from the `plannedApis` lists.
+- Stages 2–5 run on Sonnet; Stage 6 (review) on Opus. No Live, no push.
 
 ## MiRTA OpenAPI documentation baseline — APPROVED (gate A)
 

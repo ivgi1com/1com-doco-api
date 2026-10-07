@@ -289,7 +289,6 @@ const infoDids: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the Proxy API INFO reqtype (info=DIDS). Full audit: source-docs/proxy-api/info.md.",
-    "Omitting tenant may return every tenant's DIDs with an admin key (the source shows this by example), but that form is not offered or tested here — see source-docs/unresolved.md U-12/U-13 (base host and tenant-placeholder ambiguity).",
     "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-53): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array; format=csv returned an empty body on the tenant tested.",
     "format=json here shows only the DID's own fields, never the joined tenant record the real API also returns in the same item.",
     "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
@@ -316,6 +315,7 @@ const simplecdrsStartParam: Parameter = {
   required: "undocumented",
   description: "Start date/time filter, observed as YYYY-MM-DD.",
   example: "2026-01-01",
+  format: "date",
   source: "source-docs/proxy-api/info.md",
 };
 
@@ -324,6 +324,7 @@ const simplecdrsEndParam: Parameter = {
   name: "end",
   description: "End date/time filter, observed as YYYY-MM-DD.",
   example: "2026-01-31",
+  format: "date",
 };
 
 const simplecdrsFormatParam: Parameter = {
@@ -544,7 +545,7 @@ export const infoRecording = proxyOperation({
   summary: "Returns the recording of one call, looked up by its unique id or by the call id a DIAL request returned.",
   source: "info.md",
   queryParameters: [
-    q("id", "The call's unique id, or the originate id returned by DIAL (its third field).", { example: "srv02-1531779475.48" }),
+    q("id", "The call's unique id, or the originate id returned by DIAL (its third field).", { example: "PBX-1531779475.48" }),
     tenantParam,
   ],
   responses: [
@@ -574,7 +575,7 @@ export const infoPlayrecording = proxyOperation({
   summary: "Same lookup as \"Get a call recording\", but asks the browser to play the recording inline instead of downloading it.",
   source: "info.md",
   queryParameters: [
-    q("id", "The call's unique id, or the originate id returned by DIAL.", { example: "srv02-1531779475.48" }),
+    q("id", "The call's unique id, or the originate id returned by DIAL.", { example: "PBX-1531779475.48" }),
     tenantParam,
   ],
   responses: [
@@ -977,7 +978,7 @@ export const infoExtstate = proxyOperation({
         { name: "UniqueID", location: "body", type: "string", required: true, description: "A short 2-letter code. Meaning not documented." },
         { name: "LinkedID", location: "body", type: "string", required: true, description: "A text value, up to 24 characters observed. Meaning not documented." },
       ],
-      example: { UniqueID: "ab", LinkedID: "srv02-1531779475.48" },
+      example: { UniqueID: "ab", LinkedID: "PBX-1531779475.48" },
     },
   ],
   notes: [
@@ -1076,8 +1077,8 @@ export const infoCdrs = proxyOperation({
     q("phone", "Filters across whoanswered, calleridnum and dialednum. Comma-separated for multiple values (Doc line 138)."),
     cdrsFormatParam,
     q("template", "Name of a server-defined XML output template (configured under Configuration/Settings → XML Template). Only meaningful with format=xml.", { example: "Test_CSV" }),
-    q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01" }),
-    q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31" }),
+    q("start", "Start date/time filter (Doc lines 152-153).", { example: "2019-12-01", format: "date" }),
+    q("end", "End date/time filter (Doc lines 152-153).", { example: "2022-12-31", format: "date" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -1091,7 +1092,7 @@ export const infoCdrs = proxyOperation({
     },
   ],
   notes: [
-    "Response column names/order are not documented for either CSV variant. Site line 194: getting the CSV for a single tenant uses \"the tenant\" format; for multiple tenants it uses \"the Admin\" format — two different, undocumented column layouts.",
+    "Response column names/order are not documented for the CSV output.",
     "The plain (no-format) response shown in the Site's own examples is not reproduced here: its structure is not independently characterised, unlike SIMPLECDRS.",
     "Compare SIMPLECDRS, a separate, simpler call-history source with its own (partially observed) shape.",
   ],

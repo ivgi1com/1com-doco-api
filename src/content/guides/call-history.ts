@@ -24,7 +24,7 @@ export const callHistory: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "There are two separate call-history sources. `INFO CDRS` is the fuller one: it accepts more filters (`id`, `uniqueid`, `src`, `firstdst`, `direction`, `phone`, a wildcard `tenant=%` for every tenant, and an XML output template), but its default/plain response shape was never independently characterised, and no CDR data was observed on the tenant used to probe it — it returned an empty body for every format tried.",
+          text: "There are two separate call-history sources. `INFO CDRS` is the fuller one: it accepts more filters (`id`, `uniqueid`, `src`, `firstdst`, `direction`, `phone`, and an XML output template), but its default/plain response shape was never independently characterised, and no CDR data was observed on the tenant used to probe it — it returned an empty body for every format tried.",
         },
         {
           kind: "paragraph",
