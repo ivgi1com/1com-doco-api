@@ -260,8 +260,9 @@
   /* Monochrome logo rendered as a mask so it inherits theme ink. */
   .brand-mark {
     background-color: currentColor;
-    -webkit-mask: url("/brand/1com-logo.png") center / contain no-repeat;
-    mask: url("/brand/1com-logo.png") center / contain no-repeat;
+    /* --brand-logo is set on <body> with the deployment base path (layout.tsx). */
+    -webkit-mask: var(--brand-logo, url("/brand/1com-logo.png")) center / contain no-repeat;
+    mask: var(--brand-logo, url("/brand/1com-logo.png")) center / contain no-repeat;
   }
 }
 
