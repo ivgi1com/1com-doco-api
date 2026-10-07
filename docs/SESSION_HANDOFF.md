@@ -1,7 +1,24 @@
 # Session Handoff
 
-Last updated: 2026-10-02 (Phase 8 Stage 6 review + remediation DONE on
-`phase/open-api-review`; at the Phase 8 gate, awaiting the user; read this first)
+Last updated: 2026-10-07 (Phase 8 APPROVED, merged to `main`, tagged
+`v1.0-developer-portal`, pushed; read this first)
+
+## Phase 8 — APPROVED and merged (2026-10-07)
+
+- GitHub `main` had 3 commits not on this branch (sub-path deployment via
+  `NEXT_PUBLIC_BASE_PATH`, `src/lib/base-path.ts`, README). Merged into
+  `phase/open-api-review` as `040bc78`. Conflict in `tests/e2e/smoke.spec.ts`:
+  kept the Phase 8 tests, applied main's `"./en..."` baseURL-relative paths;
+  `/en/changelog` stays removed (8E).
+- Only `smoke.spec.ts` uses `./` paths; other e2e specs still use `/en...`
+  and would need the same rewrite to pass under a non-empty base path.
+- Validation: check 408/408, build clean, Playwright 206 passed / 3 skips /
+  1 flaky (`smoke.spec.ts` "path-parameter endpoint ... prefills",
+  mobile-safari; passes 6/6 in isolation).
+- `phase/open-api-review` merged to `main` (no-ff), tag
+  `v1.0-developer-portal`, both pushed. No next phase started.
+- Still open: TEST API key rotation, Hebrew DRAFT, two Most Used Cases guides
+  awaiting the user's description, CSP / rate-limit header / Origin-vs-Host.
 
 ## Phase 8 Stage 6 — review and remediation DONE, at the Phase 8 gate (2026-10-02)
 

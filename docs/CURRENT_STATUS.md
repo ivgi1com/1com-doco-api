@@ -1,6 +1,15 @@
 # Current Status
 
 Current work:
+**Phase 8 (Open API rollout) APPROVED (2026-10-07) and merged to `main`, tagged
+`v1.0-developer-portal`, pushed.** Before the merge, GitHub `main` (sub-path
+deployment `NEXT_PUBLIC_BASE_PATH`, v0.2.0, README revision) was merged into
+`phase/open-api-review` (`040bc78`; one e2e conflict resolved). Validation on
+the merge: check 408/408, build clean (450 pages), Playwright 206 passed /
+3 WebKit skips / 1 flaky (extensions-get prefill, mobile-safari; 6/6 pass in
+isolation). No next phase started; any further work awaits the user.
+
+Previous:
 **Phase 8 Stage 6 (cross-API consistency and security review) DONE with remediation on `phase/open-api-review` (2026-10-02); at the Phase 8 gate, awaiting the user (A/B/C/D). Check 405/405, Playwright 207/0 failed, readiness 6/6 PASS. Phase 8E (approved) detail: customer-facing change brief (before Phase 8 Stage 6): Stages
 0-7 DONE and committed on branch `phase/customer-brief` (2026-10-02); Stage
 5 made Open API first/default (Proxy "legacy", Playground opens on

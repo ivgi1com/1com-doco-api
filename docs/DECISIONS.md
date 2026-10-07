@@ -1961,3 +1961,13 @@ internal references and hide the internal notes).
   unexplained gaps; 56-load visual pass (chromium + webkit, en/he, desktop +
   mobile) 0 overflow, 0 leaks, 0 real errors (WebKit logs the known RSC
   prefetch-abort message in some loads).
+
+## Phase 8 APPROVED and merged to main (2026-10-07)
+
+- The user approved Phase 8 (Open API rollout, incl. 8A–8E and Stage 6
+  review/remediation) and asked for `main` on GitHub to match the local
+  advanced project.
+- GitHub `main` (sub-path deployment, v0.2.0) was first merged into
+  `phase/open-api-review` (`040bc78`), then that branch was merged into
+  `main` and tagged `v1.0-developer-portal`.
+- No next phase is planned or started.
