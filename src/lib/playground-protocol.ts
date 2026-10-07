@@ -3,7 +3,9 @@
  * proxy route (/api/playground). Shared by both sides; contains no logic.
  */
 
-export const LIVE_ROUTE = "/api/playground";
+import { withBasePath } from "./base-path";
+
+export const LIVE_ROUTE = withBasePath("/api/playground");
 
 export interface LiveRequestBody {
   /** `${api}/${endpoint}`, e.g. "proxy/info-extensions". */

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata, Viewport } from "next";
 import { Assistant, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeDir, routing } from "@/i18n/routing";
+import { withBasePath } from "@/lib/base-path";
 import { SiteHeader } from "@/components/shell/site-header";
 import { THEME_INIT_SCRIPT } from "@/components/shell/theme";
 import "../globals.css";
@@ -74,7 +76,10 @@ export default async function LocaleLayout({
           {THEME_INIT_SCRIPT}
         </Script>
       </head>
-      <body className="antialiased">
+      <body
+        className="antialiased"
+        style={{ "--brand-logo": `url("${withBasePath("/brand/1com-logo.png")}")` } as CSSProperties}
+      >
         <NextIntlClientProvider>
           <a
             href="#main"

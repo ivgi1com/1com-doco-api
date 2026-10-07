@@ -11,15 +11,15 @@ import { expect, test, type Page } from "@playwright/test";
  */
 
 const routes = [
-  "/en",
-  "/en/reference/proxy/info-extensions",
-  "/en/reference/sample/list-call-records",
-  "/en/guides/getting-started",
-  "/en/playground",
-  "/en/changelog",
-  "/en/no-such-page",
-  "/he",
-  "/he/reference/proxy/info-extensions",
+  "./en",
+  "./en/reference/proxy/info-extensions",
+  "./en/reference/sample/list-call-records",
+  "./en/guides/getting-started",
+  "./en/playground",
+  "./en/changelog",
+  "./en/no-such-page",
+  "./he",
+  "./he/reference/proxy/info-extensions",
 ];
 
 const viewports = [
@@ -69,7 +69,7 @@ test.describe("interactions", () => {
 
   test("mobile nav drawer (sidebar) opens and closes", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/en");
+    await page.goto("./en");
     const dialog = page.getByRole("dialog", { name: "Main" });
     // Same hydration race as the search-palette test below: a locator
     // .click() retries the click itself until the element is actionable,
@@ -86,7 +86,7 @@ test.describe("interactions", () => {
   });
 
   test("search palette: keyboard shortcut opens it, Escape closes it", async ({ page }) => {
-    await page.goto("/en");
+    await page.goto("./en");
     const dialog = page.getByRole("dialog", { name: "Search docs" });
     // SearchPalette wires up its document keydown listener in a useEffect,
     // which only runs after hydration. page.keyboard.press is a single
@@ -106,7 +106,7 @@ test.describe("interactions", () => {
   });
 
   test("endpoint page: code tabs switch and copy button works", async ({ page }) => {
-    await page.goto("/en/reference/sample/list-call-records");
+    await page.goto("./en/reference/sample/list-call-records");
     await page.getByRole("tab", { name: "Python" }).click();
     await expect(page.getByRole("tab", { name: "Python" })).toHaveAttribute("aria-selected", "true");
   });
@@ -119,7 +119,7 @@ test.describe("interactions", () => {
   const desktopPane = (page: Page) => page.locator(".md\\:grid");
 
   test("playground: empty state, then Demo send shows loading then a response", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await expect(desktopPane(page).getByText("No response yet")).toBeVisible();
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/ms$/)).toBeVisible(); // loading: elapsed-ms readout
@@ -127,7 +127,7 @@ test.describe("interactions", () => {
   });
 
   test("playground: switching to Live requires confirmation and shows the key field", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await expect(page.getByRole("heading", { name: "Switch to Live mode?" })).toBeVisible();
     await page.getByRole("button", { name: "Switch mode" }).click();
@@ -138,7 +138,7 @@ test.describe("interactions", () => {
   // U-08); the Sample API is never allowlisted, so Send must stay disabled
   // rather than attempt (and fail) a request, as the old prototype stub did.
   test("playground: Live is not allowlisted for the Sample API, so Send stays disabled", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
     await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
@@ -149,7 +149,7 @@ test.describe("interactions", () => {
   });
 
   test("playground: required-field validation blocks Send with a missing path parameter", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/get-call-record");
+    await page.goto("./en/playground?endpoint=sample/get-call-record");
     // Path params are prefilled from the endpoint's documented example value;
     // clear it to exercise the required-field path.
     await desktopPane(page).getByLabel("call_id").fill("");
@@ -159,7 +159,7 @@ test.describe("interactions", () => {
   });
 
   test("JSON viewer: collapses a node and search filters", async ({ page }) => {
-    await page.goto("/en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=sample/list-call-records");
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
     await desktopPane(page).getByPlaceholder("Search JSON").fill("outbound");
@@ -171,7 +171,7 @@ test.describe("interactions", () => {
     test("reference page shows the legacy badge, fixed query params, and undocumented states truthfully", async ({
       page,
     }) => {
-      await page.goto("/en/reference/proxy/info-extensions");
+      await page.goto("./en/reference/proxy/info-extensions");
       await expect(page.getByRole("heading", { name: "List extensions" })).toBeVisible();
       await expect(page.getByText("Legacy endpoint")).toBeVisible();
       // The header's own path line; the request panel (desktop + mobile,
@@ -209,7 +209,7 @@ test.describe("interactions", () => {
     test("API reference redirects to the Proxy API (the default API) and the sidebar matches it", async ({
       page,
     }) => {
-      await page.goto("/en/reference");
+      await page.goto("./en/reference");
       await expect(page).toHaveURL(/\/reference\/proxy$/);
       await expect(page.getByRole("combobox").first()).toHaveValue("proxy");
     });
@@ -217,7 +217,7 @@ test.describe("interactions", () => {
     test("Try in Playground opens the Playground on this endpoint with the Proxy API's own samples", async ({
       page,
     }) => {
-      await page.goto("/en/reference/proxy/info-extensions");
+      await page.goto("./en/reference/proxy/info-extensions");
       await page.getByRole("link", { name: "Try in Playground" }).click();
       await expect(page).toHaveURL(/\/playground\?endpoint=proxy\/info-extensions$/);
       await desktopPane(page).getByText("Code preview").click();
@@ -229,14 +229,14 @@ test.describe("interactions", () => {
     // exercises the no-fixture-set fallback ("unavailable" — never a
     // fabricated or replayed response).
     test("Demo mode never fabricates or replays data for an endpoint with no fixtures", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/cdr-get");
+      await page.goto("./en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Demo data not available yet")).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText(/status: 200/)).toHaveCount(0);
     });
 
     test("undocumented-required query parameters never block Send", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/cdr-get");
+      await page.goto("./en/playground?endpoint=proxy/cdr-get");
       await desktopPane(page).getByLabel("tenant").fill("");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toHaveCount(0);
@@ -264,7 +264,7 @@ test.describe("interactions", () => {
     }
 
     async function goLive(page: Page) {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
@@ -281,7 +281,7 @@ test.describe("interactions", () => {
         called = true;
         return route.abort();
       });
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
@@ -380,12 +380,12 @@ test.describe("interactions", () => {
     // step: GET is rejected by Next.js before our handler runs, and a
     // foreign Origin is rejected by the handler's first check.
     test("the real route rejects GET (only POST is exported)", async ({ request }) => {
-      const res = await request.get("/api/playground");
+      const res = await request.get("./api/playground");
       expect(res.status()).toBe(405);
     });
 
     test("the real route rejects a cross-site Origin", async ({ request }) => {
-      const res = await request.post("/api/playground", {
+      const res = await request.post("./api/playground", {
         headers: { origin: "https://evil.test", "content-type": "application/json" },
         data: { endpoint: "proxy/info-extensions", params: {}, credential: "x" },
       });
@@ -394,7 +394,7 @@ test.describe("interactions", () => {
 
     // Phase 5 adjustment (A-42/A-43): two more allowlisted endpoints.
     async function goLiveOn(page: Page, endpoint: string) {
-      await page.goto(`/en/playground?endpoint=${endpoint}`);
+      await page.goto(`./en/playground?endpoint=${endpoint}`);
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
@@ -578,13 +578,13 @@ test.describe("interactions", () => {
     // Real route, no mock: both are rejected by validation before any
     // upstream fetch, so neither can reach the 1com host.
     test("the real route rejects a CDR field override and a non-allowlisted operation", async ({ request, baseURL }) => {
-      const headers = { origin: baseURL!, "sec-fetch-site": "same-origin", "content-type": "application/json" };
-      const override = await request.post("/api/playground", {
+      const headers = { origin: new URL(baseURL!).origin, "sec-fetch-site": "same-origin", "content-type": "application/json" };
+      const override = await request.post("./api/playground", {
         headers,
         data: { endpoint: "proxy/cdr-get", params: { uniqueid: "srv02-1.2", field: "src" }, credential: "x" },
       });
       expect(override.status()).toBe(400);
-      const listqueues = await request.post("/api/playground", {
+      const listqueues = await request.post("./api/playground", {
         headers,
         data: { endpoint: "proxy/agent-listqueues", params: {}, credential: "x" },
       });
@@ -607,7 +607,7 @@ test.describe("interactions", () => {
           bodyText: JSON.stringify({ "1": { ex_id: "1", ex_name: "X", ex_number: "1" } }),
         },
       });
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       // The desktop 3-pane layout and the mobile step flow are both mounted
@@ -674,7 +674,7 @@ test.describe("interactions", () => {
 
     for (const { endpoint, label } of defaultResolves) {
       test(`${endpoint}: default field values resolve a real Demo scenario, not Not simulated`, async ({ page }) => {
-        await page.goto(`/en/playground?endpoint=${endpoint}`);
+        await page.goto(`./en/playground?endpoint=${endpoint}`);
         await desktopPane(page).getByRole("button", { name: "Send request" }).click();
         await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
         // Scoped to the response's own "Scenario: <label>" line (a single
@@ -705,7 +705,7 @@ test.describe("interactions", () => {
     // meaningful: scenario chips still switch between the endpoint's
     // distinct fixture cases (json/csv, matched/unmatched).
     test("info-simplecdrs: scenario chips switch between the JSON and CSV fixture cases", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-simplecdrs");
+      await page.goto("./en/playground?endpoint=proxy/info-simplecdrs");
 
       await desktopPane(page).getByRole("button", { name: "Calls, phone match (JSON)" }).click();
       await expect(desktopPane(page).getByLabel("phone", { exact: true })).toHaveValue("5550101001");
@@ -734,7 +734,7 @@ test.describe("interactions", () => {
     test("a scenario chip fills the endpoint's own query fields, then Send reflects that exact scenario", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await page.goto("./en/playground?endpoint=proxy/info-agents");
       await desktopPane(page).getByRole("button", { name: "Unknown queue (JSON null)" }).click();
       await expect(desktopPane(page).getByLabel("queue", { exact: true })).toHaveValue("999999");
       await expect(desktopPane(page).getByLabel("format", { exact: true })).toHaveValue("json");
@@ -749,9 +749,9 @@ test.describe("interactions", () => {
     test("Simulate error is hidden once an endpoint has fixtures, unlike the fixture-less Sample API", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
-      await page.goto("/en/playground?endpoint=sample/list-call-records");
+      await page.goto("./en/playground?endpoint=sample/list-call-records");
       await expect(desktopPane(page).getByText("Simulate error response")).toBeVisible();
     });
 
@@ -761,7 +761,7 @@ test.describe("interactions", () => {
         called = true;
         return route.abort();
       });
-      await page.goto("/en/playground?endpoint=proxy/info-dids");
+      await page.goto("./en/playground?endpoint=proxy/info-dids");
       await desktopPane(page).getByRole("button", { name: "CSV (empty)" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
@@ -769,7 +769,7 @@ test.describe("interactions", () => {
     });
 
     test("the Request tab is available for Demo too, explicitly marked not sent", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-extensions");
+      await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await desktopPane(page).getByRole("tab", { name: "Request" }).click();
@@ -792,7 +792,7 @@ test.describe("interactions", () => {
     // resolved to, which is what broke silently before this fix.
     test("mobile: a Demo scenario resolves through the step flow", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto("/en/playground?endpoint=proxy/info-agents");
+      await page.goto("./en/playground?endpoint=proxy/info-agents");
       await page.getByRole("button", { name: "Send request" }).first().click();
       await page.getByRole("tab", { name: "Response" }).click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
@@ -806,7 +806,7 @@ test.describe("interactions", () => {
     // assertion below intentionally keeps checking for the "(plain)" chip,
     // which still exists as a non-default scenario option.
     test("he: scenario labels and the response stay English while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("/he/playground?endpoint=proxy/info-dids");
+      await page.goto("./he/playground?endpoint=proxy/info-dids");
       // Mobile step-flow and desktop grid are both mounted (CSS-hidden, not
       // JS-unmounted), each with its own legend; scope to the desktop pane
       // (this test uses the default desktop-sized viewport) like the rest of
@@ -832,7 +832,7 @@ test.describe("interactions", () => {
     // (matched → no-match), still verifying Hebrew chrome around an
     // English-labelled scenario.
     test("he: a scenario chip switch stays English-labelled while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("/he/playground?endpoint=proxy/info-simplecdrs");
+      await page.goto("./he/playground?endpoint=proxy/info-simplecdrs");
       await page.getByRole("button", { name: "Calls, phone match (JSON)" }).first().click();
       await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
@@ -850,7 +850,7 @@ test.describe("interactions", () => {
     test("info-queuelogs: the default-resolved abandoned-call scenario has the observed record's content", async ({
       page,
     }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await page.goto("./en/playground?endpoint=proxy/info-queuelogs");
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
       await expect(desktopPane(page).getByText("Abandoned call (JSON)").last()).toBeVisible();
@@ -858,7 +858,7 @@ test.describe("interactions", () => {
     });
 
     test("info-queuelogs: the no-data JSON chip reproduces the single-byte ] body", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/info-queuelogs");
+      await page.goto("./en/playground?endpoint=proxy/info-queuelogs");
       await desktopPane(page).getByRole("button", { name: "No data (JSON)" }).click();
       await desktopPane(page).getByRole("button", { name: "Send request" }).click();
       await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
@@ -880,7 +880,7 @@ test.describe("interactions", () => {
     };
 
     test("a write operation is reference-only: warning callout, no Try link, vendor response sample", async ({ page }) => {
-      await page.goto("/en/reference/proxy/dial");
+      await page.goto("./en/reference/proxy/dial");
       await expect(page.getByRole("heading", { name: "Place a call" })).toBeVisible();
       await expect(page.getByText("Changes state — reference only")).toBeVisible();
       await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
@@ -891,7 +891,7 @@ test.describe("interactions", () => {
     });
 
     test("a write operation never sends from the Playground, in Demo or Live", async ({ page }) => {
-      await page.goto("/en/playground?endpoint=proxy/dial");
+      await page.goto("./en/playground?endpoint=proxy/dial");
       const send = desktopPane(page).getByRole("button", { name: "Send request" });
       await expect(send).toBeDisabled();
       await expect(desktopPane(page).getByTestId("write-only-note")).toBeVisible();
@@ -902,7 +902,7 @@ test.describe("interactions", () => {
     });
 
     test("a ManageDB write documents its jsondata body, admin key, and a form-encoded POST sample", async ({ page }) => {
-      await page.goto("/en/reference/proxy/managedb-custom-add");
+      await page.goto("./en/reference/proxy/managedb-custom-add");
       await expect(page.getByText(/with one field, jsondata, whose value is the object below encoded as JSON/)).toBeVisible();
       await expect(page.locator('section[aria-labelledby="authentication"]').getByText("Key scope: Admin key")).toBeVisible();
       const panel = await requestPanel(page);
@@ -911,7 +911,7 @@ test.describe("interactions", () => {
     });
 
     test("a binary response says so instead of 'No response body'", async ({ page }) => {
-      await page.goto("/en/reference/proxy/info-recording");
+      await page.goto("./en/reference/proxy/info-recording");
       const panel = await requestPanel(page);
       await expect(panel.getByText("Binary body (for example audio). Not shown here.")).toBeVisible();
       await expect(panel.getByText("--output response.bin")).toBeVisible();
