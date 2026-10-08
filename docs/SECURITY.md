@@ -301,8 +301,8 @@ Residual risks and limits (accepted):
 Validation (2026-10-08): 474 unit tests; Chromium Playwright 118 passed
 (zero CSP violations across en/he pages at 1440px and 390px); the env-gated
 real-PBX spec (`tests/e2e/live-real.spec.ts`, 3 tests) passed against the
-production PBX with a TEST key. WebKit (mobile-safari) could not be run:
-the browser is not installed on the development machine.
+production PBX with a TEST key. WebKit (mobile-safari) was installed later
+the same day (user OK) and its full project passed: 115 passed, 6 skipped.
 
 ## Security review — Phase 9 (2026-10-08, Opus 5.5)
 

@@ -1,9 +1,9 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (Phase 9 Stages 1–5 done on `phase/openapi-live`;
-Stage 6 review + gate pending; read this first)
+Last updated: 2026-10-08 (Phase 9 Stages 1–6 done on `phase/openapi-live`;
+at the approval gate; read this first)
 
-## Phase 9 — Open API Live pilot (2026-10-08), at Stage 6
+## Phase 9 — Open API Live pilot (2026-10-08), at the approval gate
 
 - Branch `phase/openapi-live` (from `main` @ `9dc8562`). Commits: `bde25fd`
   phase doc, `b93afe0` Stage 1 server, `99abefd` 3-day range (user
@@ -16,13 +16,14 @@ Stage 6 review + gate pending; read this first)
   multi-tenant answers blocked; Live hides `format/template/contenttype`;
   CSP + related headers on every route. Real-PBX spec
   (`tests/e2e/live-real.spec.ts`) passed 3/3 locally with the user's TEST key.
-- Validation: `npm run check` 474/474; Chromium Playwright 118 passed;
-  WebKit/mobile-safari NOT run (`npx playwright install webkit` needed; not
-  installed without the user's OK). No screenshot-based visual pass yet.
-- **Remaining**: Stage 6 — Opus `security-review` over
-  `main...phase/openapi-live`, remediation, a visual pass (desktop + mobile)
-  and the Phase Completion Report with the A/B/C/D gate question. Then, only
-  after approval, the user enables Live on the server (`docs/DEPLOYMENT.md`).
+- Validation: `npm run check` 474/474; Chromium Playwright 118 passed /
+  3 skipped; WebKit installed (user OK) and mobile-safari 115 passed /
+  6 skipped. Manual visual pass on desktop (Chrome, production build): OK,
+  no console errors; phone width covered by Playwright only.
+- Stage 6: Opus security review over `main...phase/openapi-live` — no
+  findings (`docs/SECURITY.md` "Security review — Phase 9").
+- **Remaining**: the user's A/B/C/D gate decision. Then, only after
+  approval, the user enables Live on the server (`docs/DEPLOYMENT.md`).
 - Open: how `next start` is launched/supervised on the server (not
   verified); TEST key was pasted into the chat on 2026-10-08, rotation
   recommended; Hebrew strings DRAFT; CSP keeps `'unsafe-inline'`

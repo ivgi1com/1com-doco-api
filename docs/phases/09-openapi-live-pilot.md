@@ -1,9 +1,9 @@
 # Phase 9 — Open API Live pilot
 
-> **Status (2026-10-08): Stages 1–5 DONE; Stage 6 (Opus security review) and the approval gate pending.** Branch `phase/openapi-live`, created from `main` @ `9dc8562` (`v1.0-developer-portal`). Not pushed, merged or tagged.
+> **Status (2026-10-08): Stages 1–6 DONE; at the approval gate (not approved).** Branch `phase/openapi-live`, created from `main` @ `9dc8562` (`v1.0-developer-portal`). Not pushed, merged or tagged.
 > **Source:** grilling session with the user, 2026-10-08. Every decision below is the user's.
 > **Primary model:** Opus 5.5 (security boundary, credential handling, PII). Routine UI/docs sub-tasks may return to Sonnet 5 — flag at each stage.
-> **Next step:** Stage 6 (Opus 5.5): security review, visual pass, Phase Completion Report, A/B/C/D gate.
+> **Next step:** the user's A/B/C/D gate decision.
 
 ## 1. Objective
 
@@ -62,4 +62,4 @@ Enable Live mode for exactly one Open API operation, `simplecdrs-list`, end-to-e
 3. CSP lockdown and security headers (Opus) — `0fb9c94`.
 4. Env-gated real-PBX e2e (Sonnet) — `7c6636b`; passed 3/3 locally with the TEST key.
 5. Docs (Sonnet): SECURITY, DECISIONS, DEPLOYMENT, ENVIRONMENT, status/handoff.
-6. Opus security review, visual pass, gate report (pending).
+6. Opus security review (no findings), visual pass, WebKit run, gate report — done.
