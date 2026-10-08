@@ -27,7 +27,9 @@ export default defineConfig({
     // for proxy/info-extensions. This is still safe: every test that sends a
     // Live request first installs a `page.route("**/api/playground", ...)`
     // mock, which intercepts the browser's request before it ever reaches
-    // this server — no test may send a real, unmocked Live request.
+    // this server — no test may send a real, unmocked Live request. The one
+    // exception is tests/e2e/live-real.spec.ts, which is skipped unless the
+    // user exports a TEST key in their own shell (see that file's header).
     env: { PLAYGROUND_LIVE_ENABLED: "true" },
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
