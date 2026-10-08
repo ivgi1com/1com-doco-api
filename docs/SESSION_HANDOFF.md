@@ -1,7 +1,24 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (all work merged to `main`, pushed, deployed;
-Live enabled in production; read this first)
+Last updated: 2026-10-08 (side-menu changes approved on
+`feat/collapsed-side-menus`; read this first)
+
+## Side-menu changes (2026-10-08), APPROVED (gate A)
+
+- Branch `feat/collapsed-side-menus` (from `main` @ `caedb8e`), not merged,
+  not pushed, not deployed.
+- `src/components/shell/category-groups.tsx` is the shared collapsible
+  category list (controlled `<details>`, Expand all / Collapse all, active
+  category opens on navigation, `forceOpen` while the Playground filter has
+  text). Used by `ReferenceNav` (sidebar + drawer) and `EndpointPicker`.
+- Menu config is data: `menuOrder` / `menuHidden` on `ApiDefinition`, set
+  only for the Open API in `src/content/openapi/index.ts`; applied by
+  `menuCategories()` in `src/content/index.ts`. Hiding is menu-only.
+- Tests: `tests/unit/menu-categories.test.ts`, two e2e tests in
+  `tests/e2e/smoke.spec.ts`. Gotcha: Playwright `fill()` before hydration
+  leaves the DOM value and React ignores an identical refill; clear first.
+- Standing user rule: after any UI change, open the changed page in Chrome
+  for the user to approve.
 
 ## Production deployed and Live enabled (2026-10-08)
 

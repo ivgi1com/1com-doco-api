@@ -1,6 +1,18 @@
 # Current Status
 
 Current work:
+**Side-menu changes APPROVED (2026-10-08, gate A) on
+`feat/collapsed-side-menus`; not merged to `main`, not pushed, not
+deployed. Reference sidebar, mobile drawer and Playground picker: categories
+start collapsed (only the active endpoint's category open), Expand all /
+Collapse all buttons, Open API menu order Dial, Simple CDR, Extension, DID,
+Queue, Hunt List, Media File then the rest, Provisioning Phone and Setting
+hidden from the menus only (pages/search/fixtures unchanged). Validation:
+`npm run check` 480/480, Playwright 225 passed / 9 skipped / 0 failed
+(mobile-safari CSP tests are timing-flaky under parallel load and pass
+alone). Next phase being planned; nothing implemented.**
+
+Previous:
 **Production (2026-10-08): `main` `5ac5a82` deployed to
 `https://pbx6webserver.1com.co.il/1com-api-doco/` and Live enabled
 (`PLAYGROUND_LIVE_ENABLED=true`, 13:31 IDT). Verified from outside:

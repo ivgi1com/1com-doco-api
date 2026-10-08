@@ -185,4 +185,8 @@ export interface ApiDefinition {
   /** Shown on the API overview page. */
   summary: string;
   categories: Category[];
+  /** Category ids shown first in the side menus, in this order; the rest keep their order. */
+  menuOrder?: string[];
+  /** Category ids left out of the side menus only (pages, search and routes are unaffected). */
+  menuHidden?: string[];
 }

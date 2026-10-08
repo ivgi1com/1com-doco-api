@@ -22,7 +22,9 @@
     "api": "API",
     "version": "Version",
     "latest": "latest",
-    "legacyApi": "{name} (legacy)"
+    "legacyApi": "{name} (legacy)",
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all"
   },
   "theme": {
     "label": "Theme",

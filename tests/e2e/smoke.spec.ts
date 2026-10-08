@@ -1110,6 +1110,72 @@ test.describe("interactions", () => {
       await expect(page.getByRole("heading", { name: "1com Open API" }).first()).toBeVisible();
     });
 
+    test("side menus start collapsed except the active endpoint's category", async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+
+      await page.goto("./en/reference/openapi");
+      const groups = page.locator("aside").first().locator("details");
+      expect(await groups.count()).toBeGreaterThan(1);
+      await expect(page.locator("aside").first().locator("details[open]")).toHaveCount(0);
+
+      await page.goto("./en/reference/openapi/cdrs-list");
+      await expect(page.locator("aside").first().locator("details[open]")).toHaveCount(1);
+      await expect(
+        page.locator("aside").first().locator("details[open]").getByRole("link", { name: /List CDRs/ }),
+      ).toBeVisible();
+
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      const picker = desktopPane(page).locator("nav details");
+      expect(await picker.count()).toBeGreaterThan(1);
+      await expect(desktopPane(page).locator("nav details[open]")).toHaveCount(1);
+
+      // Filtering opens every matching category; clearing returns to the default.
+      const filter = desktopPane(page).getByRole("searchbox");
+      // fill() before hydration is lost; retry until the filter takes effect.
+      // Clear first: refilling an identical DOM value fires no React onChange.
+      await expect(async () => {
+        await filter.fill("");
+        await filter.fill("cdr");
+        await expect(desktopPane(page).locator("nav details:not([open])")).toHaveCount(0, { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      await filter.fill("");
+      await expect(desktopPane(page).locator("nav details[open]")).toHaveCount(1);
+    });
+
+    test("side menus: Expand all / Collapse all, curated order, Provisioning and Setting hidden", async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      const expectedFirst = ["Dial", "Simple CDR", "Extension", "DID", "Queue", "Hunt List", "Media File"];
+
+      for (const [url, menu] of [
+        ["./en/reference/openapi/cdrs-list", () => page.locator("aside").first()],
+        ["./en/playground?endpoint=openapi/cdrs-list", () => desktopPane(page).locator("nav")],
+      ] as const) {
+        await page.goto(url);
+        const scope = menu();
+        const summaries = scope.locator("details > summary");
+        await expect(summaries.first()).toHaveText("Dial");
+        const titles = (await summaries.allTextContents()).map((s) => s.trim());
+        expect(titles.slice(0, 7)).toEqual(expectedFirst);
+        expect(titles).not.toContain("Provisioning Phone");
+        expect(titles).not.toContain("Setting");
+
+        // Clicks before hydration are lost; retry until the groups respond.
+        await expect(async () => {
+          await scope.getByRole("button", { name: "Expand all" }).click();
+          await expect(scope.locator("details:not([open])")).toHaveCount(0, { timeout: 500 });
+        }).toPass({ timeout: 10_000 });
+        await scope.getByRole("button", { name: "Collapse all" }).click();
+        await expect(scope.locator("details[open]")).toHaveCount(0);
+        // A group stays under the user's control after a bulk action.
+        await summaries.nth(1).click();
+        await expect(scope.locator("details[open]")).toHaveCount(1);
+      }
+
+      // Hidden from the menu only: the page itself still exists.
+      const res = await page.goto("./en/reference/openapi/provisioningphones-list");
+      expect(res?.status()).toBe(200);
+    });
+
     test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {
       await page.goto("./en/reference/openapi/cdrs-list");
       await expect(page.getByRole("heading", { name: "List CDRs" })).toBeVisible();
