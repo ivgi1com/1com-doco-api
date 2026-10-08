@@ -304,6 +304,30 @@ real-PBX spec (`tests/e2e/live-real.spec.ts`, 3 tests) passed against the
 production PBX with a TEST key. WebKit (mobile-safari) could not be run:
 the browser is not installed on the development machine.
 
+## Security review — Phase 9 (2026-10-08, Opus 5.5)
+
+`security-review` over `main...phase/openapi-live`. **No findings** at the
+review's confidence threshold. Verified: the Open API base URL is fixed in
+code and must exactly match `ALLOWED_BASES`, endpoint paths cannot contain
+`{` or `..`, and the built URL is re-checked; only exactly-named documented
+parameters are accepted (`KEY`, `Format`, `format[]`, `__proto__` are
+rejected), and reserved/forced/excluded names cannot be set, so
+`format=json` cannot be overridden; the key reaches the PBX only in the
+`X-API-Key` header and only visible-ASCII keys are accepted (no header
+injection); only fixed, read-only `GET` targets exist; the error-envelope
+path keeps only string `code`/`message` and cannot carry records; other
+response shapes are withheld; log lines carry no key, URL, filter or call
+data; Live responses render as text (no `dangerouslySetInnerHTML`); the
+production CSP keeps every fetch, image, font, form and frame same-origin.
+Accepted and out of scope: `'unsafe-inline'` (see Phase 9 above).
+
+Manual visual pass (2026-10-08, production build, Chrome desktop 1440px):
+Playground `openapi/simplecdrs-list` in Demo and Live (Live hides
+`format/template/contenttype`, shows the key field, request preview and
+Send), Hebrew Reference page; no console errors. The browser window could
+not be narrowed to phone width, so the 390px layout relies on the
+Playwright checks.
+
 ## Blocking requirements for future Live enablement
 
 Each item here blocks one operation from the Live allowlist
