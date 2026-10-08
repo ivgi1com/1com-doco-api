@@ -1544,6 +1544,8 @@ test.describe("Content-Security-Policy (Phase 9)", () => {
   }
 
   test("a Live send still works under the CSP", async ({ page }) => {
+    // Uses the desktop pane; the mobile project's iPhone viewport hides it.
+    await page.setViewportSize({ width: 1440, height: 900 });
     const violations = await watchCsp(page);
     await page.route("**/api/playground", (route) =>
       route.fulfill({
