@@ -1,16 +1,25 @@
 # Current Status
 
 Current work:
+**Production (2026-10-08): `main` `5ac5a82` deployed to
+`https://pbx6webserver.1com.co.il/1com-api-doco/` and Live enabled
+(`PLAYGROUND_LIVE_ENABLED=true`, 13:31 IDT). Verified from outside:
+`openapi/simplecdrs-list` reaches the PBX (fake key -> upstream 401
+`invalid_api_key`), other operations `endpoint_not_allowed`, foreign
+origin `forbidden_origin`; CSP headers present; `/he/...` -> `/en/...`.
+All work is merged to `main` and pushed. No next phase started.**
+Procedure and kill switch: `docs/DEPLOYMENT.md`.
+
+Previous:
 **Hebrew removed — English-only portal (2026-10-08), merged to `main`
 on the user's request together with the approved Phase 9 (Open API Live
-pilot) it was built on. Not pushed, not tagged. Live is not enabled in
-production.** `/en/` addresses unchanged; `/he/...`
+pilot) it was built on. (Since pushed and deployed; see above.)** `/en/` addresses unchanged; `/he/...`
 redirects to `/en/...`. See `docs/DECISIONS.md` "Hebrew removed".
 
 **Phase 9 (Open API Live pilot, `simplecdrs-list`) APPROVED (2026-10-08,
 gate B — approve, save, and stop) on `phase/openapi-live`. Not merged to
 `main`, not pushed, not tagged. No next phase started; waiting for the user.
-Live is NOT yet enabled in production (`docs/DEPLOYMENT.md`, on request).**
+(Since merged, pushed, deployed and Live-enabled; see above.)**
 Opus security review: no findings.
 Server (header auth, JSON-only, 12-field allowlist, 3-day range cap,
 multi-tenant block), Playground wiring, CSP lockdown and the env-gated

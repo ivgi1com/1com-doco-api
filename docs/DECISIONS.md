@@ -2068,3 +2068,10 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   the approved Phase 9 (Open API Live pilot). Not pushed, not tagged;
   production Live not enabled.
 
+## Live enabled in production (2026-10-08)
+
+- On the user's request, `main` (`5ac5a82`) was deployed to the production
+  server and `PLAYGROUND_LIVE_ENABLED=true` was added to `/etc/portal.env`
+  (the Phase 9 decision "enable right after the gate"). Verified from
+  outside the network. Kill switch: remove the line and restart the portal.
+
