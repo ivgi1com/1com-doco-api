@@ -59,8 +59,9 @@ Unset, the portal is served from the domain root.
 
 - `/etc/portal.env` (no secrets): `NODE_ENV=production`,
   `PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for`,
-  `NEXT_PUBLIC_BASE_PATH=/1com-api-doco`. `PLAYGROUND_LIVE_ENABLED` is not
-  set, so Live is off.
+  `NEXT_PUBLIC_BASE_PATH=/1com-api-doco`, `PLAYGROUND_LIVE_ENABLED=true`
+  (Live enabled 2026-10-08 13:31 IDT). Kill switch: remove that line and
+  `systemctl restart portal`.
 - `/home/portal/app` is a git clone of `github.com/ivgi1com/1com-doco-api`,
   checked out detached at the deployed commit.
 

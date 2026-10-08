@@ -1,7 +1,20 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (Phase 9 APPROVED, gate B — saved and stopped;
-read this first)
+Last updated: 2026-10-08 (all work merged to `main`, pushed, deployed;
+Live enabled in production; read this first)
+
+## Production deployed and Live enabled (2026-10-08)
+
+- `main` `5ac5a82` deployed on the server (`portal.service`, systemd, user
+  `portal`, `/home/portal/app`, settings `/etc/portal.env`); procedure and
+  pitfalls in `docs/DEPLOYMENT.md`.
+- `PLAYGROUND_LIVE_ENABLED=true` added to `/etc/portal.env`, portal
+  restarted. Verified from outside: Live pilot proxied (fake key -> upstream
+  401), other operations refused, foreign origin refused, CSP present.
+- Server leftovers in `/home/portal/app`: `.next.v1.0-backup`,
+  `.next.failed` (safe to delete once the build is trusted).
+- Open: TEST key rotation recommended (pasted in chat 2026-10-08); no tag
+  for this release yet; next phase not started.
 
 ## Hebrew removed — English only (2026-10-08), merged to `main`
 
