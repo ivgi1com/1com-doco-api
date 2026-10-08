@@ -94,6 +94,7 @@
     "notDocumented": "Not documented by the source.",
     "requiredUndocumented": "Not documented",
     "evidenceObservedSanitized": "Observed, sanitized — not vendor-documented",
+    "evidenceObservedSanitizedShort": "Observed sample",
     "notes": "Notes",
     "verification": "Verification",
     "notVerified": "Not verified against a live API",

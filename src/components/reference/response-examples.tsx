@@ -38,12 +38,12 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
         </label>
         <div className="flex items-center gap-2">
           {current.evidence === "observed-sanitized" && (
-            <span className="rounded-sm bg-warning-tint px-1.5 py-0.5 text-[11px] font-semibold text-warning-ink">
-              {t("evidenceObservedSanitized")}
+            <span className="whitespace-nowrap rounded-sm bg-code-surface px-1.5 py-0.5 text-[11px] font-semibold text-code-muted">
+              {t("evidenceObservedSanitizedShort")}
             </span>
           )}
           {current.evidence === "vendor" && (
-            <span className="rounded-sm bg-code-surface px-1.5 py-0.5 text-[11px] font-semibold text-code-muted">
+            <span className="whitespace-nowrap rounded-sm bg-code-surface px-1.5 py-0.5 text-[11px] font-semibold text-code-muted">
               {t("evidenceVendor")}
             </span>
           )}
@@ -69,6 +69,9 @@ export function ResponseExamples({ responses }: { responses: RenderedResponse[] 
         <div tabIndex={0} className="code-body max-h-[28rem] overflow-y-auto" dangerouslySetInnerHTML={{ __html: current.html }} />
       ) : (
         <p className="px-4 py-3 font-mono text-sm text-code-muted">{current.binary ? t("binaryBody") : current.schemaOnly ? t("noExampleSchemaOnly") : t("noBody")}</p>
+      )}
+      {current.evidence === "observed-sanitized" && (
+        <p className="border-t border-code-border px-3 py-1.5 text-[11px] text-code-muted">{t("evidenceObservedSanitized")}</p>
       )}
     </div>
   );

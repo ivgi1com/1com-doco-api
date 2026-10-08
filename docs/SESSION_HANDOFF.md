@@ -1,7 +1,20 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (side-menu changes merged to `main`, tagged
-`v1.2-side-menus`; read this first)
+Last updated: 2026-10-08 (evidence-badge fix approved on
+`fix/evidence-badge-style`, unmerged; read this first)
+
+## Evidence-badge fix (2026-10-08), APPROVED (gate B)
+
+- Branch `fix/evidence-badge-style` (from `main` @ `8cb8bb6`), 2 commits
+  (fix + docs); not merged, not pushed, not deployed. Production runs
+  `v1.2-side-menus` and still shows the old amber badge until a new deploy
+  (procedure `docs/DEPLOYMENT.md`).
+- `src/components/reference/response-examples.tsx`: chip uses message
+  `endpoint.evidenceObservedSanitizedShort` ("Observed sample", neutral);
+  full `evidenceObservedSanitized` text is a caption under the example.
+- Known flake, not caused by recent work: Playwright "no CSP violations or
+  console errors" (mobile-safari, sometimes chromium) fails on aborted
+  `_rsc` prefetch requests ("due to access control checks"); rerun alone.
 
 ## Side-menu changes (2026-10-08), APPROVED (gate A)
 

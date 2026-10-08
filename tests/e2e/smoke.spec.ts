@@ -228,8 +228,11 @@ test.describe("interactions", () => {
         // note ("...its request examples."), so target the <summary> itself.
         await page.locator("summary", { hasText: "Request example" }).click();
         await expect(page.locator("details").getByText(evidenceBadgeText).first()).toBeVisible();
+        await expect(page.locator("details").getByText("Observed sample", { exact: true }).first()).toBeVisible();
       } else {
         await expect(page.locator("aside").getByText(evidenceBadgeText).first()).toBeVisible();
+        // The header chip is the short neutral label; the full wording is the caption.
+        await expect(page.locator("aside").getByText("Observed sample", { exact: true }).first()).toBeVisible();
       }
       await expect(
         page.locator('section[aria-labelledby="errors"]').getByText("Not documented by the source."),
