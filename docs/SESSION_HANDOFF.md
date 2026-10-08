@@ -57,7 +57,6 @@ tag and deploy steps are routine (Sonnet).
 - Known Playwright flakes (pass when rerun alone, also on older baselines):
   "no CSP violations or console errors" (aborted `_rsc` prefetches,
   mostly mobile-safari), mobile nav drawer tests under parallel load.
-- Ignore the stray untracked `bash.exe.stackdump` in the repo root.
 
 ### Done this session (2026-10-08), newest first
 
