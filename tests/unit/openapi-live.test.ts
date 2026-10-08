@@ -46,8 +46,8 @@ function post(body: unknown) {
 
 async function run(body: unknown, upstreamText: string, status = 200) {
   const lines: string[] = [];
-  const fetch = vi.fn(async (_url: URL | RequestInfo, _init?: RequestInit) =>
-    new Response(upstreamText, { status, headers: { "content-type": "application/json" } }),
+  const fetch = vi.fn<(url: URL | RequestInfo, init?: RequestInit) => Promise<Response>>(
+    async () => new Response(upstreamText, { status, headers: { "content-type": "application/json" } }),
   );
   const res = await handleLiveRequest(post(body), {
     config: getPlaygroundConfig({ PLAYGROUND_LIVE_ENABLED: "true" }),
