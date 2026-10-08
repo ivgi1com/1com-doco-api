@@ -40,9 +40,58 @@ NEXT_PUBLIC_BASE_PATH=/1com-api-doco npm run build
 (`src/lib/base-path.ts`, `next.config.ts`; leading slash, no trailing slash.)
 Unset, the portal is served from the domain root.
 
-**Not verified:** how `next start` is launched and supervised on the server
-(process manager, user, working directory, how environment variables reach
-it). Record it here once confirmed.
+## Process and settings (verified 2026-10-08)
+
+- systemd unit `/etc/systemd/system/portal.service` (enabled), **not PM2**
+  (PM2 on this server runs other applications; leave it alone):
+
+  ```ini
+  [Service]
+  User=portal
+  WorkingDirectory=/home/portal/app
+  EnvironmentFile=/etc/portal.env
+  ExecStart=/opt/node-v24/bin/node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3100
+  Restart=on-failure
+  MemoryMax=1G
+  NoNewPrivileges=true
+  PrivateTmp=true
+  ```
+
+- `/etc/portal.env` (no secrets): `NODE_ENV=production`,
+  `PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for`,
+  `NEXT_PUBLIC_BASE_PATH=/1com-api-doco`. `PLAYGROUND_LIVE_ENABLED` is not
+  set, so Live is off.
+- `/home/portal/app` is a git clone of `github.com/ivgi1com/1com-doco-api`,
+  checked out detached at the deployed commit.
+
+## Updating production (verified 2026-10-08, deployed `5ac5a82`)
+
+Run as root on the server; the portal is down for a few minutes.
+
+```
+systemctl stop portal
+sudo -u portal bash -c 'cd /home/portal/app \
+  && export PATH=/opt/node-v24/bin:$PATH \
+  && git fetch --tags origin && git checkout --detach <commit> \
+  && cp -a .next .next.prev \
+  && npm ci --include=dev \
+  && set -a && . /etc/portal.env && set +a \
+  && npm run build'
+systemctl start portal
+```
+
+Pitfalls seen on 2026-10-08:
+
+- Install **before** loading `/etc/portal.env`, or pass `--include=dev`:
+  with `NODE_ENV=production`, `npm ci` skips devDependencies and the build
+  fails with `Cannot find module '@tailwindcss/postcss'`.
+- After a failed build, move `.next` aside before retrying: its Turbopack
+  cache kept reporting the same missing module even after it was installed.
+
+Rollback: `git checkout --detach <previous commit>`, then `npm ci
+--include=dev` and rebuild, or restore the previous `.next` copy and
+restart. The 2026-10-08 update left `.next.v1.0-backup` and `.next.failed`
+on the server (safe to delete once the new build is trusted).
 
 ## Runtime environment
 
@@ -72,9 +121,9 @@ is forwarded per request.
 Done by the user on the server, one step at a time:
 
 1. Build with the sub-path (above) from the approved commit.
-2. Set `PLAYGROUND_LIVE_ENABLED=true` and
-   `PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for` in the portal process's
-   environment, then restart the portal process.
+2. Add `PLAYGROUND_LIVE_ENABLED=true` to `/etc/portal.env`
+   (`PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for` is already there), then
+   `systemctl restart portal`. No rebuild needed.
 3. Verify headers: `curl -sI https://pbx6webserver.1com.co.il/1com-api-doco/en`
    shows `Content-Security-Policy`, `Referrer-Policy: no-referrer`,
    `X-Frame-Options: DENY`.
