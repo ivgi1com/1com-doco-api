@@ -11,10 +11,11 @@ Live enabled in production; read this first)
 - `PLAYGROUND_LIVE_ENABLED=true` added to `/etc/portal.env`, portal
   restarted. Verified from outside: Live pilot proxied (fake key -> upstream
   401), other operations refused, foreign origin refused, CSP present.
-- Server leftovers in `/home/portal/app`: `.next.v1.0-backup`,
-  `.next.failed` (safe to delete once the build is trusted).
-- Open: TEST key rotation recommended (pasted in chat 2026-10-08); no tag
-  for this release yet; next phase not started.
+- Old build copies (`.next.v1.0-backup`, `.next.failed`) deleted from the
+  server on 2026-10-08; rollback = rebuild from a tag. Release tagged
+  `v1.1-openapi-live-pilot` (`aa4f5e2`, pushed).
+- Open: TEST key rotation recommended (pasted in chat 2026-10-08); next
+  phase not started.
 
 ## Hebrew removed — English only (2026-10-08), merged to `main`
 
