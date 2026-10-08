@@ -1,9 +1,9 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (Phase 9 Stages 1–6 done on `phase/openapi-live`;
-at the approval gate; read this first)
+Last updated: 2026-10-08 (Phase 9 APPROVED, gate B — saved and stopped;
+read this first)
 
-## Phase 9 — Open API Live pilot (2026-10-08), at the approval gate
+## Phase 9 — Open API Live pilot (2026-10-08), APPROVED (gate B)
 
 - Branch `phase/openapi-live` (from `main` @ `9dc8562`). Commits: `bde25fd`
   phase doc, `b93afe0` Stage 1 server, `99abefd` 3-day range (user
@@ -22,8 +22,12 @@ at the approval gate; read this first)
   no console errors; phone width covered by Playwright only.
 - Stage 6: Opus security review over `main...phase/openapi-live` — no
   findings (`docs/SECURITY.md` "Security review — Phase 9").
-- **Remaining**: the user's A/B/C/D gate decision. Then, only after
-  approval, the user enables Live on the server (`docs/DEPLOYMENT.md`).
+- **Approved 2026-10-08, gate B (approve, save, and stop).** No next
+  phase started or planned. Not merged to `main`, not pushed, not tagged
+  (suggested tag when asked: `v1.1-openapi-live-pilot`).
+- Not yet done, only on the user's request: merge/push/tag; enabling Live on
+  the production server (`docs/DEPLOYMENT.md`, user runs each step; first
+  confirm how `next start` is supervised there).
 - Open: how `next start` is launched/supervised on the server (not
   verified); TEST key was pasted into the chat on 2026-10-08, rotation
   recommended; Hebrew strings DRAFT; CSP keeps `'unsafe-inline'`

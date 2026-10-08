@@ -2030,3 +2030,11 @@ Branch `phase/openapi-live` from `main` @ `9dc8562` (`v1.0-developer-portal`).
 Stages (all on `phase/openapi-live`): 1 server `b93afe0` (+ 3-day amendment
 `99abefd`), 2 client `aa1ba60`, 3 CSP `0fb9c94`, 4 real-PBX spec `7c6636b`,
 5 docs. Stage 6 (Opus security review and gate) pending.
+
+## Phase 9 APPROVED (2026-10-08)
+
+- The user approved Phase 9 at its gate with option B (approve, save, and
+  stop). Final branch state on `phase/openapi-live`; not merged, pushed or
+  tagged. No next phase is planned or started.
+- Production Live enable (decided "right after the gate") is still a
+  separate, user-run step and has not been done.

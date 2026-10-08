@@ -1,10 +1,11 @@
 # Current Status
 
 Current work:
-**Phase 9 (Open API Live pilot, `simplecdrs-list`) — Stages 1–6 DONE on
-`phase/openapi-live` (2026-10-08); at the approval gate, awaiting the user
-(A/B/C/D). Not approved, not merged, not pushed, not tagged.** Opus
-security review: no findings.
+**Phase 9 (Open API Live pilot, `simplecdrs-list`) APPROVED (2026-10-08,
+gate B — approve, save, and stop) on `phase/openapi-live`. Not merged to
+`main`, not pushed, not tagged. No next phase started; waiting for the user.
+Live is NOT yet enabled in production (`docs/DEPLOYMENT.md`, on request).**
+Opus security review: no findings.
 Server (header auth, JSON-only, 12-field allowlist, 3-day range cap,
 multi-tenant block), Playground wiring, CSP lockdown and the env-gated
 real-PBX spec are committed; the real-PBX spec passed 3/3 against the

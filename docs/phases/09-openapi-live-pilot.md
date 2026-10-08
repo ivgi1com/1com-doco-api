@@ -1,9 +1,9 @@
 # Phase 9 — Open API Live pilot
 
-> **Status (2026-10-08): Stages 1–6 DONE; at the approval gate (not approved).** Branch `phase/openapi-live`, created from `main` @ `9dc8562` (`v1.0-developer-portal`). Not pushed, merged or tagged.
+> **Status (2026-10-08): APPROVED by the user (gate B — approve, save, and stop).** Not merged, pushed or tagged. Branch `phase/openapi-live`, created from `main` @ `9dc8562` (`v1.0-developer-portal`). Not pushed, merged or tagged.
 > **Source:** grilling session with the user, 2026-10-08. Every decision below is the user's.
 > **Primary model:** Opus 5.5 (security boundary, credential handling, PII). Routine UI/docs sub-tasks may return to Sonnet 5 — flag at each stage.
-> **Next step:** the user's A/B/C/D gate decision.
+> **Next step:** none started. The next phase waits for the user. Production Live enable (`docs/DEPLOYMENT.md`) happens only when the user asks.
 
 ## 1. Objective
 
