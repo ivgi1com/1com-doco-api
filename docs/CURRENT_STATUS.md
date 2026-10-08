@@ -1,9 +1,8 @@
 # Current Status
 
 Current work:
-**Side-menu changes APPROVED (2026-10-08, gate A) on
-`feat/collapsed-side-menus`; not merged to `main`, not pushed, not
-deployed. Reference sidebar, mobile drawer and Playground picker: categories
+**Side-menu changes APPROVED (2026-10-08, gate A), merged to `main`
+(`7f35952`) and tagged `v1.2-side-menus`; not pushed, not deployed. Reference sidebar, mobile drawer and Playground picker: categories
 start collapsed (only the active endpoint's category open), Expand all /
 Collapse all buttons, Open API menu order Dial, Simple CDR, Extension, DID,
 Queue, Hunt List, Media File then the rest, Provisioning Phone and Setting
