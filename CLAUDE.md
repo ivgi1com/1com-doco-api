@@ -402,6 +402,8 @@ Wait for the user's choice before proceeding.
 
 ## Agent skills
 
+Agent-skill flows (`/grill-with-docs`, `/implement`, `/implement-spec`, `/triage`, etc.) are subordinate to this file's approval gates, Git workflow, no-guessing protocol, and model routing. Where a skill's default conflicts with these rules, these rules win.
+
 ### Issue tracker
 
 GitHub Issues (`ivgi1com/1com-doco-api`, via `gh`). See `docs/agents/issue-tracker.md`.
