@@ -17,8 +17,6 @@ const routes = [
   "./en/guides/getting-started",
   "./en/playground",
   "./en/no-such-page",
-  "./he",
-  "./he/reference/proxy/info-extensions",
 ];
 
 const viewports = [
@@ -476,6 +474,129 @@ test.describe("interactions", () => {
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
     }
 
+    // Phase 9: openapi/simplecdrs-list is the first Open API operation that
+    // can go Live. Every test mocks `/api/playground`; none reaches the PBX.
+    test.describe("Open API Live pilot (Phase 9)", () => {
+      const LIVE_OP = "openapi/simplecdrs-list";
+      const rows = [
+        { sc_te_id: "12", tenantcode: "TESTTENANT", sc_start: "2026-01-01 09:00:00", sc_direction: "IN", sc_calleridnum: "0500000000", sc_calleridname: "", sc_dialednum: "0300000000", sc_disposition: "ANSWERED", sc_duration: "30", sc_billsec: "25", sc_uniqueid: "1700000000.1", sc_whoanswered: "" },
+      ];
+      const upstream = (status: number, body: unknown) => ({
+        ok: true,
+        upstream: {
+          status,
+          latencyMs: 90,
+          sizeBytes: 100,
+          contentType: "application/json",
+          headers: { "content-type": "application/json" },
+          bodyText: JSON.stringify(body),
+        },
+      });
+
+      test("opens in Demo; Live needs the confirmation, then shows the key field and an enabled Send", async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        await expect(page.getByRole("button", { name: "Switch to Live" })).toBeVisible();
+        await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(desktopPane(page).getByLabel("API key")).toBeVisible();
+        await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeEnabled();
+      });
+
+      test("Live hides format, template and contenttype; Demo still shows them", async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        for (const name of ["format", "template", "contenttype"]) {
+          await expect(desktopPane(page).getByLabel(name, { exact: true })).toBeVisible();
+        }
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        for (const name of ["format", "template", "contenttype"]) {
+          await expect(desktopPane(page).getByLabel(name, { exact: true })).toHaveCount(0);
+        }
+        await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toBeVisible();
+        await expect(desktopPane(page).getByLabel("calleridnum", { exact: true })).toBeVisible();
+      });
+
+      test("the Live request preview shows format=json and a masked X-API-Key header, never the key", async ({ page }) => {
+        await goLiveOn(page, LIVE_OP);
+        const preview = desktopPane(page).getByTestId("request-preview");
+        await preview.locator("summary").click();
+        await expect(preview).toContainText("format=json");
+        await expect(preview).toContainText("X-API-Key");
+        await expect(preview).toContainText("••••");
+        await expect(page.getByText(FAKE_KEY)).toHaveCount(0);
+      });
+
+      test("Send posts the endpoint, the entered filters and the key to the portal only, without format", async ({ page }) => {
+        const posted: { endpoint: string; params: Record<string, string>; credential: string }[] = [];
+        await page.route("**/api/playground", (route) => {
+          posted.push(route.request().postDataJSON());
+          return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(upstream(200, rows)) });
+        });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByLabel("tenant", { exact: true }).fill("MYTENANT");
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible();
+        await expect(desktopPane(page).getByText('"sc_uniqueid"')).toBeVisible();
+        expect(posted).toHaveLength(1);
+        expect(posted[0].endpoint).toBe(LIVE_OP);
+        expect(posted[0].credential).toBe(FAKE_KEY);
+        expect(posted[0].params.tenant).toBe("MYTENANT");
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["format"]));
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["template"]));
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["contenttype"]));
+      });
+
+      test("an upstream error envelope is shown as the LIVE response with its status", async ({ page }) => {
+        await mockPlayground(page, upstream(401, { error: { code: "invalid_api_key", message: "Invalid API key" } }));
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 401/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/invalid_api_key/)).toBeVisible();
+        await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+      });
+
+      test("a range over 3 days is reported as a portal error, not Demo data", async ({ page }) => {
+        await mockPlayground(page, { ok: false, error: { code: "range_too_wide" } }, { status: 400 });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText("Request failed")).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/at most 3 days/)).toBeVisible();
+        await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+      });
+
+      test("an answer spanning several tenants is blocked with an explicit message and no records", async ({ page }) => {
+        await mockPlayground(page, { ok: false, error: { code: "multi_tenant_blocked" } }, { status: 403 });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/more than one tenant/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText('"sc_uniqueid"')).toHaveCount(0);
+      });
+
+      test("other Open API operations stay Live-disabled", async ({ page }) => {
+        await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+        await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+      });
+
+      test("the Live pilot works on a narrow screen without console errors", async ({ page }) => {
+        const errors = trackConsoleErrors(page);
+        await page.setViewportSize({ width: 390, height: 844 });
+        await mockPlayground(page, upstream(200, rows));
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        // The mode bar sits above the stepped mobile layout.
+        await expect(page.getByRole("button", { name: "Switch to Live" })).toBeVisible();
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(page.getByRole("button", { name: "Switch to Demo" })).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+        expect(errors).toEqual([]);
+      });
+    });
+
     // UX fix: tenant + API key are shared Live-mode context and must survive
     // switching endpoints via the sidebar (not a fresh page load); an
     // endpoint-specific field (id) must still reset normally.
@@ -877,47 +998,6 @@ test.describe("interactions", () => {
       await page.getByRole("tab", { name: "Response" }).click();
       await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
       await expect(page.getByText("Queue agents (JSON)").first()).toBeVisible();
-    });
-
-    // Scenario labels are English-only by content-language decision (Phase 4,
-    // demo/types.ts DemoCase.label); the surrounding chrome is Hebrew.
-    // Stage 7 remediation: the resolved-default assertion now targets "DID
-    // list (JSON)" (see the defaultResolves comment above); the chip
-    // assertion below intentionally keeps checking for the "(plain)" chip,
-    // which still exists as a non-default scenario option.
-    test("he: scenario labels and the response stay English while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("./he/playground?endpoint=proxy/info-dids");
-      // Mobile step-flow and desktop grid are both mounted (CSS-hidden, not
-      // JS-unmounted), each with its own legend; scope to the desktop pane
-      // (this test uses the default desktop-sized viewport) like the rest of
-      // this file does.
-      await expect(desktopPane(page).getByText("תרחישים")).toBeVisible(); // "Scenarios" legend
-      const chip = page.getByRole("button", { name: "DID list (plain)" });
-      await expect(chip).toBeVisible();
-      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
-      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
-      await expect(page.getByText("תרחיש:").first()).toBeVisible(); // "Scenario:" label
-      // Scoped to the response's own scenario line, not any occurrence of
-      // the label text (the chip button above is a second, always-rendered
-      // match) — same fix as the defaultResolves loop.
-      const scenarioLine = desktopPane(page).locator("p", { hasText: "תרחיש:" });
-      await expect(scenarioLine).toContainText("DID list (JSON)");
-    });
-
-    // Superseded note (Stage 7 remediation): see the "scenario chips switch"
-    // test above — default Send now resolves "Calls, unfiltered (JSON)"
-    // directly (covered for he by the "scenario labels...stay English"
-    // test above, using info-dids), so there is no longer a "Not simulated"
-    // state to exercise here. This test now covers a chip switch instead
-    // (matched → no-match), still verifying Hebrew chrome around an
-    // English-labelled scenario.
-    test("he: a scenario chip switch stays English-labelled while the surrounding UI is Hebrew", async ({ page }) => {
-      await page.goto("./he/playground?endpoint=proxy/info-simplecdrs");
-      await page.getByRole("button", { name: "Calls, phone match (JSON)" }).first().click();
-      await page.getByRole("button", { name: "שליחת הבקשה" }).first().click();
-      await expect(page.getByText(/status: 200/).first()).toBeVisible({ timeout: 3000 });
-      await expect(page.getByText("תרחיש:").first()).toBeVisible(); // "Scenario:" label
-      await expect(page.getByText("Calls, phone match (JSON)").last()).toBeVisible();
     });
 
     // Superseded note (Stage 7 remediation): info-queuelogs's `format` param
@@ -1324,9 +1404,9 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByRole("textbox", { name: /^datestart/ })).toBeVisible();
     });
 
-    test("pickers work on a narrow screen and in Hebrew (8E)", async ({ page }) => {
+    test("pickers work on a narrow screen (8E)", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto("./he/playground?endpoint=openapi/simplecdrs-list");
+      await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
       const mobile = page.locator("div.md\\:hidden");
       const start = mobile.getByTestId("date-field-start");
       await mobile.getByTestId("request-preview").locator("summary").click();
@@ -1355,7 +1435,7 @@ test.describe("interactions", () => {
         "./en/reference/openapi/extensions-get",
         "./en/reference/proxy/info-extensions",
         "./en/reference/proxy/info-queuelogs",
-        "./he/reference/proxy/voicemail-list",
+        "./en/reference/proxy/voicemail-list",
       ]) {
         await page.goto(path);
         const text = await page.locator("main").innerText();
@@ -1367,5 +1447,102 @@ test.describe("interactions", () => {
       await page.goto("./en/reference/proxy/info-extensions");
       await expect(page.getByText(/Response formats are observed, not vendor-documented/).first()).toBeVisible();
     });
+  });
+});
+
+// Phase 9 Stage 3: CSP "lockdown" (src/lib/security-headers.ts). Every page
+// must render and work with the policy in force: no violation reports, no
+// console errors, across pages, a narrow viewport and a (mocked) Live send.
+test.describe("Content-Security-Policy (Phase 9)", () => {
+  const pages = [
+    "./en",
+    "./en/reference/openapi/simplecdrs-list",
+    "./en/reference/proxy/info-extensions",
+    "./en/guides/getting-started",
+    "./en/playground",
+    "./en/playground?endpoint=openapi/simplecdrs-list",
+  ];
+
+  async function watchCsp(page: Page) {
+    await page.addInitScript(() => {
+      (window as unknown as { __csp: string[] }).__csp = [];
+      document.addEventListener("securitypolicyviolation", (e) => {
+        (window as unknown as { __csp: string[] }).__csp.push(`${e.violatedDirective} ${e.blockedURI}`);
+      });
+    });
+    return () => page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
+  }
+
+  test("every page is served with the CSP and related headers", async ({ request }) => {
+    for (const url of ["./en", "./en/playground"]) {
+      const res = await request.get(url);
+      const h = res.headers();
+      expect(h["content-security-policy"], url).toContain("connect-src 'self'");
+      expect(h["content-security-policy"], url).toContain("frame-ancestors 'none'");
+      expect(h["content-security-policy"], url).not.toContain("unsafe-eval");
+      expect(h["referrer-policy"], url).toBe("no-referrer");
+      expect(h["x-frame-options"], url).toBe("DENY");
+    }
+  });
+
+  for (const width of [1440, 390]) {
+    test(`no CSP violations or console errors at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      const errors = trackConsoleErrors(page);
+      const violations = await watchCsp(page);
+      for (const url of pages) {
+        await page.goto(url);
+        await page.waitForLoadState("networkidle");
+        expect(await violations(), url).toEqual([]);
+      }
+      expect(errors).toEqual([]);
+    });
+  }
+
+  test("a Live send still works under the CSP", async ({ page }) => {
+    // Uses the desktop pane; the mobile project's iPhone viewport hides it.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const violations = await watchCsp(page);
+    await page.route("**/api/playground", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          upstream: { status: 200, latencyMs: 5, sizeBytes: 2, contentType: "application/json", headers: {}, bodyText: "[]" },
+        }),
+      }),
+    );
+    await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
+    await page.getByRole("button", { name: "Switch to Live" }).click();
+    await page.getByRole("button", { name: "Switch mode" }).click();
+    const pane = page.locator(".md\\:grid");
+    await pane.getByLabel("API key").fill("not-a-real-key-e2e-only");
+    await pane.getByRole("button", { name: "Send request" }).click();
+    await expect(pane.getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+    expect(await violations()).toEqual([]);
+  });
+});
+
+// Hebrew removed (2026-10-08): English only, old /he addresses redirect.
+test.describe("English only (Hebrew removed)", () => {
+  test("old /he addresses redirect to the same /en page, keeping the query", async ({ page }) => {
+    await page.goto("./he");
+    await expect(page).toHaveURL(/\/en$/);
+    await page.goto("./he/reference/proxy/info-extensions");
+    await expect(page).toHaveURL(/\/en\/reference\/proxy\/info-extensions$/);
+    await page.goto("./he/playground?endpoint=openapi/simplecdrs-list");
+    // The redirect may re-encode the query ("/" -> "%2F"); compare decoded values.
+    const url = new URL(page.url());
+    expect(url.pathname).toMatch(/\/en\/playground$/);
+    expect(url.searchParams.get("endpoint")).toBe("openapi/simplecdrs-list");
+  });
+
+  test("pages are English, left-to-right, with no language switcher", async ({ page }) => {
+    await page.goto("./en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+    await expect(page.getByRole("navigation", { name: "Language" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /עב|עברית|Hebrew/ })).toHaveCount(0);
   });
 });

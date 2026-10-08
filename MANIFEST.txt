@@ -31,7 +31,6 @@ docs/phases/07-proxy-api-rollout.md
 docs/phases/08-open-api.md
 eslint.config.mjs
 messages/en.json
-messages/he.json
 next.config.ts
 package-lock.json
 package.json
@@ -61,7 +60,6 @@ src/components/reference/param-list.tsx
 src/components/reference/request-panel.tsx
 src/components/reference/response-examples.tsx
 src/components/shell/console-button.tsx
-src/components/shell/locale-switch.tsx
 src/components/shell/mobile-nav.tsx
 src/components/shell/nav-config.ts
 src/components/shell/nav-link.tsx

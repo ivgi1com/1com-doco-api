@@ -46,7 +46,7 @@ export function ChildDisclosure({
         className="inline-flex h-7 items-center gap-1 rounded-md border border-border px-2 text-xs font-semibold text-ink-muted transition-colors duration-150 hover:border-border-control hover:text-ink"
       >
         <ChevronRight
-          className={`icon-directional size-3.5 transition-transform duration-150 ease-out-quart ${open ? "rotate-90 rtl:-rotate-90" : ""}`}
+          className={`size-3.5 transition-transform duration-150 ease-out-quart ${open ? "rotate-90" : ""}`}
           aria-hidden
         />
         {open ? hideLabel : showLabel}

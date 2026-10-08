@@ -8,7 +8,6 @@ import { withObserved } from "@/content/observed";
 import { buildSearchIndex } from "@/lib/search-index";
 import { EXCLUDED_GUIDES, EXCLUDED_OPENAPI_OPS, EXCLUDED_PROXY_OPS } from "./helpers/exclusions";
 import en from "../../messages/en.json";
-import he from "../../messages/he.json";
 
 /**
  * Phase 8E customer-copy guard (docs/phases/08E-customer-change-brief.md):
@@ -53,7 +52,6 @@ for (const api of apis) {
 for (const g of guides) collect(g, `guide:${g.slug}`, hits);
 for (const set of [...proxyDemoFixtures, ...openapiDemoFixtures]) collect(set, `demo:${set.endpoint}`, hits);
 collect(en, "messages:en", hits);
-collect(he, "messages:he", hits);
 
 function offenders(test: (h: Hit) => boolean): string[] {
   return hits

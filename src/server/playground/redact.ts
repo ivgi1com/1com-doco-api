@@ -162,6 +162,47 @@ export function projectJsonFields(text: string, allowed: ReadonlySet<string>): P
   return { text: JSON.stringify(projected), omittedFields: dropped.size, withheld: false };
 }
 
+/**
+ * For APIs whose errors are `{"error":{"code":…,"message":…}}`: if the body is
+ * exactly that shape, returns it with only string `code` and `message` kept.
+ * Anything else returns null and goes through the normal field allowlist.
+ */
+export function projectErrorEnvelope(text: string): ProjectionResult | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text.trim());
+  } catch {
+    return null;
+  }
+  if (!isPlainRecord(parsed) || Object.keys(parsed).length !== 1 || !isPlainRecord(parsed.error)) return null;
+  const out: Record<string, string> = {};
+  let omitted = 0;
+  for (const [k, v] of Object.entries(parsed.error)) {
+    if ((k === "code" || k === "message") && typeof v === "string") out[k] = v;
+    else omitted++;
+  }
+  return { text: JSON.stringify({ error: out }), omittedFields: omitted, withheld: false };
+}
+
+/**
+ * Distinct values of `field` across the records of an (already projected)
+ * JSON array or keyed object. Non-JSON or other shapes count as 0.
+ */
+export function countDistinctField(text: string, field: string): number {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text.trim());
+  } catch {
+    return 0;
+  }
+  const records = Array.isArray(parsed) ? parsed : isPlainRecord(parsed) ? Object.values(parsed) : [];
+  const seen = new Set<string>();
+  for (const r of records) {
+    if (isPlainRecord(r) && r[field] !== undefined && r[field] !== null) seen.add(String(r[field]));
+  }
+  return seen.size;
+}
+
 export function redactSensitive(text: string): RedactionResult {
   const trimmed = text.trim();
   if (trimmed === "") return { text, redacted: 0 };

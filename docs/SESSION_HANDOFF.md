@@ -1,7 +1,53 @@
 # Session Handoff
 
-Last updated: 2026-10-07 (Phase 8 APPROVED, merged to `main`, tagged
-`v1.0-developer-portal`, pushed; read this first)
+Last updated: 2026-10-08 (Phase 9 APPROVED, gate B — saved and stopped;
+read this first)
+
+## Hebrew removed — English only (2026-10-08), merged to `main`
+
+- Branch `chore/remove-hebrew` from `phase/openapi-live`. Language switcher,
+  `messages/he.json`, untranslated banner and RTL-only code removed; html is
+  always `lang="en" dir="ltr"`; `/en/` kept; `/he/...` -> `/en/...` (308).
+- Validation: `npm run check` 474/474; full Playwright (chromium +
+  mobile-safari) after the change: all pass except two known timing flakes
+  under parallel load (mobile nav drawer, CSP 390px) that pass alone.
+- The "Hebrew strings DRAFT" open item below is obsolete.
+- Merged to `main` on the user's request (2026-10-08), which also brings in
+  the approved Phase 9 branch `phase/openapi-live`. Not pushed, not tagged.
+  `chore/agent-skills-docs` is still separate and unmerged.
+
+## Phase 9 — Open API Live pilot (2026-10-08), APPROVED (gate B)
+
+- Branch `phase/openapi-live` (from `main` @ `9dc8562`). Commits: `bde25fd`
+  phase doc, `b93afe0` Stage 1 server, `99abefd` 3-day range (user
+  amendment), `35ba4c5` lint, `aa1ba60` Stage 2 client, `0fb9c94` Stage 3
+  CSP, `7c6636b` Stage 4 real-PBX spec, then the Stage 5 docs commit. Plus
+  `chore/agent-skills-docs` (separate branch: CLAUDE.md agent-skills
+  section, `docs/agents/`), not merged.
+- Done: only `openapi/simplecdrs-list` can go Live; key in `X-API-Key`;
+  JSON only; 12-field allowlist; filters pattern-checked; range <= 3 days;
+  multi-tenant answers blocked; Live hides `format/template/contenttype`;
+  CSP + related headers on every route. Real-PBX spec
+  (`tests/e2e/live-real.spec.ts`) passed 3/3 locally with the user's TEST key.
+- Validation: `npm run check` 474/474; Chromium Playwright 118 passed /
+  3 skipped; WebKit installed (user OK) and mobile-safari 115 passed /
+  6 skipped. Manual visual pass on desktop (Chrome, production build): OK,
+  no console errors; phone width covered by Playwright only.
+- Stage 6: Opus security review over `main...phase/openapi-live` — no
+  findings (`docs/SECURITY.md` "Security review — Phase 9").
+- **Approved 2026-10-08, gate B (approve, save, and stop).** No next
+  phase started or planned. Not merged to `main`, not pushed, not tagged
+  (suggested tag when asked: `v1.1-openapi-live-pilot`).
+- Not yet done, only on the user's request: merge/push/tag; enabling Live on
+  the production server (`docs/DEPLOYMENT.md`, user runs each step; first
+  confirm how `next start` is supervised there).
+- Open: how `next start` is launched/supervised on the server (not
+  verified); TEST key was pasted into the chat on 2026-10-08, rotation
+  recommended; Hebrew strings DRAFT; CSP keeps `'unsafe-inline'`
+  (documented trade-off); two Most Used Cases guides still await the user's
+  description; `bash.exe.stackdump` in the working tree is untracked junk.
+- Model routing used: Opus 5.5 for Stages 1 and 3 and the grilling/plan;
+  Sonnet 5.5 for Stages 2, 4, 5. Stage 6 needs Opus 5.5.
 
 ## Phase 8 — APPROVED and merged (2026-10-07)
 

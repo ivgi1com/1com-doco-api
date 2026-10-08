@@ -30,14 +30,8 @@
     "dark": "Dark",
     "system": "System"
   },
-  "locale": {
-    "label": "Language",
-    "en": "English",
-    "he": "עברית"
-  },
   "prototype": {
-    "banner": "Prototype sample content. The endpoints on this page are fictional and do not describe a real 1com API.",
-    "untranslated": "This content is not translated yet. It is shown in English."
+    "banner": "Prototype sample content. The endpoints on this page are fictional and do not describe a real 1com API."
   },
   "home": {
     "title": "Build on 1com voice infrastructure",
@@ -153,6 +147,8 @@
       "invalid_request": "The request did not pass validation. Check the fields and try again.",
       "endpoint_not_allowed": "This endpoint is not enabled for Live requests yet.",
       "missing_credential": "Enter your API Key before sending a Live request.",
+      "range_too_wide": "Live requests can cover at most 3 days. Narrow the start and end dates (an empty date means today).",
+      "multi_tenant_blocked": "The answer contained records from more than one tenant, so nothing is shown. The Playground supports keys that see a single tenant only.",
       "upstream_timeout": "The 1com server did not respond in time.",
       "upstream_too_large": "The 1com server's response was larger than the portal allows.",
       "upstream_redirect": "The 1com server tried to redirect the request. The portal does not follow redirects.",

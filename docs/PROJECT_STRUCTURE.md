@@ -100,7 +100,8 @@ project `CLAUDE.md` instead. Do not put permanent operating rules here.
 
 ## `messages/`
 
-next-intl message catalogs, one file per locale (`en.json`, `he.json`).
+next-intl message catalog, English only (`en.json`; Hebrew was removed
+2026-10-08 and `/he/...` addresses redirect to `/en/...`).
 UI chrome strings only; API/reference prose lives in the content model
 under `src/content/`, not here.
 

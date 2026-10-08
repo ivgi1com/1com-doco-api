@@ -1,8 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 import { getSearchIndex } from "@/lib/search-index";
-import { LocaleSwitch } from "./locale-switch";
 import { MobileNav } from "./mobile-nav";
 import { mainNav } from "./nav-config";
 import { NavLink } from "./nav-link";
@@ -32,11 +30,6 @@ export function SiteHeader() {
                 </li>
               ))}
             </ul>
-            <div className="sm:hidden">
-              <Suspense fallback={null}>
-                <LocaleSwitch />
-              </Suspense>
-            </div>
             <section className="border-t border-border pt-4">
               <h2 className="mb-2 px-2 text-xs font-semibold text-ink-muted">{t("guides")}</h2>
               <GuidesNav idPrefix="drawer" />
@@ -69,11 +62,6 @@ export function SiteHeader() {
         </nav>
         <div className="ms-auto flex items-center gap-1 sm:gap-2">
           <SearchPalette items={index} />
-          <div className="hidden sm:block">
-            <Suspense fallback={<span className="block h-8 w-[74px]" />}>
-              <LocaleSwitch />
-            </Suspense>
-          </div>
           <ThemeToggle />
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { isDemoSimulatedWrite } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
+import type { LiveTargetHints } from "@/lib/playground-protocol";
 import { demoProvider, liveProvider, type PlaygroundResponse } from "./executor";
 
 export type PlaygroundMode = "live" | "demo";
@@ -60,7 +61,7 @@ function subscribeApiKey(cb: () => void) {
   return () => window.removeEventListener(API_KEY_EVENT, cb);
 }
 
-export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvailable: boolean) {
+export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvailable: boolean, liveHints?: LiveTargetHints) {
   const [mode, setMode] = useState<PlaygroundMode>("demo");
   const [pendingMode, setPendingMode] = useState<PlaygroundMode | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => defaultFieldValues(endpoint));
@@ -208,7 +209,10 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
     // One provider per mode; no fallback between them (docs/SECURITY.md).
     const provider = mode === "live" ? liveProvider : demoProvider;
     provider
-      .execute({ api, endpoint, fieldValues, credential: apiKey, simulateError }, controller.signal)
+      .execute(
+        { api, endpoint, fieldValues, credential: apiKey, simulateError, liveHints: mode === "live" ? liveHints : undefined },
+        controller.signal,
+      )
       .then(
         (result: PlaygroundResponse) => {
           // The endpoint or mode changed (or the component unmounted) while
@@ -226,7 +230,7 @@ export function usePlayground(api: ApiDefinition, endpoint: Endpoint, liveAvaila
         clearInterval(timerRef.current);
         setSending(false);
       });
-  }, [api, apiKey, endpoint, fieldValues, liveAvailable, mode, simulateError, validate, writeDemoSupported]);
+  }, [api, apiKey, endpoint, fieldValues, liveAvailable, liveHints, mode, simulateError, validate, writeDemoSupported]);
 
   return {
     mode,

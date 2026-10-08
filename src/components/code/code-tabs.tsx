@@ -63,10 +63,9 @@ export function CodeTabs({
   const current = samples.find((s) => s.id === active) ?? samples[0];
 
   const onKeyDown = (e: KeyboardEvent, index: number) => {
-    const dir = document.documentElement.dir === "rtl" ? -1 : 1;
     let next = index;
-    if (e.key === "ArrowRight") next = index + dir;
-    else if (e.key === "ArrowLeft") next = index - dir;
+    if (e.key === "ArrowRight") next = index + 1;
+    else if (e.key === "ArrowLeft") next = index - 1;
     else if (e.key === "Home") next = 0;
     else if (e.key === "End") next = samples.length - 1;
     else return;

@@ -1,11 +1,11 @@
 import { ChevronRight } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { CodeTabs } from "@/components/code/code-tabs";
 import { Callout } from "@/components/ui/callout";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { getEndpoint } from "@/content";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { Link } from "@/i18n/navigation";
@@ -35,10 +35,10 @@ function statusInk(status: number | "undocumented") {
   return "text-danger-ink";
 }
 
-/** Prose that comes from API content (English until the Hebrew scope is decided). */
+/** Prose that comes from API content. */
 function ContentText({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <p lang="en" dir="auto" className={className}>
+    <p dir="auto" className={className}>
       {children}
     </p>
   );
@@ -55,7 +55,6 @@ export function EndpointView({
 }) {
   const t = useTranslations("endpoint");
   const tn = useTranslations("nav");
-  const locale = useLocale();
   const category = api.categories.find((c) => c.id === endpoint.category);
   const replacement = endpoint.deprecation?.replacement
     ? getEndpoint(api.id, endpoint.deprecation.replacement)
@@ -80,15 +79,15 @@ export function EndpointView({
             </Link>
           </li>
           <li className="flex items-center gap-1">
-            <ChevronRight className="icon-directional size-3.5" aria-hidden />
+            <ChevronRight className="size-3.5" aria-hidden />
             <Link href={`/reference/${api.id}`} className="hover:text-ink">
               {api.name}
             </Link>
           </li>
           {category && (
             <li className="flex items-center gap-1" aria-current="page">
-              <ChevronRight className="icon-directional size-3.5" aria-hidden />
-              <span lang="en">{category.title}</span>
+              <ChevronRight className="size-3.5" aria-hidden />
+              <span>{category.title}</span>
             </li>
           )}
         </ol>
@@ -99,7 +98,6 @@ export function EndpointView({
           <header className="space-y-4">
             <div className="space-y-2">
               {api.synthetic && <PrototypeBanner />}
-              {locale !== "en" && <UntranslatedBanner />}
             </div>
             {endpoint.status === "deprecated" && endpoint.deprecation && (
               <Callout kind="warning" title={t("deprecatedBanner", { date: endpoint.deprecation.date ?? "" })}>
@@ -124,7 +122,7 @@ export function EndpointView({
               </Callout>
             )}
             <div className="flex flex-wrap items-center gap-3">
-              <h1 lang="en" className="text-2xl font-bold text-ink">
+              <h1 className="text-2xl font-bold text-ink">
                 {endpoint.title}
               </h1>
               <LifecycleBadge status={endpoint.status} />
@@ -153,7 +151,7 @@ export function EndpointView({
           <details className="group rounded-md border border-border md:hidden">
             <summary className="flex h-11 cursor-pointer list-none items-center justify-between px-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
               {t("requestExample")}
-              <ChevronRight className="icon-directional size-4 transition-transform duration-150 group-open:rotate-90 rtl:group-open:-rotate-90" aria-hidden />
+              <ChevronRight className="size-4 transition-transform duration-150 group-open:rotate-90" aria-hidden />
             </summary>
             <div className="border-t border-border p-3">
               <RequestPanel apiId={api.id} endpoint={endpoint} data={panel} />
@@ -162,7 +160,7 @@ export function EndpointView({
 
           <Section id="authentication" title={t("security")}>
             <div className="rounded-md border border-border px-4 py-3 text-sm">
-              <p className="font-semibold text-ink" lang="en">
+              <p className="font-semibold text-ink">
                 {endpoint.authentication.type}
               </p>
               <ContentText className="mt-1 text-ink-muted">
@@ -268,8 +266,8 @@ export function EndpointView({
                   <li key={i}>
                     <details className="group rounded-md border border-border">
                       <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
-                        <ChevronRight className="icon-directional size-4 shrink-0 text-ink-muted transition-transform group-open:rotate-90" aria-hidden />
-                        <span lang="en" className="min-w-0 flex-1">
+                        <ChevronRight className="size-4 shrink-0 text-ink-muted transition-transform group-open:rotate-90" aria-hidden />
+                        <span className="min-w-0 flex-1">
                           {ex.title}
                         </span>
                       </summary>
@@ -316,7 +314,7 @@ export function EndpointView({
                       <td className="px-3 py-2.5 max-sm:p-0">
                         <code className="prose-code">{e.code}</code>
                       </td>
-                      <td lang="en" dir="auto" className="px-3 py-2.5 text-ink max-sm:col-span-2 max-sm:mt-1 max-sm:p-0">
+                      <td dir="auto" className="px-3 py-2.5 text-ink max-sm:col-span-2 max-sm:mt-1 max-sm:p-0">
                         <InlineMarkup text={e.description} />
                       </td>
                     </tr>
@@ -350,7 +348,7 @@ export function EndpointView({
                     <li key={id}>
                       <Link href={`/reference/${api.id}/${id}`} className="group inline-flex items-center gap-2 text-sm">
                         <MethodBadge method={rel.method} size="sm" />
-                        <span lang="en" className="font-semibold text-accent group-hover:underline">
+                        <span className="font-semibold text-accent group-hover:underline">
                           {rel.title}
                         </span>
                       </Link>

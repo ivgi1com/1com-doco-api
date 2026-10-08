@@ -5,7 +5,7 @@ import { CodeBlock } from "@/components/code/code-block";
 import { InlineMarkup } from "@/components/reference/inline-markup";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { apis, getApi, listEndpoints } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -40,7 +40,6 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
       <header className="space-y-4">
         <div className="space-y-2">
           {api.synthetic && <PrototypeBanner />}
-          {locale !== "en" && <UntranslatedBanner />}
         </div>
         <p className="text-sm font-semibold text-ink-muted">{tn("overview")}</p>
         <h1 className="text-2xl font-bold text-ink">
@@ -49,7 +48,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
             {api.version}
           </span>
         </h1>
-        <p lang="en" dir="auto" className="max-w-[70ch] text-md text-ink-muted">
+        <p dir="auto" className="max-w-[70ch] text-md text-ink-muted">
           {api.summary}
         </p>
       </header>
@@ -66,7 +65,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
           <h2 id="auth" className="text-xl font-semibold text-ink">
             {t("security")}
           </h2>
-          <p lang="en" dir="auto" className="max-w-[70ch] text-ink">
+          <p dir="auto" className="max-w-[70ch] text-ink">
             <InlineMarkup text={quickstartEndpoint.authentication.description} />
           </p>
           <CodeBlock code={quickstartSample} lang="bash" title="shell" />
@@ -75,7 +74,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
 
       {api.categories.map((category) => (
         <section key={category.id} aria-labelledby={`cat-${category.id}`} className="space-y-3">
-          <h2 id={`cat-${category.id}`} lang="en" className="text-xl font-semibold text-ink">
+          <h2 id={`cat-${category.id}`} className="text-xl font-semibold text-ink">
             {category.title}
           </h2>
           <ul className="divide-y divide-border border-y border-border">
@@ -86,7 +85,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
                   className="group grid gap-x-4 gap-y-1 py-3 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-center"
                 >
                   <span className="flex items-center gap-2">
-                    <span lang="en" className="font-semibold text-ink group-hover:text-accent">
+                    <span className="font-semibold text-ink group-hover:text-accent">
                       {e.title}
                     </span>
                     <LifecycleBadge status={e.status} />

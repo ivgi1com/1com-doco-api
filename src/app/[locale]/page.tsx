@@ -2,7 +2,7 @@ import { ArrowRight, BookOpen, FlaskConical, Library, Zap } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { apis } from "@/content";
 import { Link } from "@/i18n/navigation";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -22,7 +22,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     <div className="mx-auto w-full max-w-[64rem] space-y-12 px-4 pb-20 pt-10 sm:px-6 lg:px-10">
       <div className="space-y-3">
         {api.synthetic && <PrototypeBanner />}
-        {locale !== "en" && <UntranslatedBanner />}
       </div>
 
       <header className="space-y-4">
@@ -34,7 +33,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             className="flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
           >
             {t("startGuide")}
-            <ArrowRight className="icon-directional size-4" aria-hidden />
+            <ArrowRight className="size-4" aria-hidden />
           </Link>
           <Link
             href="/reference"

@@ -1971,3 +1971,100 @@ internal references and hide the internal notes).
   `phase/open-api-review` (`040bc78`), then that branch was merged into
   `main` and tagged `v1.0-developer-portal`.
 - No next phase is planned or started.
+
+
+## Phase 9 — Open API Live pilot (2026-10-08)
+
+Defined by a grilling session with the user; every point below is the
+user's decision unless marked otherwise. Spec: `docs/phases/09-openapi-live-pilot.md`.
+Branch `phase/openapi-live` from `main` @ `9dc8562` (`v1.0-developer-portal`).
+
+- **Scope**: exactly one Open API operation goes Live, `simplecdrs-list`
+  (read-only). Everything else stays Live-disabled; later operations are
+  added one at a time in later phases with the same pattern. *Why*: mirrors
+  the Proxy pilot (Phase 4/5) and keeps the security review small.
+- **Caller PII shown in full to the key holder; never logged or stored.**
+  Closes SEC-REQ-08 for this operation only. *Alternatives rejected*:
+  masking in the portal (no longer shows real API output) and removing the
+  fields (diverges from the documented response).
+- **Credential upstream in the `X-API-Key` header** (the documented
+  preferred transport), not the `key` query parameter, so it stays out of
+  URLs and the vendor's access logs. Required extending the allowlist from
+  query-only to header auth for the one name `X-API-Key`.
+- **JSON only.** `format=json` forced; `format`/`template`/`contenttype`
+  not caller-settable. The user first chose to allow XML/template output,
+  then reconsidered after learning it cannot be field-filtered.
+- **12-field default-deny response allowlist** (observed record); error
+  answers cut to `error.code`/`error.message` (without this the field
+  allowlist would have emptied them to `{"error":{}}`).
+- **All 13 documented filters + `tenant` accepted, each with an anchored
+  pattern.**
+- **Date range**: first decided 7 days, **amended the same day to 3 days
+  (user)**. Enforced before any upstream call, with the documented defaults
+  (today 00:00:00 / 23:59:59) applied for an omitted bound.
+- **Multi-tenant answer blocked** whole (`multi_tenant_blocked`): a key that
+  sees several tenants (admin/global) is not supported in the Playground.
+- **Playground still opens in Demo**; Live is a deliberate switch with the
+  existing confirmation.
+- **CSP "lockdown" over strict-nonce CSP.** Pages stay statically
+  pre-rendered; `script-src` keeps `'unsafe-inline'`. The policy locks the
+  page to its own origin (exfiltration lock). *Trade-off recorded*: injected
+  script is not blocked. The strict alternative would render every page per
+  request on the PBX host.
+- **Testing**: unit + mocked-browser tests always; an env-gated real-PBX
+  spec (`tests/e2e/live-real.spec.ts`) the user runs locally with the TEST
+  key in their own shell: trace/screenshot/video off, structure-only
+  assertions, the one browser test filtered to an empty result.
+- **TEST key**: local testing only; never in production configuration or in
+  the repository. Rotation not tied to this phase (user). Note: the key was
+  pasted into the chat on 2026-10-08 (value not recorded anywhere).
+- **Production**: Live is enabled on the production server right after gate
+  approval, with `PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for`. Hosting
+  facts (Apache reverse proxy to `127.0.0.1:3100`) were verified by the user
+  and are recorded in `docs/DEPLOYMENT.md`, which did not exist before.
+- **BLOCK LIVE bookkeeping** (Claude, not asked): the baseline's `BLOCK
+  LIVE` mark on `simplecdrs-list` is left as recorded history; the readiness
+  test lists an explicit, self-checking exemption instead of rewriting the
+  baseline.
+
+Stages (all on `phase/openapi-live`): 1 server `b93afe0` (+ 3-day amendment
+`99abefd`), 2 client `aa1ba60`, 3 CSP `0fb9c94`, 4 real-PBX spec `7c6636b`,
+5 docs. Stage 6 (Opus security review and gate) pending.
+
+## Phase 9 APPROVED (2026-10-08)
+
+- The user approved Phase 9 at its gate with option B (approve, save, and
+  stop). Final branch state on `phase/openapi-live`; not merged, pushed or
+  tagged. No next phase is planned or started.
+- Production Live enable (decided "right after the gate") is still a
+  separate, user-run step and has not been done.
+
+## Hebrew removed — English-only portal (2026-10-08)
+
+User decisions (asked one by one), on branch `chore/remove-hebrew` from
+`phase/openapi-live`:
+
+- **Hebrew is removed completely** from the site: no Hebrew pages, language
+  switcher, Hebrew messages (`messages/he.json` deleted) or "not translated"
+  banner. Supersedes the Phase 1–4 bilingual (en/he, RTL) decisions.
+- **Addresses keep `/en/`**, so every existing English link and bookmark
+  keeps working (next-intl stays, with a single locale and no detection).
+- **Old `/he/...` addresses redirect (308) to the same `/en/...` page**
+  (`next.config.ts` redirects; query kept).
+- **RTL-only code removed** (RTL CSS, `rtl:` variants, mirrored icons,
+  RTL arrow-key logic, Hebrew font subset, redundant `lang="en"` markers).
+  Kept: generic logical CSS classes and the `dir="ltr"`/`dir="auto"`
+  isolation around code, URLs and parameter names.
+- Kept on purpose (not UI language): the vendor source-site URL that
+  contains Hebrew (`src/content/proxy/shared.ts`) and a Hebrew caller-name
+  test value — real call data may contain Hebrew names, and the Live filter
+  pattern must keep accepting them.
+- Historical decision and phase entries that mention Hebrew are unchanged.
+
+## Merged to main (2026-10-08)
+
+- On the user's request, `chore/remove-hebrew` was merged into `main`
+  (no-ff). Because it was built on `phase/openapi-live`, this also merges
+  the approved Phase 9 (Open API Live pilot). Not pushed, not tagged;
+  production Live not enabled.
+

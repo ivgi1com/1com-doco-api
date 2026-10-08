@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PlaygroundApp } from "@/components/playground/playground-app";
 import { Callout } from "@/components/ui/callout";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { apis, defaultEndpoint, getApi, getEndpoint } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
-import { listLiveTargetIds } from "@/server/playground/allowlist";
+import { listLiveTargetHints, listLiveTargetIds } from "@/server/playground/allowlist";
 import { getPlaygroundConfig } from "@/server/playground/config";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,13 +37,14 @@ export default async function PlaygroundPage({
 
   const samplesByEndpoint = await buildPlaygroundSamples(api);
   // Read per request (this page is dynamic), so the kill switch applies without a rebuild.
-  const liveEndpointIds = getPlaygroundConfig().liveEnabled ? listLiveTargetIds() : [];
+  const liveEnabled = getPlaygroundConfig().liveEnabled;
+  const liveEndpointIds = liveEnabled ? listLiveTargetIds() : [];
+  const liveHints = liveEnabled ? listLiveTargetHints() : {};
 
   return (
     <div className="flex min-h-[calc(100dvh-57px)] flex-col">
       <div className="space-y-2 px-4 py-3 sm:px-6 lg:px-10">
         {api.synthetic && <PrototypeBanner />}
-        {locale !== "en" && <UntranslatedBanner />}
         {endpointNotFound && (
           <Callout kind="warning" title={t("endpointNotFoundTitle")}>
             <p data-testid="endpoint-not-found">
@@ -58,6 +59,7 @@ export default async function PlaygroundPage({
         initialEndpoint={endpoint}
         samplesByEndpoint={samplesByEndpoint}
         liveEndpointIds={liveEndpointIds}
+        liveHints={liveHints}
       />
     </div>
   );

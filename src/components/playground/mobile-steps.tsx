@@ -52,7 +52,7 @@ export function MobileSteps({
           onClick={() => setMobileStep((mobileStep - 1) as 0 | 1 | 2)}
           className="flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold text-ink disabled:opacity-40"
         >
-          <ChevronLeft className="icon-directional size-4" aria-hidden />
+          <ChevronLeft className="size-4" aria-hidden />
           {steps[mobileStep - 1] ? t(steps[mobileStep - 1].key) : ""}
         </button>
         <button
@@ -62,7 +62,7 @@ export function MobileSteps({
           className="flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold text-ink disabled:opacity-40"
         >
           {steps[mobileStep + 1] ? t(steps[mobileStep + 1].key) : ""}
-          <ChevronRight className="icon-directional size-4" aria-hidden />
+          <ChevronRight className="size-4" aria-hidden />
         </button>
       </div>
     </div>

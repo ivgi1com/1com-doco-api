@@ -1,6 +1,27 @@
 # Current Status
 
 Current work:
+**Hebrew removed — English-only portal (2026-10-08), merged to `main`
+on the user's request together with the approved Phase 9 (Open API Live
+pilot) it was built on. Not pushed, not tagged. Live is not enabled in
+production.** `/en/` addresses unchanged; `/he/...`
+redirects to `/en/...`. See `docs/DECISIONS.md` "Hebrew removed".
+
+**Phase 9 (Open API Live pilot, `simplecdrs-list`) APPROVED (2026-10-08,
+gate B — approve, save, and stop) on `phase/openapi-live`. Not merged to
+`main`, not pushed, not tagged. No next phase started; waiting for the user.
+Live is NOT yet enabled in production (`docs/DEPLOYMENT.md`, on request).**
+Opus security review: no findings.
+Server (header auth, JSON-only, 12-field allowlist, 3-day range cap,
+multi-tenant block), Playground wiring, CSP lockdown and the env-gated
+real-PBX spec are committed; the real-PBX spec passed 3/3 against the
+production PBX with the user's TEST key. `npm run check` 474/474, Chromium
+Playwright 118 passed / 3 skipped, WebKit 115 passed / 6 skipped. Production
+enable happens only after gate approval (`docs/DEPLOYMENT.md`). Spec
+`docs/phases/09-openapi-live-pilot.md`; detail `docs/DECISIONS.md` "Phase 9",
+`docs/SECURITY.md` "Phase 9".
+
+Previous:
 **Phase 8 (Open API rollout) APPROVED (2026-10-07) and merged to `main`, tagged
 `v1.0-developer-portal`, pushed.** Before the merge, GitHub `main` (sub-path
 deployment `NEXT_PUBLIC_BASE_PATH`, v0.2.0, README revision) was merged into

@@ -4,7 +4,7 @@ import type { LiveResponseBody, PortalErrorCode } from "@/lib/playground-protoco
 import type { PlaygroundConfig } from "./config";
 import { executeLive } from "./execute";
 import { logLive } from "./log";
-import { projectJsonFields, redactSensitive } from "./redact";
+import { countDistinctField, projectErrorEnvelope, projectJsonFields, redactSensitive } from "./redact";
 import { clientKey, type RateLimiter } from "./rate-limit";
 import { validateLiveRequest } from "./validate";
 
@@ -17,6 +17,8 @@ const STATUS: Record<PortalErrorCode, number> = {
   invalid_request: 400,
   endpoint_not_allowed: 403,
   missing_credential: 400,
+  range_too_wide: 400,
+  multi_tenant_blocked: 403,
   upstream_timeout: 504,
   upstream_too_large: 502,
   upstream_redirect: 502,
@@ -139,9 +141,19 @@ export async function handleLiveRequest(request: Request, deps: HandlerDeps): Pr
   }
 
   // Nothing sensitive leaves the server (A-40 decisions): JSON is cut down to
-  // the target's field allowlist, then credential-like values are redacted
-  // as a second layer (which also covers the plain-text table).
-  const projection = projectJsonFields(result.upstream.bodyText, validation.value.target.jsonFields);
+  // the target's field allowlist (or, for an error envelope, to its code and
+  // message), then credential-like values are redacted as a second layer
+  // (which also covers the plain-text table).
+  const target = validation.value.target;
+  const projection =
+    (target.errorEnvelope ? projectErrorEnvelope(result.upstream.bodyText) : null) ??
+    projectJsonFields(result.upstream.bodyText, target.jsonFields);
+  // An answer spanning several tenants means a non-tenant (admin) key: block
+  // all of it rather than show other customers' records (Phase 9 decision).
+  if (target.tenantField && countDistinctField(projection.text, target.tenantField) > 1) {
+    log({ endpoint: endpointId, outcome: "multi_tenant_blocked", status: result.upstream.status, latencyMs: result.upstream.latencyMs });
+    return portalError("multi_tenant_blocked");
+  }
   const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text);
   const upstream = {
     ...result.upstream,

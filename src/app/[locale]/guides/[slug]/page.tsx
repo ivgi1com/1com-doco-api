@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GuideBody } from "@/components/guides/guide-body";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { getGuide, guides } from "@/content/guides";
 import { routing } from "@/i18n/routing";
 
@@ -32,11 +32,10 @@ export default async function GuidePage({ params }: PageProps<"/[locale]/guides/
   return (
     <div className="mx-auto w-full max-w-[84rem] px-4 pb-16 pt-8 sm:px-6 lg:px-10">
       <div className="grid grid-cols-1 gap-x-10 gap-y-8 xl:grid-cols-[minmax(0,1fr)_16rem]">
-        <article lang="en" dir="auto" className="min-w-0 max-w-[70ch] space-y-8">
+        <article dir="auto" className="min-w-0 max-w-[70ch] space-y-8">
           <header className="space-y-3">
             <div className="space-y-2">
               {guide.synthetic && <PrototypeBanner />}
-              {locale !== "en" && <UntranslatedBanner />}
             </div>
             <h1 className="text-2xl font-bold text-ink">{guide.title}</h1>
             <p className="text-md text-ink-muted">{guide.summary}</p>

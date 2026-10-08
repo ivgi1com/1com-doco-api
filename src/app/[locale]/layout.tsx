@@ -5,14 +5,14 @@ import { notFound } from "next/navigation";
 import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { localeDir, routing } from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
 import { withBasePath } from "@/lib/base-path";
 import { SiteHeader } from "@/components/shell/site-header";
 import { THEME_INIT_SCRIPT } from "@/components/shell/theme";
 import "../globals.css";
 
 const assistant = Assistant({
-  subsets: ["latin", "hebrew"],
+  subsets: ["latin"],
   variable: "--font-assistant",
   display: "swap",
 });
@@ -57,7 +57,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      dir={localeDir[locale]}
+      dir="ltr"
       className={`${assistant.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >

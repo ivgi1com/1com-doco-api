@@ -151,14 +151,13 @@ export function ParamField({
         </p>
       )}
       <div id={helpId} className="mt-1 space-y-0.5 text-xs text-ink-muted">
-        {/* API content prose is English until the Hebrew scope is decided (same as the Reference's ContentText). */}
         {param.description && (
-          <p lang="en" dir="auto">
+          <p dir="auto">
             <InlineMarkup text={param.description} />
           </p>
         )}
         {param.condition && (
-          <p lang="en" dir="auto">
+          <p dir="auto">
             {param.condition}
           </p>
         )}

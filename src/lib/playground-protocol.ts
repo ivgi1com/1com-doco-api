@@ -14,6 +14,17 @@ export interface LiveRequestBody {
   credential: string;
 }
 
+/**
+ * What the Playground needs to know about one Live target to build the same
+ * request the portal will make. Display only; the server enforces the policy.
+ */
+export interface LiveTargetHints {
+  /** Documented query parameters the caller may not set in Live: hidden and never sent. */
+  hiddenParams: string[];
+  /** Query values the portal always sends upstream (shown in the Live request preview). */
+  fixedQuery: Record<string, string>;
+}
+
 /** Portal-side failures. Each is shown as a portal error, never replaced by Demo data. */
 export type PortalErrorCode =
   | "live_disabled"
@@ -24,6 +35,10 @@ export type PortalErrorCode =
   | "invalid_request"
   | "endpoint_not_allowed"
   | "missing_credential"
+  /** The date range (start..end, with the documented defaults) exceeds the Live limit. */
+  | "range_too_wide"
+  /** The answer contained records of more than one tenant (an admin key); nothing is shown. */
+  | "multi_tenant_blocked"
   | "upstream_timeout"
   | "upstream_too_large"
   | "upstream_redirect"

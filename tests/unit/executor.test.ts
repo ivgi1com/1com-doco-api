@@ -35,6 +35,50 @@ describe("liveQueryParams", () => {
   });
 });
 
+describe("Live hints (Phase 9)", () => {
+  const cdrs = getEndpoint("openapi", "simplecdrs-list")!;
+  const hints = { hiddenParams: ["format", "template", "contenttype"], fixedQuery: { format: "json" } };
+  const values = {
+    "query:tenant": "ACME",
+    "query:format": "xml",
+    "query:template": "t1",
+    "query:contenttype": "text/xml",
+    "query:direction": "IN",
+  };
+
+  it("never includes hidden params in the Live query", () => {
+    expect(liveQueryParams(cdrs, values, hints.hiddenParams)).toEqual({ tenant: "ACME", direction: "IN" });
+  });
+
+  it("without hints (Demo) keeps every entered param", () => {
+    expect(Object.keys(liveQueryParams(cdrs, values)).sort()).toEqual(["contenttype", "direction", "format", "template", "tenant"]);
+  });
+
+  it("previews the forced format=json and a masked X-API-Key header, with hidden params dropped", () => {
+    const r = sanitizedRequest(openapiApi, cdrs, values, hints);
+    expect(r.url).toBe(`${openapiApi.baseUrl}/simplecdrs?format=json&tenant=ACME&direction=IN`);
+    expect(r.headers).toEqual({ "X-API-Key": MASK });
+  });
+
+  it("posts no hidden param and the key only in the body", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ ok: false, error: { code: "range_too_wide" } })));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await liveProvider.execute(
+      { api: openapiApi, endpoint: cdrs, fieldValues: values, credential: KEY, simulateError: false, liveHints: hints },
+      new AbortController().signal,
+    );
+    expect(result).toMatchObject({ source: "LIVE", kind: "portal-error", code: "range_too_wide" });
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(LIVE_ROUTE);
+    expect(JSON.parse(init.body as string)).toEqual({
+      endpoint: "openapi/simplecdrs-list",
+      params: { tenant: "ACME", direction: "IN" },
+      credential: KEY,
+    });
+    expect(JSON.stringify(init.headers)).not.toContain(KEY);
+  });
+});
+
 describe("sanitizedRequest", () => {
   it("masks the query-auth credential and keeps fixed selectors", () => {
     const r = sanitizedRequest(proxyApi, infoExtensions, fieldValues);

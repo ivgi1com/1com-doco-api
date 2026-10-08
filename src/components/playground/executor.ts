@@ -5,6 +5,7 @@ import {
   LIVE_ROUTE,
   type LiveRequestBody,
   type LiveResponseBody,
+  type LiveTargetHints,
   type PortalErrorCode,
 } from "@/lib/playground-protocol";
 
@@ -90,6 +91,8 @@ export interface ExecuteRequest {
   fieldValues: Record<string, string>;
   credential: string;
   simulateError: boolean;
+  /** Live only: how the portal will shape this request (hidden params, forced query). */
+  liveHints?: LiveTargetHints;
 }
 
 export interface ApiExecutor {
@@ -136,10 +139,11 @@ function coerceBodyValue(type: string, raw: string): unknown {
   return raw;
 }
 
-/** Non-empty query values the user entered, trimmed. */
-export function liveQueryParams(endpoint: Endpoint, fieldValues: Record<string, string>) {
+/** Non-empty query values the user entered, trimmed. `hidden` names are never included (Live-only restrictions). */
+export function liveQueryParams(endpoint: Endpoint, fieldValues: Record<string, string>, hidden: readonly string[] = []) {
   const params: Record<string, string> = {};
   for (const p of endpoint.queryParameters) {
+    if (hidden.includes(p.name)) continue;
     const v = fieldValues[`query:${p.name}`]?.trim();
     if (v) params[p.name] = v;
   }
@@ -174,9 +178,14 @@ export function sanitizedBody(endpoint: Endpoint, fieldValues: Record<string, st
 }
 
 /** Mirrors the server's upstream URL order (fixed selectors, params, credential), credential masked. */
-export function sanitizedRequest(api: ApiDefinition, endpoint: Endpoint, fieldValues: Record<string, string>): SanitizedRequest {
-  const query = new URLSearchParams(endpoint.fixedQuery ?? {});
-  for (const [k, v] of Object.entries(liveQueryParams(endpoint, fieldValues))) query.set(k, v);
+export function sanitizedRequest(
+  api: ApiDefinition,
+  endpoint: Endpoint,
+  fieldValues: Record<string, string>,
+  live?: LiveTargetHints,
+): SanitizedRequest {
+  const query = new URLSearchParams({ ...(endpoint.fixedQuery ?? {}), ...(live?.fixedQuery ?? {}) });
+  for (const [k, v] of Object.entries(liveQueryParams(endpoint, fieldValues, live?.hiddenParams))) query.set(k, v);
   const auth = endpoint.authentication;
   let search = query.toString();
   let headers: Record<string, string> | undefined;
@@ -233,8 +242,8 @@ function parseBody(text: string): { format: "json" | "text"; body: unknown } {
 }
 
 export const liveProvider: ApiExecutor = {
-  async execute({ api, endpoint, fieldValues, credential }, signal) {
-    const request = sanitizedRequest(api, endpoint, fieldValues);
+  async execute({ api, endpoint, fieldValues, credential, liveHints }, signal) {
+    const request = sanitizedRequest(api, endpoint, fieldValues, liveHints);
     // SEC-REQ-27: Live never sends a write. The UI and the server allowlist
     // (GET-only) already block this; this is the client-side last layer.
     if (endpoint.operationClass === "write") {
@@ -242,7 +251,7 @@ export const liveProvider: ApiExecutor = {
     }
     const payload: LiveRequestBody = {
       endpoint: `${api.id}/${endpoint.id}`,
-      params: liveQueryParams(endpoint, fieldValues),
+      params: liveQueryParams(endpoint, fieldValues, liveHints?.hiddenParams),
       credential,
     };
 

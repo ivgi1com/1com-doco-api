@@ -9,6 +9,7 @@ import { MethodBadge } from "@/components/ui/method-badge";
 import type { DemoFixtureSet } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 import { authEnvVar } from "@/lib/code-samples";
+import type { LiveTargetHints } from "@/lib/playground-protocol";
 import { sanitizedRequest, substitutePathParams } from "./executor";
 import { OperationHeader } from "./operation-header";
 import { ParamField } from "./param-field";
@@ -31,6 +32,7 @@ export function RequestBuilder({
   state,
   synthetic,
   liveAvailable,
+  liveHints,
   demoFixtures,
 }: {
   api: ApiDefinition;
@@ -40,6 +42,8 @@ export function RequestBuilder({
   synthetic: boolean;
   /** False when this endpoint isn't allowlisted for Live, or Live is disabled server-side. */
   liveAvailable: boolean;
+  /** Live target policy for this endpoint, when it is Live-capable (hidden params, forced query). */
+  liveHints?: LiveTargetHints;
   /** Present when this endpoint has Demo scenario presets (src/content/demo). */
   demoFixtures?: DemoFixtureSet;
 }) {
@@ -69,6 +73,9 @@ export function RequestBuilder({
   // documented-example fixture set (writeDemoSupported).
   const writeOnly = isWrite && (mode === "live" || !writeDemoSupported);
   const liveBlocked = mode === "live" && !liveAvailable && !isWrite;
+  // In Live, parameters the portal does not accept are hidden, not just ignored.
+  const liveShape = mode === "live" ? liveHints : undefined;
+  const queryParameters = endpoint.queryParameters.filter((p) => !liveShape?.hiddenParams.includes(p.name));
 
   const applyScenario = (preset: Readonly<Record<string, string>>) => {
     for (const [name, value] of Object.entries(preset)) setField(fieldKey("query", name), value);
@@ -147,10 +154,10 @@ export function RequestBuilder({
         </fieldset>
       )}
 
-      {endpoint.queryParameters.length > 0 && (
+      {queryParameters.length > 0 && (
         <fieldset className="space-y-3">
           <legend className="mb-1 text-xs font-semibold text-ink-muted">{te("queryParams")}</legend>
-          {endpoint.queryParameters.map((p) => {
+          {queryParameters.map((p) => {
             const key = fieldKey("query", p.name);
             return (
               <ParamField
@@ -190,7 +197,7 @@ export function RequestBuilder({
         <div className="space-y-2 border-t border-border p-3">
           <p className="text-xs text-ink-muted">{t("requestPreviewNote")}</p>
           <RequestTab
-            request={sanitizedRequest(api, endpoint, fieldValues)}
+            request={sanitizedRequest(api, endpoint, fieldValues, liveShape)}
             endpoint={endpoint}
             notSent={mode === "demo" || isWrite}
           />

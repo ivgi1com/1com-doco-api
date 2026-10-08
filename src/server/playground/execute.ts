@@ -23,19 +23,26 @@ export interface ExecuteOptions {
 /**
  * Builds the upstream URL from the allowlisted target only. The caller never
  * supplies a host or path. Order: fixed operation selectors, parameters,
- * then the credential (the only place it is documented to travel, U-08).
+ * then — for query-auth APIs only — the credential (U-08). A header-auth key
+ * never enters the URL (see buildUpstreamHeaders).
  */
 export function buildUpstreamUrl({ target, params, credential }: LiveRequest): URL {
   const url = new URL(target.path, target.origin);
   const query = new URLSearchParams();
   for (const [k, v] of Object.entries(target.fixedQuery)) query.set(k, v);
   for (const [k, v] of Object.entries(params)) query.set(k, v);
-  query.set(target.credentialParam, credential);
+  if (target.credential.location === "query") query.set(target.credential.name, credential);
   url.search = query.toString();
   if (url.origin !== target.origin || url.pathname !== target.path) {
     throw new Error("Live target resolved outside its allowlisted origin/path");
   }
   return url;
+}
+
+export function buildUpstreamHeaders({ target, credential }: LiveRequest): Record<string, string> {
+  const headers: Record<string, string> = { accept: "application/json, text/plain;q=0.9, */*;q=0.1" };
+  if (target.credential.location === "header") headers[target.credential.name.toLowerCase()] = credential;
+  return headers;
 }
 
 class TooLargeError extends Error {}
@@ -67,7 +74,7 @@ async function readCapped(body: ReadableStream<Uint8Array> | null, maxBytes: num
 /**
  * Performs the one upstream call. Errors are mapped to fixed codes and the
  * original error is discarded: Node's fetch errors can embed the request
- * URL, and the URL carries the credential.
+ * URL or headers, and either may carry the credential.
  */
 export async function executeLive(request: LiveRequest, options: ExecuteOptions): Promise<ExecuteResult> {
   const doFetch = options.fetch ?? fetch;
@@ -83,7 +90,7 @@ export async function executeLive(request: LiveRequest, options: ExecuteOptions)
       redirect: "manual",
       cache: "no-store",
       credentials: "omit",
-      headers: { accept: "application/json, text/plain;q=0.9, */*;q=0.1" },
+      headers: buildUpstreamHeaders(request),
       signal,
     });
 

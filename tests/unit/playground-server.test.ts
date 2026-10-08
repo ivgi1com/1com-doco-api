@@ -63,7 +63,7 @@ describe("allowlist", () => {
       path: "/pbx/proxyapi.php",
       method: "GET",
       fixedQuery: { reqtype: "INFO", info: "EXTENSIONS" },
-      credentialParam: "key",
+      credential: { location: "query", name: "key" },
     });
     // `format` added after A-40 (enum-restricted; see redact.test.ts).
     expect([...t!.allowedParams].sort()).toEqual(["format", "id", "number", "tenant"]);

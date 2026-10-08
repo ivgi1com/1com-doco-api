@@ -99,7 +99,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-assistant), "Noto Sans Hebrew", system-ui, -apple-system,
+  --font-sans: var(--font-assistant), system-ui, -apple-system,
     "Segoe UI", Arial, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
@@ -191,10 +191,6 @@
     text-wrap: pretty;
   }
 
-  :where(html[lang="he"]) {
-    line-height: 1.7;
-  }
-
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -235,14 +231,6 @@
     );
   }
 
-  :where([dir="rtl"]) .signal-hairline {
-    background: linear-gradient(
-      to left,
-      oklch(0.478 0.265 271.6),
-      oklch(0.517 0.271 293.1)
-    );
-  }
-
   .dot-grid {
     background-image: radial-gradient(
       circle at 1px 1px,
@@ -250,11 +238,6 @@
       transparent 0
     );
     background-size: 20px 20px;
-  }
-
-  /* Directional icons mirror in RTL; object icons never do. */
-  :where([dir="rtl"]) .icon-directional {
-    transform: scaleX(-1);
   }
 
   /* Monochrome logo rendered as a mask so it inherits theme ink. */
@@ -296,7 +279,7 @@
   user-select: none;
 }
 
-/* Drawer: slides in from the inline-start edge (MASTER.md motion: <=250ms). */
+/* Drawer: slides in from the left edge (MASTER.md motion: <=250ms). */
 dialog.drawer[open] {
   animation: drawer-in 220ms var(--ease-out-quart);
 }
@@ -306,14 +289,6 @@ dialog.drawer[open]::backdrop {
 @keyframes drawer-in {
   from {
     transform: translateX(-100%);
-  }
-}
-:where([dir="rtl"]) dialog.drawer[open] {
-  animation-name: drawer-in-rtl;
-}
-@keyframes drawer-in-rtl {
-  from {
-    transform: translateX(100%);
   }
 }
 @keyframes fade-in {

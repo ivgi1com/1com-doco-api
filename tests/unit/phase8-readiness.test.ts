@@ -62,11 +62,16 @@ describe("Demo never reaches a network (all OpenAPI operations)", () => {
 });
 
 describe("Live allowlist", () => {
-  it("is exactly the three approved Proxy reads, with no OpenAPI id", () => {
-    expect([...listLiveTargetIds()].sort()).toEqual(["proxy/cdr-get", "proxy/info-agents", "proxy/info-extensions"]);
+  // Phase 9 (2026-10-08) added the first OpenAPI read, simplecdrs-list.
+  it("is exactly the three approved Proxy reads plus the Phase 9 OpenAPI pilot", () => {
+    expect([...listLiveTargetIds()].sort()).toEqual([
+      "openapi/simplecdrs-list",
+      "proxy/cdr-get",
+      "proxy/info-agents",
+      "proxy/info-extensions",
+    ]);
     for (const id of listLiveTargetIds()) {
       const [apiId, endpointId] = id.split("/");
-      expect(apiId).toBe("proxy");
       expect(getEndpoint(apiId, endpointId)?.operationClass, id).not.toBe("write");
     }
   });
@@ -159,10 +164,26 @@ describe("Baseline ↔ inventory ↔ content reconciliation", () => {
     for (const op of ops) expect(EXCLUDED_OPENAPI_RESOURCE_FILES.has(op.file), op.id).toBe(EXCLUDED_OPENAPI_OPS.has(op.id));
   });
 
-  it("BLOCK LIVE operations are never Live-enabled or Demo-simulated writes", () => {
+  // The baseline's BLOCK LIVE marks stay as recorded on 2026-09-26. An
+  // operation leaves the block only by an explicit user decision that closes
+  // its SEC-REQ for Live (docs/SECURITY.md); each is listed here.
+  const LIVE_BLOCK_LIFTED = new Set(["simplecdrs-list"]); // SEC-REQ-08, Phase 9, 2026-10-08
+
+  it("BLOCK LIVE operations are never Live-enabled (unless explicitly lifted) or Demo-simulated writes", () => {
     for (const op of ops.filter((o) => o.securityReview === "BLOCK LIVE")) {
-      expect(listLiveTargetIds()).not.toContain(`openapi/${op.id}`);
+      if (!LIVE_BLOCK_LIFTED.has(op.id)) expect(listLiveTargetIds()).not.toContain(`openapi/${op.id}`);
       expect(isDemoSimulatedWrite("openapi", { id: op.id, operationClass: op.operationClass as "read" | "write" })).toBe(false);
+    }
+    // Every lifted id is a real BLOCK LIVE read, so the exemption can't silently widen.
+    for (const id of LIVE_BLOCK_LIFTED) {
+      const op = ops.find((o) => o.id === id);
+      expect(op?.securityReview, id).toBe("BLOCK LIVE");
+      expect(op?.operationClass, id).toBe("read");
+    }
+    const liftedLive = listLiveTargetIds().filter((id) => id.startsWith("openapi/")).map((id) => id.slice("openapi/".length));
+    for (const id of liftedLive) {
+      const op = ops.find((o) => o.id === id);
+      if (op?.securityReview === "BLOCK LIVE") expect(LIVE_BLOCK_LIFTED.has(id), id).toBe(true);
     }
   });
 });
