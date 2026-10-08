@@ -1,12 +1,13 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (side-menu changes approved on
-`feat/collapsed-side-menus`; read this first)
+Last updated: 2026-10-08 (side-menu changes merged to `main`, tagged
+`v1.2-side-menus`; read this first)
 
 ## Side-menu changes (2026-10-08), APPROVED (gate A)
 
-- Branch `feat/collapsed-side-menus` (from `main` @ `caedb8e`), not merged,
-  not pushed, not deployed.
+- Branch `feat/collapsed-side-menus` (from `main` @ `caedb8e`), merged to
+  `main` (`7f35952`, no-ff) and tagged `v1.2-side-menus`; not pushed, not
+  deployed (procedure: `docs/DEPLOYMENT.md`).
 - `src/components/shell/category-groups.tsx` is the shared collapsible
   category list (controlled `<details>`, Expand all / Collapse all, active
   category opens on navigation, `forceOpen` while the Playground filter has
