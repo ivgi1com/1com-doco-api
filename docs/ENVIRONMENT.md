@@ -70,8 +70,14 @@ Names only, see `.env.example`; all are optional with safe defaults (see
 - `PLAYGROUND_TRUSTED_IP_HEADER` — a reverse-proxy header name to trust for
   per-client rate limiting; unset means every caller shares one bucket.
 
+Local testing only (Phase 9): `OPENAPI_TEST_KEY` and `OPENAPI_TEST_TENANT`
+enable `tests/e2e/live-real.spec.ts`, which calls the real PBX. Export them
+in your own shell for one run; never write them to a file, never set them on
+a server. Without them the spec is skipped. Production hosting, the
+sub-path build and the Live enable steps are in `docs/DEPLOYMENT.md`.
+
 None of these configure the upstream host — it is fixed in
-`src/content/proxy-api.ts` and asserted at startup
+`src/content/proxy` / `src/content/openapi` and asserted at startup
 (`src/server/playground/allowlist.ts`), not overridable by any env var.
 
 ## Browser testing

@@ -257,7 +257,7 @@ const pgLines = [
   "",
   "None are hidden from the Playground. Operations that cannot be sent, and why:",
   "",
-  `- All ${oaRows.length}: Live is default-deny (no OpenAPI id on the Live allowlist; SEC-REQ-27/28).`,
+  `- ${oaRows.length - oaLive.length} of ${oaRows.length}: Live is default-deny (not on the Live allowlist; SEC-REQ-27/28). ${oaLive.length} on the allowlist (Phase 9 pilot, SEC-REQ-08): ${oaLive.join(", ") || "none"}.`,
   `- ${oaWrites.length} writes: never sent in Live; Demo only from a documented example (SEC-REQ-27, amended 2026-10-01).`,
   ...oaReadsNoDemo.map((r) => `- ${r.id}: no Demo data — ${oaReason(r)}`),
   "",

@@ -1,6 +1,19 @@
 # Current Status
 
 Current work:
+**Phase 9 (Open API Live pilot, `simplecdrs-list`) — Stages 1–5 DONE on
+`phase/openapi-live` (2026-10-08); Stage 6 (Opus security review) and the
+approval gate are NOT done. Not approved, not merged, not pushed, not tagged.**
+Server (header auth, JSON-only, 12-field allowlist, 3-day range cap,
+multi-tenant block), Playground wiring, CSP lockdown and the env-gated
+real-PBX spec are committed; the real-PBX spec passed 3/3 against the
+production PBX with the user's TEST key. `npm run check` 474/474, Chromium
+Playwright 118 passed; WebKit not run (browser not installed). Production
+enable happens only after gate approval (`docs/DEPLOYMENT.md`). Spec
+`docs/phases/09-openapi-live-pilot.md`; detail `docs/DECISIONS.md` "Phase 9",
+`docs/SECURITY.md` "Phase 9".
+
+Previous:
 **Phase 8 (Open API rollout) APPROVED (2026-10-07) and merged to `main`, tagged
 `v1.0-developer-portal`, pushed.** Before the merge, GitHub `main` (sub-path
 deployment `NEXT_PUBLIC_BASE_PATH`, v0.2.0, README revision) was merged into

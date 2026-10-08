@@ -1,7 +1,35 @@
 # Session Handoff
 
-Last updated: 2026-10-07 (Phase 8 APPROVED, merged to `main`, tagged
-`v1.0-developer-portal`, pushed; read this first)
+Last updated: 2026-10-08 (Phase 9 Stages 1–5 done on `phase/openapi-live`;
+Stage 6 review + gate pending; read this first)
+
+## Phase 9 — Open API Live pilot (2026-10-08), at Stage 6
+
+- Branch `phase/openapi-live` (from `main` @ `9dc8562`). Commits: `bde25fd`
+  phase doc, `b93afe0` Stage 1 server, `99abefd` 3-day range (user
+  amendment), `35ba4c5` lint, `aa1ba60` Stage 2 client, `0fb9c94` Stage 3
+  CSP, `7c6636b` Stage 4 real-PBX spec, then the Stage 5 docs commit. Plus
+  `chore/agent-skills-docs` (separate branch: CLAUDE.md agent-skills
+  section, `docs/agents/`), not merged.
+- Done: only `openapi/simplecdrs-list` can go Live; key in `X-API-Key`;
+  JSON only; 12-field allowlist; filters pattern-checked; range <= 3 days;
+  multi-tenant answers blocked; Live hides `format/template/contenttype`;
+  CSP + related headers on every route. Real-PBX spec
+  (`tests/e2e/live-real.spec.ts`) passed 3/3 locally with the user's TEST key.
+- Validation: `npm run check` 474/474; Chromium Playwright 118 passed;
+  WebKit/mobile-safari NOT run (`npx playwright install webkit` needed; not
+  installed without the user's OK). No screenshot-based visual pass yet.
+- **Remaining**: Stage 6 — Opus `security-review` over
+  `main...phase/openapi-live`, remediation, a visual pass (desktop + mobile)
+  and the Phase Completion Report with the A/B/C/D gate question. Then, only
+  after approval, the user enables Live on the server (`docs/DEPLOYMENT.md`).
+- Open: how `next start` is launched/supervised on the server (not
+  verified); TEST key was pasted into the chat on 2026-10-08, rotation
+  recommended; Hebrew strings DRAFT; CSP keeps `'unsafe-inline'`
+  (documented trade-off); two Most Used Cases guides still await the user's
+  description; `bash.exe.stackdump` in the working tree is untracked junk.
+- Model routing used: Opus 5.5 for Stages 1 and 3 and the grilling/plan;
+  Sonnet 5.5 for Stages 2, 4, 5. Stage 6 needs Opus 5.5.
 
 ## Phase 8 — APPROVED and merged (2026-10-07)
 

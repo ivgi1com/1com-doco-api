@@ -87,11 +87,12 @@ production API infrastructure. See `docs/DECISIONS.md` "Phase 5 planning"
 for why these choices were made.
 
 - **Allowed hosts/endpoints/methods**: `allowlist.ts#LIVE_POLICIES`
-  hard-codes exactly three targets (`proxy/info-extensions`,
-  `proxy/info-agents`, `proxy/cdr-get`; all `GET`), each resolved from the
-  content model and asserted against a fixed origin set at module load —
-  not env-configurable, so no deployment config can widen it. A unit test
-  pins the list to exactly these three.
+  hard-codes exactly four targets (`proxy/info-extensions`,
+  `proxy/info-agents`, `proxy/cdr-get`, and since Phase 9
+  `openapi/simplecdrs-list`; all `GET`), each resolved from the content
+  model and asserted against a fixed set of exact base URLs
+  (`ALLOWED_BASES`) at module load — not env-configurable, so no
+  deployment config can widen it. Unit tests pin the list.
 - **Request timeout / response-size ceiling / rate limit**: `config.ts`
   reads env vars with a safe default and a hard ceiling neither can exceed
   (e.g. timeout defaults to 10 s, capped at 30 s regardless of the env
@@ -120,6 +121,10 @@ for why these choices were made.
   credential/tenant never appear in any response body, log line, or
   thrown-error string across every failure path (timeout, oversize,
   redirect, network error, rate limit).
+  **Open API (Phase 9):** the key is forwarded only in the `X-API-Key`
+  header (`execute.ts#buildUpstreamHeaders`), never in the upstream URL, so
+  the Proxy API access-log limitation above does not apply to it. `key` is
+  a reserved name that can never be caller-set as a query parameter.
 - **SSRF defense**: there is no caller-supplied target URL of any kind —
   `endpoint` selects one of the fixed allowlist entries by id; the upstream
   URL is built only from that entry's own origin/path/fixedQuery
@@ -150,7 +155,8 @@ medium findings. Fixed:
 
 Accepted / open (not code defects in this phase):
 
-- **No Content-Security-Policy.** The key lives in `sessionStorage`, so any
+- **No Content-Security-Policy.** (**Addressed in Phase 9, 2026-10-08: see
+  "Phase 9 — Open API Live pilot" below.**) The key lives in `sessionStorage`, so any
   future XSS could read it. Current HTML sinks (`dangerouslySetInnerHTML`)
   render only server-generated shiki output from static content and the
   constant theme script; upstream response data is rendered as text only.
@@ -227,6 +233,76 @@ Accepted (user decisions, 2026-09-25):
   limit; the upstream is authoritative for access.
 - **Tenant scoping is upstream's**: the portal does not check that `tenant`
   belongs to the key (unchanged from U-08).
+
+## Phase 9 — Open API Live pilot (2026-10-08, Opus 5.5)
+
+First Open API operation on the Live allowlist: `openapi/simplecdrs-list`
+(`GET /simplecdrs`). Decisions are the user's (grilling session 2026-10-08;
+`docs/phases/09-openapi-live-pilot.md`, `docs/DECISIONS.md` "Phase 9").
+
+Controls (all in `src/server/playground/`, enforced server-side):
+
+- **Credential transport**: `X-API-Key` header only; never in the upstream
+  URL. Header-unsafe keys (anything outside visible ASCII) are rejected.
+- **Base URL**: exact-match allowlist (`ALLOWED_BASES`), including
+  `https://pbx6webserver.1com.co.il/pbx/openapi.php`; the target path is the
+  base path plus the fixed endpoint path.
+- **Output format**: JSON only. `format=json` is forced; `format`,
+  `template` and `contenttype` are not caller-settable (template/XML output
+  cannot be field-filtered). The Playground hides them in Live.
+- **Response fields**: default-deny allowlist of the 12 observed fields
+  (`sc_te_id`, `tenantcode`, `sc_start`, `sc_direction`, `sc_calleridnum`,
+  `sc_calleridname`, `sc_dialednum`, `sc_disposition`, `sc_duration`,
+  `sc_billsec`, `sc_uniqueid`, `sc_whoanswered`). Any other JSON shape is
+  withheld. Upstream error answers are cut to `error.code` and
+  `error.message`.
+- **Filters**: `tenant` and the 13 documented filters, each with an
+  anchored pattern; anything else is rejected before any upstream call.
+- **Date range**: `end - start` at most **3 days** (user amendment
+  2026-10-08), with the documented defaults for an omitted bound (today
+  00:00:00 / 23:59:59); impossible dates and `end < start` are rejected;
+  `range_too_wide` is returned before any upstream call.
+- **Multi-tenant answers**: if the (projected) answer contains more than
+  one distinct `tenantcode` (an admin/global key), the whole answer is
+  blocked (`multi_tenant_blocked`); only the event is logged, no data.
+- **Logging**: unchanged by construction (`log.ts` has no field for
+  parameters, tenant, credential, URL or body). Verified by tests that fake
+  call data never appears in any log line.
+- **Content-Security-Policy** (`src/lib/security-headers.ts`, applied to
+  every route by `next.config.ts`): `default-src 'self'`, `connect-src
+  'self'`, `img-src 'self' data:`, `font-src 'self'`, `object-src 'none'`,
+  `base-uri 'self'`, `form-action 'self'`, `frame-ancestors 'none'`; plus
+  `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`,
+  `X-Frame-Options: DENY`. Development alone adds `'unsafe-eval'` and `ws:`.
+
+Residual risks and limits (accepted):
+
+- **The CSP is an exfiltration lock, not an injection block.** By user
+  decision the pages stay statically pre-rendered, so `script-src` keeps
+  `'unsafe-inline'` (the theme script and Next's bootstrap need it). Script
+  injected by a future XSS could therefore still run and read the key from
+  `sessionStorage`, but the page cannot send it to any other origin.
+  Removing `'unsafe-inline'` needs per-request nonces and dynamic rendering
+  of every page, a deployment-level change.
+- **Caller PII is shown in full** to the key holder (decision above). The
+  portal never logs or stores it; the browser tab shows it until closed.
+- **`tenant` is required in practice**: a tenant key without it gets
+  `401 invalid_api_key` (probe 2026-09-26).
+- **Rate limit**: in-memory, per instance. Behind the production Apache the
+  client IP arrives as the last `X-Forwarded-For` entry, appended by
+  `mod_proxy`; set `PLAYGROUND_TRUSTED_IP_HEADER=x-forwarded-for`
+  (`docs/DEPLOYMENT.md`). The port the app listens on must stay bound to
+  `127.0.0.1`, otherwise a caller could forge the header.
+- **TEST key handling**: the TEST key is for local testing only, never in
+  production configuration, never committed. A TEST key was pasted into the
+  chat session on 2026-10-08 so the real-PBX e2e could run; rotating it is
+  recommended (the value is deliberately not recorded here).
+
+Validation (2026-10-08): 474 unit tests; Chromium Playwright 118 passed
+(zero CSP violations across en/he pages at 1440px and 390px); the env-gated
+real-PBX spec (`tests/e2e/live-real.spec.ts`, 3 tests) passed against the
+production PBX with a TEST key. WebKit (mobile-safari) could not be run:
+the browser is not installed on the development machine.
 
 ## Blocking requirements for future Live enablement
 
@@ -348,11 +424,11 @@ Recorded 2026-09-26. Evidence: `source-docs/openapi/cdrs.md`.
 
 Field names are documented (`clid`, `src`/`dst`/`realsrc`, `pincode`, `cc_cost`/`cc_country`/`cc_network`/`cc_buy`) but no response example exists, so envelope/types are unconfirmed. Before Live: confirm response schema, then a default-deny allowlist excluding `pincode` and billing-cost fields absent a business decision.
 
-### SEC-REQ-08 — OpenAPI Simple CDR response fields (BLOCKING, open)
+### SEC-REQ-08 — OpenAPI Simple CDR response fields (CLOSED for `simplecdrs-list` Live, Phase 9, 2026-10-08)
 
-Recorded 2026-09-26. Evidence: `source-docs/openapi/simplecdrs.md`.
+Recorded 2026-09-26. Evidence: `source-docs/openapi/simplecdrs.md`, `source-docs/observed/openapi/probe-2026-09-26.masked.json`.
 
-Caller PII fields (`sc_calleridnum`, `sc_calleridname`, `sc_dialednum`) documented by name only, no response example. Before Live: confirm response schema, then a default-deny allowlist.
+Caller PII fields (`sc_calleridnum`, `sc_calleridname`, `sc_dialednum`) were documented by name only. **Closed by user decision 2026-10-08** for the single operation `openapi/simplecdrs-list`: the response schema was confirmed by the 2026-09-26 probe (12 fields) and is enforced as a default-deny allowlist; the caller PII is shown in full to the holder of the key (their own tenant's data) and is never logged or stored by the portal. See "Phase 9 — Open API Live pilot". The baseline's `BLOCK LIVE` mark is kept as recorded history; `tests/unit/phase8-readiness.test.ts` carries the explicit exemption. Any other operation that touches this data remains blocked.
 
 ### SEC-REQ-09 — OpenAPI AI Analysis (BLOCK LIVE outright, open)
 
