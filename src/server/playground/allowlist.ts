@@ -81,7 +81,7 @@ const LIVE_POLICIES = {
     forcedQuery: { format: "json" },
     excludedParams: ["format", "template", "contenttype"],
     tenantField: "tenantcode",
-    dateRange: { start: "start", end: "end", maxDays: 7 },
+    dateRange: { start: "start", end: "end", maxDays: 3 },
     errorEnvelope: true,
     paramPatterns: {
       tenant: /^[\p{L}\p{N}_.-]{1,64}$/u,

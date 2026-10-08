@@ -78,7 +78,7 @@ describe("simplecdrs-list target", () => {
       fixedQuery: { format: "json" },
       credential: { location: "header", name: "X-API-Key" },
       tenantField: "tenantcode",
-      dateRange: { start: "start", end: "end", maxDays: 7 },
+      dateRange: { start: "start", end: "end", maxDays: 3 },
       errorEnvelope: true,
     });
   });
@@ -200,26 +200,26 @@ describe("parameters", () => {
   });
 });
 
-describe("date range (max 7 days, documented defaults)", () => {
-  it("accepts exactly 7 days", () => {
-    expect(validate(withParams({ start: "2026-10-01 00:00:00", end: "2026-10-08 00:00:00" })).ok).toBe(true);
+describe("date range (max 3 days, documented defaults)", () => {
+  it("accepts exactly 3 days", () => {
+    expect(validate(withParams({ start: "2026-10-01 00:00:00", end: "2026-10-04 00:00:00" })).ok).toBe(true);
   });
 
-  it("rejects 7 days and 1 second", () => {
-    expect(validate(withParams({ start: "2026-10-01 00:00:00", end: "2026-10-08 00:00:01" }))).toEqual({
+  it("rejects 3 days and 1 second", () => {
+    expect(validate(withParams({ start: "2026-10-01 00:00:00", end: "2026-10-04 00:00:01" }))).toEqual({
       ok: false,
       code: "range_too_wide",
     });
   });
 
   it("applies end = today 23:59:59 when only start is given", () => {
-    expect(validate(withParams({ start: "2026-10-02 00:00:00" })).ok).toBe(true);
-    expect(validate(withParams({ start: "2026-10-01 23:59:58" }))).toEqual({ ok: false, code: "range_too_wide" });
+    expect(validate(withParams({ start: "2026-10-06 00:00:00" })).ok).toBe(true);
+    expect(validate(withParams({ start: "2026-10-05 23:59:58" }))).toEqual({ ok: false, code: "range_too_wide" });
   });
 
   it("applies start = today 00:00:00 when only end is given", () => {
-    expect(validate(withParams({ end: "2026-10-15 00:00:00" })).ok).toBe(true);
-    expect(validate(withParams({ end: "2026-10-15 00:00:01" }))).toEqual({ ok: false, code: "range_too_wide" });
+    expect(validate(withParams({ end: "2026-10-11 00:00:00" })).ok).toBe(true);
+    expect(validate(withParams({ end: "2026-10-11 00:00:01" }))).toEqual({ ok: false, code: "range_too_wide" });
   });
 
   it("treats blank dates as omitted", () => {
