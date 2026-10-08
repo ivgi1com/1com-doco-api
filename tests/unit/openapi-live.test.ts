@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { getLiveTarget, listLiveHiddenParams } from "@/server/playground/allowlist";
+import { getLiveTarget, listLiveTargetHints } from "@/server/playground/allowlist";
 import { getPlaygroundConfig } from "@/server/playground/config";
 import { buildUpstreamHeaders, buildUpstreamUrl } from "@/server/playground/execute";
 import { handleLiveRequest } from "@/server/playground/handler";
@@ -110,8 +110,10 @@ describe("simplecdrs-list target", () => {
   });
 
   it("tells the Playground which documented params to hide", () => {
-    expect(listLiveHiddenParams()[ID].sort()).toEqual(["contenttype", "format", "template"]);
-    expect(listLiveHiddenParams()["proxy/info-extensions"]).toEqual([]);
+    const hints = listLiveTargetHints();
+    expect(hints[ID].hiddenParams.sort()).toEqual(["contenttype", "format", "template"]);
+    expect(hints[ID].fixedQuery).toEqual({ format: "json" });
+    expect(hints["proxy/info-extensions"].hiddenParams).toEqual([]);
   });
 });
 

@@ -5,7 +5,7 @@ import { Callout } from "@/components/ui/callout";
 import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
 import { apis, defaultEndpoint, getApi, getEndpoint } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
-import { listLiveTargetIds } from "@/server/playground/allowlist";
+import { listLiveTargetHints, listLiveTargetIds } from "@/server/playground/allowlist";
 import { getPlaygroundConfig } from "@/server/playground/config";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,7 +37,9 @@ export default async function PlaygroundPage({
 
   const samplesByEndpoint = await buildPlaygroundSamples(api);
   // Read per request (this page is dynamic), so the kill switch applies without a rebuild.
-  const liveEndpointIds = getPlaygroundConfig().liveEnabled ? listLiveTargetIds() : [];
+  const liveEnabled = getPlaygroundConfig().liveEnabled;
+  const liveEndpointIds = liveEnabled ? listLiveTargetIds() : [];
+  const liveHints = liveEnabled ? listLiveTargetHints() : {};
 
   return (
     <div className="flex min-h-[calc(100dvh-57px)] flex-col">
@@ -58,6 +60,7 @@ export default async function PlaygroundPage({
         initialEndpoint={endpoint}
         samplesByEndpoint={samplesByEndpoint}
         liveEndpointIds={liveEndpointIds}
+        liveHints={liveHints}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import "server-only";
 import { openapiApi } from "@/content/openapi";
 import { proxyApi } from "@/content/proxy";
 import type { ApiDefinition } from "@/content/types";
+import type { LiveTargetHints } from "@/lib/playground-protocol";
 
 /**
  * The only destinations the Live proxy may ever reach, each with its own
@@ -236,7 +237,9 @@ export function listLiveTargetIds(): string[] {
   return [...targets.keys()];
 }
 
-/** Per Live target, the documented parameters the Playground must hide in Live mode. */
-export function listLiveHiddenParams(): Record<string, string[]> {
-  return Object.fromEntries([...targets.values()].map((t) => [t.id, [...t.excludedParams]]));
+/** Per Live target, what the Playground needs to mirror the portal's request (see LiveTargetHints). */
+export function listLiveTargetHints(): Record<string, LiveTargetHints> {
+  return Object.fromEntries(
+    [...targets.values()].map((t) => [t.id, { hiddenParams: [...t.excludedParams], fixedQuery: { ...t.fixedQuery } }]),
+  );
 }

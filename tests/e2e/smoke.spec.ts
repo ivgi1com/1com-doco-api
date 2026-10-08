@@ -476,6 +476,129 @@ test.describe("interactions", () => {
       await desktopPane(page).getByLabel("API key").fill(FAKE_KEY);
     }
 
+    // Phase 9: openapi/simplecdrs-list is the first Open API operation that
+    // can go Live. Every test mocks `/api/playground`; none reaches the PBX.
+    test.describe("Open API Live pilot (Phase 9)", () => {
+      const LIVE_OP = "openapi/simplecdrs-list";
+      const rows = [
+        { sc_te_id: "12", tenantcode: "TESTTENANT", sc_start: "2026-01-01 09:00:00", sc_direction: "IN", sc_calleridnum: "0500000000", sc_calleridname: "", sc_dialednum: "0300000000", sc_disposition: "ANSWERED", sc_duration: "30", sc_billsec: "25", sc_uniqueid: "1700000000.1", sc_whoanswered: "" },
+      ];
+      const upstream = (status: number, body: unknown) => ({
+        ok: true,
+        upstream: {
+          status,
+          latencyMs: 90,
+          sizeBytes: 100,
+          contentType: "application/json",
+          headers: { "content-type": "application/json" },
+          bodyText: JSON.stringify(body),
+        },
+      });
+
+      test("opens in Demo; Live needs the confirmation, then shows the key field and an enabled Send", async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        await expect(page.getByRole("button", { name: "Switch to Live" })).toBeVisible();
+        await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(desktopPane(page).getByLabel("API key")).toBeVisible();
+        await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeEnabled();
+      });
+
+      test("Live hides format, template and contenttype; Demo still shows them", async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        for (const name of ["format", "template", "contenttype"]) {
+          await expect(desktopPane(page).getByLabel(name, { exact: true })).toBeVisible();
+        }
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        for (const name of ["format", "template", "contenttype"]) {
+          await expect(desktopPane(page).getByLabel(name, { exact: true })).toHaveCount(0);
+        }
+        await expect(desktopPane(page).getByLabel("tenant", { exact: true })).toBeVisible();
+        await expect(desktopPane(page).getByLabel("calleridnum", { exact: true })).toBeVisible();
+      });
+
+      test("the Live request preview shows format=json and a masked X-API-Key header, never the key", async ({ page }) => {
+        await goLiveOn(page, LIVE_OP);
+        const preview = desktopPane(page).getByTestId("request-preview");
+        await preview.locator("summary").click();
+        await expect(preview).toContainText("format=json");
+        await expect(preview).toContainText("X-API-Key");
+        await expect(preview).toContainText("••••");
+        await expect(page.getByText(FAKE_KEY)).toHaveCount(0);
+      });
+
+      test("Send posts the endpoint, the entered filters and the key to the portal only, without format", async ({ page }) => {
+        const posted: { endpoint: string; params: Record<string, string>; credential: string }[] = [];
+        await page.route("**/api/playground", (route) => {
+          posted.push(route.request().postDataJSON());
+          return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(upstream(200, rows)) });
+        });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByLabel("tenant", { exact: true }).fill("MYTENANT");
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible();
+        await expect(desktopPane(page).getByText('"sc_uniqueid"')).toBeVisible();
+        expect(posted).toHaveLength(1);
+        expect(posted[0].endpoint).toBe(LIVE_OP);
+        expect(posted[0].credential).toBe(FAKE_KEY);
+        expect(posted[0].params.tenant).toBe("MYTENANT");
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["format"]));
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["template"]));
+        expect(Object.keys(posted[0].params)).not.toEqual(expect.arrayContaining(["contenttype"]));
+      });
+
+      test("an upstream error envelope is shown as the LIVE response with its status", async ({ page }) => {
+        await mockPlayground(page, upstream(401, { error: { code: "invalid_api_key", message: "Invalid API key" } }));
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 401/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/invalid_api_key/)).toBeVisible();
+        await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+      });
+
+      test("a range over 3 days is reported as a portal error, not Demo data", async ({ page }) => {
+        await mockPlayground(page, { ok: false, error: { code: "range_too_wide" } }, { status: 400 });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText("Request failed")).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText(/at most 3 days/)).toBeVisible();
+        await expect(desktopPane(page).getByText(/DEMO/)).toHaveCount(0);
+      });
+
+      test("an answer spanning several tenants is blocked with an explicit message and no records", async ({ page }) => {
+        await mockPlayground(page, { ok: false, error: { code: "multi_tenant_blocked" } }, { status: 403 });
+        await goLiveOn(page, LIVE_OP);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/more than one tenant/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText('"sc_uniqueid"')).toHaveCount(0);
+      });
+
+      test("other Open API operations stay Live-disabled", async ({ page }) => {
+        await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+        await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+      });
+
+      test("the Live pilot works on a narrow screen without console errors", async ({ page }) => {
+        const errors = trackConsoleErrors(page);
+        await page.setViewportSize({ width: 390, height: 844 });
+        await mockPlayground(page, upstream(200, rows));
+        await page.goto(`./en/playground?endpoint=${LIVE_OP}`);
+        // The mode bar sits above the stepped mobile layout.
+        await expect(page.getByRole("button", { name: "Switch to Live" })).toBeVisible();
+        await page.getByRole("button", { name: "Switch to Live" }).click();
+        await page.getByRole("button", { name: "Switch mode" }).click();
+        await expect(page.getByRole("button", { name: "Switch to Demo" })).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBe(false);
+        expect(errors).toEqual([]);
+      });
+    });
+
     // UX fix: tenant + API key are shared Live-mode context and must survive
     // switching endpoints via the sidebar (not a fresh page load); an
     // endpoint-specific field (id) must still reset normally.

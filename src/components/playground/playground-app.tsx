@@ -5,6 +5,7 @@ import type { RenderedSample } from "@/components/code/code-tabs";
 import { defaultEndpoint, getApi } from "@/content";
 import { getDemoFixtures } from "@/content/demo";
 import type { ApiDefinition, Endpoint } from "@/content/types";
+import type { LiveTargetHints } from "@/lib/playground-protocol";
 import { useRouter } from "@/i18n/navigation";
 import { EndpointPicker } from "./endpoint-picker";
 import { MobileSteps } from "./mobile-steps";
@@ -19,17 +20,21 @@ export function PlaygroundApp({
   initialEndpoint,
   samplesByEndpoint,
   liveEndpointIds,
+  liveHints,
 }: {
   api: ApiDefinition;
   initialEndpoint: Endpoint;
   samplesByEndpoint: Record<string, RenderedSample[]>;
   /** Allowlisted `${api}/${endpoint}` ids; empty when Live is disabled server-side. */
   liveEndpointIds: string[];
+  /** Per Live target: parameters hidden in Live and query values the portal forces. */
+  liveHints: Record<string, LiveTargetHints>;
 }) {
   const router = useRouter();
   const [endpoint, setEndpoint] = useState(initialEndpoint);
   const liveAvailable = liveEndpointIds.includes(`${api.id}/${endpoint.id}`);
-  const state = usePlayground(api, endpoint, liveAvailable);
+  const hints = liveAvailable ? liveHints[`${api.id}/${endpoint.id}`] : undefined;
+  const state = usePlayground(api, endpoint, liveAvailable, hints);
   const samples = samplesByEndpoint[endpoint.id] ?? [];
   const demoFixtures = getDemoFixtures(api.id, endpoint.id);
 
@@ -59,6 +64,7 @@ export function PlaygroundApp({
       state={state}
       synthetic={api.synthetic}
       liveAvailable={liveAvailable}
+      liveHints={hints}
       demoFixtures={demoFixtures}
     />
   );
