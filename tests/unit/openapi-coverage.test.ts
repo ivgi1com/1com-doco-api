@@ -151,9 +151,9 @@ describe("OpenAPI content ↔ inventory", () => {
     }
   });
 
-  it("puts no OpenAPI endpoint on the Live allowlist (SEC-REQ-27/28)", () => {
+  it("puts only the Phase 9 pilot on the Live allowlist (SEC-REQ-27/28, Phase 9)", () => {
     const live = listLiveTargetIds();
-    expect(live.filter((id) => id.startsWith("openapi/"))).toEqual([]);
+    expect(live.filter((id) => id.startsWith("openapi/"))).toEqual(["openapi/simplecdrs-list"]);
   });
 
   it("gives Demo fixtures only to the approved endpoints", () => {

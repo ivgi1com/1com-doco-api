@@ -28,6 +28,8 @@ const PORTAL_ERROR_TONE: Record<string, "warning" | "danger"> = {
   invalid_request: "warning",
   endpoint_not_allowed: "warning",
   missing_credential: "warning",
+  range_too_wide: "warning",
+  multi_tenant_blocked: "warning",
   upstream_timeout: "danger",
   upstream_too_large: "danger",
   upstream_redirect: "danger",

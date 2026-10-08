@@ -41,8 +41,13 @@ async function run(body: unknown, upstreamText: string, contentType = "applicati
 }
 
 describe("Live allowlist membership", () => {
-  it("is exactly the three approved endpoints", () => {
-    expect(listLiveTargetIds().sort()).toEqual(["proxy/cdr-get", "proxy/info-agents", "proxy/info-extensions"]);
+  it("is exactly the approved endpoints", () => {
+    expect(listLiveTargetIds().sort()).toEqual([
+      "openapi/simplecdrs-list",
+      "proxy/cdr-get",
+      "proxy/info-agents",
+      "proxy/info-extensions",
+    ]);
   });
 
   it.each(["proxy/agent-listqueues", "proxy/cdr-update", "proxy/info-queues", "proxy/INFO-AGENTS", "proxy/info-agents "])(
@@ -62,7 +67,7 @@ describe("info-agents target", () => {
       path: "/pbx/proxyapi.php",
       method: "GET",
       fixedQuery: { reqtype: "INFO", info: "agents" },
-      credentialParam: "key",
+      credential: { location: "query", name: "key" },
     });
     expect([...t.allowedParams].sort()).toEqual(["format", "queue", "tenant"]);
     expect([...t.paramEnums.get("format")!].sort()).toEqual(["json", "plain"]);
