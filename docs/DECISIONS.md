@@ -2038,3 +2038,26 @@ Stages (all on `phase/openapi-live`): 1 server `b93afe0` (+ 3-day amendment
   tagged. No next phase is planned or started.
 - Production Live enable (decided "right after the gate") is still a
   separate, user-run step and has not been done.
+
+## Hebrew removed — English-only portal (2026-10-08)
+
+User decisions (asked one by one), on branch `chore/remove-hebrew` from
+`phase/openapi-live`:
+
+- **Hebrew is removed completely** from the site: no Hebrew pages, language
+  switcher, Hebrew messages (`messages/he.json` deleted) or "not translated"
+  banner. Supersedes the Phase 1–4 bilingual (en/he, RTL) decisions.
+- **Addresses keep `/en/`**, so every existing English link and bookmark
+  keeps working (next-intl stays, with a single locale and no detection).
+- **Old `/he/...` addresses redirect (308) to the same `/en/...` page**
+  (`next.config.ts` redirects; query kept).
+- **RTL-only code removed** (RTL CSS, `rtl:` variants, mirrored icons,
+  RTL arrow-key logic, Hebrew font subset, redundant `lang="en"` markers).
+  Kept: generic logical CSS classes and the `dir="ltr"`/`dir="auto"`
+  isolation around code, URLs and parameter names.
+- Kept on purpose (not UI language): the vendor source-site URL that
+  contains Hebrew (`src/content/proxy/shared.ts`) and a Hebrew caller-name
+  test value — real call data may contain Hebrew names, and the Live filter
+  pattern must keep accepting them.
+- Historical decision and phase entries that mention Hebrew are unchanged.
+

@@ -1,6 +1,11 @@
 # Current Status
 
 Current work:
+**Hebrew removed — English-only portal (2026-10-08), branch
+`chore/remove-hebrew` (from `phase/openapi-live`). Not merged, pushed or
+tagged; awaiting the user's review.** `/en/` addresses unchanged; `/he/...`
+redirects to `/en/...`. See `docs/DECISIONS.md` "Hebrew removed".
+
 **Phase 9 (Open API Live pilot, `simplecdrs-list`) APPROVED (2026-10-08,
 gate B — approve, save, and stop) on `phase/openapi-live`. Not merged to
 `main`, not pushed, not tagged. No next phase started; waiting for the user.

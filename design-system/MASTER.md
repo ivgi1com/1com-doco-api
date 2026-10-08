@@ -164,7 +164,7 @@ Lifecycle badges: outline style, so they never compete with method pills.
 ## Navigation
 
 - Header height 56px, sticky, `bg` with a bottom border plus a 1px brand hairline (indigo to violet).
-- Contents: logo, Guides / API Reference / Changelog, search (`⌘K`/`Ctrl K`, `/`), `EN | עב`, theme, account.
+- Contents: logo, Guides / API Reference / Changelog, search (`⌘K`/`Ctrl K`, `/`), theme, account. (The `EN | עב` language switch was removed 2026-10-08: English only.)
 - Sidebar:
   - 16rem, sticky, scrolls independently.
   - Active item: `accent` text on an accent tint at about 10%. No side stripe.
@@ -214,7 +214,7 @@ Lifecycle badges: outline style, so they never compete with method pills.
 - **Loading**: skeletons shaped like the final content. The Playground's in-flight request shows a pulsing signal dot plus elapsed milliseconds. No centered spinners over content.
 - **Empty**: explain what goes here and give the next action (for example, "Send a request to see the response").
 - **Error**: what happened, why (when known), and what to do next. Include the status code and request ID. Never expose secrets or raw upstream internals.
-- **Not translated yet** (Hebrew): an info banner, following the MS Learn pattern.
+- ~~**Not translated yet** (Hebrew): an info banner~~ — removed 2026-10-08 with Hebrew.
 
 ## Responsive rules
 
@@ -246,10 +246,12 @@ Rules:
   - Colour is never the only signal: method, lifecycle and mode all carry text.
 - Full keyboard operation: skip link, visible `:focus-visible` ring, roving focus in trees and tabs, palette shortcuts that don't hijack inputs.
 - Semantic landmarks. Code tabs use the ARIA tabs pattern. Disclosures use `aria-expanded`. The Playground response uses a polite live region.
-- `lang` and `dir` are set on `<html>` per locale. Inline LTR tokens in Hebrew prose use `<bdi>` or `dir="ltr"`.
+- `<html lang="en" dir="ltr">` (English only since 2026-10-08).
 - Respect reduced motion and forced colors (`forced-colors: active`: badges keep their borders).
 
 ## RTL / bilingual rules
+
+> **Superseded 2026-10-08:** Hebrew was removed; the portal is English-only and left-to-right. Kept as history. Logical properties remain in use as ordinary CSS.
 
 - Locales: `en` (LTR) and `he` (RTL). The whole chrome mirrors through logical properties. No physical `left`/`right` in components.
 - Never mirrored: code, JSON, URLs and paths, method pills, parameter names, E.164 numbers, telemetry.

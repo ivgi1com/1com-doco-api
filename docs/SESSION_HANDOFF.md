@@ -3,6 +3,17 @@
 Last updated: 2026-10-08 (Phase 9 APPROVED, gate B — saved and stopped;
 read this first)
 
+## Hebrew removed — English only (2026-10-08), awaiting review
+
+- Branch `chore/remove-hebrew` from `phase/openapi-live`. Language switcher,
+  `messages/he.json`, untranslated banner and RTL-only code removed; html is
+  always `lang="en" dir="ltr"`; `/en/` kept; `/he/...` -> `/en/...` (308).
+- Validation: `npm run check` 474/474; full Playwright (chromium +
+  mobile-safari) after the change: all pass except two known timing flakes
+  under parallel load (mobile nav drawer, CSP 390px) that pass alone.
+- The "Hebrew strings DRAFT" open item below is obsolete.
+- Not merged/pushed/tagged; needs the user's review.
+
 ## Phase 9 — Open API Live pilot (2026-10-08), APPROVED (gate B)
 
 - Branch `phase/openapi-live` (from `main` @ `9dc8562`). Commits: `bde25fd`
