@@ -1,7 +1,71 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (Phase 10 approved on `phase/live-all-reads`,
-unmerged; read this first)
+Last updated: 2026-10-08 (end of session; start at "Resume here")
+
+## Resume here (2026-10-08, end of session)
+
+### Where things stand
+
+| What | Commit / tag | GitHub | Production |
+|---|---|---|---|
+| Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | **deployed** (server checked out at the tag) |
+| Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge`; `main` head `88a4a3f` | pushed at end of session | not deployed |
+| Phase 10 — Live for every read (85 targets) | `phase/live-all-reads`, from `88a4a3f` | pushed at end of session | not deployed |
+
+- Work branch: `phase/live-all-reads` (contains all of `main`). Not merged.
+- Production server: `/home/portal/app` detached at `v1.2-side-menus`;
+  previous build kept in `.next.prev` (from `5ac5a82`).
+  `PLAYGROUND_LIVE_ENABLED=true` is already set, so deploying Phase 10 turns
+  all 85 reads Live at once.
+- Next phase: **Phase 11, planned, not started** —
+  `docs/phases/11-verify-merge-deploy-live.md`.
+
+### Resume on another machine
+
+```
+git clone https://github.com/ivgi1com/1com-doco-api.git   # or: git fetch --all --tags
+cd 1com-doco-api
+git switch phase/live-all-reads
+npm ci
+npm run check            # expect 505/505
+npx playwright install   # first time only (chromium + webkit)
+```
+
+Read first: `CLAUDE.md`, `docs/CURRENT_STATUS.md`, this file,
+`docs/phases/11-verify-merge-deploy-live.md`, `docs/SECURITY.md` "Phase 10".
+Model: Phase 11 step 1 (judging real redaction output) on Opus 5.5; merge,
+tag and deploy steps are routine (Sonnet).
+
+### Working agreements (user preferences; also in local agent memory)
+
+- Server/deploy work: give one command at a time, say what output to paste,
+  wait. Never list later steps in advance.
+- Questions: one at a time, each with selectable options and a recommended
+  one. Never batch questions, even when a skill says to.
+- After any UI change: run the app locally and open the changed page in the
+  user's Chrome for approval at the end of the task (in addition to the
+  Playwright checks of CLAUDE.md rule 6). Stop the local server after review.
+- Approval gates: always end a phase with the A/B/C/D question (CLAUDE.md).
+  Merge, tag, push and deploy only on explicit request.
+- Production facts and the update procedure: `docs/DEPLOYMENT.md` (Apache
+  `/1com-api-doco` -> `127.0.0.1:3100`, systemd `portal.service`, user
+  `portal`, `npm ci --include=dev` before loading `/etc/portal.env`). Never
+  touch the other apps on that server (PM2, `/noc`, `/dashboard-dev`).
+- Tests must never reach the real PBX, except `tests/e2e/live-real.spec.ts`,
+  which runs only with `OPENAPI_TEST_KEY` / `OPENAPI_TEST_TENANT` set in the
+  user's own shell. Never put a key in chat, files or commits.
+- Known Playwright flakes (pass when rerun alone, also on older baselines):
+  "no CSP violations or console errors" (aborted `_rsc` prefetches,
+  mostly mobile-safari), mobile nav drawer tests under parallel load.
+- Ignore the stray untracked `bash.exe.stackdump` in the repo root.
+
+### Done this session (2026-10-08), newest first
+
+1. Phase 10 — Live for every read (approved, gate A): see below and
+   `docs/phases/10-live-all-reads.md`.
+2. Evidence badge fix (gate B, merged, tagged `v1.2.1-evidence-badge`).
+3. Side menus (gate A, merged, tagged `v1.2-side-menus`, pushed, deployed;
+   verified from outside: pages 200, CSP headers, new buttons present).
 
 ## Phase 10 — Live for every read (2026-10-08), APPROVED (gate A)
 

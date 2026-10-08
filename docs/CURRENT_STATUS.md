@@ -7,8 +7,10 @@ targets (52 Open API, 33 Proxy), pass-through + server-side redaction,
 categorical blocks kept (writes, call content, Dial, DISA, "unclear" Proxy
 ops). Production still runs `v1.2-side-menus`; deploying this build turns
 all 85 Live at once (`PLAYGROUND_LIVE_ENABLED=true` already). `npm run check`
-505/505; Playwright 228/9 skipped/3 known flakes. Next phase: planning only.
-Spec `docs/phases/10-live-all-reads.md`; policy `docs/SECURITY.md` "Phase 10".**
+505/505; Playwright 228/9 skipped/3 known flakes. Next phase: Phase 11 (real-PBX check, merge, tag, deploy),
+planned, not started: `docs/phases/11-verify-merge-deploy-live.md`. Spec
+`docs/phases/10-live-all-reads.md`; policy `docs/SECURITY.md` "Phase 10".
+Resume instructions: `docs/SESSION_HANDOFF.md` "Resume here".**
 
 Previous:
 **Evidence-badge fix APPROVED (2026-10-08, gate B), merged to `main` (1ecb14b)
