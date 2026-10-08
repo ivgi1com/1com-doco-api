@@ -11,6 +11,8 @@ export interface LiveRequestBody {
   /** `${api}/${endpoint}`, e.g. "proxy/info-extensions". */
   endpoint: string;
   params: Record<string, string>;
+  /** Values for the operation's `{name}` path segments; omitted when it has none. */
+  pathParams?: Record<string, string>;
   credential: string;
 }
 

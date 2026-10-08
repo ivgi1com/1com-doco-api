@@ -18,7 +18,11 @@ export const WITHHELD =
 
 // Includes 2FA/OTP params and PINs (observed in format=json output, A-40).
 // `pin(?![a-z])` matches "lockpin"/"pin" but not "mapping".
-const SENSITIVE_NAME = /pass(word|wd)?|pwd|secret|token|2fa|otp|mfa|pin(?![a-z])/i;
+const SENSITIVE_NAME = /pass(word|wd)?|pwd|secret|token|2fa|otp|mfa|pin(?![a-z])|api_?key/i;
+
+// A secret this short (a 0/1 flag under a "2fa" name, say) is not worth
+// hunting for in sibling fields: it would blank every matching flag.
+const MIN_SIBLING_SECRET_LENGTH = 4;
 
 export interface RedactionResult {
   text: string;
@@ -34,8 +38,19 @@ function redactJsonValue(value: unknown, counter: { n: number }): unknown {
   if (Array.isArray(value)) return value.map((v) => redactJsonValue(v, counter));
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
+    // The same secret under another key in this record — e.g. the positional
+    // "0".."n" duplicates some endpoints add (A-43, SEC-REQ-01) — is a secret too.
+    const secrets = new Set(
+      Object.entries(value)
+        .filter(([k, v]) => SENSITIVE_NAME.test(k) && isNonEmpty(v))
+        .map(([, v]) => String(v))
+        .filter((s) => s.length >= MIN_SIBLING_SECRET_LENGTH),
+    );
     for (const [k, v] of Object.entries(value)) {
-      if (SENSITIVE_NAME.test(k) && isNonEmpty(v)) {
+      if (isNonEmpty(v) && secrets.has(String(v))) {
+        out[k] = REDACTED;
+        counter.n++;
+      } else if (SENSITIVE_NAME.test(k) && isNonEmpty(v)) {
         out[k] = REDACTED;
         counter.n++;
       } else if (SENSITIVE_NAME.test(k) && v && typeof v === "object") {
@@ -83,13 +98,17 @@ function redactDelimited(text: string): RedactionResult {
   if (headerIndex === -1) return { text, redacted: 0 };
   const header = lines[headerIndex];
   const delimiter = DELIMITERS.find((d) => header.includes(d));
-  if (!delimiter) {
-    // Single-column or unstructured text. If it names a secret, we can't locate the value.
-    return SENSITIVE_NAME.test(header) ? { text: WITHHELD, redacted: -1 } : { text, redacted: 0 };
-  }
+  // Single-column or unstructured text (e.g. "Password: x" lines): if any line
+  // names a secret, we can't locate the value.
+  if (!delimiter) return SENSITIVE_NAME.test(text) ? { text: WITHHELD, redacted: -1 } : { text, redacted: 0 };
   const columns = header.split(delimiter).map((c) => c.trim().replace(/^"|"$/g, ""));
   const sensitive = columns.flatMap((c, i) => (SENSITIVE_NAME.test(c) ? [i] : []));
-  if (sensitive.length === 0) return { text, redacted: 0 };
+  // No secret column, but a data row names one (a name|value listing, say):
+  // the value sits in an ordinary column, so fail closed.
+  if (sensitive.length === 0) {
+    const named = lines.slice(headerIndex + 1).some((l) => SENSITIVE_NAME.test(l));
+    return named ? { text: WITHHELD, redacted: -1 } : { text, redacted: 0 };
+  }
   // Quoted fields may contain the delimiter; naive splitting could misalign
   // columns, so any quote in the data means fail closed.
   if (lines.slice(headerIndex + 1).some((l) => l.includes('"'))) return { text: WITHHELD, redacted: -1 };

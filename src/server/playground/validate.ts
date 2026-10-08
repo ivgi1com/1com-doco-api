@@ -6,6 +6,8 @@ export interface LiveRequest {
   target: LiveTarget;
   /** Only non-empty, allowlisted parameters. */
   params: Record<string, string>;
+  /** Exactly the target's path parameters, each matching `target.pathValue`. */
+  pathParams: Record<string, string>;
   credential: string;
 }
 
@@ -16,7 +18,7 @@ export type ValidationResult = { ok: true; value: LiveRequest } | { ok: false; c
 const MAX_PARAM_LENGTH = 128;
 const MAX_CREDENTIAL_LENGTH = 256;
 const MAX_PARAM_COUNT = 16;
-const TOP_LEVEL_KEYS = new Set(["endpoint", "params", "credential"]);
+const TOP_LEVEL_KEYS = new Set(["endpoint", "params", "pathParams", "credential"]);
 // C0 controls, DEL, and C1 controls: never legitimate in a query value.
 const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/;
 // A key sent as an HTTP header: visible ASCII only (no spaces, no header splitting).
@@ -77,7 +79,7 @@ export function validateLiveRequest(input: unknown, now: Date = new Date()): Val
   if (!isPlainObject(input)) return invalid;
   for (const key of Object.keys(input)) if (!TOP_LEVEL_KEYS.has(key)) return invalid;
 
-  const { endpoint, params, credential } = input;
+  const { endpoint, params, pathParams, credential } = input;
   if (typeof endpoint !== "string" || endpoint.length > 128) return invalid;
   const target = getLiveTarget(endpoint);
   if (!target) return { ok: false, code: "endpoint_not_allowed" };
@@ -99,6 +101,18 @@ export function validateLiveRequest(input: unknown, now: Date = new Date()): Val
     clean[name] = value;
   }
 
+  // Path values become URL segments: exactly the documented names, each one
+  // plain segment (no "/", "%", "?", "#"), never "." or "..".
+  if (pathParams !== undefined && !isPlainObject(pathParams)) return invalid;
+  const pathEntries = Object.entries(pathParams ?? {});
+  if (pathEntries.length !== target.pathParams.length) return invalid;
+  const cleanPath: Record<string, string> = {};
+  for (const name of target.pathParams) {
+    const value = Object.hasOwn(pathParams ?? {}, name) ? (pathParams as Record<string, unknown>)[name] : undefined;
+    if (typeof value !== "string" || !target.pathValue.test(value) || /^\.+$/.test(value)) return invalid;
+    cleanPath[name] = value;
+  }
+
   if (target.dateRange) {
     const code = checkDateRange(target.dateRange, clean, now);
     if (code) return { ok: false, code };
@@ -110,5 +124,5 @@ export function validateLiveRequest(input: unknown, now: Date = new Date()): Val
   if (credential.trim() === "") return { ok: false, code: "missing_credential" };
   if (target.credential.location === "header" && !HEADER_CREDENTIAL.test(credential)) return invalid;
 
-  return { ok: true, value: { target, params: clean, credential } };
+  return { ok: true, value: { target, params: clean, pathParams: cleanPath, credential } };
 }

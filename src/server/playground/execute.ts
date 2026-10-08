@@ -26,14 +26,20 @@ export interface ExecuteOptions {
  * then — for query-auth APIs only — the credential (U-08). A header-auth key
  * never enters the URL (see buildUpstreamHeaders).
  */
-export function buildUpstreamUrl({ target, params, credential }: LiveRequest): URL {
-  const url = new URL(target.path, target.origin);
+export function buildUpstreamUrl({ target, params, pathParams, credential }: LiveRequest): URL {
+  // Validated values (validate.ts), encoded anyway: a segment can never become a separator.
+  const path = target.path.replace(/\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (_, name: string) => {
+    const value = pathParams[name];
+    if (value === undefined) throw new Error("Live path parameter missing");
+    return encodeURIComponent(value);
+  });
+  const url = new URL(path, target.origin);
   const query = new URLSearchParams();
   for (const [k, v] of Object.entries(target.fixedQuery)) query.set(k, v);
   for (const [k, v] of Object.entries(params)) query.set(k, v);
   if (target.credential.location === "query") query.set(target.credential.name, credential);
   url.search = query.toString();
-  if (url.origin !== target.origin || url.pathname !== target.path) {
+  if (url.origin !== target.origin || url.pathname !== path) {
     throw new Error("Live target resolved outside its allowlisted origin/path");
   }
   return url;

@@ -2090,3 +2090,14 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   the full wording kept as a muted caption under the example. The
   documented-vs-observed disclosure stays visible; only its styling changed.
 
+## Phase 10 — Live for every read (2026-10-08)
+
+- User request: Live for all endpoints except create/update/delete, with
+  tenant and API key in the request. Decisions (asked one at a time):
+  pass-through output + server-side redaction, keeping categorical blocks;
+  both Open API and Proxy API; call content (AI Analysis, AI Logs, Proxy
+  recordings, voicemail transcripts, audio) blocked. Dial, DISA, Auth Token,
+  writes and "unclear" operations stay off. Supersedes the per-read
+  field-allowlist SEC-REQs; residual risk recorded in `docs/SECURITY.md`
+  "Phase 10". Spec `docs/phases/10-live-all-reads.md`.
+

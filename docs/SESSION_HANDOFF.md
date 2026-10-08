@@ -1,7 +1,20 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (evidence-badge fix merged to `main`, tagged
-`v1.2.1-evidence-badge`; read this first)
+Last updated: 2026-10-08 (Phase 10 approved on `phase/live-all-reads`,
+unmerged; read this first)
+
+## Phase 10 — Live for every read (2026-10-08), APPROVED (gate A)
+
+- Branch `phase/live-all-reads` (from `main` @ `88a4a3f`); not merged,
+  pushed, tagged or deployed. `main` also has the unpushed evidence-badge
+  merge and tag `v1.2.1-evidence-badge`.
+- Allowlist derived from content (`allowlist.ts#buildTargets`): GET +
+  `read`, strict policies kept, `LIVE_BLOCKED_CATEGORIES` /
+  `LIVE_BLOCKED_ENDPOINTS`. Pass-through targets rely on `redact.ts` only.
+  Path params via `pathParams` in the POST body.
+- Residual risk (user-accepted): name-based redaction; no tenant-isolation
+  check on pass-through targets. `docs/SECURITY.md` "Phase 10".
+- Not done: real-PBX check with the TEST key; production deploy.
 
 ## Evidence-badge fix (2026-10-08), APPROVED (gate B)
 

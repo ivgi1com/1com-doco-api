@@ -62,14 +62,10 @@ describe("Demo never reaches a network (all OpenAPI operations)", () => {
 });
 
 describe("Live allowlist", () => {
-  // Phase 9 (2026-10-08) added the first OpenAPI read, simplecdrs-list.
-  it("is exactly the three approved Proxy reads plus the Phase 9 OpenAPI pilot", () => {
-    expect([...listLiveTargetIds()].sort()).toEqual([
-      "openapi/simplecdrs-list",
-      "proxy/cdr-get",
-      "proxy/info-agents",
-      "proxy/info-extensions",
-    ]);
+  // Phase 9 (2026-10-08) added the first OpenAPI read, simplecdrs-list; Phase
+  // 10 (same day) opened every read except the categorical blocks — exact
+  // membership is pinned in live-endpoints.test.ts.
+  it("contains only non-write operations", () => {
     for (const id of listLiveTargetIds()) {
       const [apiId, endpointId] = id.split("/");
       expect(getEndpoint(apiId, endpointId)?.operationClass, id).not.toBe("write");
@@ -167,7 +163,24 @@ describe("Baseline ↔ inventory ↔ content reconciliation", () => {
   // The baseline's BLOCK LIVE marks stay as recorded on 2026-09-26. An
   // operation leaves the block only by an explicit user decision that closes
   // its SEC-REQ for Live (docs/SECURITY.md); each is listed here.
-  const LIVE_BLOCK_LIFTED = new Set(["simplecdrs-list"]); // SEC-REQ-08, Phase 9, 2026-10-08
+  // simplecdrs-list: SEC-REQ-08, Phase 9. The rest: Phase 10 (2026-10-08, user
+  // decision "pass-through + redaction, keep categorical blocks"); AI Analysis,
+  // DISA, Dial and Auth Token stay blocked.
+  const LIVE_BLOCK_LIFTED = new Set([
+    "simplecdrs-list",
+    "cdrs-list",
+    "conferencerooms-list",
+    "conferencerooms-get",
+    "extensions-list",
+    "extensions-get",
+    "extensions-get-by-number",
+    "paginggroups-list",
+    "paginggroups-get",
+    "provisioningphones-list",
+    "provisioningphones-get",
+    "voicemails-list",
+    "voicemails-get",
+  ]);
 
   it("BLOCK LIVE operations are never Live-enabled (unless explicitly lifted) or Demo-simulated writes", () => {
     for (const op of ops.filter((o) => o.securityReview === "BLOCK LIVE")) {

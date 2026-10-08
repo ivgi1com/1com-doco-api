@@ -1,6 +1,16 @@
 # Current Status
 
 Current work:
+**Phase 10 (Live for every read) APPROVED (2026-10-08, gate A) on
+`phase/live-all-reads`; not merged, pushed, tagged or deployed. 85 Live
+targets (52 Open API, 33 Proxy), pass-through + server-side redaction,
+categorical blocks kept (writes, call content, Dial, DISA, "unclear" Proxy
+ops). Production still runs `v1.2-side-menus`; deploying this build turns
+all 85 Live at once (`PLAYGROUND_LIVE_ENABLED=true` already). `npm run check`
+505/505; Playwright 228/9 skipped/3 known flakes. Next phase: planning only.
+Spec `docs/phases/10-live-all-reads.md`; policy `docs/SECURITY.md` "Phase 10".**
+
+Previous:
 **Evidence-badge fix APPROVED (2026-10-08, gate B), merged to `main` (1ecb14b)
 and tagged `v1.2.1-evidence-badge`; not pushed, not deployed.
 Response examples with `observed-sanitized` evidence now show a short
