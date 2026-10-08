@@ -1,8 +1,8 @@
 # Current Status
 
 Current work:
-**Evidence-badge fix APPROVED (2026-10-08, gate B - approve, save, stop) on
-`fix/evidence-badge-style`; not merged to `main`, not pushed, not deployed.
+**Evidence-badge fix APPROVED (2026-10-08, gate B), merged to `main` (1ecb14b)
+and tagged `v1.2.1-evidence-badge`; not pushed, not deployed.
 Response examples with `observed-sanitized` evidence now show a short
 neutral "Observed sample" chip (one line) plus a muted caption with the full
 "Observed, sanitized - not vendor-documented" wording. `npm run check`
