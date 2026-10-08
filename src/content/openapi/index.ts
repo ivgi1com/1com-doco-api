@@ -90,4 +90,6 @@ export const openapiApi: ApiDefinition = {
   summary:
     "1com's REST-style API (openapi.php): one path per object, JSON bodies, and list/get/create/update/delete on most configuration objects. Authenticate with the X-API-Key header; tenant-scoped objects take a tenant parameter. Documented from the official API documentation; no operation has been tested against a real PBX yet. Operations that change state are documented here but never sent from the Playground.",
   categories: categories.filter((c) => c.endpoints.length > 0),
+  menuOrder: ["dial", "simplecdr", "extension", "did", "queue", "huntlist", "mediafile"],
+  menuHidden: ["provisioningphone", "setting"],
 };

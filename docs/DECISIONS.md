@@ -2075,3 +2075,11 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   (the Phase 9 decision "enable right after the gate"). Verified from
   outside the network. Kill switch: remove the line and restart the portal.
 
+## Side menus: hide, not delete (2026-10-08)
+
+- The user asked to remove Provisioning and Settings from the menu. Chosen
+  (user): hide from the side menus only. Content, routes, search, Demo
+  fixtures and coverage tests are unchanged; direct URLs still work.
+  Ordering and hiding are per-API config (`menuOrder`, `menuHidden`), set
+  only for the Open API.
+

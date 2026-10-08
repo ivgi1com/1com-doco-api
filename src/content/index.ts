@@ -1,7 +1,7 @@
 import { openapiApi } from "./openapi";
 import { proxyApi } from "./proxy";
 import { sampleApi } from "./sample-api";
-import type { ApiDefinition, Endpoint } from "./types";
+import type { ApiDefinition, Category, Endpoint } from "./types";
 
 /**
  * 1com Open API first (`apis[0]` is the default, Phase 8E), then the legacy
@@ -15,6 +15,21 @@ export function getApi(apiId: string): ApiDefinition | undefined {
 
 export function listEndpoints(api: ApiDefinition): Endpoint[] {
   return api.categories.flatMap((category) => category.endpoints);
+}
+
+/** Categories for the side menus: `menuHidden` removed, `menuOrder` ids first, the rest in their own order. */
+export function menuCategories(api: ApiDefinition): Category[] {
+  const hidden = new Set(api.menuHidden);
+  const order = api.menuOrder ?? [];
+  const rank = (c: Category) => {
+    const i = order.indexOf(c.id);
+    return i === -1 ? order.length : i;
+  };
+  return api.categories
+    .filter((c) => !hidden.has(c.id))
+    .map((c, index) => ({ c, index }))
+    .sort((a, b) => rank(a.c) - rank(b.c) || a.index - b.index)
+    .map(({ c }) => c);
 }
 
 export function getEndpoint(apiId: string, endpointId: string): Endpoint | undefined {

@@ -1,12 +1,13 @@
 "use client";
 
-import { ChevronDown, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { apis, getApi } from "@/content";
+import { apis, getApi, menuCategories } from "@/content";
 import { getGuide, guideApis, guidesForApi } from "@/content/guides";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { CategoryGroups } from "./category-groups";
 import { NavLink } from "./nav-link";
 
 const itemClass =
@@ -21,6 +22,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
   const router = useRouter();
   const detectedId = /^\/reference\/([^/]+)/.exec(pathname)?.[1];
   const api = (detectedId && getApi(detectedId)) || apis[0];
+  const activeEndpointId = /^\/reference\/[^/]+\/([^/]+)/.exec(pathname)?.[1];
 
   return (
     <div className="space-y-5">
@@ -61,28 +63,18 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
         </NavLink>
       </div>
 
-      {api.categories.map((category) => (
-        <details key={category.id} open className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between rounded-md px-2 py-1 text-xs font-semibold text-ink-muted hover:text-ink [&::-webkit-details-marker]:hidden">
-            {category.title}
-            <ChevronDown
-              className="size-3.5 -rotate-90 transition-transform duration-150 ease-out-quart group-open:rotate-0"
-              aria-hidden
-            />
-          </summary>
-          <ul className="mt-1 space-y-0.5">
-            {category.endpoints.map((endpoint) => (
-              <li key={endpoint.id}>
-                <NavLink href={`/reference/${api.id}/${endpoint.id}`} className={itemClass}>
-                  <MethodBadge method={endpoint.method} size="sm" />
-                  <span className="min-w-0 flex-1 truncate">{endpoint.title}</span>
-                  {endpoint.status !== "stable" && <LifecycleBadge status={endpoint.status} compact />}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </details>
-      ))}
+      <CategoryGroups
+        key={api.id}
+        categories={menuCategories(api)}
+        activeEndpointId={activeEndpointId}
+        renderEndpoint={(endpoint) => (
+          <NavLink href={`/reference/${api.id}/${endpoint.id}`} className={itemClass}>
+            <MethodBadge method={endpoint.method} size="sm" />
+            <span className="min-w-0 flex-1 truncate">{endpoint.title}</span>
+            {endpoint.status !== "stable" && <LifecycleBadge status={endpoint.status} compact />}
+          </NavLink>
+        )}
+      />
     </div>
   );
 }
