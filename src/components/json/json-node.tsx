@@ -98,7 +98,7 @@ export function JsonNode({
               className="mt-[3px] grid size-4 shrink-0 place-items-center text-code-muted"
             >
               <ChevronRight
-                className={`icon-directional size-3 transition-transform duration-150 ease-out-quart ${open ? "rotate-90" : ""}`}
+                className={`size-3 transition-transform duration-150 ease-out-quart ${open ? "rotate-90" : ""}`}
                 aria-hidden
               />
             </button>

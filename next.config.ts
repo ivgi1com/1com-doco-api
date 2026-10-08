@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
   basePath: BASE_PATH || undefined,
   // CSP + related headers on every route (src/lib/security-headers.ts).
   // `source` is matched under basePath automatically.
+  // Hebrew was removed (2026-10-08): old /he addresses go to the same English page.
+  async redirects() {
+    return [
+      { source: "/he", destination: "/en", permanent: true },
+      { source: "/he/:path*", destination: "/en/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders(process.env.NODE_ENV !== "production") }];
   },

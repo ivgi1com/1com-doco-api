@@ -66,7 +66,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
           <summary className="flex cursor-pointer list-none items-center justify-between rounded-md px-2 py-1 text-xs font-semibold text-ink-muted hover:text-ink [&::-webkit-details-marker]:hidden">
             {category.title}
             <ChevronDown
-              className="size-3.5 -rotate-90 transition-transform duration-150 ease-out-quart rtl:rotate-90 group-open:rotate-0 rtl:group-open:rotate-0"
+              className="size-3.5 -rotate-90 transition-transform duration-150 ease-out-quart group-open:rotate-0"
               aria-hidden
             />
           </summary>

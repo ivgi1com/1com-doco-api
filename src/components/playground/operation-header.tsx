@@ -21,10 +21,10 @@ export function OperationHeader({ endpoint }: { endpoint: Endpoint }) {
 
   return (
     <header data-testid="operation-header" className="space-y-1.5">
-      <h2 lang="en" dir="auto" className="text-sm font-semibold text-ink">
+      <h2 dir="auto" className="text-sm font-semibold text-ink">
         {endpoint.title}
       </h2>
-      <p lang="en" dir="auto" className="text-xs text-ink-muted">
+      <p dir="auto" className="text-xs text-ink-muted">
         <InlineMarkup text={endpoint.summary} />
       </p>
       <ul className="flex flex-wrap gap-1.5 text-[11px] font-medium text-ink-muted">

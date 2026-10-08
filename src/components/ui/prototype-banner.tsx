@@ -11,12 +11,3 @@ export function PrototypeBanner() {
     </p>
   );
 }
-
-export function UntranslatedBanner() {
-  const t = useTranslations("prototype");
-  return (
-    <p className="rounded-md border border-info-ink/25 bg-info-tint px-3 py-2 text-sm text-info-ink">
-      {t("untranslated")}
-    </p>
-  );
-}

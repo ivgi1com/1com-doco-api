@@ -30,14 +30,8 @@
     "dark": "Dark",
     "system": "System"
   },
-  "locale": {
-    "label": "Language",
-    "en": "English",
-    "he": "עברית"
-  },
   "prototype": {
-    "banner": "Prototype sample content. The endpoints on this page are fictional and do not describe a real 1com API.",
-    "untranslated": "This content is not translated yet. It is shown in English."
+    "banner": "Prototype sample content. The endpoints on this page are fictional and do not describe a real 1com API."
   },
   "home": {
     "title": "Build on 1com voice infrastructure",

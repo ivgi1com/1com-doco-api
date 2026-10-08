@@ -54,7 +54,7 @@ export function RequestPanel({
           className="flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
         >
           {t("tryIt")}
-          <ArrowRight className="icon-directional size-4" aria-hidden />
+          <ArrowRight className="size-4" aria-hidden />
         </Link>
       )}
       {data.responses.length > 0 ? (

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PlaygroundApp } from "@/components/playground/playground-app";
 import { Callout } from "@/components/ui/callout";
-import { PrototypeBanner, UntranslatedBanner } from "@/components/ui/prototype-banner";
+import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { apis, defaultEndpoint, getApi, getEndpoint } from "@/content";
 import { buildPlaygroundSamples } from "@/lib/playground-index";
 import { listLiveTargetHints, listLiveTargetIds } from "@/server/playground/allowlist";
@@ -45,7 +45,6 @@ export default async function PlaygroundPage({
     <div className="flex min-h-[calc(100dvh-57px)] flex-col">
       <div className="space-y-2 px-4 py-3 sm:px-6 lg:px-10">
         {api.synthetic && <PrototypeBanner />}
-        {locale !== "en" && <UntranslatedBanner />}
         {endpointNotFound && (
           <Callout kind="warning" title={t("endpointNotFoundTitle")}>
             <p data-testid="endpoint-not-found">

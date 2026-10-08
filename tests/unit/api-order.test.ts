@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { apis, defaultEndpoint, listEndpoints } from "@/content";
 import { getGuide, guideApis, guides, guidesForApi } from "@/content/guides";
 import en from "../../messages/en.json";
-import he from "../../messages/he.json";
 
 /** Phase 8E Stage 5 (brief item 8): Open API first and default, Proxy legacy, Sample last. */
 describe("API order and defaults (8E)", () => {
@@ -13,7 +12,6 @@ describe("API order and defaults (8E)", () => {
   it("marks only the Proxy API as legacy", () => {
     expect(apis.filter((a) => a.legacy).map((a) => a.id)).toEqual(["proxy"]);
     expect(en.nav.legacyApi).toContain("{name}");
-    expect(he.nav.legacyApi).toContain("{name}");
   });
 
   it("opens the Open API Playground on Simple CDR, a documented read", () => {
