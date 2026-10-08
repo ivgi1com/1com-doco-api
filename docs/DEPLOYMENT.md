@@ -91,8 +91,9 @@ Pitfalls seen on 2026-10-08:
 
 Rollback: `git checkout --detach <previous commit>`, then `npm ci
 --include=dev` and rebuild, or restore the previous `.next` copy and
-restart. The 2026-10-08 update left `.next.v1.0-backup` and `.next.failed`
-on the server (safe to delete once the new build is trusted).
+restart (the update above keeps one in `.next.prev`). The extra copies from
+the 2026-10-08 update were deleted the same day, so returning to v1.0 means
+rebuilding from the `v1.0-developer-portal` tag.
 
 ## Runtime environment
 
