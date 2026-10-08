@@ -2061,3 +2061,10 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   pattern must keep accepting them.
 - Historical decision and phase entries that mention Hebrew are unchanged.
 
+## Merged to main (2026-10-08)
+
+- On the user's request, `chore/remove-hebrew` was merged into `main`
+  (no-ff). Because it was built on `phase/openapi-live`, this also merges
+  the approved Phase 9 (Open API Live pilot). Not pushed, not tagged;
+  production Live not enabled.
+

@@ -3,7 +3,7 @@
 Last updated: 2026-10-08 (Phase 9 APPROVED, gate B — saved and stopped;
 read this first)
 
-## Hebrew removed — English only (2026-10-08), awaiting review
+## Hebrew removed — English only (2026-10-08), merged to `main`
 
 - Branch `chore/remove-hebrew` from `phase/openapi-live`. Language switcher,
   `messages/he.json`, untranslated banner and RTL-only code removed; html is
@@ -12,7 +12,9 @@ read this first)
   mobile-safari) after the change: all pass except two known timing flakes
   under parallel load (mobile nav drawer, CSP 390px) that pass alone.
 - The "Hebrew strings DRAFT" open item below is obsolete.
-- Not merged/pushed/tagged; needs the user's review.
+- Merged to `main` on the user's request (2026-10-08), which also brings in
+  the approved Phase 9 branch `phase/openapi-live`. Not pushed, not tagged.
+  `chore/agent-skills-docs` is still separate and unmerged.
 
 ## Phase 9 — Open API Live pilot (2026-10-08), APPROVED (gate B)
 
