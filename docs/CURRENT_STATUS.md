@@ -1,6 +1,12 @@
 # Current Status
 
 Current work:
+**RESUME POINTER (2026-10-08): active work is NOT on `main`. It is on branch
+`phase/live-all-reads` (Phase 10 "Live for every read" approved, not merged;
+Phase 11 "verify, merge, deploy" planned, not started). Before anything else:
+`git switch phase/live-all-reads`, then read `docs/SESSION_HANDOFF.md`
+"Resume here" on that branch. The status below on `main` is older.**
+
 **Evidence-badge fix APPROVED (2026-10-08, gate B), merged to `main` (1ecb14b)
 and tagged `v1.2.1-evidence-badge`; not pushed, not deployed.
 Response examples with `observed-sanitized` evidence now show a short
