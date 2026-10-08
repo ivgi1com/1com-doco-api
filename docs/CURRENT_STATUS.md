@@ -1,6 +1,17 @@
 # Current Status
 
 Current work:
+**Evidence-badge fix APPROVED (2026-10-08, gate B - approve, save, stop) on
+`fix/evidence-badge-style`; not merged to `main`, not pushed, not deployed.
+Response examples with `observed-sanitized` evidence now show a short
+neutral "Observed sample" chip (one line) plus a muted caption with the full
+"Observed, sanitized - not vendor-documented" wording. `npm run check`
+480/480; Playwright 222 passed / 9 skipped / 3 CSP-test flakes (pre-existing:
+the mobile-safari CSP 1440px test failed 2/6 on pre-menu baseline `caedb8e`,
+1/6 now). Production (`v1.2-side-menus`) still shows the old amber badge.
+No next phase started; waiting for the user.**
+
+Previous:
 **Side-menu changes APPROVED (2026-10-08, gate A), merged to `main`
 (`7f35952`) and tagged `v1.2-side-menus`; not pushed, not deployed. Reference sidebar, mobile drawer and Playground picker: categories
 start collapsed (only the active endpoint's category open), Expand all /

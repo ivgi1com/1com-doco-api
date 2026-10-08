@@ -2083,3 +2083,10 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   Ordering and hiding are per-API config (`menuOrder`, `menuHidden`), set
   only for the Open API.
 
+## Observed-example label: neutral chip + caption (2026-10-08)
+
+- The amber, two-line "Observed, sanitized - not vendor-documented" chip
+  looked alarming. Chosen (user): a short neutral "Observed sample" chip and
+  the full wording kept as a muted caption under the example. The
+  documented-vs-observed disclosure stays visible; only its styling changed.
+
