@@ -167,7 +167,7 @@ tag and deploy steps are routine (Sonnet).
   verified); TEST key was pasted into the chat on 2026-10-08, rotation
   recommended; Hebrew strings DRAFT; CSP keeps `'unsafe-inline'`
   (documented trade-off); two Most Used Cases guides still await the user's
-  description; `bash.exe.stackdump` in the working tree is untracked junk.
+  description.
 - Model routing used: Opus 5.5 for Stages 1 and 3 and the grilling/plan;
   Sonnet 5.5 for Stages 2, 4, 5. Stage 6 needs Opus 5.5.
 
