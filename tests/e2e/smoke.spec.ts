@@ -1492,3 +1492,76 @@ test.describe("interactions", () => {
     });
   });
 });
+
+// Phase 9 Stage 3: CSP "lockdown" (src/lib/security-headers.ts). Every page
+// must render and work with the policy in force: no violation reports, no
+// console errors, across locales, a narrow viewport and a (mocked) Live send.
+test.describe("Content-Security-Policy (Phase 9)", () => {
+  const pages = [
+    "./en",
+    "./he",
+    "./en/reference/openapi/simplecdrs-list",
+    "./en/reference/proxy/info-extensions",
+    "./en/guides/getting-started",
+    "./en/playground",
+    "./he/playground?endpoint=openapi/simplecdrs-list",
+  ];
+
+  async function watchCsp(page: Page) {
+    await page.addInitScript(() => {
+      (window as unknown as { __csp: string[] }).__csp = [];
+      document.addEventListener("securitypolicyviolation", (e) => {
+        (window as unknown as { __csp: string[] }).__csp.push(`${e.violatedDirective} ${e.blockedURI}`);
+      });
+    });
+    return () => page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
+  }
+
+  test("every page is served with the CSP and related headers", async ({ request }) => {
+    for (const url of ["./en", "./en/playground"]) {
+      const res = await request.get(url);
+      const h = res.headers();
+      expect(h["content-security-policy"], url).toContain("connect-src 'self'");
+      expect(h["content-security-policy"], url).toContain("frame-ancestors 'none'");
+      expect(h["content-security-policy"], url).not.toContain("unsafe-eval");
+      expect(h["referrer-policy"], url).toBe("no-referrer");
+      expect(h["x-frame-options"], url).toBe("DENY");
+    }
+  });
+
+  for (const width of [1440, 390]) {
+    test(`no CSP violations or console errors at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      const errors = trackConsoleErrors(page);
+      const violations = await watchCsp(page);
+      for (const url of pages) {
+        await page.goto(url);
+        await page.waitForLoadState("networkidle");
+        expect(await violations(), url).toEqual([]);
+      }
+      expect(errors).toEqual([]);
+    });
+  }
+
+  test("a Live send still works under the CSP", async ({ page }) => {
+    const violations = await watchCsp(page);
+    await page.route("**/api/playground", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          upstream: { status: 200, latencyMs: 5, sizeBytes: 2, contentType: "application/json", headers: {}, bodyText: "[]" },
+        }),
+      }),
+    );
+    await page.goto("./en/playground?endpoint=openapi/simplecdrs-list");
+    await page.getByRole("button", { name: "Switch to Live" }).click();
+    await page.getByRole("button", { name: "Switch mode" }).click();
+    const pane = page.locator(".md\\:grid");
+    await pane.getByLabel("API key").fill("not-a-real-key-e2e-only");
+    await pane.getByRole("button", { name: "Send request" }).click();
+    await expect(pane.getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+    expect(await violations()).toEqual([]);
+  });
+});
