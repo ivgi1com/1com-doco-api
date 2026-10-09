@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apis, getApi, getEndpoint, listEndpoints, menuCategories } from "@/content";
+import { apis, getApi, getEndpoint, menuCategories } from "@/content";
 import { guides } from "@/content/guides";
 import { sampleLanguages } from "@/lib/code-samples";
 import { buildSearchIndex } from "@/lib/search-index";
