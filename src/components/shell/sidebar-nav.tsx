@@ -54,6 +54,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
             {api.version} ({t("latest")})
           </option>
         </select>
+        <p className="px-0.5 text-xs text-ink-muted">{t("apiHint")}</p>
       </div>
 
       <div>
@@ -108,6 +109,7 @@ export function GuidesNav({ idPrefix = "side" }: { idPrefix?: string }) {
             </option>
           ))}
         </select>
+        <p className="px-0.5 text-xs text-ink-muted">{t("apiHint")}</p>
       </div>
       <ul className="space-y-0.5">
         {guidesForApi(apiId).map((guide) => (

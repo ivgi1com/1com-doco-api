@@ -29,7 +29,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <p className="max-w-[60ch] text-md text-ink-muted">{t("lead")}</p>
         <div className="flex flex-wrap gap-3 pt-1">
           <Link
-            href="/guides/openapi-authentication"
+            href="/guides/quickstart"
             className="flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
           >
             {t("startGuide")}

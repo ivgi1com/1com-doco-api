@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apis, getApi, getEndpoint, listEndpoints } from "@/content";
+import { apis, getApi, getEndpoint, listEndpoints, menuCategories } from "@/content";
 import { guides } from "@/content/guides";
 import { sampleLanguages } from "@/lib/code-samples";
 import { buildSearchIndex } from "@/lib/search-index";
@@ -62,8 +62,8 @@ describe("guide registry", () => {
 });
 
 describe("search index", () => {
-  it("covers every endpoint of every API plus every guide", () => {
-    const endpointCount = apis.reduce((n, api) => n + listEndpoints(api).length, 0);
+  it("covers every menu-visible endpoint of every API plus every guide", () => {
+    const endpointCount = apis.reduce((n, api) => n + menuCategories(api).flatMap((c) => c.endpoints).length, 0);
     const index = buildSearchIndex();
     expect(index.filter((i) => i.kind === "endpoint")).toHaveLength(endpointCount);
     expect(index.filter((i) => i.kind === "guide")).toHaveLength(guides.length);

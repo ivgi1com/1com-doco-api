@@ -264,7 +264,7 @@ test.describe("interactions", () => {
 
     test("Guides open in Open API mode; Proxy guides only after selecting it (8E)", async ({ page, browserName }) => {
       await page.goto("./en/guides");
-      await expect(page).toHaveURL(/\/guides\/openapi-authentication$/);
+      await expect(page).toHaveURL(/\/guides\/quickstart$/);
       const sidebar = page.locator("aside").first();
       const select = sidebar.getByRole("combobox");
       await expect(select).toHaveValue("openapi");
@@ -280,7 +280,7 @@ test.describe("interactions", () => {
 
     test("the home Most Used Cases card and primary button lead to Open API guides (8E)", async ({ page }) => {
       await page.goto("./en");
-      await expect(page.getByRole("link", { name: "Get started with the Open API" })).toHaveAttribute("href", /\/guides\/openapi-authentication$/);
+      await expect(page.getByRole("link", { name: "Get started with the Open API" })).toHaveAttribute("href", /\/guides\/quickstart$/);
       await page.getByRole("link", { name: /Most Used Cases/ }).click();
       await expect(page).toHaveURL(/\/guides\/most-used-cases$/);
       await expect(page.getByRole("heading", { level: 1, name: "Most Used Cases" })).toBeVisible();

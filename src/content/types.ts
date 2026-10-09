@@ -202,7 +202,7 @@ export interface ApiDefinition {
   categories: Category[];
   /** Category ids shown first in the side menus, in this order; the rest keep their order. */
   menuOrder?: string[];
-  /** Category ids left out of the side menus only (pages, search and routes are unaffected). */
+  /** Category ids left out of the side menus and search (pages and routes are unaffected). */
   menuHidden?: string[];
   /** Related categories shown under one menu entry; the group sits where its first member would. */
   menuGroups?: MenuGroupDefinition[];

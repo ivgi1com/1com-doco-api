@@ -1,8 +1,10 @@
 import { apis } from "../index";
 import { authentication } from "./authentication";
 import { callHistory } from "./call-history";
+import { glossary } from "./glossary";
 import { mostUsedCases } from "./most-used-cases";
 import { openapiAuthentication } from "./openapi-authentication";
+import { quickstart } from "./quickstart";
 import type { Guide } from "./types";
 
 /**
@@ -10,7 +12,7 @@ import type { Guide } from "./types";
  * legacy Proxy API. Each guide is a content module (types.ts); the Guides
  * sidebar shows one API's guides at a time.
  */
-export const guides: Guide[] = [openapiAuthentication, mostUsedCases, authentication, callHistory];
+export const guides: Guide[] = [quickstart, openapiAuthentication, glossary, mostUsedCases, authentication, callHistory];
 
 export function getGuide(slug: string) {
   return guides.find((g) => g.slug === slug);

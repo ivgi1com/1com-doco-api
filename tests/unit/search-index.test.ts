@@ -18,6 +18,15 @@ describe("buildSearchIndex", () => {
   });
 });
 
+describe("buildSearchIndex and hidden menu categories", () => {
+  it("leaves out categories hidden from the side menus (Settings, Provisioning phones)", () => {
+    const hrefs = buildSearchIndex().map((i) => i.href);
+    expect(hrefs.some((h) => h.startsWith("/reference/openapi/settings-"))).toBe(false);
+    expect(hrefs.some((h) => h.startsWith("/reference/openapi/provisioningphones-"))).toBe(false);
+    expect(hrefs).toContain("/reference/openapi/extensions-list");
+  });
+});
+
 describe("searchItems", () => {
   const index = buildSearchIndex();
 

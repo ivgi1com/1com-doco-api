@@ -23,6 +23,7 @@
     "version": "Version",
     "latest": "latest",
     "legacyApi": "{name} (legacy)",
+    "apiHint": "Use the Open API for new integrations; the Proxy API is legacy.",
     "expandAll": "Expand all",
     "collapseAll": "Collapse all"
   },

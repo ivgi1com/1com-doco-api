@@ -1227,3 +1227,18 @@ OA-20 — Proxy reads the portal withholds or can't reach (OBSERVED)
   10 s timeout (`upstream_timeout`); not checked for leaks.
 - All other 31 Proxy Live answers: no key, no secret-named value, no secret
   URL parameter (Phase 12, `docs/phases/12-proxy-real-check.md`).
+
+## 17. Public OpenAPI spec file (2026-10-09)
+
+OA-21 — The PBX serves its OpenAPI spec without a key (OBSERVED)
+- A keyless `GET` of `/pbx/openapi.php/openapi.json`, `/swagger.json` and
+  `?spec=1` on the production PBX host each returned HTTP 200,
+  `application/json`, the same 388,804-byte body: OpenAPI 3.0.3, title
+  "Pbx OpenAPI", version 1.1.7, 98 paths, three security schemes (query key,
+  header key, bearer).
+- It describes 43 paths the portal does not document, including the
+  administrative resources the customer portal excludes (`/auth/token`,
+  `/tenants`, `/users`, `/userprofiles`, `/routingprofiles`, `/providers`).
+- Decision: the portal does not link or ship the file. Linking it would
+  publish the excluded administrative surface. Reopen when the user decides
+  whether a customer-scoped spec should be offered.
