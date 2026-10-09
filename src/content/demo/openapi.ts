@@ -65,7 +65,7 @@ const extensionsStateFixtures: DemoFixtureSet = {
     {
       id: "not-registered-json",
       label: "Not registered",
-      basis: "extension-state.md: the documented response when the extension exists but no registration server is available (UniqueID KO). Demo convention: extension number 199 selects this case; the number itself is not from the source.",
+      basis: "extension-state.md: the documented response when the extension exists but no registration server is available (UniqueID KO). Demo convention: extension number 199 selects this case; the number itself is not from the documentation.",
       when: { tenant: "*", number: ["199"], ext: "*" },
       preset: { tenant: TENANT, number: "199" },
       response: {
@@ -2789,7 +2789,7 @@ const simplecdrsListFixtures: DemoFixtureSet = {
     {
       id: "no-match-json",
       label: "No matching calls",
-      basis: "Observed on the test PBX: a filter matching no calls (minduration=999999 in the probe) returned HTTP 200 with an empty JSON array `[]`, not an error (source-docs/DOCS_AUDIT.md OA-18). `999999` selects this case as a Demo convention; the value itself is not from the source.",
+      basis: "Observed on the test PBX: a filter matching no calls (minduration=999999 in the probe) returned HTTP 200 with an empty JSON array `[]`, not an error (source-docs/DOCS_AUDIT.md OA-18). `999999` selects this case as a Demo convention; the value itself is not from the documentation.",
       when: { tenant: "*", start: "*", end: "*", id: "*", uniqueid: "*", calleridnum: "*", calleridname: "*", disposition: "*", direction: "*", dialednum: "*", whoanswered: "*", phone: "*", minduration: ["999999"], mintalktime: "*", format: "*", template: "*", contenttype: "*" },
       preset: { tenant: TENANT, minduration: "999999" },
       response: { status: 200, format: "json", contentType: "application/json", body: [] },
@@ -2999,7 +2999,7 @@ const aianalysisFixtures: DemoFixtureSet = {
     {
       id: "invalid-key-json",
       label: "Invalid API Key",
-      basis: "_common.md ov:42 documents `invalid_api_key` for a key that does not match the tenant (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the source.",
+      basis: "_common.md ov:42 documents `invalid_api_key` for a key that does not match the tenant (DOCUMENTED). Envelope `{\"error\":{\"code\",\"message\"}}` observed on the test PBX (source-docs/DOCS_AUDIT.md OA-14). `DEMO_INVALID_KEY` is a Demo convention entered in the `key` query field, not from the documentation.",
       when: { tenant: "*", uniqueid: "*", key: ["DEMO_INVALID_KEY"] },
       preset: { tenant: TENANT, key: "DEMO_INVALID_KEY" },
       response: {
@@ -3012,7 +3012,7 @@ const aianalysisFixtures: DemoFixtureSet = {
     {
       id: "no-match-json",
       label: "No analysis for the unique ID",
-      basis: "Observed on the test PBX: a uniqueid with no analysis returned HTTP 200 with an empty JSON array `[]`, not an error (source-docs/DOCS_AUDIT.md OA-14, OA-18). `1700000000.00` selects this case as a Demo convention; the value itself is not from the source.",
+      basis: "Observed on the test PBX: a uniqueid with no analysis returned HTTP 200 with an empty JSON array `[]`, not an error (source-docs/DOCS_AUDIT.md OA-14, OA-18). `1700000000.00` selects this case as a Demo convention; the value itself is not from the documentation.",
       when: { tenant: "*", uniqueid: ["1700000000.00"], key: "*" },
       preset: { tenant: TENANT, uniqueid: "1700000000.00" },
       response: { status: 200, format: "json", contentType: "application/json", body: [] },
@@ -3020,7 +3020,7 @@ const aianalysisFixtures: DemoFixtureSet = {
     {
       id: "one-unknown-json",
       label: "One of two unique IDs unknown",
-      basis: "ai-analysis.md Important Notes: \"Unknown unique IDs are omitted from the response.\" Two IDs are requested; only the known one returns a row. The second ID is a Demo convention, not from the source.",
+      basis: "ai-analysis.md Important Notes: \"Unknown unique IDs are omitted from the response.\" Two IDs are requested; only the known one returns a row. The second ID is a Demo convention, not from the documentation.",
       when: { tenant: "*", uniqueid: ["1700000000.42,1700000000.99"], key: "*" },
       preset: { tenant: TENANT, uniqueid: "1700000000.42,1700000000.99" },
       response: { status: 200, format: "json", contentType: "application/json", body: [ANALYSIS_ROW] },
@@ -3028,7 +3028,7 @@ const aianalysisFixtures: DemoFixtureSet = {
     {
       id: "found-json",
       label: "Analysis found (JSON)",
-      basis: "ai-analysis.md: the documented example response for a matched uniqueid. The all-miss case (no uniqueid matches) is not shown on the source page, so only this one case is fixtured.",
+      basis: "ai-analysis.md: the documented example response for a matched uniqueid. The all-miss case (no uniqueid matches) is not shown on the documentation page, so only this one case is fixtured.",
       when: { tenant: "*", uniqueid: "*", key: "*" },
       preset: { tenant: TENANT, uniqueid: "1700000000.42" },
       response: {

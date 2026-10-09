@@ -25,7 +25,7 @@ describe("customerText", () => {
   it("drops source line citations, keeping any quotation they introduced", () => {
     expect(customerText("Doc-only purpose line (Doc line 127): \"list of queues\".")).toBe('Doc-only purpose line: "list of queues".');
     expect(customerText('Site line 155: "Based on your browser settings"')).toBe('"Based on your browser settings"');
-    expect(customerText("Doc line 137 lists id, uniqueid together")).toBe("The source lists id, uniqueid together");
+    expect(customerText("Doc line 137 lists id, uniqueid together")).toBe("The documentation lists id, uniqueid together");
     expect(customerText("Doc line 179: start and stop only")).toBe("Start and stop only");
   });
 

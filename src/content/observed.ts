@@ -51,13 +51,13 @@ for (const [key, id] of Object.entries(FOLLOWUP_IDS)) {
 /** Error and edge-case observations, attached as notes to the operation they were made on. */
 const OBSERVED_NOTES: Record<string, string[]> = {
   "extensions-list": [
-    "Observed on the test PBX: an invalid key returned HTTP 401 with `{\"error\": {\"code\": \"invalid_api_key\", \"message\": ...}}`. Omitting `tenant`, or sending an unknown tenant, also returned 401 `invalid_api_key` — the source documents `tenant_required` and `tenant_not_found` for those cases (source-docs/DOCS_AUDIT.md OA-15).",
+    "Observed on the test PBX: an invalid key returned HTTP 401 with `{\"error\": {\"code\": \"invalid_api_key\", \"message\": ...}}`. Omitting `tenant`, or sending an unknown tenant, also returned 401 `invalid_api_key` — the documentation lists `tenant_required` and `tenant_not_found` for those cases (source-docs/DOCS_AUDIT.md OA-15).",
   ],
   "campaigns-get": [
-    "Observed on the test PBX: a nonexistent ID returned HTTP 404 `object_not_found`, an error code the source does not list (source-docs/DOCS_AUDIT.md OA-16).",
+    "Observed on the test PBX: a nonexistent ID returned HTTP 404 `object_not_found`, an error code that is not in the documented list (source-docs/DOCS_AUDIT.md OA-16).",
   ],
   "aianalysis-get": [
-    "Observed on the test PBX: a request without `uniqueid` returned HTTP 400 `uniqueid_required`; a request whose unique IDs have no analysis returned HTTP 200 with an empty array `[]` (the source does not show the all-miss case).",
+    "Observed on the test PBX: a request without `uniqueid` returned HTTP 400 `uniqueid_required`; a request whose unique IDs have no analysis returned HTTP 200 with an empty array `[]` (the all-miss case is not shown in the documentation).",
   ],
   "extensions-state-get": [
     "Observed on the test PBX: an unknown extension number returned HTTP 404 in the `{\"error\": {\"code\", \"message\"}}` envelope. An existing extension returned the documented 8 keys; `UniqueID` and `LinkedID` were non-empty and the other six were empty strings.",
@@ -213,11 +213,11 @@ function observedResponse(endpoint: Endpoint, r: ProbeResult): ResponseSpec {
   const keys = new Set(rows.flatMap((row) => (typeof row === "object" ? Object.keys(row) : [])));
   const genericKeys = GENERIC_FIELDS.filter((k) => keys.has(k)).map((k) => `\`${k}\``);
   const generic = genericKeys.length
-    ? ` Besides the source columns, ${isList ? "each row" : "the object"} carries generic ${genericKeys.join(", ")} field${genericKeys.length > 1 ? "s" : ""}.`
+    ? ` Besides the documented columns, ${isList ? "each row" : "the object"} carries generic ${genericKeys.join(", ")} field${genericKeys.length > 1 ? "s" : ""}.`
     : "";
   return {
     status: 200,
-    description: `Observed on the test PBX (${PROBE_DATE}, one masked structure-only probe): HTTP 200 with ${envelope}.${generic} Field names and value types are observed; the example values are synthetic placeholders, and fields whose meaning the source does not document stay undocumented.`,
+    description: `Observed on the test PBX (${PROBE_DATE}, one masked structure-only probe): HTTP 200 with ${envelope}.${generic} Field names and value types are observed; the example values are synthetic placeholders, and fields whose meaning the documentation does not document stay undocumented.`,
     format: "json",
     evidence: "observed-sanitized",
     ...(empty ? { example: [] } : { schema: schemaOf(rows), example: isList ? [exampleOf(rows)] : exampleOf(body) }),

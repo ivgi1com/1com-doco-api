@@ -34,7 +34,7 @@ const formatParam: Parameter = {
   enum: ["plain", "json"],
   example: "json",
   description:
-    "Output format. The source lists plain, json, xml and csv \"depending on the request\" without saying which this operation supports. Observed (A-40): the default is plain (a pipe-delimited table); json returns an array; xml and csv returned an empty body, so they are not offered here.",
+    "Output format. The documentation lists plain, json, xml and csv \"depending on the request\" without saying which this operation supports. Observed (A-40): the default is plain (a pipe-delimited table); json returns an array; xml and csv returned an empty body, so they are not offered here.",
   source: `${SOURCE_PAGE}#bkmrk-common-parameters`,
 };
 
@@ -107,9 +107,9 @@ const infoExtensions: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the legacy proxyapi.php reqtype catalogue (reqtype=INFO, info=EXTENSIONS). Full audit: source-docs/proxy-api/info.md.",
-    "1com's production path is /pbx/proxyapi.php. The vendor's own documentation examples use /mirtapbx/proxyapi.php; only the 1com path is used in this portal.",
-    "The source shows three usage patterns only by example: list every extension (tenant only), filter by id, or filter by number. Whether id and number can be combined, and how the list is paginated, is not documented.",
-    "Response formats are observed, not vendor-documented (source-docs/DOCS_AUDIT.md A-40): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array. format=xml and format=csv returned an empty body for this operation, so they are not offered.",
+    "1com's production path is /pbx/proxyapi.php. Some older examples use /mirtapbx/proxyapi.php; only the 1com path is used in this portal.",
+    "Three usage patterns are shown, only by example: list every extension (tenant only), filter by id, or filter by number. Whether id and number can be combined, and how the list is paginated, is not documented.",
+    "Response formats are observed, not documented (source-docs/DOCS_AUDIT.md A-40): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array. format=xml and format=csv returned an empty body for this operation, so they are not offered.",
     "In Live mode the portal returns only the six fields documented above for format=json, and redacts credential-like values (passwords, 2FA parameters, PINs) in either format before the response reaches your browser. Your own integration receives the full upstream record.",
     "An earlier sample (source-docs/observed/info-extensions.json, U-11) showed an object keyed by ex_id; it matches neither observed format and is superseded.",
   ],
@@ -124,7 +124,7 @@ const agentsQueueParam: Parameter = {
   type: "string",
   required: "undocumented",
   description:
-    "Queue identifier to list agents for. Not documented by the source for this operation (the operation itself is only named in the INFO purpose line). Observed (A-43): a nonexistent queue returns the JSON literal null; omitting it returned the same agents as the tenant's one queue on the test tenant.",
+    "Queue identifier to list agents for. Not specified for this operation (the operation itself is only named in the INFO purpose line). Observed (A-43): a nonexistent queue returns the JSON literal null; omitting it returned the same agents as the tenant's one queue on the test tenant.",
   example: "281",
   constraints: "Digits only (enforced by this portal's Live proxy).",
   source: "source-docs/DOCS_AUDIT.md#a-43",
@@ -209,7 +209,7 @@ const infoAgents: Endpoint = {
   responses: [infoAgentsResponse],
   errors: "undocumented",
   notes: [
-    "Not exemplified by the vendor documentation: the INFO operation list names \"agents\" without an example. This operation was supplied by 1com and characterised by observation only (source-docs/DOCS_AUDIT.md A-43).",
+    "Not exemplified in the documentation: the INFO operation list names \"agents\" without an example. This operation was supplied by 1com and characterised by observation only (source-docs/DOCS_AUDIT.md A-43).",
     "The info value is case-insensitive in observation (agents and AGENTS returned the same body).",
     "Errors are not signalled by HTTP status: a nonexistent queue returns HTTP 200 with the body null.",
     "Field meanings are not documented. Records use numeric keys; the Live proxy returns only the positions observed so far (0, 1, 2, 4–8, 10, 11).",
@@ -289,7 +289,7 @@ const infoDids: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the Proxy API INFO reqtype (info=DIDS). Full audit: source-docs/proxy-api/info.md.",
-    "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-53): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array; format=csv returned an empty body on the tenant tested.",
+    "Response formats are observed, not documented for their exact shape (source-docs/DOCS_AUDIT.md A-53): the default is a pipe-delimited plain-text table (content type text/html); format=json returns a JSON array; format=csv returned an empty body on the tenant tested.",
     "format=json here shows only the DID's own fields, never the joined tenant record the real API also returns in the same item.",
     "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
   ],
@@ -356,7 +356,7 @@ const simplecdrsItemSchema: Parameter[] = [
 const infoSimplecdrsResponse: ResponseSpec = {
   status: 200,
   description:
-    "With format=json: a JSON array, one object per call; every field also appears a second time under a bare positional key (\"0\"..\"10\", same order as listed here) — observed, not vendor-documented (A-49). With format=csv: the same 11 named fields as a comma-separated table with a header row; values containing a space are quoted. No matching calls returns an empty 200 body, not [] (A-49). A default/plain format exists but is not reproduced here — see A-54.",
+    "With format=json: a JSON array, one object per call; every field also appears a second time under a bare positional key (\"0\"..\"10\", same order as listed here) — observed, not documented (A-49). With format=csv: the same 11 named fields as a comma-separated table with a header row; values containing a space are quoted. No matching calls returns an empty 200 body, not [] (A-49). A default/plain format exists but is not reproduced here — see A-54.",
   format: "json",
   evidence: "observed-sanitized",
   verified: true,
@@ -412,8 +412,8 @@ const infoSimplecdrs: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the Proxy API INFO reqtype (info=SIMPLECDRS). Full audit: source-docs/proxy-api/info.md.",
-    "The source also names id/uniqueid/calleridnum/calleridname/disposition/direction/whoanswered as filter parameters (source-docs/proxy-api/info.md); only phone, start and end are offered here, matching what was actually characterised (A-49).",
-    "Response formats are observed, not vendor-documented for their exact shape (source-docs/DOCS_AUDIT.md A-49, A-54): format=json and format=csv are well understood; a default/plain table exists but is not offered here because its structure could only be partially decoded from a masked capture (A-54).",
+    "The documentation also names id/uniqueid/calleridnum/calleridname/disposition/direction/whoanswered as filter parameters (source-docs/proxy-api/info.md); only phone, start and end are offered here, matching what was actually characterised (A-49).",
+    "Response formats are observed, not documented for their exact shape (source-docs/DOCS_AUDIT.md A-49, A-54): format=json and format=csv are well understood; a default/plain table exists but is not offered here because its structure could only be partially decoded from a masked capture (A-54).",
     "Not offered on Live: src/server/playground/allowlist.ts has no entry for this operation. Adding one is a separate security decision (Phase 7).",
   ],
   related: [],
@@ -422,7 +422,7 @@ const infoSimplecdrs: Endpoint = {
 const queuelogsQueueParam: Parameter = {
   ...agentsQueueParam,
   description:
-    "Queue identifier. The source names it for queue logs (Doc line 151: \"queue id requested for agents info or queue logs\"). Whether it actually narrows the result was not observed (A-50): a nonexistent queue returned the same empty result as every other request on the test tenant.",
+    "Queue identifier. It is named for queue logs (Doc line 151: \"queue id requested for agents info or queue logs\"). Whether it actually narrows the result was not observed (A-50): a nonexistent queue returned the same empty result as every other request on the test tenant.",
   source: "source-docs/DOCS_AUDIT.md#a-50",
 };
 
@@ -446,7 +446,7 @@ const queuelogsFormatParam: Parameter = {
   enum: ["json", "csv"],
   example: "json",
   description:
-    "Output format. json returns an array of records, each field also duplicated under a bare positional key (observed from one user-supplied record, A-50). csv is the Site's own example format; only its empty result (0 bytes) has been observed. The default format's structure with data is unknown and is not offered here.",
+    "Output format. json returns an array of records, each field also duplicated under a bare positional key (observed from one user-supplied record, A-50). csv is the documented example format; only its empty result (0 bytes) has been observed. The default format's structure with data is unknown and is not offered here.",
   source: "source-docs/DOCS_AUDIT.md#a-50",
 };
 
@@ -528,7 +528,7 @@ const infoQueuelogs: Endpoint = {
   errors: "undocumented",
   notes: [
     "One operation of the Proxy API INFO reqtype (info=QUEUELOGS). Full audit: source-docs/proxy-api/info.md.",
-    "The response shape comes from one record supplied by the user (an abandoned call), not from the vendor documentation or a controlled probe (source-docs/DOCS_AUDIT.md A-50). Answered calls, other dispositions and csv/default output with data are not yet observed.",
+    "The response shape comes from one record supplied by the user (an abandoned call), not from the documentation or a controlled probe (source-docs/DOCS_AUDIT.md A-50). Answered calls, other dispositions and csv/default output with data are not yet observed.",
     "Each record embeds the answering agent's extension row, including credential fields, duplicated under positional keys (A-55). Not offered on Live until docs/SECURITY.md SEC-REQ-01 is implemented and validated.",
   ],
   related: [],
@@ -551,7 +551,7 @@ export const infoRecording = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "The recording as a binary audio file. Implied by the source (\"get the recording for the call\"); the content type and audio format are not documented.",
+      description: "The recording as a binary audio file. Implied by the documentation (\"get the recording for the call\"); the content type and audio format are not documented.",
       format: "binary",
       evidence: "vendor",
       verified: false,
@@ -640,7 +640,7 @@ export const infoVoicemail = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Presumed to be the message audio (implied by VOICEMAIL's own action=message, which the source documents as binary); not confirmed for this INFO form.",
+      description: "Presumed to be the message audio (implied by VOICEMAIL's own action=message, which is documented as binary); not confirmed for this INFO form.",
       format: "binary",
       evidence: "vendor",
       verified: false,
@@ -649,7 +649,7 @@ export const infoVoicemail = proxyOperation({
   ],
   notes: [
     "Doc-only purpose line (Doc line 130). No example or response sample in either source.",
-    "Not probed and has no Demo fixture: the source does not say whether retrieving a message marks it read, and VOICEMAIL separately exposes markread/markunread actions — calling this to observe its response could silently change a real mailbox's state (user decision, Phase 7 Stage 1).",
+    "Not probed and has no Demo fixture: it is not stated whether retrieving a message marks it read, and VOICEMAIL separately exposes markread/markunread actions — calling this to observe its response could silently change a real mailbox's state (user decision, Phase 7 Stage 1).",
   ],
 });
 
@@ -713,7 +713,7 @@ export const infoQueues = proxyOperation({
       example: { "281": "Sales", "282": "Support" },
     },
   ],
-  notes: ["Doc-only purpose line (Doc line 120): \"list of queues\". No vendor response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56)."],
+  notes: ["Doc-only purpose line (Doc line 120): \"list of queues\". No documented response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56)."],
   related: ["info-queue"],
 });
 
@@ -750,7 +750,7 @@ export const infoQueue = proxyOperation({
     },
   ],
   notes: [
-    "Doc-only purpose line (Doc line 121): \"info about the queue based on id\". No vendor response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56), called without an id.",
+    "Doc-only purpose line (Doc line 121): \"info about the queue based on id\". No documented response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-56), called without an id.",
   ],
   related: ["info-queues"],
 });
@@ -983,7 +983,7 @@ export const infoExtstate = proxyOperation({
   ],
   notes: [
     "Doc purpose (Doc line 134): \"get the state of the extensions, including the number speaking with.\"",
-    "Shares the Site's \"INFO - Flow\" section heading with info=FLOW, but is a distinct info value with its own ext parameter (FLOW uses id).",
+    "Shares the documented \"INFO - Flow\" section heading with info=FLOW, but is a distinct info value with its own ext parameter (FLOW uses id).",
   ],
   related: ["info-flow", "info-extensions"],
 });
@@ -1013,7 +1013,7 @@ export const infoFlow = proxyOperation({
     },
   ],
   notes: [
-    "Site-only (Site line 112); not in the Doc's info value list.",
+    "Site-only (Site line 112); not in the documentation's info value list.",
     "Compare FLOWS (all flows for a tenant) and SETFLOW (writes a flow's state).",
   ],
   related: ["flows", "setflow", "info-extstate"],
@@ -1043,8 +1043,8 @@ export const infoVariable = proxyOperation({
     },
   ],
   notes: [
-    "Site-only (Site line 116); not in the Doc's info value list.",
-    "The Site's own example uses the alternate DEMO.1com.com/1com host form in its visible link text, not just its href target (source-docs/unresolved.md U-12) — reproduced here with the portal's canonical host instead.",
+    "Site-only (Site line 116); not in the documentation's info value list.",
+    "The documented example uses the alternate DEMO.1com.com/1com host form in its visible link text, not just its href target (source-docs/unresolved.md U-12) — reproduced here with the portal's canonical host instead.",
   ],
 });
 
@@ -1055,7 +1055,7 @@ const cdrsFormatParam: Parameter = {
   required: "undocumented",
   enum: ["csv", "xml"],
   description:
-    "Output format (Doc line 137: csv, xml). The Site's own examples also show plain output with no format parameter at all.",
+    "Output format (Doc line 137: csv, xml). The documented examples also show plain output with no format parameter at all.",
   source: "source-docs/proxy-api/info.md",
 };
 
@@ -1068,7 +1068,7 @@ export const infoCdrs = proxyOperation({
   summary: "Returns call records (CDRs), optionally filtered by phone number, id, or date range.",
   source: "info.md",
   queryParameters: [
-    q("tenant", "Tenant code, or % for all tenants. The Site's all-tenant example uses a bare, non-percent-encoded %.", { example: "TENANTCODE" }),
+    q("tenant", "Tenant code, or % for all tenants. The documented all-tenant example uses a bare, non-percent-encoded %.", { example: "TENANTCODE" }),
     q("id", "Filters to one call. Doc line 137 lists id, uniqueid, src, firstdst and direction together as \"further parameters available\", without individually documenting them."),
     q("uniqueid", "Filters to one call by its unique id."),
     q("src", "Filters by source number. Meaning not further documented."),
@@ -1093,7 +1093,7 @@ export const infoCdrs = proxyOperation({
   ],
   notes: [
     "Response column names/order are not documented for the CSV output.",
-    "The plain (no-format) response shown in the Site's own examples is not reproduced here: its structure is not independently characterised, unlike SIMPLECDRS.",
+    "The plain (no-format) response shown in the documented examples is not reproduced here: its structure is not independently characterised, unlike SIMPLECDRS.",
     "Compare SIMPLECDRS, a separate, simpler call-history source with its own (partially observed) shape.",
   ],
   related: ["info-simplecdrs", "cdr-get"],

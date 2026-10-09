@@ -26,9 +26,9 @@ const extensionFields: Parameter[] = [
   f("sipfriends", "Nested chan_sip peer fields, e.g. `host`, `nat`.", { type: "object" }),
   f("ps_endpoints", "Nested PJSIP endpoint fields, e.g. `transport`, `direct_media`.", { type: "object" }),
   f("ps_aors", "Nested PJSIP AOR fields, e.g. `max_contacts`, `remove_existing`.", { type: "object" }),
-  f("ps_auths", "Nested PJSIP auth row. Its fields are not shown by the source.", { type: "object" }),
+  f("ps_auths", "Nested PJSIP auth row. Its fields are not shown.", { type: "object" }),
   f("ce_customextensions", "Nested CUSTOM extension fields, e.g. `ce_peername`, `ce_destination`.", { type: "object" }),
-  f("ve_virtualextensions", "Nested virtual-extension row. Its fields are not shown by the source.", { type: "object" }),
+  f("ve_virtualextensions", "Nested virtual-extension row. Its fields are not shown.", { type: "object" }),
   f(
     "destinations",
     "Call-forwarding destinations, keyed by destination type. Each value is one destination string or an array, e.g. `VOICEMAIL-100`. Each type also has alias keys usable at the top level: `EXT-UNCONDITIONAL` (`unconditional`), `EXT-NOANSWER` (`onnoanswer`, `noanswer`, `no_answer`), `EXT-BUSY` (`onbusy`, `busy`), `EXT-OFFLINE` (`onoffline`, `offline`), `EXT-ONCONDITION` (`oncondition`, `condition`), `EXT-DIALBYNAME` (`dialbyname`, `dial_by_name`), `EXT-ONLYALLOWCALL` (`onlyallowcall`, `only_allow_call`), `EXT-DONOTCALL` (`donotcall`, `do_not_call`).",
@@ -103,7 +103,7 @@ const stateKeys: Parameter[] = [
   ["Connected Line ID Name", "The other party's name. Personal data."],
   ["Context", "Dialplan context."],
   ["Extension", "Dialed or connected number. Personal data."],
-  ["Direction", "Call direction. The source shows `IN`; other values are not documented."],
+  ["Direction", "Call direction. Only `IN` is shown; other values are not documented."],
   ["OtherParty", "The other party's number. Personal data."],
 ].map(([name, description]) => ({ name, location: "body" as const, type: "string", required: true, description }));
 
@@ -149,7 +149,7 @@ const getState = openapiOperation({
   ],
   notes: [
     "GET only. The response is always JSON.",
-    "The 200 status is the portal's placeholder for a success response; the source documents no HTTP status codes.",
+    "A successful request returned HTTP 200 on the 1com test PBX (observed on one installation; not an official guarantee).",
     "Example values are synthetic; the key set and value types (all strings) are as documented.",
     "Security (SEC-REQ-04): the response carries live caller numbers and names.",
     "The response for an unknown extension number is not documented.",

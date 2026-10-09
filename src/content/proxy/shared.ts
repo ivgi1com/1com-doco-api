@@ -22,7 +22,7 @@ export const PROXY_PATH = "/pbx/proxyapi.php";
 
 export const legacyDeprecation: Deprecation = {
   note:
-    "The vendor documentation for proxyapi.php recommends the Open API endpoint for new integrations. See the 1com Open API reference in this portal; the two APIs are separate and their operations do not map one to one.",
+    "For new integrations, use the Open API; see the 1com Open API reference in this portal. The two APIs are separate and their operations do not map one to one.",
 };
 
 /** U-09: decided for info-extensions (tenant key, read-only suffices); applied unchanged to the Phase 4–6 operations. */
@@ -38,7 +38,7 @@ export const auth: Authentication = {
 export const authScopeUndocumented: Authentication = {
   type: "API Key",
   description:
-    "API Key, sent as the key query parameter. The source says keys come in read/write and read-only kinds; it does not say which kind this operation requires.",
+    "API Key, sent as the key query parameter. The documentation says keys come in read/write and read-only kinds; it does not say which kind this operation requires.",
   location: "query",
   parameter: "key",
 };
@@ -49,7 +49,7 @@ export const tenantParam: Parameter = {
   type: "string",
   required: "undocumented",
   description:
-    "Tenant code to scope the request to. The source states this is \"normally\" required for tenant-scoped calls, without documenting when it can be omitted.",
+    "Tenant code to scope the request to. The documentation states this is \"normally\" required for tenant-scoped calls, without documenting when it can be omitted.",
   example: "TENANTCODE",
   source: `${SOURCE_PAGE}#bkmrk-common-parameters`,
 };

@@ -1,4 +1,4 @@
-import { apis, listEndpoints } from "@/content";
+import { apis, menuCategories } from "@/content";
 import { guides } from "@/content/guides";
 import type { HttpMethod } from "@/content/types";
 
@@ -12,8 +12,9 @@ export interface SearchItem {
 
 /** Pure builder — recomputes every call. Use `getSearchIndex()` to reuse a cached result. */
 export function buildSearchIndex(): SearchItem[] {
+  // Categories hidden from the side menus (`menuHidden`) are hidden from search too.
   const endpoints: SearchItem[] = apis.flatMap((api) =>
-    listEndpoints(api).map((e) => ({
+    menuCategories(api).flatMap((c) => c.endpoints).map((e) => ({
       kind: "endpoint" as const,
       title: e.title,
       detail: e.path,

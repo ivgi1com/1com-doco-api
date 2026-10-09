@@ -24,7 +24,8 @@ for (const row of openapiExamples.examples as unknown as ExampleRow[]) {
   const list = byEndpoint.get(key) ?? [];
   list.push({
     title: row.title,
-    description: row.description,
+    // The snapshot's wording is third-person ("the source field names"); customers read the API owner's voice.
+    description: row.description?.replaceAll("the source field names", "the field names"),
     path: row.path,
     query: row.query,
     ...(row.body !== undefined ? { body: row.body } : {}),

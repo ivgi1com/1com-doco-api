@@ -29,7 +29,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <p className="max-w-[60ch] text-md text-ink-muted">{t("lead")}</p>
         <div className="flex flex-wrap gap-3 pt-1">
           <Link
-            href="/guides/openapi-authentication"
+            href="/guides/quickstart"
             className="flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover"
           >
             {t("startGuide")}
@@ -61,7 +61,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <div aria-label={t("apisLabel")} className="flex flex-wrap items-center gap-2 border-t border-border pt-6">
         <span className="text-xs font-semibold text-ink-muted">{tn("api")}</span>
         {apis
-          .filter((a) => !a.synthetic)
           .map((a) => (
             <Link
               key={a.id}

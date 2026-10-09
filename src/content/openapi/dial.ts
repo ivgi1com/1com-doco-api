@@ -16,7 +16,7 @@ const dial = openapiOperation({
   path: "/dial",
   title: "Originate a call",
   summary:
-    "Originates a call between a source extension and a destination number. The source describes it as the Open API equivalent of the Proxy API's DIAL, using the same PBX dialplan contexts.",
+    "Originates a call between a source extension and a destination number. It is the Open API equivalent of the Proxy API's DIAL, using the same PBX dialplan contexts.",
   authentication: openapiAuth({
     write: true,
     extra: "Read-only API Keys cannot originate calls.",
@@ -35,8 +35,8 @@ const dial = openapiOperation({
     f("recording", "Sets `SETRECORDING`. The example sends `\"yes\"`; other accepted values are not documented."),
     f("autoanswer", "Sets `AUTOANSWER`."),
     f("nofollow", "Sets `SETNOFOLLOWEXTENSION`."),
-    f("account", "Peer account name to set as `SETPEERNAME`. `SOURCE` resolves it from the source extension."),
-    f("server", "PBX node peer name to use when the source or destination registration server cannot be found."),
+    f("account", "Peer account name to set as `SETPEERNAME`. `SOURCE` resolves it from the originating extension."),
+    f("server", "PBX node peer name to use when the originating or destination registration server cannot be found."),
     f("var", "Comma-separated custom variables, e.g. `campaign=summer,lead=42`."),
     f("vars", "Custom variables as a JSON object. Variables are tenant-prefixed and listed in `VARLIST`.", { type: "object" }),
   ],
@@ -59,7 +59,7 @@ const dial = openapiOperation({
         ["Response", "`Success` in the documented example."],
         ["Message", "Human-readable result, e.g. `Originate successfully queued`."],
         ["ID", "Originate tracking ID."],
-        ["source", "The source as resolved."],
+        ["source", "The originating party, as resolved."],
         ["dest", "The destination as resolved."],
         ["server", "PBX node peer name used."],
         ["node", "PBX node display name."],
@@ -79,7 +79,7 @@ const dial = openapiOperation({
   ],
   notes: [
     "This places a real phone call. It is documented here but never sent from the Playground, in Live or Demo (SEC-REQ-06).",
-    "The 200 status is the portal's placeholder for a success response; the source documents no HTTP status codes.",
+    "The HTTP status of a successful response is not specified for this operation.",
     "The endpoint returns JSON only. Value types of the `SET*` fields are not documented beyond the example.",
   ],
 });

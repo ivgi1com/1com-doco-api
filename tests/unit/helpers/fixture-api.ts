@@ -1,7 +1,7 @@
-import type { ApiDefinition, Endpoint, Parameter } from "./types";
+import type { ApiDefinition, Endpoint, Parameter } from "@/content/types";
 
 /**
- * SYNTHETIC PROTOTYPE CONTENT (Phase 2).
+ * TEST FIXTURE: the former "Sample (prototype)" API, no longer part of the portal.
  * Fictional endpoints used only to evaluate the visual design. They describe
  * no real 1com API. Phone numbers use the reserved fictional +1 555-01xx range
  * and the host is the reserved example.com domain.
@@ -336,3 +336,10 @@ export const sampleApi: ApiDefinition = {
     { id: "contacts", title: "Contacts", endpoints: [createContact, updateContact, deleteContact] },
   ],
 };
+
+/** One fixture endpoint by id; throws if absent. */
+export function fixtureEndpoint(id: string): Endpoint {
+  const e = sampleApi.categories.flatMap((c) => c.endpoints).find((x) => x.id === id);
+  if (!e) throw new Error(`fixture endpoint ${id} not found`);
+  return e;
+}

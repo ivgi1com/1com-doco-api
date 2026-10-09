@@ -11,10 +11,19 @@ describe("buildSearchIndex", () => {
   it("links endpoints to their reference route", () => {
     const index = buildSearchIndex();
     const item = index.find(
-      (i) => i.kind === "endpoint" && i.href === "/reference/sample/list-call-records",
+      (i) => i.kind === "endpoint" && i.href === "/reference/openapi/extensions-list",
     );
     expect(item).toBeDefined();
     expect(item?.method).toBe("GET");
+  });
+});
+
+describe("buildSearchIndex and hidden menu categories", () => {
+  it("leaves out categories hidden from the side menus (Settings, Provisioning phones)", () => {
+    const hrefs = buildSearchIndex().map((i) => i.href);
+    expect(hrefs.some((h) => h.startsWith("/reference/openapi/settings-"))).toBe(false);
+    expect(hrefs.some((h) => h.startsWith("/reference/openapi/provisioningphones-"))).toBe(false);
+    expect(hrefs).toContain("/reference/openapi/extensions-list");
   });
 });
 
@@ -27,19 +36,18 @@ describe("searchItems", () => {
   });
 
   it("is case-insensitive", () => {
-    const lower = searchItems(index, "contact");
-    const upper = searchItems(index, "CONTACT");
+    const lower = searchItems(index, "campaign");
+    const upper = searchItems(index, "CAMPAIGN");
     expect(upper.map((i) => i.href)).toEqual(lower.map((i) => i.href));
     expect(lower.length).toBeGreaterThan(0);
   });
 
   it("ranks title-prefix matches before title-substring and detail matches", () => {
-    const results = searchItems(index, "call");
-    // "List call records" / "Retrieve a call record" start with "call"? No —
-    // title is "List call records", which *contains* but doesn't start with "call".
+    const results = searchItems(index, "extension");
+    // "List extensions" contains but doesn't start with "extension".
     // Use a query that actually prefixes a title to assert ordering.
-    const prefixResults = searchItems(index, "list call records");
-    expect(prefixResults[0]?.title.toLowerCase()).toBe("list call records");
+    const prefixResults = searchItems(index, "list extensions");
+    expect(prefixResults[0]?.title.toLowerCase()).toBe("list extensions");
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -49,8 +57,8 @@ describe("searchItems", () => {
   });
 
   it("matches on detail (path) even when the title doesn't match", () => {
-    const results = searchItems(index, "/v1/contacts");
-    expect(results.every((i) => i.detail.includes("/v1/contacts"))).toBe(true);
+    const results = searchItems(index, "/campaigns");
+    expect(results.every((i) => i.detail.includes("/campaigns"))).toBe(true);
     expect(results.length).toBeGreaterThan(0);
   });
 });

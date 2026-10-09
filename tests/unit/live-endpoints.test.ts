@@ -72,7 +72,7 @@ describe("Live allowlist membership", () => {
     expect(listLiveTargetIds()).toHaveLength(85);
   });
 
-  it("never includes a write, a Proxy action, a blocked operation or the Sample API", () => {
+  it("never includes a write, a Proxy action, a blocked operation", () => {
     for (const id of listLiveTargetIds()) {
       const [apiId, endpointId] = id.split("/");
       const e = getEndpoint(apiId, endpointId)!;
@@ -80,7 +80,6 @@ describe("Live allowlist membership", () => {
       if (STRICT.includes(id)) expect(e.operationClass, id).not.toBe("write");
       else expect(e.operationClass, id).toBe("read");
       expect(BLOCKED.has(id), id).toBe(false);
-      expect(apiId, id).not.toBe("sample");
     }
     for (const id of ["openapi/dial", "proxy/dial", "proxy/hangup", "proxy/reboot", "proxy/sms", "openapi/queues-create"]) {
       expect(listLiveTargetIds(), id).not.toContain(id);

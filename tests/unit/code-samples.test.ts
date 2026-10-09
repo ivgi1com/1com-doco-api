@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { openapiApi } from "@/content/openapi";
 import { proxyApi } from "@/content/proxy";
-import { sampleApi } from "@/content/sample-api";
+import { fixtureEndpoint, sampleApi } from "./helpers/fixture-api";
 import { getEndpoint } from "@/content";
 import type { Endpoint } from "@/content/types";
 import {
@@ -12,10 +12,10 @@ import {
   resolvePath,
 } from "@/lib/code-samples";
 
-const listCalls = getEndpoint("sample", "list-call-records")!;
-const getCall = getEndpoint("sample", "get-call-record")!;
-const createContact = getEndpoint("sample", "create-contact")!;
-const deleteContact = getEndpoint("sample", "delete-contact")!;
+const listCalls = fixtureEndpoint("list-call-records");
+const getCall = fixtureEndpoint("get-call-record");
+const createContact = fixtureEndpoint("create-contact");
+const deleteContact = fixtureEndpoint("delete-contact");
 const infoExtensions = getEndpoint("proxy", "info-extensions")!;
 
 describe("resolvePath", () => {

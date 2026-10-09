@@ -29,7 +29,7 @@ const field = (name: string, description: string): Parameter => ({
 const fieldTableResponse = (fields: Parameter[]) => ({
   status: 200,
   description:
-    "Per-record fields as listed by the source (field names and descriptions only). Not documented: the HTTP status, the JSON envelope (array or wrapper object), each field's type, and empty-result behavior.",
+    "Per-record fields as listed (field names and descriptions only). Not documented: the HTTP status, the JSON envelope (array or wrapper object), each field's type, and empty-result behavior.",
   format: "json" as const,
   evidence: "vendor" as const,
   schema: fields,
@@ -96,7 +96,7 @@ const cdr = openapiOperation({
   }),
   queryParameters: [
     reportTenant(),
-    q("start", "Start date/time filter. Defaults to today 00:00:00. The source states two rules: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00", format: "datetime" }),
+    q("start", "Start date/time filter. Defaults to today 00:00:00. Two rules apply: the date range applies when neither `id` nor `uniqueid` is supplied, and also when neither `id` nor `linkedid` is supplied.", { example: "2026-01-01 00:00:00", format: "datetime" }),
     q("end", "End date/time filter. Defaults to today 23:59:59. Applied under the same two rules as `start`.", { example: "2026-01-01 23:59:59", format: "datetime" }),
     q("id", "Comma-separated CDR row IDs. A path segment (`/cdrs/123`) also maps here."),
     q("uniqueid", "Comma-separated Asterisk unique IDs."),
@@ -266,7 +266,7 @@ const aianalysis = openapiOperation({
   errors: errors("missing_api_key", "invalid_api_key", "tenant_required", "tenant_not_found", "uniqueid_required", "method_not_allowed"),
   notes: [
     "Path aliases: `/aianalysis`, `/aianalyses`, `/ai_analysis`, `/ai_analyses`, `/callanalysis`, `/call_analysis`.",
-    "The 200 status is the portal's placeholder for a success response; the source documents no HTTP status codes.",
+    "A successful request returned HTTP 200 on the 1com test PBX (observed on one installation; not an official guarantee).",
     "Example values are synthetic. The response when no requested uniqueid matches at all (empty array vs error) is not shown.",
     "Security (SEC-REQ-09): full call transcripts and AI-generated summaries are call content, not just metadata. BLOCK LIVE outright; any future Live consideration needs a distinct privacy/consent decision, not just a field allowlist.",
   ],
@@ -348,8 +348,8 @@ const ailogs = openapiOperation({
     "Path aliases: `/ailog`, `/ailogs`, `/ai_log`, `/ai_logs`, plus `/ailogs/export` (defaults `format` to `csv`) and `/ailogs/{id}`.",
     "A compatibility query form is also documented: `GET /openapi.php?object=ailogs&action=list&tenant=<code>`. Whether it has different security properties than the primary path is undocumented.",
     "CSV column order is documented as the same field order as JSON, but not independently verified for CSV.",
-    "The 200 status is the portal's placeholder for a success response; the source documents no HTTP status codes.",
-    "Security (SEC-REQ-10): `ai_talk` is conversation content, and the source page itself warns it \"can contain sensitive conversation content. Store exports securely and restrict access to API Keys.\" `ai_callerid` is caller PII. REVIEW REQUIRED: `ai_talk` needs explicit product sign-off before any Live/Demo exposure, beyond a mechanical field allowlist.",
+    "The success status was not observed: AI Logs was not available on the 1com test PBX (HTTP 404 `not_found`), so it is not specified here.",
+    "Security (SEC-REQ-10): `ai_talk` is conversation content, and the reference itself warns it \"can contain sensitive conversation content. Store exports securely and restrict access to API Keys.\" `ai_callerid` is caller PII. REVIEW REQUIRED: `ai_talk` needs explicit product sign-off before any Live/Demo exposure, beyond a mechanical field allowlist.",
   ],
 });
 

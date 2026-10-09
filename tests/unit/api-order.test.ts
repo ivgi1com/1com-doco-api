@@ -3,10 +3,10 @@ import { apis, defaultEndpoint, listEndpoints } from "@/content";
 import { getGuide, guideApis, guides, guidesForApi } from "@/content/guides";
 import en from "../../messages/en.json";
 
-/** Phase 8E Stage 5 (brief item 8): Open API first and default, Proxy legacy, Sample last. */
+/** Phase 8E Stage 5 (brief item 8): Open API first and default, Proxy legacy. */
 describe("API order and defaults (8E)", () => {
-  it("lists Open API first, Proxy second, Sample last", () => {
-    expect(apis.map((a) => a.id)).toEqual(["openapi", "proxy", "sample"]);
+  it("lists Open API first, Proxy second", () => {
+    expect(apis.map((a) => a.id)).toEqual(["openapi", "proxy"]);
   });
 
   it("marks only the Proxy API as legacy", () => {
@@ -32,8 +32,8 @@ describe("API order and defaults (8E)", () => {
 });
 
 describe("Guides API selector and Most Used Cases (8E)", () => {
-  it("offers Open API, Proxy and Sample guides, Open API first", () => {
-    expect(guideApis().map((a) => a.id)).toEqual(["openapi", "proxy", "sample"]);
+  it("offers Open API and Proxy guides, Open API first", () => {
+    expect(guideApis().map((a) => a.id)).toEqual(["openapi", "proxy"]);
     expect(guides[0].apiId).toBe("openapi");
   });
 

@@ -6,8 +6,9 @@ import type { Authentication, Endpoint, ErrorSpec, Parameter, Requirement } from
  * source-docs/openapi/ (README.md has the authority rules and coverage
  * index; `_common.md` the cross-resource contract, cited here as `ov:N`).
  * No-guessing rule: what the official page does not say stays
- * "undocumented" (response schemas, HTTP statuses). Nothing here has been
- * tested against a real PBX.
+ * "undocumented" (response schemas, HTTP statuses). Reads were probed on a
+ * real PBX (Phases 8B, 9, 11; observed.ts); no write has been tested, and
+ * nothing is marked verified.
  */
 
 // U-17: closed on the user's confirmation (2026-09-26), not by a call.
@@ -17,7 +18,7 @@ export const OFFICIAL_BOOK = "https://manual.mirtapbx.com/books/api/page";
 
 // ov:18
 const TRANSPORTS =
-  "Send the key in the `X-API-Key` header. The source also accepts it as the `key` query parameter or as `Authorization: Bearer <key>`; the header keeps it out of URLs and logs.";
+  "Send the key in the `X-API-Key` header. The API also accepts it as the `key` query parameter or as `Authorization: Bearer <key>`; the header keeps it out of URLs and logs.";
 
 /**
  * Authentication for one resource. `write` adds the rule every object page
@@ -229,7 +230,7 @@ export function openapiResource(r: ResourceSpec): Endpoint[] {
       method: "POST",
       path: r.path,
       title: `Create ${r.singular}`,
-      summary: r.summaries?.create ?? `Creates a ${r.singular}. Accepts the short request aliases or the source column names.`,
+      summary: r.summaries?.create ?? `Creates a ${r.singular}. Accepts the short request aliases or the column names.`,
       authentication: writeAuth,
       queryParameters: writeQuery,
       requestBody: r.fields,

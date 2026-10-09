@@ -30,7 +30,7 @@ const [list, get, create, update, remove] = openapiResource({
     f("monitor_type_id", "Maps to `fl_monitor_type_id`.", { required: "undocumented", type: "integer" }),
     f(
       "destination",
-      "`FLOW` destination. The source documents `destinations` itself as an alias of this single destination type here — unlike every other object's `destinations`-wrapper-object convention. Flagged, not resolved.",
+      "`FLOW` destination. `destinations` is documented as an alias of this single destination type here — unlike every other object's `destinations`-wrapper-object convention. Flagged, not resolved.",
       { type: "unknown" },
     ),
   ],

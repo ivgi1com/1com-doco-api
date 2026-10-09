@@ -1,13 +1,12 @@
 import { openapiApi } from "./openapi";
 import { proxyApi } from "./proxy";
-import { sampleApi } from "./sample-api";
 import type { ApiDefinition, Category, Endpoint, MenuGroup } from "./types";
 
 /**
  * 1com Open API first (`apis[0]` is the default, Phase 8E), then the legacy
- * Proxy API. The Sample API stays last as prototype/design reference.
+ * Proxy API.
  */
-export const apis: ApiDefinition[] = [openapiApi, proxyApi, sampleApi];
+export const apis: ApiDefinition[] = [openapiApi, proxyApi];
 
 export function getApi(apiId: string): ApiDefinition | undefined {
   return apis.find((api) => api.id === apiId);
