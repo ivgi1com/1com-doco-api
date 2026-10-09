@@ -11,7 +11,7 @@ import type { Guide } from "./types";
 export const openapiAuthentication: Guide = {
   slug: "openapi-authentication",
   title: "Open API authentication",
-  summary: "Full vs read-only API Keys, how the key travels, the tenant parameter, the common error codes, and why nothing here is Live yet.",
+  summary: "Full vs read-only API Keys, how the key travels, the tenant parameter, the common errors, and what the Playground does in Live mode.",
   synthetic: false,
   apiId: "openapi",
   sources: ["source-docs/openapi/_common.md"],
@@ -26,7 +26,7 @@ export const openapiAuthentication: Guide = {
         },
         {
           kind: "paragraph",
-          text: "The API accepts the key in three ways: the `X-API-Key` header, a `key` query parameter, or `Authorization: Bearer <key>`. This portal always sends the header — a project preference, not an API requirement — because a key in the query string ends up in URLs and logs.",
+          text: "The API accepts the key in three ways: the `X-API-Key` header, a `key` query parameter, or `Authorization: Bearer <key>`. The Playground and the code samples always send the header, because a key in the query string ends up in URLs and logs. Prefer the header in your own code too.",
         },
         { kind: "sample", endpoint: "extensions-state-get", language: "curl", title: "shell" },
         {
@@ -53,7 +53,7 @@ export const openapiAuthentication: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "Errors come back as JSON with an error code and a message. Neither the JSON field names of that error body nor an HTTP status for any error is documented on any page — this portal's error tables show the status as “undocumented” rather than guess one.",
+          text: "Errors come back as JSON in the envelope `{\"error\": {\"code\": \"...\", \"message\": \"...\"}}`. HTTP statuses are not specified for most errors; where we have seen one on the 1com PBX it is shown below, and every other status is left as “—” rather than guessed.",
         },
         {
           kind: "list",
@@ -70,24 +70,31 @@ export const openapiAuthentication: Guide = {
         {
           kind: "callout",
           tone: "note",
+          title: "Observed on the 1com PBX",
+          text: "On one installation, every successful read returned HTTP 200, and errors used the envelope above with statuses 400, 401, 403 and 404: `invalid_api_key` → 401, `uniqueid_required` → 400, `not_found` and `object_not_found` → 404 (an ID that does not exist), and `admin_required` → 403 (a tenant key calling an administrative resource). A missing or unknown `tenant` was also answered with 401 `invalid_api_key` rather than `tenant_required` or `tenant_not_found`. These are observations, not guarantees; do not rely on a status or code that is not listed here.",
+        },
+        {
+          kind: "callout",
+          tone: "note",
           text: "A handful of resources document their own additional codes — `single_tenant_required`, `template_not_found` for the two CDR-style reports' template output; `uniqueid_required` for AI Analysis; `invalid_format`, `api_ip_not_allowed` for AI Logs. Each Reference page lists exactly the codes its own official page documents.",
         },
       ],
     },
     {
       id: "live-safety",
-      title: "Why nothing here is Live yet",
+      title: "Live mode in the Playground",
       blocks: [
         {
           kind: "paragraph",
-          text: "Every Open API write stays Reference-only in this portal — the Playground never sends a `POST`, `PATCH`, `PUT`, or `DELETE`, in Live or Demo. No Open API operation has been tested against a real PBX.",
+          text: "Open API reads can run in Live mode against your own tenant with your API Key; a few sensitive resources are Demo-only. Writes (`POST`, `PATCH`, `PUT`, `DELETE`) are Reference-only: the Playground never sends them, in Live or Demo mode. Live reads have been run against a real PBX; write operations have not been tested.",
         },
         {
           kind: "list",
           items: [
-            "A future Live read would use your tenant's API Key.",
-            "The server, not the browser, would set and enforce `tenant`.",
-            "`%` tenant wildcards and an omitted tenant would be rejected.",
+            "Live uses your tenant's API Key. It is sent for that request only and is not stored or logged.",
+            "Use a tenant-scoped key. `%` tenant wildcards and an omitted tenant are rejected.",
+            "Sensitive values in a response (for example credentials) are redacted before the response reaches your browser.",
+            "If a Live request fails, the Playground shows the failure. It never swaps in Demo data.",
           ],
         },
       ],

@@ -149,7 +149,7 @@ const getState = openapiOperation({
   ],
   notes: [
     "GET only. The response is always JSON.",
-    "The HTTP status of a successful response is not specified for this operation.",
+    "A successful request returned HTTP 200 on the 1com test PBX (observed on one installation; not an official guarantee).",
     "Example values are synthetic; the key set and value types (all strings) are as documented.",
     "Security (SEC-REQ-04): the response carries live caller numbers and names.",
     "The response for an unknown extension number is not documented.",

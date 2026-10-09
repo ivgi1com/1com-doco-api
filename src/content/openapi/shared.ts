@@ -6,8 +6,9 @@ import type { Authentication, Endpoint, ErrorSpec, Parameter, Requirement } from
  * source-docs/openapi/ (README.md has the authority rules and coverage
  * index; `_common.md` the cross-resource contract, cited here as `ov:N`).
  * No-guessing rule: what the official page does not say stays
- * "undocumented" (response schemas, HTTP statuses). Nothing here has been
- * tested against a real PBX.
+ * "undocumented" (response schemas, HTTP statuses). Reads were probed on a
+ * real PBX (Phases 8B, 9, 11; observed.ts); no write has been tested, and
+ * nothing is marked verified.
  */
 
 // U-17: closed on the user's confirmation (2026-09-26), not by a call.
