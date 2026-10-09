@@ -5,7 +5,7 @@ import { useId, useMemo, useState } from "react";
 import { CategoryGroups } from "@/components/shell/category-groups";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
-import { apis, menuCategories } from "@/content";
+import { apis, menuGroups } from "@/content";
 import type { ApiDefinition, Endpoint } from "@/content/types";
 
 export function EndpointPicker({
@@ -26,16 +26,18 @@ export function EndpointPicker({
   const filterId = useId();
   const apiSelectId = useId();
 
-  const categories = useMemo(() => {
+  const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return menuCategories(api)
-      .map((category) => ({
-        ...category,
-        endpoints: category.endpoints.filter(
-          (e) => !q || e.title.toLowerCase().includes(q) || e.path.toLowerCase().includes(q),
-        ),
+    const matches = (e: { title: string; path: string }) =>
+      !q || e.title.toLowerCase().includes(q) || e.path.toLowerCase().includes(q);
+    return menuGroups(api)
+      .map((group) => ({
+        ...group,
+        categories: group.categories
+          .map((category) => ({ ...category, endpoints: category.endpoints.filter(matches) }))
+          .filter((c) => c.endpoints.length > 0),
       }))
-      .filter((c) => c.endpoints.length > 0);
+      .filter((g) => g.categories.length > 0);
   }, [api, query]);
 
   return (
@@ -70,7 +72,7 @@ export function EndpointPicker({
       </div>
       <nav aria-label={t("endpoints")} className="min-h-0 flex-1 overflow-y-auto p-2">
         <CategoryGroups
-          categories={categories}
+          groups={groups}
           activeEndpointId={selected.id}
           forceOpen={filtering}
           renderEndpoint={(endpoint) => (

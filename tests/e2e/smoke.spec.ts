@@ -1183,7 +1183,7 @@ test.describe("interactions", () => {
 
     test("side menus: Expand all / Collapse all, curated order, Provisioning and Setting hidden", async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
-      const expectedFirst = ["Dial", "Simple CDR", "Extension", "DID", "Queue", "Hunt List", "Media File"];
+      const expectedFirst = ["Dial", "CDR", "Extension", "DID", "Queue", "Hunt List", "Media File"];
 
       for (const [url, menu] of [
         ["./en/reference/openapi/cdrs-list", () => page.locator("aside").first()],
@@ -1213,6 +1213,63 @@ test.describe("interactions", () => {
       // Hidden from the menu only: the page itself still exists.
       const res = await page.goto("./en/reference/openapi/provisioningphones-list");
       expect(res?.status()).toBe(200);
+    });
+
+    test("menu groups: related categories under one entry, as one flat list, on every surface (issue #1)", async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      const cdrGroup = (scope: import("@playwright/test").Locator) =>
+        scope.locator("details").filter({ has: page.locator("summary", { hasText: /^CDR$/ }) });
+      const linkNames = async (group: import("@playwright/test").Locator, role: "link" | "button") =>
+        (await group.locator("li").getByRole(role).allTextContents()).map((t) => t.replace(/^GET/, "").trim());
+
+      // Sidebar: one CDR entry, open on a CDR page; Simple CDR's operation then CDR's, no sub-headings.
+      await page.goto("./en/reference/openapi/cdrs-list");
+      const aside = page.locator("aside").first();
+      const summaries = (await aside.locator("details > summary").allTextContents()).map((t) => t.trim());
+      for (const merged of ["Simple CDR", "Campaign Number", "Phone Book Entry", "AI Logs"]) expect(summaries).not.toContain(merged);
+      for (const group of ["CDR", "Campaign", "Phone Book", "AI Analysis"]) expect(summaries).toContain(group);
+      const cdr = cdrGroup(aside);
+      await expect(cdr).toHaveAttribute("open", "");
+      await expect(cdr.locator("ul")).toHaveCount(1);
+      await expect(cdr.locator("p")).toHaveCount(0);
+      expect(await linkNames(cdr, "link")).toEqual(["List simple CDRs", "List CDRs"]);
+
+      // Proxy API groups; COUNTCALLS stays alone.
+      await page.goto("./en/reference/proxy");
+      const proxy = (await aside.locator("details > summary").allTextContents()).map((t) => t.trim());
+      for (const group of ["CHANNELS", "PEERS", "QUEUE", "FLOWS", "COUNTCALLS"]) expect(proxy).toContain(group);
+      for (const merged of ["CHANNEL", "COUNTCHANNELS", "COUNTPEERS", "QUEUERESET", "SETFLOW"]) expect(proxy).not.toContain(merged);
+
+      // Overview: one CDR section listing both operations, no sub-headings; hidden-from-menu categories still listed.
+      await page.goto("./en/reference/openapi");
+      const main = page.locator("main");
+      const cdrSection = main.locator("section").filter({ has: page.getByRole("heading", { level: 2, name: "CDR", exact: true }) });
+      await expect(cdrSection.locator("h3")).toHaveCount(0);
+      await expect(cdrSection.getByRole("link")).toHaveCount(2);
+      await expect(main.getByRole("heading", { name: "Simple CDR" })).toHaveCount(0);
+      await expect(main.getByRole("heading", { level: 2, name: "Provisioning Phone" })).toBeVisible();
+
+      // Playground picker: same flat group; the filter narrows it to the matching operation.
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      const nav = desktopPane(page).locator("nav");
+      expect(await linkNames(cdrGroup(nav), "button")).toEqual(["List simple CDRs", "List CDRs"]);
+      const filter = desktopPane(page).getByRole("searchbox");
+      await expect(async () => {
+        await filter.fill("");
+        await filter.fill("simple cdr");
+        await expect(nav.locator("details")).toHaveCount(1, { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      expect(await linkNames(cdrGroup(nav), "button")).toEqual(["List simple CDRs"]);
+
+      // Mobile drawer: same flat group.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("./en/reference/openapi/cdrs-list");
+      const dialog = page.getByRole("dialog", { name: "Main" });
+      await expect(async () => {
+        await page.getByRole("button", { name: "Open navigation" }).click();
+        await expect(dialog).toBeVisible({ timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      expect(await linkNames(cdrGroup(dialog), "link")).toEqual(["List simple CDRs", "List CDRs"]);
     });
 
     test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {

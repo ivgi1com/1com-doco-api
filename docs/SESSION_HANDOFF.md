@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-09 (Phase 11 steps 1-3 done; start at "Resume here")
+Last updated: 2026-10-09 (menu groups merged; Phase 11 deploy open; start at "Resume here")
 
 ## Resume here (2026-10-09)
 
@@ -10,7 +10,8 @@ Last updated: 2026-10-09 (Phase 11 steps 1-3 done; start at "Resume here")
 |---|---|---|---|
 | Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | **deployed** (server checked out at the tag) |
 | Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge`; `main` head `88a4a3f` | pushed at end of session | not deployed |
-| Phase 10 — Live for every read (85 targets) + Phase 11 redaction fix | merge `34ca543` on `main`, tag `v1.3-live-all-reads` | not pushed | not deployed |
+| Phase 10 — Live for every read (85 targets) + Phase 11 redaction fix | merge `34ca543` on `main`, tag `v1.3-live-all-reads` | pushed | not deployed |
+| Menu groups (issue #1): related categories under one entry, flat list | `feat/menu-groups` merged to `main`, tag `v1.4-menu-groups` | not pushed | not deployed |
 
 - `phase/live-all-reads` merged to `main` (no-ff, `34ca543`), tagged
   `v1.3-live-all-reads`. Phase 11 real-PBX check: 7 passed / 1 skipped
@@ -21,6 +22,11 @@ Last updated: 2026-10-09 (Phase 11 steps 1-3 done; start at "Resume here")
   previous build kept in `.next.prev` (from `5ac5a82`).
   `PLAYGROUND_LIVE_ENABLED=true` is already set, so deploying Phase 10 turns
   all 85 reads Live at once.
+- Menu groups: data `menuGroups` on each API definition; `menuGroups()` in
+  `src/content/index.ts` folds them into the menu order (a group sits at its
+  first defined member). Tests `tests/unit/menu-categories.test.ts`, e2e
+  "menu groups" in `tests/e2e/smoke.spec.ts`. Spec: GitHub issue #1 (+ the
+  flat-list revision comment). `gh` is installed and logged in as `ivgi1com`.
 - Next: **Phase 11 step 4 (deploy)**, only on the user's request; push
   first, also on request. `docs/phases/11-verify-merge-deploy-live.md`.
 
