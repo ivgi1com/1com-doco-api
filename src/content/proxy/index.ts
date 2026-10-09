@@ -85,4 +85,10 @@ export const proxyApi: ApiDefinition = {
     virtualextCategory,
     voicemailCategory,
   ],
+  menuGroups: [
+    { title: "CHANNELS", categories: ["channel", "channels", "countchannels"] },
+    { title: "PEERS", categories: ["peers", "countpeers"] },
+    { title: "QUEUE", categories: ["queue", "queuereset"] },
+    { title: "FLOWS", categories: ["flows", "setflow"] },
+  ],
 };

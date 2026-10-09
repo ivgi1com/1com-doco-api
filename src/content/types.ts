@@ -171,6 +171,23 @@ export interface Category {
   endpoints: Endpoint[];
 }
 
+/** Several categories shown as one side-menu entry (menu only; ids, URLs and Live policy are unaffected). */
+export interface MenuGroupDefinition {
+  title: string;
+  /** Member category ids, in display order. */
+  categories: string[];
+}
+
+/** One side-menu entry: a group of one or more categories. */
+export interface MenuGroup {
+  /** The first member's category id: stable key for open/closed state. */
+  id: string;
+  title: string;
+  categories: Category[];
+  /** True when the group joins several categories: each is shown under its own sub-heading. */
+  subheadings: boolean;
+}
+
 export interface ApiDefinition {
   id: string;
   name: string;
@@ -189,4 +206,6 @@ export interface ApiDefinition {
   menuOrder?: string[];
   /** Category ids left out of the side menus only (pages, search and routes are unaffected). */
   menuHidden?: string[];
+  /** Related categories shown under one menu entry; the group sits where its first member would. */
+  menuGroups?: MenuGroupDefinition[];
 }

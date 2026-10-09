@@ -92,4 +92,10 @@ export const openapiApi: ApiDefinition = {
   categories: categories.filter((c) => c.endpoints.length > 0),
   menuOrder: ["dial", "simplecdr", "extension", "did", "queue", "huntlist", "mediafile"],
   menuHidden: ["provisioningphone", "setting"],
+  menuGroups: [
+    { title: "CDR", categories: ["simplecdr", "cdr"] },
+    { title: "Campaign", categories: ["campaign", "campaignnumber"] },
+    { title: "Phone Book", categories: ["phonebook", "phonebookentry"] },
+    { title: "AI Analysis", categories: ["aianalysis", "ailogs"] },
+  ],
 };

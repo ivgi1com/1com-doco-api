@@ -1,7 +1,7 @@
 import { openapiApi } from "./openapi";
 import { proxyApi } from "./proxy";
 import { sampleApi } from "./sample-api";
-import type { ApiDefinition, Category, Endpoint } from "./types";
+import type { ApiDefinition, Category, Endpoint, MenuGroup } from "./types";
 
 /**
  * 1com Open API first (`apis[0]` is the default, Phase 8E), then the legacy
@@ -17,9 +17,8 @@ export function listEndpoints(api: ApiDefinition): Endpoint[] {
   return api.categories.flatMap((category) => category.endpoints);
 }
 
-/** Categories for the side menus: `menuHidden` removed, `menuOrder` ids first, the rest in their own order. */
-export function menuCategories(api: ApiDefinition): Category[] {
-  const hidden = new Set(api.menuHidden);
+function orderedCategories(api: ApiDefinition, includeHidden: boolean): Category[] {
+  const hidden = new Set(includeHidden ? [] : api.menuHidden);
   const order = api.menuOrder ?? [];
   const rank = (c: Category) => {
     const i = order.indexOf(c.id);
@@ -30,6 +29,37 @@ export function menuCategories(api: ApiDefinition): Category[] {
     .map((c, index) => ({ c, index }))
     .sort((a, b) => rank(a.c) - rank(b.c) || a.index - b.index)
     .map(({ c }) => c);
+}
+
+/** Categories for the side menus: `menuHidden` removed, `menuOrder` ids first, the rest in their own order. */
+export function menuCategories(api: ApiDefinition): Category[] {
+  return orderedCategories(api, false);
+}
+
+/**
+ * Side-menu entries: `menuCategories` order, with each `menuGroups` entry
+ * folded into one group at the place of its first visible member (in the
+ * group's own order). Members keep
+ * the group's own order; an all-hidden group disappears. `includeHidden` keeps
+ * `menuHidden` categories (the overview page lists every category).
+ */
+export function menuGroups(api: ApiDefinition, { includeHidden = false } = {}): MenuGroup[] {
+  const ordered = orderedCategories(api, includeHidden);
+  const byId = new Map(ordered.map((c) => [c.id, c]));
+  const groupOf = new Map<string, { title: string; categories: Category[] }>();
+  for (const def of api.menuGroups ?? []) {
+    const members = def.categories.flatMap((id) => byId.get(id) ?? []);
+    for (const id of def.categories) groupOf.set(id, { title: def.title, categories: members });
+  }
+  const out: MenuGroup[] = [];
+  for (const category of ordered) {
+    const group = groupOf.get(category.id);
+    if (!group) out.push({ id: category.id, title: category.title, categories: [category], subheadings: false });
+    else if (group.categories[0] === category) {
+      out.push({ id: category.id, title: group.title, categories: group.categories, subheadings: group.categories.length > 1 });
+    }
+  }
+  return out;
 }
 
 export function getEndpoint(apiId: string, endpointId: string): Endpoint | undefined {
@@ -43,4 +73,4 @@ export function defaultEndpoint(api: ApiDefinition): Endpoint {
   return endpoints.find((e) => e.id === api.defaultEndpoint) ?? endpoints[0];
 }
 
-export type { ApiDefinition, Endpoint } from "./types";
+export type { ApiDefinition, Endpoint, MenuGroup } from "./types";

@@ -2,7 +2,7 @@
 
 import { BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { apis, getApi, menuCategories } from "@/content";
+import { apis, getApi, menuGroups } from "@/content";
 import { getGuide, guideApis, guidesForApi } from "@/content/guides";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
@@ -65,7 +65,7 @@ export function ReferenceNav({ idPrefix = "side" }: { idPrefix?: string }) {
 
       <CategoryGroups
         key={api.id}
-        categories={menuCategories(api)}
+        groups={menuGroups(api)}
         activeEndpointId={activeEndpointId}
         renderEndpoint={(endpoint) => (
           <NavLink href={`/reference/${api.id}/${endpoint.id}`} className={itemClass}>

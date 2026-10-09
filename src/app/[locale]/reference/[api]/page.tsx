@@ -6,7 +6,7 @@ import { InlineMarkup } from "@/components/reference/inline-markup";
 import { LifecycleBadge } from "@/components/ui/lifecycle-badge";
 import { MethodBadge } from "@/components/ui/method-badge";
 import { PrototypeBanner } from "@/components/ui/prototype-banner";
-import { apis, getApi, listEndpoints } from "@/content";
+import { apis, getApi, listEndpoints, menuGroups, type Endpoint } from "@/content";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { buildSample } from "@/lib/code-samples";
@@ -72,34 +72,47 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
         </section>
       )}
 
-      {api.categories.map((category) => (
-        <section key={category.id} aria-labelledby={`cat-${category.id}`} className="space-y-3">
-          <h2 id={`cat-${category.id}`} className="text-xl font-semibold text-ink">
-            {category.title}
+      {menuGroups(api, { includeHidden: true }).map((group) => (
+        <section key={group.id} aria-labelledby={`cat-${group.id}`} className="space-y-3">
+          <h2 id={`cat-${group.id}`} className="text-xl font-semibold text-ink">
+            {group.title}
           </h2>
-          <ul className="divide-y divide-border border-y border-border">
-            {category.endpoints.map((e) => (
-              <li key={e.id}>
-                <Link
-                  href={`/reference/${api.id}/${e.id}`}
-                  className="group grid gap-x-4 gap-y-1 py-3 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-center"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="font-semibold text-ink group-hover:text-accent">
-                      {e.title}
-                    </span>
-                    <LifecycleBadge status={e.status} />
-                  </span>
-                  <span dir="ltr" className="flex min-w-0 items-center gap-2 justify-self-start">
-                    <MethodBadge method={e.method} size="sm" />
-                    <code className="truncate font-mono text-sm text-ink-muted">{e.path}</code>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {group.subheadings
+            ? group.categories.map((category) => (
+                <div key={category.id} className="space-y-2">
+                  <h3 id={`cat-${category.id}`} className="text-base font-semibold text-ink-muted">
+                    {category.title}
+                  </h3>
+                  {endpointRows(api.id, category.endpoints)}
+                </div>
+              ))
+            : endpointRows(api.id, group.categories[0].endpoints)}
         </section>
       ))}
     </div>
+  );
+}
+
+function endpointRows(apiId: string, endpoints: Endpoint[]) {
+  return (
+    <ul className="divide-y divide-border border-y border-border">
+      {endpoints.map((e) => (
+        <li key={e.id}>
+          <Link
+            href={`/reference/${apiId}/${e.id}`}
+            className="group grid gap-x-4 gap-y-1 py-3 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-center"
+          >
+            <span className="flex items-center gap-2">
+              <span className="font-semibold text-ink group-hover:text-accent">{e.title}</span>
+              <LifecycleBadge status={e.status} />
+            </span>
+            <span dir="ltr" className="flex min-w-0 items-center gap-2 justify-self-start">
+              <MethodBadge method={e.method} size="sm" />
+              <code className="truncate font-mono text-sm text-ink-muted">{e.path}</code>
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

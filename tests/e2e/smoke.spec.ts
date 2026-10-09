@@ -1183,7 +1183,7 @@ test.describe("interactions", () => {
 
     test("side menus: Expand all / Collapse all, curated order, Provisioning and Setting hidden", async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
-      const expectedFirst = ["Dial", "Simple CDR", "Extension", "DID", "Queue", "Hunt List", "Media File"];
+      const expectedFirst = ["Dial", "CDR", "Extension", "DID", "Queue", "Hunt List", "Media File"];
 
       for (const [url, menu] of [
         ["./en/reference/openapi/cdrs-list", () => page.locator("aside").first()],
@@ -1213,6 +1213,60 @@ test.describe("interactions", () => {
       // Hidden from the menu only: the page itself still exists.
       const res = await page.goto("./en/reference/openapi/provisioningphones-list");
       expect(res?.status()).toBe(200);
+    });
+
+    test("menu groups: related categories under one entry with sub-headings, on every surface (issue #1)", async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      const cdrGroup = (scope: import("@playwright/test").Locator) =>
+        scope.locator("details").filter({ has: page.locator("summary", { hasText: /^CDR$/ }) });
+
+      // Sidebar: one CDR entry, open on a CDR page, with Simple CDR then CDR sub-headings.
+      await page.goto("./en/reference/openapi/cdrs-list");
+      const aside = page.locator("aside").first();
+      const summaries = (await aside.locator("details > summary").allTextContents()).map((t) => t.trim());
+      for (const merged of ["Simple CDR", "Campaign Number", "Phone Book Entry", "AI Logs"]) expect(summaries).not.toContain(merged);
+      for (const group of ["CDR", "Campaign", "Phone Book", "AI Analysis"]) expect(summaries).toContain(group);
+      const cdr = cdrGroup(aside);
+      await expect(cdr).toHaveAttribute("open", "");
+      await expect(cdr.locator("p")).toHaveText(["Simple CDR", "CDR"]);
+      await expect(cdr.getByRole("list", { name: "Simple CDR" }).getByRole("link", { name: /List simple CDRs/ })).toBeVisible();
+      await expect(cdr.getByRole("list", { name: "CDR", exact: true }).getByRole("link", { name: /List CDRs/ })).toBeVisible();
+
+      // Proxy API groups; COUNTCALLS stays alone.
+      await page.goto("./en/reference/proxy");
+      const proxy = (await aside.locator("details > summary").allTextContents()).map((t) => t.trim());
+      for (const group of ["CHANNELS", "PEERS", "QUEUE", "FLOWS", "COUNTCALLS"]) expect(proxy).toContain(group);
+      for (const merged of ["CHANNEL", "COUNTCHANNELS", "COUNTPEERS", "QUEUERESET", "SETFLOW"]) expect(proxy).not.toContain(merged);
+
+      // Overview: group heading with category sub-headings; hidden-from-menu categories still listed.
+      await page.goto("./en/reference/openapi");
+      const main = page.locator("main");
+      await expect(main.getByRole("heading", { level: 2, name: "CDR", exact: true })).toBeVisible();
+      await expect(main.getByRole("heading", { level: 3, name: "Simple CDR" })).toBeVisible();
+      await expect(main.getByRole("heading", { level: 2, name: "Simple CDR" })).toHaveCount(0);
+      await expect(main.getByRole("heading", { level: 2, name: "Provisioning Phone" })).toBeVisible();
+
+      // Playground picker: same groups; the filter keeps the sub-heading of the one matching member.
+      await page.goto("./en/playground?endpoint=openapi/cdrs-list");
+      const nav = desktopPane(page).locator("nav");
+      await expect(cdrGroup(nav).locator("p")).toHaveText(["Simple CDR", "CDR"]);
+      const filter = desktopPane(page).getByRole("searchbox");
+      await expect(async () => {
+        await filter.fill("");
+        await filter.fill("simple cdr");
+        await expect(nav.locator("details")).toHaveCount(1, { timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      await expect(cdrGroup(nav).locator("p")).toHaveText(["Simple CDR"]);
+
+      // Mobile drawer: same grouped menu.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("./en/reference/openapi/cdrs-list");
+      const dialog = page.getByRole("dialog", { name: "Main" });
+      await expect(async () => {
+        await page.getByRole("button", { name: "Open navigation" }).click();
+        await expect(dialog).toBeVisible({ timeout: 500 });
+      }).toPass({ timeout: 10_000 });
+      await expect(cdrGroup(dialog).locator("p")).toHaveText(["Simple CDR", "CDR"]);
     });
 
     test("CDR Reference shows the documented response fields and the official named examples (8A)", async ({ page }) => {
