@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`; `main` also has the response search/hover redesign, pushed, not deployed; no phase active; start at "Resume here")
+Last updated: 2026-10-10 (production = `v1.5.1-response-highlight` (response search/hover redesign), deployed and verified; no phase active; start at "Resume here")
 
 ## Resume here (2026-10-09)
 
@@ -18,7 +18,9 @@ Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`; `main` also 
 - Response search/hover redesign (variant A) is on `main` (`c332e9d`, merge
   `f097a32`), pushed, **not deployed**: `json-node.tsx` (`Highlight`, row
   classes), `json-viewer.tsx` (passes the query), `globals.css` (`--code-match-*`
-  tokens). No tag. Deploy waits for the user.
+  tokens). Tag `v1.5.1-response-highlight` (`3008e35`), **deployed
+  2026-10-10** and verified from outside. Server: `.next.prev` = v1.5 build,
+  `.next.prev-v1.4` = v1.4 build.
 - `phase/live-all-reads` merged to `main` (no-ff, `34ca543`), tagged
   `v1.3-live-all-reads`. Phase 11 real-PBX check: 7 passed / 1 skipped
   (the Proxy part was then done in Phase 12); it found and
