@@ -83,6 +83,12 @@ systemctl start portal
 
 Pitfalls seen on 2026-10-08:
 
+- (2026-10-09) If `.next.prev` already exists, `cp -a .next .next.prev`
+  copies *into* it (`.next.prev/.next`). Remove or rename the old copy
+  first. `systemctl stop portal` leaves the unit `failed` (Next exits
+  non-zero on SIGTERM); `start` works normally. Paste-wrapped long
+  commands break in the server terminal: keep each command short.
+
 - Install **before** loading `/etc/portal.env`, or pass `--include=dev`:
   with `NODE_ENV=production`, `npm ci` skips devDependencies and the build
   fails with `Cannot find module '@tailwindcss/postcss'`.

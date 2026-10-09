@@ -1,6 +1,14 @@
 # Current Status
 
 Current work:
+**Production (2026-10-09): `v1.4-menu-groups` (`99303b1`) deployed and
+pushed. Live for all 85 reads is now on in production (with the Phase 11
+redaction fix) and the menu groups are visible. Verified from outside:
+overview 200, CSP present, grouped CDR menu, `openapi/aianalysis-get` ->
+403 `endpoint_not_allowed`, `openapi/queues-list` with a fake key ->
+upstream 401 `invalid_api_key`. Rollback copy: `.next.prev` = v1.2-side-menus
+build. Phase 11 at its approval gate.**
+
 **Menu groups (issue #1) APPROVED (2026-10-09, gate A), merged to `main`
 (no-ff) and tagged `v1.4-menu-groups`; not pushed, not deployed. Related
 categories share one side-menu entry, operations as one flat list member by
