@@ -157,7 +157,7 @@ export async function handleLiveRequest(request: Request, deps: HandlerDeps): Pr
     log({ endpoint: endpointId, outcome: "multi_tenant_blocked", status: result.upstream.status, latencyMs: result.upstream.latencyMs });
     return portalError("multi_tenant_blocked");
   }
-  const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text);
+  const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text, validation.value.credential);
   const upstream = {
     ...result.upstream,
     bodyText: redaction.text,

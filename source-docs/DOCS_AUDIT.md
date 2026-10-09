@@ -1198,3 +1198,21 @@ OA-18 — Endpoint-specific observations (OBSERVED)
 - Extension: the probed extension was a virtual extension. No SIP/PJSIP technology row was observed, so whether a GET returns the technology secret is still UNKNOWN (SEC-REQ-03).
 - Media File: the single read did **not** include `me_data` (SEC-REQ-18). It did include `me_voiceapiusername` and `me_voiceapihost`, which no official page documents.
 - Security-relevant fields observed in GET responses are recorded against their SEC-REQ in `docs/SECURITY.md` ("Phase 8B probe observations").
+
+## 15. Phase 11 — real-PBX check of Live pass-through reads (2026-10-09)
+
+Run: `tests/e2e/live-real.spec.ts` with a temporary TEST key, tenant scope.
+Assertions are counts and booleans; the follow-up diagnosis printed field
+paths and query parameter names only, never values.
+
+OA-19 — Queue webhook URLs carry API keys (OBSERVED, security)
+- `GET /queues` (`openapi/queues-list`): 38 records. Record `[1]` field
+  `qu_notifyabandonedurl` is a Proxy API URL whose query is
+  `tenant, key, reqtype, campaign, action, number`; its `key` value contains
+  the caller's own key. `qu_api_url` is a second URL-valued field; 3 URLs on
+  that tenant have a query string.
+- No official page documents either field, or that configured URLs echo keys.
+- Phase 10 redaction is name-based and `key` is not a sensitive name, so the
+  portal returned the key. Fixed before merge (`docs/SECURITY.md` "Phase 11").
+- Not affected in production: production ran `v1.2-side-menus`, where
+  `openapi/queues-list` is not a Live target.

@@ -146,3 +146,54 @@ describe("redaction of sibling copies of a secret", () => {
     expect(out).toEqual({ te_apikey: REDACTED, te_api_key: REDACTED });
   });
 });
+
+// Phase 11 real-PBX finding: openapi/queues-list returned a Proxy key inside a
+// queue's webhook URL (`qu_notifyabandonedurl`, `key=` query parameter).
+describe("keys inside URLs and echoes of the caller's key (Phase 11)", () => {
+  const OTHER_KEY = "OTHER_tenant_key_77b1";
+  const hook = (key: string) => `https://hooks.example.test/x.php?tenant=T1&key=${key}&reqtype=CAMPAIGN&number=100`;
+
+  it("redacts the caller's key and a URL's `key=` value end to end (queues-list, PHP-escaped slashes)", async () => {
+    const upstream = JSON.stringify([
+      { qu_id: "1", qu_notifyabandonedurl: hook(KEY), qu_api_url: hook(OTHER_KEY) },
+    ]).replaceAll("/", "\/");
+    const { env } = await run({ endpoint: "openapi/queues-list", params: { tenant: TENANT }, credential: KEY }, upstream);
+    expect(env.ok).toBe(true);
+    const text = env.upstream!.bodyText;
+    expect(text).not.toContain(KEY);
+    expect(text).not.toContain(OTHER_KEY);
+    const [row] = JSON.parse(text) as Record<string, string>[];
+    expect(row.qu_notifyabandonedurl).toBe(hook(REDACTED));
+    expect(row.qu_api_url).toBe(hook(REDACTED));
+    expect(env.upstream!.redactedCount).toBe(2);
+  });
+
+  it("scrubs the caller's key under any field name, also URL-encoded", () => {
+    const key = "k/ey+1";
+    const r = redactSensitive(JSON.stringify({ note: `x${key}y`, link: `p?a=${encodeURIComponent(key)}` }), key);
+    expect(r.text).not.toContain(key);
+    expect(r.text).not.toContain(encodeURIComponent(key));
+    expect(JSON.parse(r.text)).toEqual({ note: `x${REDACTED}y`, link: `p?a=${REDACTED}` });
+  });
+
+  it("scrubs the caller's key in plain-text and error-envelope bodies", () => {
+    expect(redactSensitive(`id|label\n1|${KEY}\n`, KEY).text).not.toContain(KEY);
+    expect(redactSensitive(JSON.stringify({ error: { code: "x", message: `bad ${KEY}` } }), KEY).text).not.toContain(KEY);
+  });
+
+  it("redacts secret-named query parameters in URLs, in JSON, plain text and XML", () => {
+    for (const name of ["key", "KEY", "apikey", "api_key", "token", "password", "secret"]) {
+      const url = `https://h.test/p?${name}=${SECRET}&n=1`;
+      expect(redactSensitive(JSON.stringify({ u: url })).text, name).not.toContain(SECRET);
+      expect(redactSensitive(`id|url\n1|${url}\n`).text, name).not.toContain(SECRET);
+    }
+    const xml = `<q><url>https://h.test/p?a=1&amp;key=${SECRET}</url></q>`;
+    expect(redactSensitive(xml).text).toBe(`<q><url>https://h.test/p?a=1&amp;key=${REDACTED}</url></q>`);
+  });
+
+  it("leaves ordinary URLs and non-URL `key=` text alone", () => {
+    const input = JSON.stringify({ u: "https://h.test/p?tenant=T1&number=100&monkey=1", note: "key=value" });
+    expect(redactSensitive(input)).toEqual({ text: input, redacted: 0 });
+    expect(redactSensitive(input, "")).toEqual({ text: input, redacted: 0 });
+  });
+});

@@ -112,8 +112,16 @@ test.describe("Open API Live against the real PBX (Phase 9)", () => {
 // Copy of redact.ts SENSITIVE_NAME (that module is server-only). Keep in sync.
 const SENSITIVE_NAME = /pass(word|wd)?|pwd|secret|token|2fa|otp|mfa|pin(?![a-z])|api_?key/i;
 
-/** Every value under a sensitive-named key, at any depth, that is still shown. */
+/** In a URL string: a `key` or secret-named query parameter that still has a value. */
+function unredactedUrlParams(value: string): number {
+  if (!/^https?:\/\//i.test(value)) return 0;
+  const params = [...value.matchAll(/[?&;]([^=&#;\s]+)=([^&#;\s]*)/g)];
+  return params.filter(([, name, v]) => (name.toLowerCase() === "key" || SENSITIVE_NAME.test(name)) && v !== "" && v !== "[REDACTED]").length;
+}
+
+/** Every value under a sensitive-named key, or secret URL parameter, at any depth, that is still shown. */
 function unredactedSecrets(value: unknown): number {
+  if (typeof value === "string") return unredactedUrlParams(value);
   if (Array.isArray(value)) return value.reduce<number>((n, v) => n + unredactedSecrets(v), 0);
   if (!value || typeof value !== "object") return 0;
   let n = 0;

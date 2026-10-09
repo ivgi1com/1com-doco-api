@@ -30,11 +30,56 @@ export interface RedactionResult {
   redacted: number;
 }
 
+// Phase 11 (real-PBX check): a queue's webhook URL carried a Proxy key in a
+// `key=` query parameter — a field name the rule above never sees. Inside any
+// http(s) URL, a query parameter named `key` or matching SENSITIVE_NAME is a secret.
+const URL_IN_TEXT = /https?:(?:\/|\\\/){2}[^\s"'<>|]*/gi;
+// `&amp;` is the XML spelling of the separator.
+const URL_QUERY_PARAM = /([?&;]|&amp;)([^=&#;\s]+)=([^&#;\s]*)/g;
+
+function isSecretParam(name: string): boolean {
+  let decoded = name;
+  try {
+    decoded = decodeURIComponent(name);
+  } catch {
+    // Keep the raw name.
+  }
+  return decoded.toLowerCase() === "key" || SENSITIVE_NAME.test(decoded);
+}
+
+function redactUrlSecrets(text: string, counter: { n: number }): string {
+  return text.replace(URL_IN_TEXT, (url) =>
+    url.replace(URL_QUERY_PARAM, (m, sep: string, name: string, value: string) => {
+      if (value === "" || value === REDACTED || !isSecretParam(name)) return m;
+      counter.n++;
+      return `${sep}${name}=${REDACTED}`;
+    }),
+  );
+}
+
+/**
+ * Phase 11: the caller's own credential, wherever it appears in the body
+ * (plain, URL-encoded, or JSON-escaped), whatever the field is called.
+ */
+function scrubCredential(text: string, credential: string, counter: { n: number }): string {
+  // Any length: over-redaction is acceptable, a leak is not.
+  if (credential === "") return text;
+  const forms = new Set([credential, encodeURIComponent(credential), JSON.stringify(credential).slice(1, -1)]);
+  let out = text;
+  for (const form of forms) {
+    const parts = out.split(form);
+    counter.n += parts.length - 1;
+    out = parts.join(REDACTED);
+  }
+  return out;
+}
+
 function isNonEmpty(value: unknown): boolean {
   return (typeof value === "string" && value !== "") || typeof value === "number";
 }
 
 function redactJsonValue(value: unknown, counter: { n: number }): unknown {
+  if (typeof value === "string") return redactUrlSecrets(value, counter);
   if (Array.isArray(value)) return value.map((v) => redactJsonValue(v, counter));
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
@@ -222,7 +267,19 @@ export function countDistinctField(text: string, field: string): number {
   return seen.size;
 }
 
-export function redactSensitive(text: string): RedactionResult {
+/**
+ * `credential` is the key the caller sent for this request: every copy of it
+ * in the body is replaced too (Phase 11), on top of the name-based rules.
+ */
+export function redactSensitive(text: string, credential = ""): RedactionResult {
+  const result = redactByStructure(text);
+  if (result.redacted === -1) return result;
+  const counter = { n: 0 };
+  const scrubbed = scrubCredential(result.text, credential, counter);
+  return counter.n > 0 ? { text: scrubbed, redacted: result.redacted + counter.n } : result;
+}
+
+function redactByStructure(text: string): RedactionResult {
   const trimmed = text.trim();
   if (trimmed === "") return { text, redacted: 0 };
 
@@ -236,8 +293,14 @@ export function redactSensitive(text: string): RedactionResult {
     }
   }
 
-  if (trimmed.startsWith("<")) return redactXml(text);
+  const result = trimmed.startsWith("<") ? redactXml(text) : redactDelimitedSafe(text);
+  if (result.redacted === -1) return result;
+  const counter = { n: 0 };
+  const out = redactUrlSecrets(result.text, counter);
+  return { text: out, redacted: result.redacted + counter.n };
+}
 
+function redactDelimitedSafe(text: string): RedactionResult {
   try {
     return redactDelimited(text);
   } catch (err) {

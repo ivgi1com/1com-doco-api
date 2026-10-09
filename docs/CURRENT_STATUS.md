@@ -1,6 +1,12 @@
 # Current Status
 
 Current work:
+**Phase 11 ACTIVE (2026-10-09) on `phase/live-all-reads`: step 1 (real-PBX
+check) done. It found the caller's key in `openapi/queues-list` (queue webhook
+URL, OA-19); fixed in `redact.ts` before any merge or deploy. Real-PBX spec
+7 passed / 1 skipped; `npm run check` 510/510. Next: step 2 (merge) on the
+user's approval. The TEST key used was pasted in chat: rotate it.**
+
 **Phase 10 (Live for every read) APPROVED (2026-10-08, gate A) on
 `phase/live-all-reads`; not merged, pushed, tagged or deployed. 85 Live
 targets (52 Open API, 33 Proxy), pass-through + server-side redaction,

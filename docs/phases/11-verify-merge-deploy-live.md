@@ -1,6 +1,6 @@
 # Phase 11 — verify Phase 10 against the real PBX, merge, tag, deploy
 
-> **Status (2026-10-08): PLANNED, NOT STARTED.** Chosen by the user at the Phase 10 gate (option A). The plan below has not been approved for execution yet; present it for approval before starting.
+> **Status (2026-10-09): ACTIVE — step 1 done.** Started on the user's request ("go 11"). Step 1 real-PBX run found the caller's key in `openapi/queues-list` (webhook URL, DOCS_AUDIT OA-19); fixed in `redact.ts` (credential scrub + secret URL query parameters, user decision, `docs/SECURITY.md` "Phase 11"). Re-run: 7 passed, 1 skipped (Proxy check: no `PROXY_TEST_KEY`). Steps 2-4 not started.
 > **Starting point:** branch `phase/live-all-reads` @ Phase 10 commit (approved). Production runs `v1.2-side-menus` with `PLAYGROUND_LIVE_ENABLED=true`.
 > **Model:** step 1 on Opus 5.5 (judging real redaction output is security work); steps 2-4 routine (Sonnet), flag the switch.
 

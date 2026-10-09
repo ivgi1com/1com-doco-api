@@ -385,6 +385,25 @@ Residual risk accepted by the user:
 - Personal data (caller IDs, names, e-mail, phone-book entries) is shown to
   the key holder unfiltered.
 
+## Phase 11 — key found in a real answer, redaction extended (2026-10-09, Opus 5.5)
+
+The real-PBX check (Phase 11 step 1) found the caller's key in
+`openapi/queues-list`: a queue's webhook URL (`qu_notifyabandonedurl`) holds a
+Proxy API URL with `key=<key>` (DOCS_AUDIT OA-19). User decision: two new
+rules in `redact.ts`, for every Live target:
+
+- The credential the caller sent is replaced wherever it appears in the
+  body (plain, URL-encoded, JSON-escaped), whatever the field is called.
+- In any `http(s)://` URL inside the body (JSON string values, XML and
+  plain text, also with PHP-escaped `\/`), a query parameter named `key` or
+  matching the sensitive-name rule has its value replaced. This also covers
+  keys of other tenants or other APIs in configured URLs.
+
+Unit tests: `tests/unit/live-passthrough.test.ts` ("keys inside URLs ...").
+Real check: `tests/e2e/live-real.spec.ts` asserts no secret-named field and
+no secret URL parameter keeps a value. Residual risk unchanged otherwise: a
+secret under an unrecognized name, outside a URL query, is still shown.
+
 ## Blocking requirements for future Live enablement
 
 Each item here blocks one operation from the Live allowlist
