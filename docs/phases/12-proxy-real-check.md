@@ -1,6 +1,6 @@
 # Phase 12 — Proxy API real-PBX redaction check
 
-> **Status (2026-10-09): DONE — at the approval gate.** Branch `phase/proxy-real-check`.
+> **Status (2026-10-09): APPROVED (gate A).** Branch `phase/proxy-real-check`.
 > **Model:** Opus 5.5 (judging real redaction output is security work).
 
 ## Why

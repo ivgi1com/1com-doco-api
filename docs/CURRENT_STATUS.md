@@ -1,8 +1,8 @@
 # Current Status
 
 Current work:
-**Phase 12 (Proxy real-PBX check) DONE, at the approval gate (2026-10-09) on
-`phase/proxy-real-check`: all 33 Proxy Live targets walked with a TEST key;
+**Phase 12 (Proxy real-PBX check) APPROVED (2026-10-09, gate A), merged to
+`main`, tagged `v1.4.2-proxy-real-check`: all 33 Proxy Live targets walked with a TEST key;
 31 answered, 0 leaks; `info-call`, `countpeers` timed out (unchecked);
 `info-cdrs`, `agent-listqueues` withheld by fail-closed redaction (OA-20).
 Test-only change; nothing to deploy. Rotate the TEST key.**
