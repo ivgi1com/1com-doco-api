@@ -7,7 +7,7 @@ import { getEndpointExamples } from "@/content/examples";
 import { withObserved } from "@/content/observed";
 import { buildSearchIndex } from "@/lib/search-index";
 import { EXCLUDED_GUIDES, EXCLUDED_OPENAPI_OPS, EXCLUDED_PROXY_OPS } from "./helpers/exclusions";
-import { customerText } from "@/lib/customer-text";
+import { INTERNAL_REF, customerText, isInternalNote } from "@/lib/customer-text";
 import en from "../../messages/en.json";
 
 /**
@@ -18,8 +18,8 @@ import en from "../../messages/en.json";
  * and is skipped.
  */
 
-/** Keys that hold provenance, not rendered copy. */
-const SKIP_KEYS = new Set(["sourceUrl", "source", "sources", "file", "page", "evidence"]);
+/** Keys that hold provenance, not rendered copy. `basis` (demo cases) is an internal citation; the Playground never renders it. */
+const SKIP_KEYS = new Set(["sourceUrl", "source", "sources", "file", "page", "evidence", "basis"]);
 /** The one quoted vendor path kept on purpose (user decision, 2026-10-01). */
 const KEPT = ["/mirtapbx/proxyapi.php"];
 
@@ -58,7 +58,7 @@ function offenders(test: (h: Hit) => boolean): string[] {
   return hits
     .filter(test)
     .map((h) => `${h.path}: ${h.text.slice(0, 90)}`)
-    .slice(0, 400);
+    .slice(0, 12);
 }
 
 describe("customer-visible copy", () => {
@@ -111,6 +111,21 @@ describe("customer-visible copy", () => {
     const THIRD_PARTY =
       /\bthe source\b|\bsource's\b|\bvendor\b|portal's placeholder|\bthe Doc\b|\bDoc's\b|\bthe Site\b|\bSite's\b|not documented by the source/i;
     expect(offenders((h) => !h.apiOutput && THIRD_PARTY.test(customerText(h.text)))).toEqual([]);
+  });
+
+  it("shows no internal evidence reference anywhere a customer can read (md files, audit ids, phases, src paths, probes)", () => {
+    // Same filters the UI applies; what survives them is what a customer reads.
+    const INTERNAL =
+      /\.md\b|\bsource-docs\b|\bDOCS_AUDIT\b|\b(?:OA|A|U)-\d+\b|\bSEC-REQ\b|\bPhase \d|\bStage \d|\bsrc\/|\bprobes?\b|Demo convention/i;
+    // The Reference drops whole internal notes (endpoint-view.tsx, isInternalNote).
+    const droppedNote = (h: Hit) => /\.notes\[\d+\]$/.test(h.path) && isInternalNote(h.text);
+    expect(
+      offenders((h) => {
+        if (h.apiOutput || droppedNote(h)) return false;
+        const shown = customerText(h.text);
+        return INTERNAL.test(shown) || INTERNAL_REF.test(shown);
+      }),
+    ).toEqual([]);
   });
 
   it("names the OpenAPI product '1com Open API' in selectors", () => {

@@ -4,13 +4,14 @@ import { Callout } from "@/components/ui/callout";
 import { getApi, getEndpoint } from "@/content";
 import type { Guide, GuideBlock } from "@/content/guides";
 import { Link } from "@/i18n/navigation";
+import { customerText } from "@/lib/customer-text";
 import { buildSample, sampleLanguages } from "@/lib/code-samples";
 
-/** Renders `backtick` spans as inline code; everything else is plain text (no HTML). */
+/** Renders `backtick` spans as inline code; everything else is plain text (no HTML). Internal evidence references are dropped (customer-text.ts). */
 export function InlineText({ text }: { text: string }) {
   return (
     <>
-      {text.split("`").map((part, i) =>
+      {customerText(text).split("`").map((part, i) =>
         i % 2 === 1 ? (
           <code key={i} className="prose-code">
             {part}
@@ -43,7 +44,7 @@ function Block({ block, guide }: { block: GuideBlock; guide: Guide }) {
       );
     case "callout":
       return (
-        <Callout kind={block.tone} title={block.title}>
+        <Callout kind={block.tone} title={block.title && customerText(block.title)}>
           <p>
             <InlineText text={block.text} />
           </p>
@@ -68,7 +69,7 @@ function Block({ block, guide }: { block: GuideBlock; guide: Guide }) {
             return (
               <li key={id}>
                 <Link href={`/reference/${guide.apiId}/${id}`} className="text-accent underline">
-                  {endpoint.title}
+                  {customerText(endpoint.title)}
                 </Link>{" "}
                 <span className="font-mono text-xs text-ink-muted">
                   {endpoint.method} {Object.entries(endpoint.fixedQuery ?? {}).map(([k, v]) => `${k}=${v}`).join("&") || endpoint.path}
@@ -87,7 +88,7 @@ export function GuideBody({ guide }: { guide: Guide }) {
       {guide.sections.map((section) => (
         <section key={section.id} id={section.id} aria-labelledby={`${section.id}-h`} className="scroll-mt-20 space-y-3">
           <h2 id={`${section.id}-h`} className="text-xl font-semibold text-ink">
-            {section.title}
+            {customerText(section.title)}
           </h2>
           {section.blocks.map((block, i) => (
             <Block key={i} block={block} guide={guide} />

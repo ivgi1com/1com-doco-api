@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-09 (Phases 11-12 approved, v1.4 deployed, no phase active; start at "Resume here")
+Last updated: 2026-10-10 (hotfix `v1.4.3-no-internal-text` merged locally, not pushed or deployed; `fix/outside-review` awaiting its gate; no phase active; start at "Resume here")
 
 ## Resume here (2026-10-09)
 

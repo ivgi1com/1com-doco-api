@@ -1,9 +1,20 @@
 # Current Status
 
 Current work:
-**Snapshot (2026-10-09): no phase active; the next phase has not started and
+**Snapshot (2026-10-10): no phase active; the next phase has not started and
 is waiting for the user.**
-- `main` = GitHub `main`, latest tag `v1.4.2-proxy-real-check`.
+- Hotfix `fix/no-internal-text` APPROVED (gate A), merged to local `main`,
+  tag `v1.4.3-no-internal-text`: the Playground Scenario line showed internal
+  evidence notes (md files, audit ids, phases, paths). It now shows the label
+  only; guides go through `customerText`; "probe" reads "check"; a guard test
+  covers every rendered string. **Not pushed, not deployed: production still
+  runs `v1.4-menu-groups` with the leak until the user approves a deploy.**
+- Open branch `fix/outside-review` (outside-review fixes: voice, observed
+  statuses, Quickstart, Glossary, Sample API removed, search honours
+  `menuHidden`) is at its approval gate, not merged. Open items there: glossary
+  wording review, webhook spec from the user, public spec file not linked (OA-21).
+- `main` latest tag `v1.4.3-no-internal-text` (GitHub `main` still at
+  `v1.4.2-proxy-real-check`).
 - Production: `v1.4-menu-groups` (`99303b1`) at
   `https://pbx6webserver.1com.co.il/1com-api-doco/`; Live on for all 85 reads
   (52 Open API, 33 Proxy) with the Phase 11 redaction; menu groups visible.

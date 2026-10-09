@@ -924,6 +924,21 @@ test.describe("interactions", () => {
       });
     }
 
+    // The Scenario line shows the scenario's label only: no internal evidence
+    // note (md file names, audit ids, phases, source paths) may reach a customer.
+    for (const endpoint of ["openapi/queues-list", "openapi/extensions-list", "proxy/info-extensions"]) {
+      test(`${endpoint}: the Scenario line has no internal references`, async ({ page }) => {
+        await page.goto(`./en/playground?endpoint=${endpoint}`);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
+        const scenarioLine = desktopPane(page).locator("p", { hasText: "Scenario:" });
+        await expect(scenarioLine).toBeVisible();
+        const text = await scenarioLine.innerText();
+        expect(text).toMatch(/^Scenario: \S[^·]*$/);
+        expect(text).not.toMatch(/\.md\b|source-docs|DOCS_AUDIT|\b(?:OA|A|U)-\d+\b|Phase \d|Stage \d|src\/|probe|observed\.ts/i);
+      });
+    }
+
     // Superseded note (Stage 7 remediation): this endpoint used to have its
     // own "the unset-format default is Not simulated" test, exercising the
     // one input combination (format left at its pre-Stage-7 unset state)

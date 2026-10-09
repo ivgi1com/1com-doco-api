@@ -32,7 +32,9 @@ describe("customerText", () => {
   it("drops pointers, audit sentences and phase names", () => {
     expect(customerText("not 4 — see A-72).")).toBe("not 4).");
     expect(customerText("One operation of INFO (info=DIDS). Full audit: source-docs/proxy-api/info.md.")).toBe("One operation of INFO (info=DIDS).");
-    expect(customerText("an earlier interrupted Phase 6 probe")).toBe("an earlier interrupted probe");
+    expect(customerText("an earlier interrupted Phase 6 probe")).toBe("an earlier interrupted check");
+    expect(customerText("Response observed by probe (source-docs/DOCS_AUDIT.md A-72).")).toBe("Response observed.");
+    expect(customerText("a 15-second probe timed out; the probe's retry worked")).toBe("a 15-second check timed out; the check's retry worked");
     expect(customerText("a mailbox's state (user decision, Phase 7 Stage 1).")).toBe("a mailbox's state (user decision).");
     expect(customerText("Without extension (A-68, refining A-41's earlier finding): both")).toBe("Without extension: both");
   });
@@ -49,6 +51,8 @@ describe("isInternalNote", () => {
     expect(isInternalNote("Security (SEC-REQ-07): fields include `clid`. Before Live: a default-deny allowlist.")).toBe(true);
     expect(isInternalNote("SECURITY: the format=json response includes a plaintext credential.")).toBe(true);
     expect(isInternalNote("Source: source-docs/openapi/cdrs.md.")).toBe(true);
+    expect(isInternalNote("Doc-only purpose line (Doc line 120): \"list of queues\".")).toBe(true);
+    expect(isInternalNote("Site-only action (Site line 148); not in the action list.")).toBe(true);
     expect(isInternalNote("Not offered on Live: src/server/playground/allowlist.ts has no entry.")).toBe(true);
   });
 

@@ -29,6 +29,10 @@ const LINE_SUBJECT = /(^|[.!?]\s+)(?:Site|Doc) lines? \d+(?:\s*[–-]\s*\d+)?(?=
 const LINE_LEAD = /(^|[.!?]\s+)(?:Site|Doc) lines? \d+(?:\s*[–-]\s*\d+)?:\s*([a-z])/g;
 /** A bare line citation that introduces a quotation: `Site line 155: "..."`, `(Doc line 151: "...")`. */
 const LINE_CITE = /\b(?:Site|Doc) lines? \d+(?:\s*[–-]\s*\d+)?(?::\s*|(?=\)))/g;
+/** "Response observed by probe" reads "Response observed": how a finding was made is internal. */
+const BY_PROBE = /\s+by probes?\b/g;
+/** "a structure-only probe", "the probe's timeout": customers read "check". */
+const PROBE_WORD = /\bprobes?(?=\b)/g;
 /** "an earlier interrupted Phase 6 probe" reads "an earlier interrupted probe". */
 const PHASE_BARE = /\bPhase \d+(?: Stage \d+)? (?=[a-z])/g;
 
@@ -46,7 +50,9 @@ export function customerText(text: string): string {
     .replace(LINE_SUBJECT, "$1The documentation")
     .replace(LINE_LEAD, (_m, lead: string, c: string) => lead + c.toUpperCase())
     .replace(LINE_CITE, "")
-    .replace(PHASE_BARE, "");
+    .replace(PHASE_BARE, "")
+    .replace(BY_PROBE, "")
+    .replace(PROBE_WORD, (m) => (m.endsWith("s") ? "checks" : "check"));
   if (stripped === text) return text;
   return stripped
     .replace(/[ 	]{2,}/g, " ")
@@ -62,7 +68,7 @@ export function customerText(text: string): string {
  */
 export function isInternalNote(note: string): boolean {
   return (
-    /^(?:Security \(SEC-REQ-|SECURITY:|Source: source-docs\/)/.test(note) ||
+    /^(?:Security \(SEC-REQ-|SECURITY:|Source: source-docs\/|(?:Doc|Site)-only\b)/.test(note) ||
     /\bsrc\/[\w./-]+/.test(note) ||
     INTERNAL_REF.test(customerText(note))
   );

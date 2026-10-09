@@ -2163,3 +2163,16 @@ checked claim by claim against the code. User decisions:
 - **Webhooks / call events:** a future phase once the user supplies the
   mechanism, payload and an example. Rate limits, pagination and a changelog
   stay deferred (no data).
+
+
+## No internal text for customers (2026-10-10, hotfix)
+
+- The Playground Scenario line showed the demo case's internal `basis` note.
+  Decision: the line shows the label only; `basis` is data for maintainers and
+  is never rendered.
+- Guard: one unit test over every customer-visible string (Reference, demo,
+  guides, messages) fails on md file names, `source-docs`, audit ids, phases,
+  `src/` paths and the word "probe"; an e2e test checks the Scenario line.
+- `customerText` now also reads "probe" as "check" and drops "by probe";
+  `isInternalNote` hides `Doc-only` / `Site-only` provenance notes.
+- Ships on its own branch from `main`; deploy waits for the user.
