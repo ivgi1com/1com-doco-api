@@ -214,7 +214,6 @@ export function ResponseViewer({ state, endpoint }: { state: PlaygroundState; en
       {!isLive && response.caseLabel && (
         <p className="border-b border-border px-4 py-1.5 text-xs text-ink-muted">
           {t("scenario")}: <span className="font-semibold text-ink">{response.caseLabel}</span>
-          {response.basis && <> · {response.basis}</>}
         </p>
       )}
 

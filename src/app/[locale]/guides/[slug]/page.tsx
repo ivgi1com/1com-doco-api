@@ -5,6 +5,7 @@ import { GuideBody } from "@/components/guides/guide-body";
 import { PrototypeBanner } from "@/components/ui/prototype-banner";
 import { getGuide, guides } from "@/content/guides";
 import { routing } from "@/i18n/routing";
+import { customerText } from "@/lib/customer-text";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => guides.map((g) => ({ locale, slug: g.slug })));
@@ -17,7 +18,7 @@ export async function generateMetadata({
 }: PageProps<"/[locale]/guides/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGuide(slug);
-  return guide ? { title: guide.title, description: guide.summary } : {};
+  return guide ? { title: customerText(guide.title), description: customerText(guide.summary) } : {};
 }
 
 /** Generic guide page: all content, including which API it documents, comes from the guide module. */
@@ -37,8 +38,8 @@ export default async function GuidePage({ params }: PageProps<"/[locale]/guides/
             <div className="space-y-2">
               {guide.synthetic && <PrototypeBanner />}
             </div>
-            <h1 className="text-2xl font-bold text-ink">{guide.title}</h1>
-            <p className="text-md text-ink-muted">{guide.summary}</p>
+            <h1 className="text-2xl font-bold text-ink">{customerText(guide.title)}</h1>
+            <p className="text-md text-ink-muted">{customerText(guide.summary)}</p>
           </header>
 
           <GuideBody guide={guide} />
@@ -49,7 +50,7 @@ export default async function GuidePage({ params }: PageProps<"/[locale]/guides/
             <p className="mb-2 text-xs font-semibold text-ink-muted">{t("onThisPage")}</p>
             {guide.sections.map((s) => (
               <a key={s.id} href={`#${s.id}`} className="block py-0.5 text-ink-muted hover:text-ink">
-                {s.title}
+                {customerText(s.title)}
               </a>
             ))}
           </nav>

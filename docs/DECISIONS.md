@@ -2132,3 +2132,15 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   is recorded, not a failure: the check is about leaks only. Result: 0 leaks;
   2 upstream timeouts and 2 withheld answers kept as open items (OA-20).
 
+
+## No internal text for customers (2026-10-10, hotfix)
+
+- The Playground Scenario line showed the demo case's internal `basis` note.
+  Decision: the line shows the label only; `basis` is data for maintainers and
+  is never rendered.
+- Guard: one unit test over every customer-visible string (Reference, demo,
+  guides, messages) fails on md file names, `source-docs`, audit ids, phases,
+  `src/` paths and the word "probe"; an e2e test checks the Scenario line.
+- `customerText` now also reads "probe" as "check" and drops "by probe";
+  `isInternalNote` hides `Doc-only` / `Site-only` provenance notes.
+- Ships on its own branch from `main`; deploy waits for the user.
