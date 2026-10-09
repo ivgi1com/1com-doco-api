@@ -9,12 +9,15 @@ is waiting for the user.**
   only; guides go through `customerText`; "probe" reads "check"; a guard test
   covers every rendered string. **Not pushed, not deployed: production still
   runs `v1.4-menu-groups` with the leak until the user approves a deploy.**
-- Open branch `fix/outside-review` (outside-review fixes: voice, observed
-  statuses, Quickstart, Glossary, Sample API removed, search honours
-  `menuHidden`) is at its approval gate, not merged. Open items there: glossary
-  wording review, webhook spec from the user, public spec file not linked (OA-21).
-- `main` latest tag `v1.4.3-no-internal-text` (GitHub `main` still at
-  `v1.4.2-proxy-real-check`).
+- `fix/outside-review` (first-party voice, observed statuses and errors,
+  Quickstart, Glossary, Sample API removed, search honours `menuHidden`)
+  merged to local `main` on user approval (2026-10-10), tag
+  `v1.5-outside-review-fixes`. Open items: webhook spec from the user, public
+  spec file not linked (OA-21), glossary wording reviewed by the user.
+- Local `main` = `v1.5-outside-review-fixes`. **Not pushed, not deployed:**
+  GitHub `main` is still at `v1.4.2-proxy-real-check` and production runs
+  `v1.4-menu-groups` (with the Scenario-line leak). Next: pre-deploy checks,
+  then push and deploy only on the user's approval.
 - Production: `v1.4-menu-groups` (`99303b1`) at
   `https://pbx6webserver.1com.co.il/1com-api-doco/`; Live on for all 85 reads
   (52 Open API, 33 Proxy) with the Phase 11 redaction; menu groups visible.

@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-10 (hotfix `v1.4.3-no-internal-text` merged locally, not pushed or deployed; `fix/outside-review` awaiting its gate; no phase active; start at "Resume here")
+Last updated: 2026-10-10 (local `main` = `v1.5-outside-review-fixes`, includes hotfix `v1.4.3-no-internal-text`; not pushed or deployed; production still `v1.4-menu-groups`; start at "Resume here")
 
 ## Resume here (2026-10-09)
 
