@@ -7,7 +7,7 @@ redaction fix) and the menu groups are visible. Verified from outside:
 overview 200, CSP present, grouped CDR menu, `openapi/aianalysis-get` ->
 403 `endpoint_not_allowed`, `openapi/queues-list` with a fake key ->
 upstream 401 `invalid_api_key`. Rollback copy: `.next.prev` = v1.2-side-menus
-build. Phase 11 at its approval gate.**
+build. Phase 11 APPROVED (gate A); next phase being planned, nothing started.**
 
 **Menu groups (issue #1) APPROVED (2026-10-09, gate A), merged to `main`
 (no-ff) and tagged `v1.4-menu-groups`; not pushed, not deployed. Related

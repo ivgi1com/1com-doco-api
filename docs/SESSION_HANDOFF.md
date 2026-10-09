@@ -26,7 +26,7 @@ Last updated: 2026-10-09 (menu groups merged; Phase 11 deploy open; start at "Re
   first defined member). Tests `tests/unit/menu-categories.test.ts`, e2e
   "menu groups" in `tests/e2e/smoke.spec.ts`. Spec: GitHub issue #1 (+ the
   flat-list revision comment). `gh` is installed and logged in as `ivgi1com`.
-- Next: Phase 11 approval gate (all steps done). `docs/phases/11-verify-merge-deploy-live.md`.
+- Phase 11 APPROVED (2026-10-09, gate A). Next phase: being planned, not started. `docs/phases/11-verify-merge-deploy-live.md`.
 
 ### Resume on another machine
 
