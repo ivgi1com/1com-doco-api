@@ -13,8 +13,8 @@ import { expect, test, type Page } from "@playwright/test";
 const routes = [
   "./en",
   "./en/reference/proxy/info-extensions",
-  "./en/reference/sample/list-call-records",
-  "./en/guides/getting-started",
+  "./en/reference/openapi/extensions-list",
+  "./en/guides/openapi-authentication",
   "./en/playground",
   "./en/no-such-page",
 ];
@@ -124,7 +124,7 @@ test.describe("interactions", () => {
   });
 
   test("endpoint page: code tabs switch and copy button works", async ({ page }) => {
-    await page.goto("./en/reference/sample/list-call-records");
+    await page.goto("./en/reference/proxy/info-extensions");
     await page.getByRole("tab", { name: "Python" }).click();
     await expect(page.getByRole("tab", { name: "Python" })).toHaveAttribute("aria-selected", "true");
   });
@@ -148,7 +148,7 @@ test.describe("interactions", () => {
   };
 
   test("playground: empty state, then Demo send shows loading then a response", async ({ page }) => {
-    await page.goto("./en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=proxy/info-extensions");
     await expect(desktopPane(page).getByText("No response yet")).toBeVisible();
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/ms$/)).toBeVisible(); // loading: elapsed-ms readout
@@ -165,10 +165,10 @@ test.describe("interactions", () => {
   });
 
   // Phase 5: Live is allowlisted per endpoint (docs/phases/05-live-playground.md,
-  // U-08); the Sample API is never allowlisted, so Send must stay disabled
-  // rather than attempt (and fail) a request, as the old prototype stub did.
-  test("playground: Live is not allowlisted for the Sample API, so Send stays disabled", async ({ page }) => {
-    await page.goto("./en/playground?endpoint=sample/list-call-records");
+  // U-08); an operation that is not allowlisted (Settings, SEC-REQ-26) must keep
+  // Send disabled rather than attempt (and fail) a request.
+  test("playground: Live is not allowlisted for Settings, so Send stays disabled", async ({ page }) => {
+    await page.goto("./en/playground?endpoint=openapi/settings-list");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
     await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
@@ -179,20 +179,20 @@ test.describe("interactions", () => {
   });
 
   test("playground: required-field validation blocks Send with a missing path parameter", async ({ page }) => {
-    await page.goto("./en/playground?endpoint=sample/get-call-record");
+    await page.goto("./en/playground?endpoint=openapi/campaigns-get");
     // Path params are prefilled from the endpoint's documented example value;
     // clear it to exercise the required-field path.
-    await desktopPane(page).getByLabel("call_id").fill("");
+    await desktopPane(page).getByLabel("ca_id").fill("");
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
-    await expect(desktopPane(page).getByText("call_id is required.")).toBeVisible();
+    await expect(desktopPane(page).getByText("ca_id is required.")).toBeVisible();
     await expect(desktopPane(page).getByText("Fix the highlighted fields before sending.")).toBeVisible();
   });
 
   test("JSON viewer: collapses a node and search filters", async ({ page }) => {
-    await page.goto("./en/playground?endpoint=sample/list-call-records");
+    await page.goto("./en/playground?endpoint=openapi/extensions-list");
     await desktopPane(page).getByRole("button", { name: "Send request" }).click();
     await expect(desktopPane(page).getByText(/status: 200/)).toBeVisible({ timeout: 3000 });
-    await desktopPane(page).getByPlaceholder("Search JSON").fill("outbound");
+    await desktopPane(page).getByPlaceholder("Search JSON").fill("id");
     await expect(desktopPane(page).getByText("No matches")).toHaveCount(0);
   });
 
@@ -222,7 +222,7 @@ test.describe("interactions", () => {
       // twice: a desktop `<aside>` (always open) and a mobile `<details>`
       // disclosure (closed by default, and CSS-hidden at desktop widths).
       // Assert against whichever copy applies to this viewport.
-      const evidenceBadgeText = "Observed, sanitized — not vendor-documented";
+      const evidenceBadgeText = "Observed on the 1com PBX, sanitized";
       if ((page.viewportSize()?.width ?? 0) < 768) {
         // Substring text matching also hits the unrelated method-inferred
         // note ("...its request examples."), so target the <summary> itself.
@@ -235,7 +235,7 @@ test.describe("interactions", () => {
         await expect(page.locator("aside").getByText("Observed sample", { exact: true }).first()).toBeVisible();
       }
       await expect(
-        page.locator('section[aria-labelledby="errors"]').getByText("Not documented by the source."),
+        page.locator('section[aria-labelledby="errors"]').getByText("Not specified."),
       ).toBeVisible();
     });
 
@@ -246,7 +246,7 @@ test.describe("interactions", () => {
       await expect(page).toHaveURL(/\/reference\/openapi$/);
       const select = page.getByRole("combobox").first();
       await expect(select).toHaveValue("openapi");
-      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)"]);
     });
 
     test("the Playground opens on the Open API's Simple CDR by default (8E)", async ({ page }) => {
@@ -268,7 +268,7 @@ test.describe("interactions", () => {
       const sidebar = page.locator("aside").first();
       const select = sidebar.getByRole("combobox");
       await expect(select).toHaveValue("openapi");
-      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)", "Sample (prototype)"]);
+      await expect(select.locator("option")).toHaveText(["1com Open API", "Proxy API (legacy)"]);
       await expect(sidebar.getByRole("link", { name: "Most Used Cases" })).toBeVisible();
       await expect(sidebar.getByRole("link", { name: "Call history" })).toHaveCount(0);
       test.skip(browserName === "webkit", "Playwright/WebKit doesn't fire onChange for a React-controlled <select> via selectOption.");
@@ -982,13 +982,11 @@ test.describe("interactions", () => {
       await expect(desktopPane(page).getByTestId("json-content").getByText("null")).toBeVisible();
     });
 
-    test("Simulate error is hidden once an endpoint has fixtures, unlike the fixture-less Sample API", async ({
+    test("Simulate error is hidden once an endpoint has fixtures", async ({
       page,
     }) => {
       await page.goto("./en/playground?endpoint=proxy/info-extensions");
       await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
-      await page.goto("./en/playground?endpoint=sample/list-call-records");
-      await expect(desktopPane(page).getByText("Simulate error response")).toBeVisible();
       // A real API endpoint without fixtures has no error example to simulate (8B).
       await page.goto("./en/playground?endpoint=openapi/cdrs-list");
       await expect(desktopPane(page).getByText("Simulate error response")).toHaveCount(0);
@@ -1075,7 +1073,7 @@ test.describe("interactions", () => {
       await expect(page.getByRole("link", { name: "Try in Playground" })).toHaveCount(0);
       const panel = await requestPanel(page);
       await expect(panel.getByTestId("reference-only")).toBeVisible();
-      await expect(panel.getByText("Vendor sample")).toBeVisible();
+      await expect(panel.getByText("Example", { exact: true })).toBeVisible();
       await expect(panel.getByText("Success|Originate successfully queued|15a4cfe6429054|")).toBeVisible();
     });
 
@@ -1608,7 +1606,7 @@ test.describe("interactions", () => {
       await page.goto("./en/reference/openapi/dial");
       await expect(page.getByText("This places a real phone call.").first()).toBeVisible();
       await page.goto("./en/reference/proxy/info-extensions");
-      await expect(page.getByText(/Response formats are observed, not vendor-documented/).first()).toBeVisible();
+      await expect(page.getByText(/Response formats are observed, not documented/).first()).toBeVisible();
     });
   });
 });
@@ -1621,7 +1619,7 @@ test.describe("Content-Security-Policy (Phase 9)", () => {
     "./en",
     "./en/reference/openapi/simplecdrs-list",
     "./en/reference/proxy/info-extensions",
-    "./en/guides/getting-started",
+    "./en/guides/openapi-authentication",
     "./en/playground",
     "./en/playground?endpoint=openapi/simplecdrs-list",
   ];

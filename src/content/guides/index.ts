@@ -1,17 +1,16 @@
 import { apis } from "../index";
 import { authentication } from "./authentication";
 import { callHistory } from "./call-history";
-import { gettingStarted } from "./getting-started";
 import { mostUsedCases } from "./most-used-cases";
 import { openapiAuthentication } from "./openapi-authentication";
 import type { Guide } from "./types";
 
 /**
  * Guide registry, in sidebar order: Open API first (Phase 8E), then the
- * legacy Proxy API, then the prototype Sample guide. Each guide is a content
- * module (types.ts); the Guides sidebar shows one API's guides at a time.
+ * legacy Proxy API. Each guide is a content module (types.ts); the Guides
+ * sidebar shows one API's guides at a time.
  */
-export const guides: Guide[] = [openapiAuthentication, mostUsedCases, authentication, callHistory, gettingStarted];
+export const guides: Guide[] = [openapiAuthentication, mostUsedCases, authentication, callHistory];
 
 export function getGuide(slug: string) {
   return guides.find((g) => g.slug === slug);

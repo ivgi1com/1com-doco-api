@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { getApi, getEndpoint } from "@/content";
 import { getDemoFixtures, isDemoSimulatedWrite } from "@/content/demo";
 import { proxyApi } from "@/content/proxy";
-import { sampleApi } from "@/content/sample-api";
+import { fixtureEndpoint, sampleApi } from "./helpers/fixture-api";
 import {
   BODY_SECRET_MASK,
   bodyDisplay,
@@ -19,7 +19,7 @@ const KEY = "TEST_KEY_do_not_leak_9d2f";
 const infoExtensions = getEndpoint("proxy", "info-extensions")!;
 const infoAgents = getEndpoint("proxy", "info-agents")!;
 const cdrGet = getEndpoint("proxy", "cdr-get")!;
-const listCalls = getEndpoint("sample", "list-call-records")!;
+const listCalls = fixtureEndpoint("list-call-records");
 const openapiApi = getApi("openapi")!;
 const campaignsGet = getEndpoint("openapi", "campaigns-get")!;
 
