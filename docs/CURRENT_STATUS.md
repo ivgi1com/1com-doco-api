@@ -1,6 +1,17 @@
 # Current Status
 
 Current work:
+**Menu groups (issue #1) APPROVED (2026-10-09, gate A), merged to `main`
+(no-ff) and tagged `v1.4-menu-groups`; not pushed, not deployed. Related
+categories share one side-menu entry, operations as one flat list member by
+member: Open API CDR (Simple CDR, CDR; 2nd after Dial), Campaign (+ Number),
+Phone Book (+ Entry), AI Analysis (+ AI Logs); Proxy CHANNELS, PEERS, QUEUE,
+FLOWS. Menu-only (`menuGroups` on the API definition, `menuGroups()` in
+`src/content/index.ts`): ids, URLs, Live policy, Demo, search unchanged.
+Sidebar, drawer, Playground picker and overview page. `npm run check`
+519/519; Playwright 233 passed / 19 skipped / 0 failed. Phase 11 step 4
+(deploy) still open.**
+
 **Phase 11 ACTIVE (2026-10-09). Steps 1-3 done: real-PBX check found the
 caller's key in `openapi/queues-list` (queue webhook URL, OA-19), fixed in
 `redact.ts`; real-PBX spec 7 passed / 1 skipped (Proxy check needs a Proxy
