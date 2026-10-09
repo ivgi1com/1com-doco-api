@@ -1216,3 +1216,14 @@ OA-19 — Queue webhook URLs carry API keys (OBSERVED, security)
   portal returned the key. Fixed before merge (`docs/SECURITY.md` "Phase 11").
 - Not affected in production: production ran `v1.2-side-menus`, where
   `openapi/queues-list` is not a Live target.
+
+## 16. Phase 12 — real-PBX check of all Proxy Live reads (2026-10-09)
+
+OA-20 — Proxy reads the portal withholds or can't reach (OBSERVED)
+- `info-cdrs` and `agent-listqueues`: the portal's fail-closed redaction
+  withheld the whole answer (a secret-like name that could not be aligned to
+  a column). Safe; the Playground shows the "withheld" notice instead of data.
+- `info-call` and `countpeers`: the PBX did not answer within the portal's
+  10 s timeout (`upstream_timeout`); not checked for leaks.
+- All other 31 Proxy Live answers: no key, no secret-named value, no secret
+  URL parameter (Phase 12, `docs/phases/12-proxy-real-check.md`).

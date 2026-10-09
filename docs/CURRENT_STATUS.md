@@ -1,6 +1,12 @@
 # Current Status
 
 Current work:
+**Phase 12 (Proxy real-PBX check) APPROVED (2026-10-09, gate A), merged to
+`main`, tagged `v1.4.2-proxy-real-check`: all 33 Proxy Live targets walked with a TEST key;
+31 answered, 0 leaks; `info-call`, `countpeers` timed out (unchecked);
+`info-cdrs`, `agent-listqueues` withheld by fail-closed redaction (OA-20).
+Test-only change; nothing to deploy. Rotate the TEST key.**
+
 **Production (2026-10-09): `v1.4-menu-groups` (`99303b1`) deployed and
 pushed. Live for all 85 reads is now on in production (with the Phase 11
 redaction fix) and the menu groups are visible. Verified from outside:
