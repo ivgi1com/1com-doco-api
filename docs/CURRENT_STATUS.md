@@ -18,8 +18,8 @@ is waiting for the user.**
   finds nothing; `openapi/aianalysis-get` -> 403 `endpoint_not_allowed`;
   `openapi/queues-list` with a fake key -> upstream 401; no console errors.
 - Server: `/home/portal/app` detached at `v1.5-outside-review-fixes`;
-  rollback copy `.next.prev` = the `v1.4-menu-groups` build; the older
-  `v1.2-side-menus` build was kept as `.next.prev-v1.2` (safe to delete).
+  rollback copy `.next.prev` = the `v1.4-menu-groups` build. The older
+  `v1.2-side-menus` copy (`.next.prev-v1.2`) was deleted on 2026-10-10.
   Live on for all 85 reads (52 Open API, 33 Proxy) with the Phase 11 redaction.
 - Open items: webhook spec from the user (future phase); public spec file not
   linked (OA-21); glossary wording is the user's to keep reviewing.

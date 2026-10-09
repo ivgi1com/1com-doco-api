@@ -99,7 +99,9 @@ Rollback: `git checkout --detach <previous commit>`, then `npm ci
 --include=dev` and rebuild, or restore the previous `.next` copy and
 restart (the update above keeps one in `.next.prev`). The extra copies from
 the 2026-10-08 update were deleted the same day, so returning to v1.0 means
-rebuilding from the `v1.0-developer-portal` tag.
+rebuilding from the `v1.0-developer-portal` tag. (2026-10-10) The v1.5 update
+kept the v1.4 build in `.next.prev`; the old v1.2 copy was renamed
+`.next.prev-v1.2` first and deleted afterwards.
 
 ## Runtime environment
 

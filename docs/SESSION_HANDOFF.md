@@ -8,7 +8,7 @@ Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`, deployed and
 
 | What | Commit / tag | GitHub | Production |
 |---|---|---|---|
-| Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | deployed earlier; now the `.next.prev` rollback build |
+| Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | deployed earlier; its build copy was deleted from the server on 2026-10-10 |
 | Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge` | pushed | deployed (in v1.4) |
 | Phase 10 — Live for every read (85 targets) + Phase 11 redaction fix | merge `34ca543` on `main`, tag `v1.3-live-all-reads` | pushed | deployed (in v1.4) |
 | Menu groups (issue #1): related categories under one entry, flat list | `feat/menu-groups` merged to `main`, tag `v1.4-menu-groups` | pushed | **deployed 2026-10-09** |
@@ -20,8 +20,9 @@ Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`, deployed and
   (the Proxy part was then done in Phase 12); it found and
   fixed a key leak in `openapi/queues-list` (OA-19, `docs/SECURITY.md`
   "Phase 11"). Rotate the TEST key used (pasted in chat 2026-10-09).
-- Production server: `/home/portal/app` detached at `v1.4-menu-groups`
-  (deployed 2026-10-09); `.next.prev` holds the `v1.2-side-menus` build.
+- Production server: `/home/portal/app` detached at
+  `v1.5-outside-review-fixes` (deployed 2026-10-10); `.next.prev` holds the
+  `v1.4-menu-groups` build (fast rollback: swap it back to `.next`).
   All 85 reads are Live in production.
 - Menu groups: data `menuGroups` on each API definition; `menuGroups()` in
   `src/content/index.ts` folds them into the menu order (a group sits at its
