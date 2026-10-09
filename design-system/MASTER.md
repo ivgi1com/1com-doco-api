@@ -204,6 +204,7 @@ Lifecycle badges: outline style, so they never compete with method pills.
 
 - Dark `code-bg`, mono 14px, collapsible tree with a per-node caret.
 - Toolbar: "Expand all / Collapse all", search, copy.
+- Search (Tree view): matched text gets an indigo `<mark>`, matching rows get an indigo tint plus a 3px left bar. Unmatched rows are never dimmed. Hover is a bright neutral band with a 1px ring, so it never reads as a match. Same colours in both themes (`--code-match-*`, `--code-hover-*` in `globals.css`).
 - Per-node actions: copy value, copy path (`$.data[0].id`).
 - Type-coloured tokens: string, number, boolean, null, key. Hues are distinct from the method pills where they sit side by side, at ≥ 4.5:1 on `code-bg`. Exact syntax-token values are computed during the Phase 2 prototype.
 - Long strings truncate with an expand control. Large arrays paginate (show the first N).

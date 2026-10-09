@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`, deployed and verified; GitHub pushed; no phase active; start at "Resume here")
+Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`; `main` also has the response search/hover redesign, pushed, not deployed; no phase active; start at "Resume here")
 
 ## Resume here (2026-10-09)
 
@@ -15,6 +15,10 @@ Last updated: 2026-10-10 (production = `v1.5-outside-review-fixes`, deployed and
 | Phase 11 approved (real Open API check, deploy) | tag `v1.4.1-phase11-approved` | pushed | docs only |
 | Phase 12: Proxy real-PBX check, 0 leaks (test-only) | merge `feaa5f0`, tag `v1.4.2-proxy-real-check` | pushed | nothing to deploy |
 
+- Response search/hover redesign (variant A) is on `main` (`c332e9d`, merge
+  `f097a32`), pushed, **not deployed**: `json-node.tsx` (`Highlight`, row
+  classes), `json-viewer.tsx` (passes the query), `globals.css` (`--code-match-*`
+  tokens). No tag. Deploy waits for the user.
 - `phase/live-all-reads` merged to `main` (no-ff, `34ca543`), tagged
   `v1.3-live-all-reads`. Phase 11 real-PBX check: 7 passed / 1 skipped
   (the Proxy part was then done in Phase 12); it found and

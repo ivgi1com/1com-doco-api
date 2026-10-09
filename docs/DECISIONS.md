@@ -2176,3 +2176,16 @@ checked claim by claim against the code. User decisions:
 - `customerText` now also reads "probe" as "check" and drops "by probe";
   `isInternalNote` hides `Doc-only` / `Site-only` provenance notes.
 - Ships on its own branch from `main`; deploy waits for the user.
+
+
+## Response search and hover highlight (2026-10-10)
+
+- Problem: in the Playground response (Live and Demo, same `JsonViewer`)
+  search only faded non-matching rows to 40%; matches and hover were barely
+  visible, and a faded parent also faded its matches.
+- Decision (user chose variant "A Accent" from three mock-ups): mark matched
+  text and tint matching rows in indigo, never dim unmatched rows, hover =
+  bright band + ring. Identical in light and dark theme.
+- Design only: matching rules, Tree-only search and all behaviour are
+  unchanged. New tokens `--code-match-*` / `--code-hover-*` in `globals.css`.
+- Not done: match count, next/previous, Raw-view search (new functionality).

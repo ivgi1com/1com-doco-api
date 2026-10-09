@@ -21,6 +21,13 @@ is waiting for the user.**
   rollback copy `.next.prev` = the `v1.4-menu-groups` build. The older
   `v1.2-side-menus` copy (`.next.prev-v1.2`) was deleted on 2026-10-10.
   Live on for all 85 reads (52 Open API, 33 Proxy) with the Phase 11 redaction.
+- **Merged to `main` and pushed 2026-10-10, not deployed:** Playground
+  response search/hover redesign (`c332e9d`, merge `f097a32`): matched text
+  and rows highlighted, unmatched rows no longer dimmed, hover band + ring,
+  same in light and dark. Typecheck, lint, 527 unit tests and the JSON-viewer
+  e2e pass; checked visually at 1440 (light/dark) and 390 in Demo mode (Live
+  not exercised). The full Playwright suite was not re-run. Production is
+  still `v1.5-outside-review-fixes`.
 - Open items: webhook spec from the user (future phase); public spec file not
   linked (OA-21); glossary wording is the user's to keep reviewing.
 - Real-PBX checks done: Open API (Phase 11, OA-19 fixed) and every Proxy Live
