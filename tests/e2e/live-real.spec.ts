@@ -263,11 +263,12 @@ test.describe("Proxy API Live reads against the real PBX (Phase 12)", () => {
   test("no Proxy Live answer shows the key or a secret-named value", async ({ request, baseURL }) => {
     const reads = getApi("proxy")!
       .categories.flatMap((c) => c.endpoints)
-      .filter((e) => e.method === "GET" && e.operationClass === "read");
+      // The three strict-policy targets carry no operationClass (see live-endpoints.test.ts STRICT).
+      .filter((e) => e.method === "GET" && (e.operationClass === "read" || ["cdr-get", "info-agents", "info-extensions"].includes(e.id)));
     test.setTimeout(60_000 + reads.length * 8_000);
     const origin = new URL(baseURL ?? "http://localhost:3000").origin;
 
-    const tally = { live: 0, blocked: 0, needsInput: [] as string[], non200: 0, withheld: 0 };
+    const tally = { live: 0, blocked: 0, needsInput: [] as string[], refused: [] as string[], non200: 0, withheld: [] as string[] };
     const leaks: string[] = [];
     let first = true;
     for (const e of reads) {
@@ -300,13 +301,13 @@ test.describe("Proxy API Live reads against the real PBX (Phase 12)", () => {
       if (text.includes(PROXY_KEY)) leaks.push(`${e.id}: key in response`);
       if (!env.ok) {
         // Portal-side refusal (invalid params, rate limit, timeout): nothing was shown.
-        tally.non200++;
+        tally.refused.push(`${e.id}=${env.error?.code}`);
         continue;
       }
       tally.live++;
       const up = env.upstream!;
       if (up.status !== 200) tally.non200++;
-      if (up.redactedCount === -1) tally.withheld++;
+      if (up.redactedCount === -1) tally.withheld.push(e.id);
       let n: number;
       try {
         n = unredactedSecrets(JSON.parse(up.bodyText));
@@ -318,8 +319,9 @@ test.describe("Proxy API Live reads against the real PBX (Phase 12)", () => {
 
     console.log(
       `Phase 12 summary: reads ${reads.length}, live ${tally.live}, blocked ${tally.blocked}, ` +
-        `needs input ${tally.needsInput.length} [${tally.needsInput.join(", ")}], non-200 or refused ${tally.non200}, ` +
-        `withheld ${tally.withheld}, leaks ${leaks.length}`,
+        `needs input ${tally.needsInput.length} [${tally.needsInput.join(", ")}], ` +
+        `refused by portal ${tally.refused.length} [${tally.refused.join(", ")}], upstream non-200 ${tally.non200}, ` +
+        `withheld ${tally.withheld.length} [${tally.withheld.join(", ")}], leaks ${leaks.length}`,
     );
     expect(leaks, "operations whose answer showed a key or secret").toEqual([]);
   });
