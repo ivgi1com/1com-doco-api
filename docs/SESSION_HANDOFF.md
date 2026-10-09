@@ -1,8 +1,8 @@
 # Session Handoff
 
-Last updated: 2026-10-08 (end of session; start at "Resume here")
+Last updated: 2026-10-09 (Phase 11 steps 1-3 done; start at "Resume here")
 
-## Resume here (2026-10-08, end of session)
+## Resume here (2026-10-09)
 
 ### Where things stand
 
@@ -10,15 +10,19 @@ Last updated: 2026-10-08 (end of session; start at "Resume here")
 |---|---|---|---|
 | Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | **deployed** (server checked out at the tag) |
 | Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge`; `main` head `88a4a3f` | pushed at end of session | not deployed |
-| Phase 10 — Live for every read (85 targets) | `phase/live-all-reads`, from `88a4a3f` | pushed at end of session | not deployed |
+| Phase 10 — Live for every read (85 targets) + Phase 11 redaction fix | merge `34ca543` on `main`, tag `v1.3-live-all-reads` | not pushed | not deployed |
 
-- Work branch: `phase/live-all-reads` (contains all of `main`). Not merged.
+- `phase/live-all-reads` merged to `main` (no-ff, `34ca543`), tagged
+  `v1.3-live-all-reads`. Phase 11 real-PBX check: 7 passed / 1 skipped
+  (Proxy check needs `PROXY_TEST_KEY` + `PROXY_TEST_TENANT`); it found and
+  fixed a key leak in `openapi/queues-list` (OA-19, `docs/SECURITY.md`
+  "Phase 11"). Rotate the TEST key used (pasted in chat 2026-10-09).
 - Production server: `/home/portal/app` detached at `v1.2-side-menus`;
   previous build kept in `.next.prev` (from `5ac5a82`).
   `PLAYGROUND_LIVE_ENABLED=true` is already set, so deploying Phase 10 turns
   all 85 reads Live at once.
-- Next phase: **Phase 11, planned, not started** —
-  `docs/phases/11-verify-merge-deploy-live.md`.
+- Next: **Phase 11 step 4 (deploy)**, only on the user's request; push
+  first, also on request. `docs/phases/11-verify-merge-deploy-live.md`.
 
 ### Resume on another machine
 
