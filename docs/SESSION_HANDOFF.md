@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last updated: 2026-10-09 (menu groups merged; Phase 11 deploy open; start at "Resume here")
+Last updated: 2026-10-09 (Phases 11-12 approved, v1.4 deployed, no phase active; start at "Resume here")
 
 ## Resume here (2026-10-09)
 
@@ -8,14 +8,16 @@ Last updated: 2026-10-09 (menu groups merged; Phase 11 deploy open; start at "Re
 
 | What | Commit / tag | GitHub | Production |
 |---|---|---|---|
-| Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | **deployed** (server checked out at the tag) |
-| Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge`; `main` head `88a4a3f` | pushed at end of session | not deployed |
+| Side menus (collapsed, Expand/Collapse all, Open API order, Provisioning/Setting hidden) | `7f35952`, tag `v1.2-side-menus` | pushed | deployed earlier; now the `.next.prev` rollback build |
+| Evidence badge ("Observed sample" chip + caption) | `1ecb14b`, tag `v1.2.1-evidence-badge` | pushed | deployed (in v1.4) |
 | Phase 10 — Live for every read (85 targets) + Phase 11 redaction fix | merge `34ca543` on `main`, tag `v1.3-live-all-reads` | pushed | deployed (in v1.4) |
 | Menu groups (issue #1): related categories under one entry, flat list | `feat/menu-groups` merged to `main`, tag `v1.4-menu-groups` | pushed | **deployed 2026-10-09** |
+| Phase 11 approved (real Open API check, deploy) | tag `v1.4.1-phase11-approved` | pushed | docs only |
+| Phase 12: Proxy real-PBX check, 0 leaks (test-only) | merge `feaa5f0`, tag `v1.4.2-proxy-real-check` | pushed | nothing to deploy |
 
 - `phase/live-all-reads` merged to `main` (no-ff, `34ca543`), tagged
   `v1.3-live-all-reads`. Phase 11 real-PBX check: 7 passed / 1 skipped
-  (Proxy check needs `PROXY_TEST_KEY` + `PROXY_TEST_TENANT`); it found and
+  (the Proxy part was then done in Phase 12); it found and
   fixed a key leak in `openapi/queues-list` (OA-19, `docs/SECURITY.md`
   "Phase 11"). Rotate the TEST key used (pasted in chat 2026-10-09).
 - Production server: `/home/portal/app` detached at `v1.4-menu-groups`
@@ -30,7 +32,10 @@ Last updated: 2026-10-09 (menu groups merged; Phase 11 deploy open; start at "Re
 - Phase 12 APPROVED (2026-10-09, gate A): all 33 Proxy Live targets checked
   against the real PBX, 0 leaks; open items in
   `docs/phases/12-proxy-real-check.md` (2 timeouts, 2 withheld, rotate key).
-  Next phase: being planned, not started. `docs/phases/11-verify-merge-deploy-live.md`.
+  `docs/phases/12-proxy-real-check.md` has the details.
+- **No phase active. The next phase has not started; waiting for the user.**
+  Options offered: fix the 4 open Proxy screens; rotate the key and
+  housekeeping; a new feature. `docs/phases/11-verify-merge-deploy-live.md`.
 
 ### Resume on another machine
 
@@ -53,7 +58,10 @@ tag and deploy steps are routine (Sonnet).
 - Server/deploy work: give one command at a time, say what output to paste,
   wait. Never list later steps in advance.
 - Questions: one at a time, each with selectable options and a recommended
-  one. Never batch questions, even when a skill says to.
+  one. Never batch questions, even when a skill says to (also in the user's
+  global CLAUDE.md since 2026-10-09). Explain in very simple words when asked.
+- The server terminal wraps long pasted commands: keep each server command
+  short (one line).
 - After any UI change: run the app locally and open the changed page in the
   user's Chrome for approval at the end of the task (in addition to the
   Playwright checks of CLAUDE.md rule 6). Stop the local server after review.

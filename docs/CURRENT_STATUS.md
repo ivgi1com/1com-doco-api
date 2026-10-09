@@ -1,6 +1,22 @@
 # Current Status
 
 Current work:
+**Snapshot (2026-10-09): no phase active; the next phase has not started and
+is waiting for the user.**
+- `main` = GitHub `main`, latest tag `v1.4.2-proxy-real-check`.
+- Production: `v1.4-menu-groups` (`99303b1`) at
+  `https://pbx6webserver.1com.co.il/1com-api-doco/`; Live on for all 85 reads
+  (52 Open API, 33 Proxy) with the Phase 11 redaction; menu groups visible.
+  Rollback copy on the server: `.next.prev` = `v1.2-side-menus` build.
+- Real-PBX checks done: Open API (Phase 11, OA-19 fixed) and every Proxy Live
+  read (Phase 12, 0 leaks).
+- Open items: rotate the TEST key (pasted in chat); Proxy `info-call` and
+  `countpeers` time out (unchecked); `info-cdrs` and `agent-listqueues` are
+  withheld by fail-closed redaction (OA-20).
+- Checks on `main`: `npm run check` 519/519; Playwright 233 passed / 19
+  skipped / 0 failed.
+
+Previous:
 **Phase 12 (Proxy real-PBX check) APPROVED (2026-10-09, gate A), merged to
 `main`, tagged `v1.4.2-proxy-real-check`: all 33 Proxy Live targets walked with a TEST key;
 31 answered, 0 leaks; `info-call`, `countpeers` timed out (unchecked);
@@ -13,20 +29,19 @@ redaction fix) and the menu groups are visible. Verified from outside:
 overview 200, CSP present, grouped CDR menu, `openapi/aianalysis-get` ->
 403 `endpoint_not_allowed`, `openapi/queues-list` with a fake key ->
 upstream 401 `invalid_api_key`. Rollback copy: `.next.prev` = v1.2-side-menus
-build. Phase 11 APPROVED (gate A); next phase being planned, nothing started.**
+build. Phase 11 APPROVED (gate A).**
 
 **Menu groups (issue #1) APPROVED (2026-10-09, gate A), merged to `main`
-(no-ff) and tagged `v1.4-menu-groups`; not pushed, not deployed. Related
+(no-ff) and tagged `v1.4-menu-groups` (pushed and deployed later that day). Related
 categories share one side-menu entry, operations as one flat list member by
 member: Open API CDR (Simple CDR, CDR; 2nd after Dial), Campaign (+ Number),
 Phone Book (+ Entry), AI Analysis (+ AI Logs); Proxy CHANNELS, PEERS, QUEUE,
 FLOWS. Menu-only (`menuGroups` on the API definition, `menuGroups()` in
 `src/content/index.ts`): ids, URLs, Live policy, Demo, search unchanged.
 Sidebar, drawer, Playground picker and overview page. `npm run check`
-519/519; Playwright 233 passed / 19 skipped / 0 failed. Phase 11 step 4
-(deploy) still open.**
+519/519; Playwright 233 passed / 19 skipped / 0 failed.**
 
-**Phase 11 ACTIVE (2026-10-09). Steps 1-3 done: real-PBX check found the
+**Phase 11 (2026-10-09; later approved and deployed). Steps 1-3: real-PBX check found the
 caller's key in `openapi/queues-list` (queue webhook URL, OA-19), fixed in
 `redact.ts`; real-PBX spec 7 passed / 1 skipped (Proxy check needs a Proxy
 key). `phase/live-all-reads` merged to `main` (no-ff) and tagged

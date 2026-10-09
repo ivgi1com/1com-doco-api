@@ -101,6 +101,18 @@ Both fields are optional and additive; the Sample API sets neither.
   `source-docs/proxy-api/operations.json`, is checked against this content
   by `tests/unit/proxy-coverage.test.ts`.
 
+## Side-menu configuration (menu only)
+
+Optional fields on the API definition change only the side menus (sidebar,
+mobile drawer, Playground picker) and the API overview page order; pages,
+URLs, search, Demo fixtures and the Live policy are unaffected:
+
+- `menuOrder`: category ids shown first, in this order.
+- `menuHidden`: category ids left out of the menus (still on the overview).
+- `menuGroups`: `{ title, categories }`; the categories share one menu entry
+  whose operations are one flat list, member by member. The group sits where
+  its first member would. Built by `menuGroups()` in `src/content/index.ts`.
+
 ## "Undocumented" states (no-guessing rule)
 
 Where the source is silent, the model records that instead of guessing:

@@ -18,6 +18,13 @@ The portal must support both:
 6. Demo mode
 7. Proxy API rollout
 8. Open API rollout
+9. Open API Live pilot (`openapi/simplecdrs-list`)
+10. Live for every read (pass-through + redaction)
+11. Verify against the real PBX, merge, deploy
+12. Proxy API real-PBX check
+
+Smaller approved changes between phases: English-only portal, side menus
+(`v1.2-side-menus`), evidence badge, menu groups (`v1.4-menu-groups`).
 
 Each phase has a separate file under `docs/phases/`.
 

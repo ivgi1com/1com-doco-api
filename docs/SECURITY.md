@@ -404,6 +404,14 @@ Real check: `tests/e2e/live-real.spec.ts` asserts no secret-named field and
 no secret URL parameter keeps a value. Residual risk unchanged otherwise: a
 secret under an unrecognized name, outside a URL query, is still shown.
 
+## Phase 12 — every Proxy Live read checked against the real PBX (2026-10-09)
+
+All 33 Proxy Live targets were sent with a TEST key (`tests/e2e/live-real.spec.ts`
+"Phase 12"): 31 answered with no key, no secret-named value, no secret
+column and no secret URL parameter. `info-call` and `countpeers` timed out
+(10 s) and are unchecked; `info-cdrs` and `agent-listqueues` are withheld
+whole by fail-closed redaction (OA-20). No code change was needed.
+
 ## Blocking requirements for future Live enablement
 
 Each item here blocks one operation from the Live allowlist
