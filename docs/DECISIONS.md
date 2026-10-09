@@ -2101,3 +2101,34 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   field-allowlist SEC-REQs; residual risk recorded in `docs/SECURITY.md`
   "Phase 10". Spec `docs/phases/10-live-all-reads.md`.
 
+## Phase 11 — redaction extended after a real leak (2026-10-09)
+
+- The real-PBX check found the caller's key inside a queue webhook URL in
+  `openapi/queues-list` (OA-19). User decision: scrub the submitted
+  credential anywhere in the body, and redact the values of URL query
+  parameters named `key` or matching the sensitive-name rule, for every Live
+  target. `docs/SECURITY.md` "Phase 11".
+- Then merge (`v1.3-live-all-reads`) and deploy (as `v1.4-menu-groups`, which
+  contains it). The user supplied a temporary TEST key in chat for the real
+  runs; it must be rotated.
+
+## Menu groups — menu-only, flat list (2026-10-09, issue #1)
+
+- Related categories share one side-menu entry. Open API: CDR (Simple CDR,
+  CDR; second after Dial), Campaign (+ Campaign Number), Phone Book (+ Phone
+  Book Entry), AI Analysis (+ AI Logs). Proxy: CHANNELS (CHANNEL, CHANNELS,
+  COUNTCHANNELS), PEERS (+ COUNTPEERS), QUEUE (+ QUEUERESET), FLOWS (+
+  SETFLOW); COUNTCALLS stays alone.
+- Menu only: category ids, URLs, Live blocks (keyed by category id), Demo
+  fixtures and search are unchanged. Data: `menuGroups` on the API
+  definition.
+- First built with static sub-headings; revised at the review gate to one
+  flat list (member by member, no sub-headings) in the sidebar, drawer,
+  Playground picker and overview page.
+
+## Phase 12 — check every Proxy Live read (2026-10-09)
+
+- The user chose "all" Proxy reads, not a sample. A non-200 upstream answer
+  is recorded, not a failure: the check is about leaks only. Result: 0 leaks;
+  2 upstream timeouts and 2 withheld answers kept as open items (OA-20).
+

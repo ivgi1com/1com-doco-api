@@ -70,8 +70,11 @@ Names only, see `.env.example`; all are optional with safe defaults (see
 - `PLAYGROUND_TRUSTED_IP_HEADER` — a reverse-proxy header name to trust for
   per-client rate limiting; unset means every caller shares one bucket.
 
-Local testing only (Phase 9): `OPENAPI_TEST_KEY` and `OPENAPI_TEST_TENANT`
-enable `tests/e2e/live-real.spec.ts`, which calls the real PBX. Export them
+Local testing only (Phases 9, 11, 12): `OPENAPI_TEST_KEY` and
+`OPENAPI_TEST_TENANT` enable the Open API blocks of
+`tests/e2e/live-real.spec.ts`, which call the real PBX; `PROXY_TEST_KEY` and
+`PROXY_TEST_TENANT` enable its Proxy block (every Proxy Live read, about
+5 minutes). Export them
 in your own shell for one run; never write them to a file, never set them on
 a server. Without them the spec is skipped. Production hosting, the
 sub-path build and the Live enable steps are in `docs/DEPLOYMENT.md`.
