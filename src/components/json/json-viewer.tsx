@@ -89,11 +89,11 @@ export function JsonViewer({
 
   const search = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return { matched: new Set<string>(), forceOpen: new Set<string>(), active: false };
+    if (!q) return { matched: new Set<string>(), forceOpen: new Set<string>(), active: false, q };
     const matched = new Set<string>();
     const forceOpen = new Set<string>();
     collectSearchMatches(data, [], undefined, q, matched, forceOpen);
-    return { matched, forceOpen, active: true };
+    return { matched, forceOpen, active: true, q };
   }, [data, query]);
 
   const toggle = (pathKey: string) => {
@@ -208,7 +208,7 @@ export function JsonViewer({
               onToggle={toggle}
               forceOpenPaths={search.forceOpen}
               matchedPaths={search.matched}
-              searchActive={search.active}
+              searchQuery={search.active ? search.q : ""}
             />
           </>
         ) : (

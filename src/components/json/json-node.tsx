@@ -12,6 +12,35 @@ const STRING_TRUNCATE_AT = 140;
 
 type Entry = [key: string | number, value: unknown];
 
+const ROW_BASE = "group/row relative flex items-start gap-0.5 rounded-sm px-1";
+const ROW_HOVER = "hover:bg-code-hover-row hover:shadow-[inset_0_0_0_1px_var(--code-hover-ring)]";
+const ROW_MATCH =
+  "bg-code-match-row shadow-[inset_3px_0_0_var(--code-match-bar)] hover:bg-code-match-row-hover hover:shadow-[inset_3px_0_0_var(--code-match-bar),inset_0_0_0_1px_var(--code-hover-ring)]";
+
+/** Wraps case-insensitive occurrences of `query` (already lowercased) in a <mark>. */
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query) return <>{text}</>;
+  const lower = text.toLowerCase();
+  const parts: React.ReactNode[] = [];
+  let from = 0;
+  let at = lower.indexOf(query, from);
+  while (at !== -1) {
+    if (at > from) parts.push(text.slice(from, at));
+    parts.push(
+      <mark
+        key={at}
+        className="-mx-px rounded-[3px] bg-code-match-mark px-0.5 text-code-match-mark-ink shadow-[0_0_0_1px_var(--code-match-mark-ring)]"
+      >
+        {text.slice(at, at + query.length)}
+      </mark>,
+    );
+    from = at + query.length;
+    at = lower.indexOf(query, from);
+  }
+  if (from < text.length) parts.push(text.slice(from));
+  return <>{parts}</>;
+}
+
 function isContainer(value: unknown): value is Record<string, unknown> | unknown[] {
   return typeof value === "object" && value !== null;
 }
@@ -46,7 +75,7 @@ export function JsonNode({
   onToggle,
   forceOpenPaths,
   matchedPaths,
-  searchActive,
+  searchQuery,
 }: {
   keyName?: string | number;
   value: unknown;
@@ -56,20 +85,28 @@ export function JsonNode({
   onToggle: (pathKey: string) => void;
   forceOpenPaths: Set<string>;
   matchedPaths: Set<string>;
-  searchActive: boolean;
+  searchQuery: string;
 }) {
   const t = useTranslations("json");
   const [shown, setShown] = useState(PAGE_SIZE);
   const [stringExpanded, setStringExpanded] = useState(false);
   const pathKey = formatJsonPath(path);
-  const matched = matchedPaths.has(pathKey);
-  const dimmed = searchActive && matchedPaths.size > 0 && !matched;
+  const matched = searchQuery !== "" && matchedPaths.has(pathKey);
+  const rowClass = `${ROW_BASE} ${matched ? ROW_MATCH : ROW_HOVER}`;
 
   const keyLabel =
     keyName === undefined ? null : (
       <>
         <span style={{ color: syntax.key }} className="font-semibold">
-          {typeof keyName === "number" ? keyName : JSON.stringify(keyName)}
+          {typeof keyName === "number" ? (
+            <Highlight text={String(keyName)} query={searchQuery} />
+          ) : (
+            <>
+              &quot;
+              <Highlight text={keyName} query={searchQuery} />
+              &quot;
+            </>
+          )}
         </span>
         <span style={{ color: syntax.punct }}>:</span>{" "}
       </>
@@ -87,8 +124,8 @@ export function JsonNode({
     const countLabel = isArray ? t("items", { count: entries.length }) : t("keys", { count: entries.length });
 
     return (
-      <div className={dimmed ? "opacity-40" : ""}>
-        <div className="group/row flex items-start gap-0.5 rounded-sm px-1 hover:bg-code-surface/60">
+      <div>
+        <div className={rowClass}>
           {!empty ? (
             <button
               type="button"
@@ -134,7 +171,7 @@ export function JsonNode({
                 onToggle={onToggle}
                 forceOpenPaths={forceOpenPaths}
                 matchedPaths={matchedPaths}
-                searchActive={searchActive}
+                searchQuery={searchQuery}
               />
             ))}
             {hasMore && (
@@ -156,27 +193,36 @@ export function JsonNode({
   }
 
   // Primitive: string, number, boolean, null.
-  let display: string;
+  let display: React.ReactNode;
   let color: string;
   if (value === null) {
-    display = "null";
+    display = <Highlight text="null" query={searchQuery} />;
     color = syntax.constant;
   } else if (typeof value === "boolean") {
-    display = String(value);
+    display = <Highlight text={String(value)} query={searchQuery} />;
     color = syntax.constant;
   } else if (typeof value === "number") {
-    display = String(value);
+    display = <Highlight text={String(value)} query={searchQuery} />;
     color = syntax.number;
   } else {
     const str = String(value);
     const truncated = !stringExpanded && str.length > STRING_TRUNCATE_AT;
-    display = JSON.stringify(truncated ? `${str.slice(0, STRING_TRUNCATE_AT)}…` : str);
+    const shownText = truncated ? `${str.slice(0, STRING_TRUNCATE_AT)}…` : str;
+    // JSON-escape for display, then strip the surrounding quotes so only the
+    // content is highlighted.
+    display = (
+      <>
+        &quot;
+        <Highlight text={JSON.stringify(shownText).slice(1, -1)} query={searchQuery} />
+        &quot;
+      </>
+    );
     color = syntax.string;
   }
   const isLongString = typeof value === "string" && value.length > STRING_TRUNCATE_AT;
 
   return (
-    <div className={`group/row flex items-start gap-0.5 rounded-sm px-1 hover:bg-code-surface/60 ${dimmed ? "opacity-40" : ""}`}>
+    <div className={rowClass}>
       <span className="mt-[3px] size-4 shrink-0" aria-hidden />
       <div className="min-w-0 flex-1 py-0.5 font-mono text-[13px] leading-[1.5] break-all">
         {keyLabel}
