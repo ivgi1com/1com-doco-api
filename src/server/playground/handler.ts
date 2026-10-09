@@ -143,18 +143,21 @@ export async function handleLiveRequest(request: Request, deps: HandlerDeps): Pr
   // Nothing sensitive leaves the server (A-40 decisions): JSON is cut down to
   // the target's field allowlist (or, for an error envelope, to its code and
   // message), then credential-like values are redacted as a second layer
-  // (which also covers the plain-text table).
+  // (which also covers the plain-text table). Pass-through targets (Phase 10)
+  // skip the field allowlist; redaction is then the only output control.
   const target = validation.value.target;
   const projection =
     (target.errorEnvelope ? projectErrorEnvelope(result.upstream.bodyText) : null) ??
-    projectJsonFields(result.upstream.bodyText, target.jsonFields);
+    (target.projection === "passthrough"
+      ? { text: result.upstream.bodyText, omittedFields: 0, withheld: false }
+      : projectJsonFields(result.upstream.bodyText, target.jsonFields));
   // An answer spanning several tenants means a non-tenant (admin) key: block
   // all of it rather than show other customers' records (Phase 9 decision).
   if (target.tenantField && countDistinctField(projection.text, target.tenantField) > 1) {
     log({ endpoint: endpointId, outcome: "multi_tenant_blocked", status: result.upstream.status, latencyMs: result.upstream.latencyMs });
     return portalError("multi_tenant_blocked");
   }
-  const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text);
+  const redaction = projection.withheld ? { text: projection.text, redacted: -1 } : redactSensitive(projection.text, validation.value.credential);
   const upstream = {
     ...result.upstream,
     bodyText: redaction.text,

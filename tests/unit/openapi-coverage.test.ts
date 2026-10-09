@@ -151,9 +151,12 @@ describe("OpenAPI content ↔ inventory", () => {
     }
   });
 
-  it("puts only the Phase 9 pilot on the Live allowlist (SEC-REQ-27/28, Phase 9)", () => {
-    const live = listLiveTargetIds();
-    expect(live.filter((id) => id.startsWith("openapi/"))).toEqual(["openapi/simplecdrs-list"]);
+  it("puts every OpenAPI read except AI Analysis, AI Logs and DISA on the Live allowlist (Phase 10)", () => {
+    const live = new Set(listLiveTargetIds());
+    for (const e of endpoints) {
+      const blocked = /^(aianalysis|ailogs|disas)-/.test(e.id);
+      expect(live.has(`openapi/${e.id}`), e.id).toBe(e.operationClass === "read" && !blocked);
+    }
   });
 
   it("gives Demo fixtures only to the approved endpoints", () => {

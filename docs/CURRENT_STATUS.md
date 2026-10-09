@@ -1,12 +1,26 @@
 # Current Status
 
 Current work:
-**RESUME POINTER (2026-10-08): active work is NOT on `main`. It is on branch
-`phase/live-all-reads` (Phase 10 "Live for every read" approved, not merged;
-Phase 11 "verify, merge, deploy" planned, not started). Before anything else:
-`git switch phase/live-all-reads`, then read `docs/SESSION_HANDOFF.md`
-"Resume here" on that branch. The status below on `main` is older.**
+**Phase 11 ACTIVE (2026-10-09). Steps 1-3 done: real-PBX check found the
+caller's key in `openapi/queues-list` (queue webhook URL, OA-19), fixed in
+`redact.ts`; real-PBX spec 7 passed / 1 skipped (Proxy check needs a Proxy
+key). `phase/live-all-reads` merged to `main` (no-ff) and tagged
+`v1.3-live-all-reads`; `npm run check` 510/510. Not pushed, not deployed.
+Next: step 4 (deploy), on the user's request. The TEST key used was pasted
+in chat: rotate it.**
 
+**Phase 10 (Live for every read) APPROVED (2026-10-08, gate A) on
+`phase/live-all-reads`; not merged, pushed, tagged or deployed. 85 Live
+targets (52 Open API, 33 Proxy), pass-through + server-side redaction,
+categorical blocks kept (writes, call content, Dial, DISA, "unclear" Proxy
+ops). Production still runs `v1.2-side-menus`; deploying this build turns
+all 85 Live at once (`PLAYGROUND_LIVE_ENABLED=true` already). `npm run check`
+505/505; Playwright 228/9 skipped/3 known flakes. Next phase: Phase 11 (real-PBX check, merge, tag, deploy),
+planned, not started: `docs/phases/11-verify-merge-deploy-live.md`. Spec
+`docs/phases/10-live-all-reads.md`; policy `docs/SECURITY.md` "Phase 10".
+Resume instructions: `docs/SESSION_HANDOFF.md` "Resume here".**
+
+Previous:
 **Evidence-badge fix APPROVED (2026-10-08, gate B), merged to `main` (1ecb14b)
 and tagged `v1.2.1-evidence-badge`; not pushed, not deployed.
 Response examples with `observed-sanitized` evidence now show a short

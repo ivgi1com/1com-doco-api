@@ -13,12 +13,21 @@ import type { LiveTargetHints } from "@/lib/playground-protocol";
  * - info-extensions: U-08 (2026-09-25).
  * - info-agents, cdr-get: Phase 5 adjustment (2026-09-25, A-42/A-43).
  * - openapi/simplecdrs-list: Phase 9 pilot (2026-10-08, SEC-REQ-08).
+ * - Every other read: Phase 10 (2026-10-08, user decision) — pass-through
+ *   with server-side redaction, except LIVE_BLOCKED_CATEGORIES.
  */
 interface LivePolicy {
   /**
+   * "fields" (default): JSON output is cut to `jsonFields`, then redacted.
+   * "passthrough": the upstream body is returned as-is apart from redaction
+   * (redact.ts) — the Phase 10 policy for reads without a strict allowlist.
+   */
+  projection?: "fields" | "passthrough";
+  /**
    * JSON output fields the Live proxy may return per item. Everything else is
    * dropped server-side before redaction runs as a second layer. An empty list
-   * drops every field of any JSON record the endpoint returns.
+   * drops every field of any JSON record the endpoint returns. Ignored for
+   * "passthrough".
    */
   jsonFields: readonly string[];
   /** Anchored patterns a parameter value must match, on top of validate.ts's generic limits. */
@@ -103,7 +112,41 @@ const LIVE_POLICIES = {
   },
 } as const satisfies Record<string, LivePolicy>;
 
-type LiveEndpointId = keyof typeof LIVE_POLICIES;
+/**
+ * Categories never reachable in Live, whatever their operation class:
+ * call content (AI Analysis SEC-REQ-09, AI Logs SEC-REQ-10), a call-placing
+ * action (Dial SEC-REQ-06), and toll-fraud PINs (DISA). Auth Token is not in
+ * the content model at all (portal exclusion, SEC-REQ-05).
+ */
+const LIVE_BLOCKED_CATEGORIES: Readonly<Record<string, readonly string[]>> = {
+  openapi: ["aianalysis", "ailogs", "dial", "disa"],
+};
+
+/**
+ * Single operations never Live:
+ * - info-voicemail, voicemail-message: the Proxy inventory classes them
+ *   "unclear" (source-docs/proxy-api/operations.json) — not proven read-only,
+ *   so default deny, even though the content model only has write/read.
+ * - Call content, same class as the AI block (user decision 2026-10-08):
+ *   recordings, voicemail transcripts and audio files.
+ */
+const LIVE_BLOCKED_ENDPOINTS: Readonly<Record<string, readonly string[]>> = {
+  proxy: [
+    "info-voicemail",
+    "voicemail-message",
+    "info-recording",
+    "info-playrecording",
+    "info-inforecording",
+    "info-voicemailtranscript",
+    "mediafile-getaudio",
+  ],
+};
+
+/** Phase 10: reads without a strict policy return the upstream body, redacted. */
+const PASSTHROUGH_POLICY: LivePolicy = { projection: "passthrough", jsonFields: [] };
+
+/** Path parameter values: one plain segment, never a dot-only segment (see validate.ts). */
+const PATH_VALUE = /^[A-Za-z0-9_.@+-]{1,64}$/;
 
 /**
  * Exact base URLs a Live target may resolve under. Checked against the
@@ -123,8 +166,12 @@ export interface LiveTarget {
   /** `${api}/${endpoint}`, e.g. "proxy/info-extensions". */
   id: string;
   origin: string;
-  /** Full upstream path: the API base path (if any) plus the endpoint path. */
+  /** Full upstream path: the API base path (if any) plus the endpoint path; may hold `{name}` segments. */
   path: string;
+  /** Names of the `{name}` path segments, each required and matched against `pathValue`. */
+  pathParams: readonly string[];
+  pathValue: RegExp;
+  projection: "fields" | "passthrough";
   method: "GET";
   fixedQuery: Readonly<Record<string, string>>;
   /** Caller-settable query parameters. Everything else is rejected. */
@@ -159,8 +206,23 @@ function buildTarget(api: ApiDefinition, endpointId: string, policy: LivePolicy)
   const { origin, basePath } = baseOf(api);
   if (endpoint.method !== "GET") throw new Error(`Live allowlist: ${endpointId} must be GET`);
   if (endpoint.operationClass === "write") throw new Error(`Live allowlist: ${endpointId} is a write`);
-  if (!endpoint.path.startsWith("/") || endpoint.path.includes("{") || endpoint.path.includes("..")) {
-    throw new Error(`Live allowlist: ${endpointId} needs a fixed absolute path`);
+  if (!endpoint.path.startsWith("/") || endpoint.path.includes("..") || /[?#%\\]/.test(endpoint.path)) {
+    throw new Error(`Live allowlist: ${endpointId} needs a plain absolute path`);
+  }
+  // `{name}` only as a whole segment, and only for documented path parameters.
+  const pathParams: string[] = [];
+  for (const segment of endpoint.path.split("/").slice(1)) {
+    const m = /^\{([A-Za-z_][A-Za-z0-9_]*)\}$/.exec(segment);
+    if (m) pathParams.push(m[1]);
+    else if (/[{}]/.test(segment)) throw new Error(`Live allowlist: ${endpointId} has a malformed path segment`);
+  }
+  const documented = new Set(endpoint.pathParameters.map((p) => p.name));
+  if (pathParams.length !== documented.size || pathParams.some((p) => !documented.has(p))) {
+    throw new Error(`Live allowlist: ${endpointId} path parameters do not match the path`);
+  }
+  const projection = policy.projection ?? "fields";
+  if (projection === "passthrough" && policy.tenantField) {
+    throw new Error(`Live allowlist: ${endpointId} tenant check needs a field allowlist`);
   }
 
   const auth = endpoint.authentication;
@@ -204,6 +266,9 @@ function buildTarget(api: ApiDefinition, endpointId: string, policy: LivePolicy)
     id: `${api.id}/${endpoint.id}`,
     origin,
     path: basePath + endpoint.path,
+    pathParams: Object.freeze(pathParams),
+    pathValue: PATH_VALUE,
+    projection,
     method: "GET" as const,
     fixedQuery: Object.freeze(fixedQuery),
     allowedParams,
@@ -218,14 +283,53 @@ function buildTarget(api: ApiDefinition, endpointId: string, policy: LivePolicy)
   });
 }
 
-const targets: ReadonlyMap<string, LiveTarget> = new Map(
-  (Object.keys(LIVE_POLICIES) as LiveEndpointId[]).map((id) => {
+function isBlocked(api: ApiDefinition, categoryId: string): boolean {
+  return (LIVE_BLOCKED_CATEGORIES[api.id] ?? []).includes(categoryId);
+}
+
+/**
+ * Strict policies first, then every other documented read (GET, explicitly
+ * classified "read") of each API, minus the blocked categories. Writes, Proxy
+ * GET actions (classified "write") and unclassified operations never qualify.
+ */
+function buildTargets(): Map<string, LiveTarget> {
+  // A misspelt block entry would silently block nothing: every one must exist.
+  for (const [apiId, ids] of Object.entries(LIVE_BLOCKED_CATEGORIES)) {
+    for (const id of ids) {
+      if (!APIS[apiId]?.categories.some((c) => c.id === id)) throw new Error(`Live allowlist: unknown blocked category ${apiId}/${id}`);
+    }
+  }
+  for (const [apiId, ids] of Object.entries(LIVE_BLOCKED_ENDPOINTS)) {
+    for (const id of ids) {
+      if (!APIS[apiId]?.categories.some((c) => c.endpoints.some((e) => e.id === id))) {
+        throw new Error(`Live allowlist: unknown blocked endpoint ${apiId}/${id}`);
+      }
+    }
+  }
+  const out = new Map<string, LiveTarget>();
+  for (const id of Object.keys(LIVE_POLICIES) as (keyof typeof LIVE_POLICIES)[]) {
     const [apiId, endpointId] = id.split("/");
     const api = Object.hasOwn(APIS, apiId) ? APIS[apiId] : undefined;
     if (!api) throw new Error(`Live allowlist: unknown API ${apiId}`);
-    return [id, buildTarget(api, endpointId, LIVE_POLICIES[id] as LivePolicy)] as const;
-  }),
-);
+    const category = api.categories.find((c) => c.endpoints.some((e) => e.id === endpointId));
+    if (category && isBlocked(api, category.id)) throw new Error(`Live allowlist: ${id} is in a blocked category`);
+    out.set(id, buildTarget(api, endpointId, LIVE_POLICIES[id] as LivePolicy));
+  }
+  for (const api of Object.values(APIS)) {
+    for (const category of api.categories) {
+      if (isBlocked(api, category.id)) continue;
+      for (const endpoint of category.endpoints) {
+        const id = `${api.id}/${endpoint.id}`;
+        if (out.has(id) || endpoint.method !== "GET" || endpoint.operationClass !== "read") continue;
+        if ((LIVE_BLOCKED_ENDPOINTS[api.id] ?? []).includes(endpoint.id)) continue;
+        out.set(id, buildTarget(api, endpoint.id, { ...PASSTHROUGH_POLICY, errorEnvelope: api.id === "openapi" }));
+      }
+    }
+  }
+  return out;
+}
+
+const targets: ReadonlyMap<string, LiveTarget> = buildTargets();
 
 /** Exact-match lookup; never pattern-based. */
 export function getLiveTarget(id: string): LiveTarget | undefined {

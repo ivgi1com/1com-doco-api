@@ -328,12 +328,96 @@ Send), Hebrew Reference page; no console errors. The browser window could
 not be narrowed to phone width, so the 390px layout relies on the
 Playwright checks.
 
+## Phase 10 — Live for every read (2026-10-08, Opus 5.5)
+
+User decision (2026-10-08, asked one question at a time): Live works for every
+read operation of the Open API and the Proxy API, with **pass-through output
+plus server-side redaction**, keeping categorical blocks. This replaces the
+per-operation field-allowlist requirement of the SEC-REQ items below for
+reads (see "Status after Phase 10" there).
+
+Policy (`src/server/playground/allowlist.ts`):
+
+- Live targets = every `GET` operation whose content-model class is `read`,
+  plus the four strict pre-Phase-10 policies, minus the blocks. 85 targets
+  (52 Open API, 33 Proxy). Unit-pinned in `tests/unit/live-endpoints.test.ts`;
+  any change to the count is a security decision.
+- Never Live: every write (POST/PATCH/DELETE and Proxy GET actions such as
+  dial, hangup, reboot, sms, queue-add); operations not classified `read`;
+  the Sample API; categorical blocks — Open API AI Analysis, AI Logs (call
+  content, SEC-REQ-09/10), Dial (SEC-REQ-06), DISA (SEC-REQ-22); Proxy
+  recordings, voicemail transcripts and audio (`info-recording`,
+  `info-playrecording`, `info-inforecording`, `info-voicemailtranscript`,
+  `mediafile-getaudio`: call content, user decision); Proxy `info-voicemail`
+  and `voicemail-message` (inventory class "unclear", default deny). Auth
+  Token is not in the portal at all (SEC-REQ-05). A misspelt block entry
+  fails at load.
+- Strict policies unchanged: `proxy/info-extensions`, `proxy/info-agents`,
+  `proxy/cdr-get`, `openapi/simplecdrs-list` (field allowlist, 3-day range,
+  multi-tenant block).
+- Pass-through targets: the upstream body is returned as is, except
+  `redact.ts`: credential-like names (password, pwd, secret, token, 2fa, otp,
+  mfa, pin, api key) are replaced in JSON, XML and delimited text; text that
+  names a secret but can't be aligned is withheld whole (fail closed); new in
+  Phase 10, any other key in the same JSON record holding the same value as a
+  redacted one (4+ characters) is redacted too, which covers positional
+  `"0".."n"` duplicates (the SEC-REQ-01 lesson); and plain text whose
+  secret can't be located by column (free text, or a `name|value` listing
+  where a row names a secret) is withheld whole. Open API error envelopes are
+  cut to `code` + `message`.
+- Path parameters (26 Open API `get` operations): sent as `pathParams` in the
+  POST body; exactly the documented names, each `^[A-Za-z0-9_.@+-]{1,64}$`,
+  never `.`/`..`, percent-encoded into one segment; the built URL must equal
+  the substituted template under the allowlisted base.
+- Unchanged: fixed origins, GET only, header (`X-API-Key`) or query (`key`)
+  credential per API, key only in the same-origin POST body, Origin check,
+  10 requests/minute/client, 10 s timeout, 1 MB cap, sanitized logs (no
+  params, path values, bodies or keys), kill switch `PLAYGROUND_LIVE_ENABLED`.
+
+Residual risk accepted by the user:
+
+- Redaction is name-based. A secret under an unrecognized field name (or a
+  positional key without a named twin in the same record) is shown. The
+  response goes only to the key holder, who could fetch the same data with
+  the same key directly; the portal does not store or log it.
+- No tenant-isolation check on pass-through targets (SEC-REQ-28): a key that
+  sees several tenants gets all of them, as it would directly.
+- Personal data (caller IDs, names, e-mail, phone-book entries) is shown to
+  the key holder unfiltered.
+
+## Phase 11 — key found in a real answer, redaction extended (2026-10-09, Opus 5.5)
+
+The real-PBX check (Phase 11 step 1) found the caller's key in
+`openapi/queues-list`: a queue's webhook URL (`qu_notifyabandonedurl`) holds a
+Proxy API URL with `key=<key>` (DOCS_AUDIT OA-19). User decision: two new
+rules in `redact.ts`, for every Live target:
+
+- The credential the caller sent is replaced wherever it appears in the
+  body (plain, URL-encoded, JSON-escaped), whatever the field is called.
+- In any `http(s)://` URL inside the body (JSON string values, XML and
+  plain text, also with PHP-escaped `\/`), a query parameter named `key` or
+  matching the sensitive-name rule has its value replaced. This also covers
+  keys of other tenants or other APIs in configured URLs.
+
+Unit tests: `tests/unit/live-passthrough.test.ts` ("keys inside URLs ...").
+Real check: `tests/e2e/live-real.spec.ts` asserts no secret-named field and
+no secret URL parameter keeps a value. Residual risk unchanged otherwise: a
+secret under an unrecognized name, outside a URL query, is still shown.
+
 ## Blocking requirements for future Live enablement
 
 Each item here blocks one operation from the Live allowlist
 (`src/server/playground/allowlist.ts#LIVE_POLICIES`) until it passes
 validation. Demo mode is unaffected by these requirements: its data is
 synthetic by construction.
+
+**Status after Phase 10 (2026-10-08, user decision above):** for reads, the
+field-allowlist / review requirements in SEC-REQ-01, -02, -03, -04, -07, -11
+to -21 and -23 to -30 are superseded by pass-through + redaction; those reads
+are Live. Still in force: SEC-REQ-05 (Auth Token, not in the portal),
+SEC-REQ-06 (Dial), SEC-REQ-09 (AI Analysis), SEC-REQ-10 (AI Logs, blocked as
+call content), SEC-REQ-22 (DISA), and SEC-REQ-27 (no writes in Live). The
+entries below are kept as the record of each risk.
 
 ### SEC-REQ-01 — QUEUELOGS response field allowlist (BLOCKING, open)
 

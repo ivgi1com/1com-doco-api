@@ -577,12 +577,42 @@ test.describe("interactions", () => {
         await expect(desktopPane(page).getByText('"sc_uniqueid"')).toHaveCount(0);
       });
 
-      test("other Open API operations stay Live-disabled", async ({ page }) => {
-        await page.goto("./en/playground?endpoint=openapi/cdrs-list");
-        await page.getByRole("button", { name: "Switch to Live" }).click();
-        await page.getByRole("button", { name: "Switch mode" }).click();
-        await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
-        await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+      // Phase 10: every read is Live except the categorical blocks (call
+      // content, Dial, DISA) and writes.
+      for (const blocked of ["openapi/aianalysis-get", "openapi/disas-list", "openapi/queues-create"]) {
+        test(`${blocked} stays Live-disabled (Phase 10)`, async ({ page }) => {
+          await page.goto(`./en/playground?endpoint=${blocked}`);
+          await page.getByRole("button", { name: "Switch to Live" }).click();
+          await page.getByRole("button", { name: "Switch mode" }).click();
+          await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();
+          await expect(desktopPane(page).getByLabel("API key")).toHaveCount(0);
+        });
+      }
+
+      test("a path-parameter read goes Live: tenant, key and id are sent to the portal only (Phase 10)", async ({ page }) => {
+        const posted: { endpoint: string; params: Record<string, string>; pathParams?: Record<string, string>; credential: string }[] = [];
+        await page.route("**/api/playground", (route) => {
+          posted.push(route.request().postDataJSON());
+          return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(upstream(200, { qu_id: "100", qu_name: "Support" })) });
+        });
+        await goLiveOn(page, "openapi/queues-get");
+        await desktopPane(page).getByLabel("tenant", { exact: true }).fill("MYTENANT");
+        await desktopPane(page).getByRole("textbox", { name: /^qu_id/ }).fill("100");
+        const preview = desktopPane(page).getByTestId("request-preview");
+        await preview.locator("summary").click();
+        await expect(preview).toContainText("/queues/100");
+        await expect(preview).toContainText("••••");
+        await expect(page.getByText(FAKE_KEY)).toHaveCount(0);
+        await desktopPane(page).getByRole("button", { name: "Send request" }).click();
+        await expect(desktopPane(page).getByText(/source: LIVE/)).toBeVisible({ timeout: 3000 });
+        await expect(desktopPane(page).getByText('"qu_name"')).toBeVisible();
+        expect(posted).toHaveLength(1);
+        expect(posted[0]).toMatchObject({
+          endpoint: "openapi/queues-get",
+          params: { tenant: "MYTENANT" },
+          pathParams: { qu_id: "100" },
+          credential: FAKE_KEY,
+        });
       });
 
       test("the Live pilot works on a narrow screen without console errors", async ({ page }) => {
@@ -784,12 +814,18 @@ test.describe("interactions", () => {
         data: { endpoint: "proxy/cdr-get", params: { uniqueid: "PBX-1.2", field: "src" }, credential: "x" },
       });
       expect(override.status()).toBe(400);
-      const listqueues = await request.post("/api/playground", {
+      // Phase 10: a write (Proxy GET action) and a blocked call-content read.
+      for (const endpoint of ["proxy/hangup", "proxy/info-recording"]) {
+        const refused = await request.post("/api/playground", { headers, data: { endpoint, params: {}, credential: "x" } });
+        expect(refused.status(), endpoint).toBe(403);
+        expect((await refused.json()).error.code, endpoint).toBe("endpoint_not_allowed");
+      }
+      // A path value that is not one plain segment never leaves the portal.
+      const traversal = await request.post("/api/playground", {
         headers,
-        data: { endpoint: "proxy/agent-listqueues", params: {}, credential: "x" },
+        data: { endpoint: "openapi/queues-get", params: {}, pathParams: { qu_id: ".." }, credential: "x" },
       });
-      expect(listqueues.status()).toBe(403);
-      expect((await listqueues.json()).error.code).toBe("endpoint_not_allowed");
+      expect(traversal.status()).toBe(400);
     });
 
     test("mobile: Live success is reachable through the step flow and the Request tab shows the masked key", async ({
@@ -1360,12 +1396,13 @@ test.describe("interactions", () => {
       await expect(page.getByTestId("endpoint-not-found")).toHaveCount(0);
     });
 
-    test("Live on an OpenAPI operation is explicitly not enabled: no key field, nothing sendable (8C)", async ({ page }) => {
+    test("Live on a blocked OpenAPI operation is explicitly not enabled: no key field, nothing sendable (8C, Phase 10)", async ({ page }) => {
       const sent: string[] = [];
       page.on("request", (r) => {
         if (r.url().includes("/api/playground")) sent.push(r.url());
       });
-      await page.goto("./en/playground?endpoint=openapi/extensions-list");
+      // extensions-list is Live since Phase 10; AI Analysis stays blocked (call content).
+      await page.goto("./en/playground?endpoint=openapi/aianalysis-get");
       await page.getByRole("button", { name: "Switch to Live" }).click();
       await page.getByRole("button", { name: "Switch mode" }).click();
       const pane = desktopPane(page);

@@ -150,6 +150,11 @@ export function liveQueryParams(endpoint: Endpoint, fieldValues: Record<string, 
   return params;
 }
 
+/** Every documented path parameter with its trimmed value (the server requires all of them). */
+export function livePathParams(endpoint: Endpoint, fieldValues: Record<string, string>) {
+  return Object.fromEntries(endpoint.pathParameters.map((p) => [p.name, fieldValues[`path:${p.name}`]?.trim() ?? ""]));
+}
+
 /** The endpoint path with each entered path-parameter value substituted; empty values keep their `{name}` placeholder. */
 export function substitutePathParams(endpoint: Endpoint, fieldValues: Record<string, string>): string {
   return endpoint.pathParameters.reduce((path, p) => {
@@ -252,6 +257,7 @@ export const liveProvider: ApiExecutor = {
     const payload: LiveRequestBody = {
       endpoint: `${api.id}/${endpoint.id}`,
       params: liveQueryParams(endpoint, fieldValues, liveHints?.hiddenParams),
+      ...(endpoint.pathParameters.length > 0 ? { pathParams: livePathParams(endpoint, fieldValues) } : {}),
       credential,
     };
 

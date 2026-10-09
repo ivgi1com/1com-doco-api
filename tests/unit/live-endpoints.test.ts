@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { getEndpoint } from "@/content";
+import { getApi, getEndpoint, listEndpoints } from "@/content";
 import { getLiveTarget, listLiveTargetIds } from "@/server/playground/allowlist";
 import { getPlaygroundConfig } from "@/server/playground/config";
 import { buildUpstreamUrl } from "@/server/playground/execute";
@@ -41,16 +41,58 @@ async function run(body: unknown, upstreamText: string, contentType = "applicati
 }
 
 describe("Live allowlist membership", () => {
-  it("is exactly the approved endpoints", () => {
-    expect(listLiveTargetIds().sort()).toEqual([
-      "openapi/simplecdrs-list",
-      "proxy/cdr-get",
-      "proxy/info-agents",
-      "proxy/info-extensions",
-    ]);
+  // Phase 10 (2026-10-08, user decision): every GET classified "read", minus
+  // the categorical blocks. A change to this count is a security decision.
+  const BLOCKED = new Set([
+    "openapi/aianalysis-get",
+    "openapi/ailogs-list",
+    "openapi/disas-list",
+    "openapi/disas-get",
+    "proxy/info-voicemail",
+    "proxy/voicemail-message",
+    "proxy/info-recording",
+    "proxy/info-playrecording",
+    "proxy/info-inforecording",
+    "proxy/info-voicemailtranscript",
+    "proxy/mediafile-getaudio",
+  ]);
+
+  // Approved one by one before Phase 10 (U-08, A-42/A-43, SEC-REQ-08); the
+  // three Proxy ones carry no operationClass in the content model.
+  const STRICT = ["openapi/simplecdrs-list", "proxy/cdr-get", "proxy/info-agents", "proxy/info-extensions"];
+
+  it("is every documented read of Open API and Proxy API except the blocked ones, plus the strict policies", () => {
+    const reads = (["openapi", "proxy"] as const).flatMap((apiId) =>
+      listEndpoints(getApi(apiId)!)
+        .filter((e) => e.method === "GET" && e.operationClass === "read")
+        .map((e) => `${apiId}/${e.id}`)
+        .filter((id) => !BLOCKED.has(id)),
+    );
+    expect(listLiveTargetIds().sort()).toEqual([...new Set([...reads, ...STRICT])].sort());
+    expect(listLiveTargetIds()).toHaveLength(85);
   });
 
-  it.each(["proxy/agent-listqueues", "proxy/cdr-update", "proxy/info-queues", "proxy/INFO-AGENTS", "proxy/info-agents "])(
+  it("never includes a write, a Proxy action, a blocked operation or the Sample API", () => {
+    for (const id of listLiveTargetIds()) {
+      const [apiId, endpointId] = id.split("/");
+      const e = getEndpoint(apiId, endpointId)!;
+      expect(e.method, id).toBe("GET");
+      if (STRICT.includes(id)) expect(e.operationClass, id).not.toBe("write");
+      else expect(e.operationClass, id).toBe("read");
+      expect(BLOCKED.has(id), id).toBe(false);
+      expect(apiId, id).not.toBe("sample");
+    }
+    for (const id of ["openapi/dial", "proxy/dial", "proxy/hangup", "proxy/reboot", "proxy/sms", "openapi/queues-create"]) {
+      expect(listLiveTargetIds(), id).not.toContain(id);
+    }
+  });
+
+  it("keeps the four strict field-allowlist policies; everything else is pass-through", () => {
+    const strict = listLiveTargetIds().filter((id) => getLiveTarget(id)!.projection === "fields");
+    expect(strict.sort()).toEqual(STRICT);
+  });
+
+  it.each(["proxy/info-voicemail", "proxy/cdr-update", "openapi/aianalysis-get", "proxy/INFO-AGENTS", "proxy/info-agents "])(
     "does not allow %s",
     (endpoint) => {
       expect(validateLiveRequest({ ...agents, endpoint })).toEqual({ ok: false, code: "endpoint_not_allowed" });
