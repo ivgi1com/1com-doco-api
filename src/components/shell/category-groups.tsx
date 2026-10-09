@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useId, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Endpoint, MenuGroup } from "@/content/types";
 
 const bulkButtonClass =
@@ -12,20 +12,12 @@ function activeGroupId(groups: MenuGroup[], activeEndpointId: string | undefined
   return groups.find((g) => g.categories.some((c) => c.endpoints.some((e) => e.id === activeEndpointId)))?.id;
 }
 
-const endpointList = (endpoints: Endpoint[], renderEndpoint: (endpoint: Endpoint) => ReactNode, labelledBy?: string) => (
-  <ul className="space-y-0.5" aria-labelledby={labelledBy}>
-    {endpoints.map((endpoint) => (
-      <li key={endpoint.id}>{renderEndpoint(endpoint)}</li>
-    ))}
-  </ul>
-);
-
 /**
  * Collapsible menu groups (content `menuGroups`) shared by the Reference
  * sidebar and the Playground endpoint picker, with Expand all / Collapse all.
  * Starts with only the active endpoint's group open; navigating to another
  * endpoint opens its group without closing the ones the user opened. A group
- * of several categories shows each one under a static sub-heading.
+ * of several categories lists their operations as one flat list, member by member.
  * `forceOpen` (a live filter) shows every group and parks the bulk buttons.
  */
 export function CategoryGroups({
@@ -40,7 +32,6 @@ export function CategoryGroups({
   renderEndpoint: (endpoint: Endpoint) => ReactNode;
 }) {
   const t = useTranslations("nav");
-  const idBase = useId();
   const activeId = activeGroupId(groups, activeEndpointId);
   const [open, setOpen] = useState<Set<string>>(() => new Set(activeId ? [activeId] : []));
   const [seenActiveId, setSeenActiveId] = useState(activeId);
@@ -91,19 +82,13 @@ export function CategoryGroups({
               aria-hidden
             />
           </summary>
-          {!group.subheadings
-            ? endpointList(group.categories.flatMap((c) => c.endpoints), renderEndpoint)
-            : group.categories.map((category) => {
-                const labelId = `${idBase}-${category.id}`;
-                return (
-                  <div key={category.id} className="mb-2 last:mb-0">
-                    <p id={labelId} className="px-2 pb-0.5 pt-1 text-[0.6875rem] font-medium uppercase tracking-wide text-ink-muted">
-                      {category.title}
-                    </p>
-                    {endpointList(category.endpoints, renderEndpoint, labelId)}
-                  </div>
-                );
-              })}
+          <ul className="space-y-0.5">
+            {group.categories
+              .flatMap((c) => c.endpoints)
+              .map((endpoint) => (
+                <li key={endpoint.id}>{renderEndpoint(endpoint)}</li>
+              ))}
+          </ul>
         </details>
       ))}
     </div>

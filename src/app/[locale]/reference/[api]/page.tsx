@@ -77,16 +77,7 @@ export default async function ApiOverview({ params }: PageProps<"/[locale]/refer
           <h2 id={`cat-${group.id}`} className="text-xl font-semibold text-ink">
             {group.title}
           </h2>
-          {group.subheadings
-            ? group.categories.map((category) => (
-                <div key={category.id} className="space-y-2">
-                  <h3 id={`cat-${category.id}`} className="text-base font-semibold text-ink-muted">
-                    {category.title}
-                  </h3>
-                  {endpointRows(api.id, category.endpoints)}
-                </div>
-              ))
-            : endpointRows(api.id, group.categories[0].endpoints)}
+          {endpointRows(api.id, group.categories.flatMap((c) => c.endpoints))}
         </section>
       ))}
     </div>

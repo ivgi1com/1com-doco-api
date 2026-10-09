@@ -54,10 +54,8 @@ export function menuGroups(api: ApiDefinition, { includeHidden = false } = {}): 
   const out: MenuGroup[] = [];
   for (const category of ordered) {
     const group = groupOf.get(category.id);
-    if (!group) out.push({ id: category.id, title: category.title, categories: [category], subheadings: false });
-    else if (group.categories[0] === category) {
-      out.push({ id: category.id, title: group.title, categories: group.categories, subheadings: group.categories.length > 1 });
-    }
+    if (!group) out.push({ id: category.id, title: category.title, categories: [category] });
+    else if (group.categories[0] === category) out.push({ id: category.id, title: group.title, categories: group.categories });
   }
   return out;
 }

@@ -56,7 +56,7 @@ describe("menuGroups", () => {
   const api = (extra: Partial<ApiDefinition>) =>
     ({ categories: ["a", "b", "c", "d", "e"].map(cat), ...extra }) as unknown as ApiDefinition;
   const shape = (a: ApiDefinition, opts?: { includeHidden?: boolean }) =>
-    menuGroups(a, opts).map((g) => `${g.title}:${g.categories.map((c) => c.id).join("+")}${g.subheadings ? "*" : ""}`);
+    menuGroups(a, opts).map((g) => `${g.title}:${g.categories.map((c) => c.id).join("+")}`);
 
   it("without groups, every menu category is a group of one, in menu order", () => {
     expect(shape(api({ menuOrder: ["c"] }))).toEqual(["c:c", "a:a", "b:b", "d:d", "e:e"]);
@@ -64,14 +64,14 @@ describe("menuGroups", () => {
 
   it("folds a group at the place of its first defined member, members in the group's order", () => {
     // "e" is the first member although "b" comes earlier in menu order.
-    expect(shape(api({ menuGroups: [{ title: "G", categories: ["e", "b"] }] }))).toEqual(["a:a", "c:c", "d:d", "G:e+b*"]);
+    expect(shape(api({ menuGroups: [{ title: "G", categories: ["e", "b"] }] }))).toEqual(["a:a", "c:c", "d:d", "G:e+b"]);
   });
 
   it("follows menuOrder for the anchor member", () => {
-    expect(shape(api({ menuOrder: ["d"], menuGroups: [{ title: "G", categories: ["d", "a"] }] }))).toEqual(["G:d+a*", "b:b", "c:c", "e:e"]);
+    expect(shape(api({ menuOrder: ["d"], menuGroups: [{ title: "G", categories: ["d", "a"] }] }))).toEqual(["G:d+a", "b:b", "c:c", "e:e"]);
   });
 
-  it("drops hidden members; a group left with one member has no sub-headings; an all-hidden group disappears", () => {
+  it("drops hidden members; an all-hidden group disappears", () => {
     const a = api({
       menuHidden: ["a", "c", "d"],
       menuGroups: [
@@ -80,7 +80,7 @@ describe("menuGroups", () => {
       ],
     });
     expect(shape(a)).toEqual(["G1:b", "e:e"]);
-    expect(shape(a, { includeHidden: true })).toEqual(["G1:a+b*", "G2:c+d*", "e:e"]);
+    expect(shape(a, { includeHidden: true })).toEqual(["G1:a+b", "G2:c+d", "e:e"]);
   });
 
   it("uses the anchor's category id as the group id", () => {
@@ -113,19 +113,19 @@ describe("menuGroups", () => {
 
   it("Open API: Dial, then CDR (Simple CDR, CDR); Campaign, Phone Book and AI Analysis groups", () => {
     const groups = shape(getApi("openapi")!);
-    expect(groups.slice(0, 2)).toEqual(["Dial:dial", "CDR:simplecdr+cdr*"]);
-    expect(groups).toContain("Campaign:campaign+campaignnumber*");
-    expect(groups).toContain("Phone Book:phonebook+phonebookentry*");
-    expect(groups).toContain("AI Analysis:aianalysis+ailogs*");
+    expect(groups.slice(0, 2)).toEqual(["Dial:dial", "CDR:simplecdr+cdr"]);
+    expect(groups).toContain("Campaign:campaign+campaignnumber");
+    expect(groups).toContain("Phone Book:phonebook+phonebookentry");
+    expect(groups).toContain("AI Analysis:aianalysis+ailogs");
   });
 
   it("Proxy API: CHANNELS, PEERS, QUEUE and FLOWS groups at their first member's place; COUNTCALLS alone", () => {
     const proxy = getApi("proxy")!;
     const groups = shape(proxy);
-    expect(groups).toContain("CHANNELS:channel+channels+countchannels*");
-    expect(groups).toContain("PEERS:peers+countpeers*");
-    expect(groups).toContain("QUEUE:queue+queuereset*");
-    expect(groups).toContain("FLOWS:flows+setflow*");
+    expect(groups).toContain("CHANNELS:channel+channels+countchannels");
+    expect(groups).toContain("PEERS:peers+countpeers");
+    expect(groups).toContain("QUEUE:queue+queuereset");
+    expect(groups).toContain("FLOWS:flows+setflow");
     expect(groups).toContain("COUNTCALLS:countcalls");
     const ids = menuGroups(proxy).map((g) => g.id);
     const menu = menuCategories(proxy).map((c) => c.id).filter((id) => ids.includes(id));

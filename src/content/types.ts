@@ -184,8 +184,6 @@ export interface MenuGroup {
   id: string;
   title: string;
   categories: Category[];
-  /** True when the group joins several categories: each is shown under its own sub-heading. */
-  subheadings: boolean;
 }
 
 export interface ApiDefinition {
