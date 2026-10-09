@@ -15,7 +15,9 @@ import { expect, test } from "@playwright/test";
  * and booleans only, trace/screenshot/video are off, and the one browser test
  * filters to an empty result so no call record is ever rendered. The HTML
  * reporter must not be used for this file (it would embed failure details).
- * Three real calls per run; the proxy allows 10 per minute.
+ * At most eight real calls per run (Phase 9 + Phase 11 below); the proxy
+ * allows 10 per minute. The Phase 11 Proxy API check also needs
+ * PROXY_TEST_KEY and PROXY_TEST_TENANT; without them it is skipped.
  */
 const KEY = process.env.OPENAPI_TEST_KEY ?? "";
 const TENANT = process.env.OPENAPI_TEST_TENANT ?? "";
@@ -96,5 +98,133 @@ test.describe("Open API Live against the real PBX (Phase 9)", () => {
     await pane.getByRole("button", { name: "Send request" }).click();
     await expect(pane.getByText(/source: LIVE/)).toBeVisible({ timeout: 15_000 });
     await expect(pane.getByText(/status: 200/)).toBeVisible();
+  });
+});
+
+/**
+ * Phase 11: Phase 10 made every read Live with redaction as the only output
+ * control (pass-through targets). These checks run the same real-PBX setup
+ * against a sample of those reads. Assertions are counts and booleans only.
+ * Five more real calls (four Open API, one optional Proxy); the blocked read
+ * never reaches the PBX. With the three above: at most 8 per run.
+ */
+
+// Copy of redact.ts SENSITIVE_NAME (that module is server-only). Keep in sync.
+const SENSITIVE_NAME = /pass(word|wd)?|pwd|secret|token|2fa|otp|mfa|pin(?![a-z])|api_?key/i;
+
+/** Every value under a sensitive-named key, at any depth, that is still shown. */
+function unredactedSecrets(value: unknown): number {
+  if (Array.isArray(value)) return value.reduce<number>((n, v) => n + unredactedSecrets(v), 0);
+  if (!value || typeof value !== "object") return 0;
+  let n = 0;
+  for (const [k, v] of Object.entries(value)) {
+    // A boolean flag (e.g. "2fa enabled") carries no secret; redact.ts leaves it, by design.
+    const safe = v === "" || v === null || v === "[REDACTED]" || typeof v === "boolean";
+    if (SENSITIVE_NAME.test(k) && !safe) n++;
+    else n += unredactedSecrets(v);
+  }
+  return n;
+}
+
+/** First value of `field` found in any record, at any depth. */
+function firstField(value: unknown, field: string): unknown {
+  if (Array.isArray(value)) {
+    for (const v of value) {
+      const found = firstField(v, field);
+      if (found !== undefined) return found;
+    }
+    return undefined;
+  }
+  if (!value || typeof value !== "object") return undefined;
+  if (Object.hasOwn(value, field)) return (value as Record<string, unknown>)[field];
+  return firstField(Object.values(value), field);
+}
+
+test.describe("Live for every read against the real PBX (Phase 11)", () => {
+  test.skip(!KEY || !TENANT, "OPENAPI_TEST_KEY and OPENAPI_TEST_TENANT are not set");
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "one browser is enough for real calls");
+  });
+  const origin = (baseURL: string | undefined) => new URL(baseURL ?? "http://localhost:3000").origin;
+
+  type Envelope = { ok: boolean; error?: { code: string }; upstream?: { status: number; bodyText: string } };
+  async function live(
+    request: import("@playwright/test").APIRequestContext,
+    baseURL: string | undefined,
+    data: { endpoint: string; params?: Record<string, string>; pathParams?: Record<string, string>; credential: string },
+  ): Promise<{ httpStatus: number; text: string; env: Envelope }> {
+    const res = await request.post("./api/playground", {
+      headers: { origin: origin(baseURL), "content-type": "application/json" },
+      data,
+    });
+    const text = await res.text();
+    return { httpStatus: res.status(), text, env: JSON.parse(text) as Envelope };
+  }
+
+  /** Upstream 200, JSON body, no key echoed. Returns the parsed body. */
+  function expectJson200(endpoint: string, key: string, r: { httpStatus: number; text: string; env: Envelope }): unknown {
+    expect(r.httpStatus, `${endpoint}: portal HTTP status`).toBe(200);
+    expect(r.text.includes(key), `${endpoint}: response contains the key`).toBe(false);
+    expect(r.env.ok, `${endpoint}: portal error code: ${r.env.error?.code}`).toBe(true);
+    expect(r.env.upstream?.status, `${endpoint}: upstream status`).toBe(200);
+    let body: unknown;
+    expect(() => (body = JSON.parse(r.env.upstream!.bodyText)), `${endpoint}: body is JSON (not withheld)`).not.toThrow();
+    return body;
+  }
+
+  test("queues-list returns a list, and queues-get reads its first record by path parameter", async ({ request, baseURL }) => {
+    const list = expectJson200("openapi/queues-list", KEY, await live(request, baseURL, {
+      endpoint: "openapi/queues-list",
+      params: { tenant: TENANT },
+      credential: KEY,
+    }));
+    expect(unredactedSecrets(list), "queues-list: secret-named fields with a value").toBe(0);
+
+    const id = firstField(list, "qu_id");
+    test.skip(id === undefined || id === null || id === "", "the tenant has no queues; queues-get not checked");
+    const one = expectJson200("openapi/queues-get", KEY, await live(request, baseURL, {
+      endpoint: "openapi/queues-get",
+      params: { tenant: TENANT },
+      pathParams: { qu_id: String(id) },
+      credential: KEY,
+    }));
+    expect(one !== null && typeof one === "object", "queues-get: body is an object or array").toBe(true);
+    expect(unredactedSecrets(one), "queues-get: secret-named fields with a value").toBe(0);
+  });
+
+  for (const endpoint of ["openapi/extensions-list", "openapi/voicemails-list"]) {
+    test(`${endpoint}: every secret-named field is redacted`, async ({ request, baseURL }) => {
+      const body = expectJson200(endpoint, KEY, await live(request, baseURL, {
+        endpoint,
+        params: { tenant: TENANT },
+        credential: KEY,
+      }));
+      expect(unredactedSecrets(body), `${endpoint}: secret-named fields with a value`).toBe(0);
+    });
+  }
+
+  test("a blocked read (AI Analysis) is refused by the portal, before the PBX", async ({ request, baseURL }) => {
+    const r = await live(request, baseURL, {
+      endpoint: "openapi/aianalysis-get",
+      params: { tenant: TENANT },
+      pathParams: { id: "1" },
+      credential: KEY,
+    });
+    expect(r.httpStatus).toBe(403);
+    expect(r.env.ok).toBe(false);
+    expect(r.env.error?.code).toBe("endpoint_not_allowed");
+    expect(r.env.upstream).toBeUndefined();
+  });
+
+  const PROXY_KEY = process.env.PROXY_TEST_KEY ?? "";
+  const PROXY_TENANT = process.env.PROXY_TEST_TENANT ?? "";
+  test("Proxy API: info-queues returns JSON with no secret-named value", async ({ request, baseURL }) => {
+    test.skip(!PROXY_KEY || !PROXY_TENANT, "PROXY_TEST_KEY and PROXY_TEST_TENANT are not set");
+    const body = expectJson200("proxy/info-queues", PROXY_KEY, await live(request, baseURL, {
+      endpoint: "proxy/info-queues",
+      params: { tenant: PROXY_TENANT, format: "json" },
+      credential: PROXY_KEY,
+    }));
+    expect(unredactedSecrets(body), "info-queues: secret-named fields with a value").toBe(0);
   });
 });
