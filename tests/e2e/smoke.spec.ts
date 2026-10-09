@@ -165,10 +165,10 @@ test.describe("interactions", () => {
   });
 
   // Phase 5: Live is allowlisted per endpoint (docs/phases/05-live-playground.md,
-  // U-08); an operation that is not allowlisted (Settings, SEC-REQ-26) must keep
+  // U-08); an operation that is not allowlisted (DISA list) must keep
   // Send disabled rather than attempt (and fail) a request.
-  test("playground: Live is not allowlisted for Settings, so Send stays disabled", async ({ page }) => {
-    await page.goto("./en/playground?endpoint=openapi/settings-list");
+  test("playground: Live is not allowlisted for the DISA list, so Send stays disabled", async ({ page }) => {
+    await page.goto("./en/playground?endpoint=openapi/disas-list");
     await page.getByRole("button", { name: "Switch to Live" }).click();
     await page.getByRole("button", { name: "Switch mode" }).click();
     await expect(desktopPane(page).getByRole("button", { name: "Send request" })).toBeDisabled();

@@ -2132,3 +2132,34 @@ User decisions (asked one by one), on branch `chore/remove-hebrew` from
   is recorded, not a failure: the check is about leaks only. Result: 0 leaks;
   2 upstream timeouts and 2 withheld answers kept as open items (OA-20).
 
+## Outside review fixes (2026-10-09, branch `fix/outside-review`)
+
+An outside reviewer's document (`docs/1com-docs-outside-review.md`) was
+checked claim by claim against the code. User decisions:
+
+- **Paths and API design: no change.** `/pbx/openapi.php` and
+  `/pbx/proxyapi.php` are the real upstream paths (U-01, U-12, U-17); the
+  displayed path is also the request path, so changing it would break Live
+  (`ALLOWED_BASES`) and document a path the PBX does not serve. Naming, IDs,
+  casing, `tenant` and the Proxy query key are the vendor API's design.
+- **Voice:** first-party wording that still marks gaps ("Not specified",
+  "Example", "Observed on the 1com PBX"). No "source / vendor / portal's
+  placeholder". Nothing invented. Guarded by `tests/unit/customer-copy.test.ts`.
+- **Statuses:** the observed statuses and error envelope (OA-14) are
+  published in the Open API authentication guide, labelled as observed.
+- **Live facts:** the auth guide now describes Live mode as deployed (85
+  reads; writes untested).
+- **Sample (prototype) API deleted.** Its content survives only as a unit-test
+  fixture (`tests/unit/helpers/fixture-api.ts`).
+- **New guides:** Quickstart (key and tenant from support@1com.co.il) and a
+  Glossary (industry-standard terms only; to be reviewed by the user).
+- **Selector hint:** "Use the Open API for new integrations; the Proxy API is
+  legacy."
+- **Search honours `menuHidden`** (reverses part of "Side menus: hide, not
+  delete"): Settings and Provisioning phones are out of Ctrl+K too; routes and
+  the overview are unchanged.
+- **Spec download not linked:** the PBX serves a public spec with 43 paths the
+  portal excludes, including administrative ones (OA-21).
+- **Webhooks / call events:** a future phase once the user supplies the
+  mechanism, payload and an example. Rate limits, pagination and a changelog
+  stay deferred (no data).
