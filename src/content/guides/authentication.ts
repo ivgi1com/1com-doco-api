@@ -24,7 +24,7 @@ export const authentication: Guide = {
         },
         {
           kind: "paragraph",
-          text: "The source rarely states which kind a given operation needs. Use the narrowest key that works for your use case, and confirm against your own tenant if a write fails with a key that answers reads.",
+          text: "The kind of key an operation needs is rarely stated; the kind a given operation needs. Use the narrowest key that works for your use case, and confirm against your own tenant if a write fails with a key that answers reads.",
         },
       ],
     },

@@ -17,7 +17,7 @@ export const OFFICIAL_BOOK = "https://manual.mirtapbx.com/books/api/page";
 
 // ov:18
 const TRANSPORTS =
-  "Send the key in the `X-API-Key` header. The source also accepts it as the `key` query parameter or as `Authorization: Bearer <key>`; the header keeps it out of URLs and logs.";
+  "Send the key in the `X-API-Key` header. The API also accepts it as the `key` query parameter or as `Authorization: Bearer <key>`; the header keeps it out of URLs and logs.";
 
 /**
  * Authentication for one resource. `write` adds the rule every object page
@@ -229,7 +229,7 @@ export function openapiResource(r: ResourceSpec): Endpoint[] {
       method: "POST",
       path: r.path,
       title: `Create ${r.singular}`,
-      summary: r.summaries?.create ?? `Creates a ${r.singular}. Accepts the short request aliases or the source column names.`,
+      summary: r.summaries?.create ?? `Creates a ${r.singular}. Accepts the short request aliases or the column names.`,
       authentication: writeAuth,
       queryParameters: writeQuery,
       requestBody: r.fields,

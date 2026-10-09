@@ -23,7 +23,7 @@ const FULL_AUDIT = /\s*Full audit: source-docs\/\S*?\.md\.?/g;
 const TRAILING_IN_PAREN = new RegExp(String.raw`\s*,\s*${TOKEN}(?=\))`, "g");
 /** "— see A-54", ", see A-72": a pointer to an audit entry. */
 const SEE_REF = new RegExp(String.raw`\s*(?:[—–-]\s*)?\bsee ${REF}(?:${SEP}${REF})*`, "g");
-/** A line citation used as a sentence subject: "Doc line 137 lists ..." reads "The source lists ...". */
+/** A line citation used as a sentence subject: "Doc line 137 lists ..." reads "The documentation lists ...". */
 const LINE_SUBJECT = /(^|[.!?]\s+)(?:Site|Doc) lines? \d+(?:\s*[–-]\s*\d+)?(?= [a-z])/g;
 /** A leading line citation before a lowercase clause: "Doc line 179: start and stop ..." reads "Start and stop ...". */
 const LINE_LEAD = /(^|[.!?]\s+)(?:Site|Doc) lines? \d+(?:\s*[–-]\s*\d+)?:\s*([a-z])/g;
@@ -43,7 +43,7 @@ export function customerText(text: string): string {
     .replace(REF_ONLY_PAREN, "")
     .replace(TRAILING_IN_PAREN, "")
     .replace(SEE_REF, "")
-    .replace(LINE_SUBJECT, "$1The source")
+    .replace(LINE_SUBJECT, "$1The documentation")
     .replace(LINE_LEAD, (_m, lead: string, c: string) => lead + c.toUpperCase())
     .replace(LINE_CITE, "")
     .replace(PHASE_BARE, "");

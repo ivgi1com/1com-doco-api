@@ -170,7 +170,7 @@ export const voicemailMessage = proxyOperation({
     },
   ],
   notes: [
-    "Not probed and has no Demo fixture: the source does not say whether retrieving a message marks it read, and VOICEMAIL separately exposes markread/markunread actions — calling this to observe its response could silently change a real mailbox's state (user decision, Phase 7 Stage 1).",
+    "Not probed and has no Demo fixture: it is not stated whether retrieving a message marks it read, and VOICEMAIL separately exposes markread/markunread actions — calling this to observe its response could silently change a real mailbox's state (user decision, Phase 7 Stage 1).",
   ],
   related: ["voicemail-messages", "voicemail-markread"],
 });
@@ -197,7 +197,7 @@ export const voicemailMarkread = proxyOperation({
   source: "voicemail.md",
   queryParameters: [vmTenantParam, vmMsgidParam],
   notes: [
-    "Site-only action (Site line 148); not in the Doc's action list (list/messages/message/delete). The Site's own example uses the alternate host form (DEMO.1com.com/1com), reproduced here with the portal's canonical host instead.",
+    "Site-only action (Site line 148); not in the documentation's action list (list/messages/message/delete). The documented example uses the alternate host form (DEMO.1com.com/1com), reproduced here with the portal's canonical host instead.",
     "Response not documented.",
   ],
   related: ["voicemail-markunread"],
@@ -212,7 +212,7 @@ export const voicemailMarkunread = proxyOperation({
   summary: "Marks one voicemail message as not read.",
   source: "voicemail.md",
   queryParameters: [vmTenantParam, vmMsgidParam],
-  notes: ["Site-only action (Site line 150); not in the Doc's action list. Response not documented."],
+  notes: ["Site-only action (Site line 150); not in the documentation's action list. Response not documented."],
   related: ["voicemail-markread"],
 });
 

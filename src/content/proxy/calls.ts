@@ -29,7 +29,7 @@ export const agentPause = proxyOperation({
     q("pausereason", "Free-text reason for the pause.", { required: false, example: "Breakfast" }),
   ],
   notes: [
-    "The Doc's own example uses lowercase action=pause (Doc line 164); the Site's uses action=PAUSE (Site line 131). Casing is not documented as significant either way.",
+    "The documentation's own example uses lowercase action=pause (Doc line 164); the documented uses action=PAUSE (Site line 131). Casing is not documented as significant either way.",
   ],
   related: ["agent-unpause", "agent-listqueues", "queue-add"],
 });
@@ -43,7 +43,7 @@ export const agentUnpause = proxyOperation({
   summary: "Removes an agent's pause in a queue.",
   source: "agent.md",
   queryParameters: [agentTenantParam, agentExtensionParam, agentQueueParam],
-  notes: ["Named in the Doc's action list (line 159) alongside pause; no separate example exists for unpause."],
+  notes: ["Named in the documentation's action list (line 159) alongside pause; no separate example exists for unpause."],
   related: ["agent-pause"],
 });
 
@@ -58,7 +58,7 @@ export const agentListqueues = proxyOperation({
   queryParameters: [
     agentTenantParam,
     agentExtensionParam,
-    q("format", "Output format. The Site's own example always sends format=json; no other value has been tried.", { enum: ["json"], example: "json" }),
+    q("format", "Output format. The documented example always sends format=json; no other value has been tried.", { enum: ["json"], example: "json" }),
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   responses: [
@@ -72,7 +72,7 @@ export const agentListqueues = proxyOperation({
     },
   ],
   notes: [
-    "Site-only action (Site line 133); not in the Doc's action list, which names only pause and unpause. Neither source explains it further or states whether other action values exist beyond these three.",
+    "Site-only action (Site line 133); not in the documentation's action list, which names only pause and unpause. Neither source explains it further or states whether other action values exist beyond these three.",
     "A structure-only probe against a real test tenant returned an explicit \"No extension specified\" error without an extension value (source-docs/DOCS_AUDIT.md A-68, refining A-41); the success response shape remains undocumented here.",
   ],
 });
@@ -191,7 +191,7 @@ export const countcalls = proxyOperation({
     },
   ],
   notes: [
-    "No parameters are documented, and the Doc gives only the one-line purpose (unlike every other reqtype). The Site's own example (Site line 152) sends no tenant, but a probe found tenant required in practice to avoid a fixed error response (source-docs/DOCS_AUDIT.md A-69).",
+    "No parameters are documented, and the documentation gives only the one-line purpose (unlike every other reqtype). The documented example (Site line 152) sends no tenant, but a probe found tenant required in practice to avoid a fixed error response (source-docs/DOCS_AUDIT.md A-69).",
   ],
 });
 
@@ -242,10 +242,10 @@ export const hangup = proxyOperation({
   queryParameters: [
     q("tenant", "Tenant for the channel to hang up.", { required: false }),
     q("channel", "Channel to hang up."),
-    q("extension", "Extension to hang up. The Site's example uses this alone, with no channel.", { required: false, example: "103" }),
+    q("extension", "Extension to hang up. The documented example uses this alone, with no channel.", { required: false, example: "103" }),
   ],
   notes: [
-    "A raw-source defect: the Doc's text for this reqtype runs directly into the next reqtype's heading with no line break (\"...extension to hangupMEDIAFILE    - Manage media files\"), confirmed against the raw export, not an extraction artifact.",
+    "A raw-source defect: the documentation's text for this reqtype runs directly into the next reqtype's heading with no line break (\"...extension to hangupMEDIAFILE    - Manage media files\"), confirmed against the raw export, not an extraction artifact.",
     "Response not documented for either example.",
   ],
 });

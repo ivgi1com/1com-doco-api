@@ -7,6 +7,7 @@ import { getEndpointExamples } from "@/content/examples";
 import { withObserved } from "@/content/observed";
 import { buildSearchIndex } from "@/lib/search-index";
 import { EXCLUDED_GUIDES, EXCLUDED_OPENAPI_OPS, EXCLUDED_PROXY_OPS } from "./helpers/exclusions";
+import { customerText } from "@/lib/customer-text";
 import en from "../../messages/en.json";
 
 /**
@@ -18,7 +19,7 @@ import en from "../../messages/en.json";
  */
 
 /** Keys that hold provenance, not rendered copy. */
-const SKIP_KEYS = new Set(["sourceUrl", "source", "sources", "file", "page"]);
+const SKIP_KEYS = new Set(["sourceUrl", "source", "sources", "file", "page", "evidence"]);
 /** The one quoted vendor path kept on purpose (user decision, 2026-10-01). */
 const KEPT = ["/mirtapbx/proxyapi.php"];
 
@@ -57,7 +58,7 @@ function offenders(test: (h: Hit) => boolean): string[] {
   return hits
     .filter(test)
     .map((h) => `${h.path}: ${h.text.slice(0, 90)}`)
-    .slice(0, 12);
+    .slice(0, 400);
 }
 
 describe("customer-visible copy", () => {
@@ -103,6 +104,13 @@ describe("customer-visible copy", () => {
     // No kept operation or guide links to a removed one.
     const related = apis.flatMap((a) => listEndpoints(a).flatMap((e) => e.related.map((r) => `${a.id}/${r}`)));
     expect(related.filter((r) => !ids.has(r))).toEqual([]);
+  });
+
+  it("speaks in the first person of the API owner (no third-party analyst voice)", () => {
+    // Rendered text goes through customerText (inline-markup.tsx); check what a customer reads.
+    const THIRD_PARTY =
+      /\bthe source\b|\bsource's\b|\bvendor\b|portal's placeholder|\bthe Doc\b|\bDoc's\b|\bthe Site\b|\bSite's\b|not documented by the source/i;
+    expect(offenders((h) => !h.apiOutput && THIRD_PARTY.test(customerText(h.text)))).toEqual([]);
   });
 
   it("names the OpenAPI product '1com Open API' in selectors", () => {

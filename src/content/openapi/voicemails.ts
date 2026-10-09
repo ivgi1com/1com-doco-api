@@ -32,7 +32,7 @@ const [list, get, create, update, remove] = openapiResource({
   updateExample: { name: "Demo Mailbox (updated)" },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Unlike every other object, the ID field is the bare name `uniqueid` and the source table is also bare (`voicemail`), not prefixed — as documented, not a transcription simplification.",
+    "Unlike every other object, the ID field is the bare name `uniqueid` and the underlying table is also bare (`voicemail`), not prefixed — as specified.",
     "Security (SEC-REQ-15): `password` sets a real mailbox PIN, directly analogous to the Proxy API's VOICEMAIL list `imapuser`/`imappassword` exposure (SEC-REQ-02). If GET echoes it, this repeats the same precedent in a new API family. BLOCK LIVE until a response schema is confirmed not to include the mailbox password.",
   ],
 });

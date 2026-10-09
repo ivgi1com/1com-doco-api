@@ -51,7 +51,7 @@ const [list, get, create, update, remove] = openapiResource({
   },
   errorCodes: ["missing_api_key", "invalid_api_key", "tenant_required", "read_only_api_key", "missing_required_field"],
   notes: [
-    "Security (SEC-REQ-30): `application`/`streamengine` are raw, free-form fields with no documented meaning; before Live, establish their semantics from the spec or the vendor. Writes are already excluded from Live by SEC-REQ-27; a read would expose the configured value.",
+    "Security (SEC-REQ-30): `application`/`streamengine` are raw, free-form fields with no documented meaning; before Live, establish their semantics from the specification. Writes are already excluded from Live by SEC-REQ-27; a read would expose the configured value.",
   ],
 });
 

@@ -45,7 +45,7 @@ export const callHistory: Guide = {
       blocks: [
         {
           kind: "paragraph",
-          text: "`format` is not one global enum — the Doc's common-parameters table lists only `json`/`plain`, but individual operations document their own different sets, and this portal's own probing found further undocumented values behave differently per operation. Always check the specific endpoint's own Reference page rather than assuming a format that works elsewhere will work here.",
+          text: "`format` is not one global enum — the documentation's common-parameters table lists only `json`/`plain`, but individual operations document their own different sets, and this portal's own probing found further undocumented values behave differently per operation. Always check the specific endpoint's own Reference page rather than assuming a format that works elsewhere will work here.",
         },
         {
           kind: "list",

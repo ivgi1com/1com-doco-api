@@ -20,7 +20,7 @@ export const faxSend = proxyOperation({
   source: "fax.md",
   queryParameters: [
     q("source_number", "Number to send the fax from."),
-    q("dest_number", "Number to send the fax to. The Site's own multipart example instead names this parameter number — not explained whether that is an undocumented alias or an inconsistency between the two sources."),
+    q("dest_number", "Number to send the fax to. The documented own multipart example instead names this parameter number — not explained whether that is an undocumented alias or an inconsistency between the two sources."),
     q("quality", "Fax quality.", { required: false, enum: ["204x98", "204x196", "204x392"] }),
     q("pagesize", "Page size.", { required: false, enum: ["a4", "letter", "legal"] }),
     q("rotate", "Rotation. Empty means automatic.", { required: false, enum: ["", "E", "W", "no"] }),
@@ -30,7 +30,7 @@ export const faxSend = proxyOperation({
   ],
   requestBodyEncoding: { kind: "multipart", fileField: "filename", exampleFile: "fax.pdf" },
   notes: [
-    "The Doc's own reference URL passes filename as a query parameter, showing no file upload; the Site's fuller PHP example posts filename as an old-style cURL @-prefixed file field instead. Whether the Doc's version is a simplified illustration or a genuinely different calling convention is not stated.",
+    "The documentation's own reference URL passes filename as a query parameter, showing no file upload; the documented fuller PHP example posts filename as an old-style cURL @-prefixed file field instead. Whether the documentation's version is a simplified illustration or a genuinely different calling convention is not stated.",
     "Response not documented.",
   ],
   related: ["mediafile-getaudio"],
@@ -51,7 +51,7 @@ export const mediafileGetaudio = proxyOperation({
   queryParameters: [
     q("tenant", "Tenant to get audio from."),
     q("objectid", "Media file id.", { example: "3619" }),
-    q("id", "Also sent by the Site's own example alongside objectid. Neither source explains what id means here, and it is not in the Doc's parameter list for this reqtype at all.", { required: false, example: "19" }),
+    q("id", "Also sent by the documented example alongside objectid. Neither source explains what id means here, and it is not in the documentation's parameter list for this reqtype at all.", { required: false, example: "19" }),
   ],
   responses: [
     {
@@ -103,7 +103,7 @@ export const phonebookQuery = proxyOperation({
     },
   ],
   notes: [
-    "The Site's own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior audit and unchanged in this source.",
+    "The documented own table-of-contents heading spells this reqtype PHONEBOOKS (plural), but every example and every Doc reference uses the singular reqtype=PHONEBOOK — a mismatch already flagged in the prior audit and unchanged in this source.",
     "Response observed by probe without field/value (source-docs/DOCS_AUDIT.md A-75); the success shape remains undocumented.",
   ],
   related: ["phonebook-add"],
@@ -190,7 +190,7 @@ export const responsepathList = proxyOperation({
   responses: [
     {
       status: 200,
-      description: "Success response not documented, consistent with the source's own lack of a response sample. An empty 200 body (0 bytes), with no error text, was observed on the test tenant regardless of parameters or format (A-76).",
+      description: "Success response not documented, consistent with the lack of a documented response sample. An empty 200 body (0 bytes), with no error text, was observed on the test tenant regardless of parameters or format (A-76).",
       format: "plain",
       evidence: "observed-sanitized",
       verified: true,
@@ -198,7 +198,7 @@ export const responsepathList = proxyOperation({
     },
   ],
   notes: [
-    "The Doc's parameter block for RESPONSEPATH appears twice with different action lists; both copies document list. No vendor example or response sample for this action; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
+    "The documentation's parameter block for RESPONSEPATH appears twice with different action lists; both copies document list. No documented example or response sample for this action; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
   ],
   related: ["responsepath-getlast"],
 });
@@ -229,8 +229,8 @@ export const responsepathGetid = proxyOperation({
     },
   ],
   notes: [
-    "A source defect: this action and its rrid parameter appear only in the Doc's first copy of the RESPONSEPATH block (lines 264-276); the second copy (330-339) omits both, listing only list and getlast. Which is current is not stated — both are recorded here as documented, but treat getid as less certain than list/getlast.",
-    "No vendor example or response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
+    "A source defect: this action and its rrid parameter appear only in the documentation's first copy of the RESPONSEPATH block (lines 264-276); the second copy (330-339) omits both, listing only list and getlast. Which is current is not stated — both are recorded here as documented, but treat getid as less certain than list/getlast.",
+    "No documented example or response sample; response observed by probe (source-docs/DOCS_AUDIT.md A-76).",
   ],
   related: ["responsepath-list", "responsepath-getlast"],
 });
@@ -264,9 +264,9 @@ export const responsepathGetlast = proxyOperation({
   ],
   verification: { documented: true, implemented: true, tested: true, verified: false },
   notes: [
-    "The plain sample above comes from the vendor source itself (evidence: vendor), not from a probe against a real tenant — shown as-is per the no-guessing rule.",
-    "format=xml also exists (Site lines 212-223), but the source's own caveat (Site line 213) is \"Based on the xml format shown in the manual, it returns something like:\" — not a guaranteed-exact sample. Its own example is additionally malformed: <ClientID> and <OrderNumber> both close with a mismatched </MemberNumber> tag rather than their own closing tags. Not reproduced as a second response example here, since this portal's response viewer shows one example per status code and the plain sample is the better-attested of the two.",
-    "A structure-only probe found an empty 200 body on the test tenant, for both format=(default) and format=xml (source-docs/DOCS_AUDIT.md A-76) — no matching data on that tenant; the vendor sample above remains the documented format.",
+    "The plain sample above comes from the documentation itself, not from a probe against a real tenant — shown as-is per the no-guessing rule.",
+    "format=xml also exists (Site lines 212-223), but the documented caveat (Site line 213) is \"Based on the xml format shown in the manual, it returns something like:\" — not a guaranteed-exact sample. Its own example is additionally malformed: <ClientID> and <OrderNumber> both close with a mismatched </MemberNumber> tag rather than their own closing tags. Not reproduced as a second response example here, since this portal's response viewer shows one example per status code and the plain sample is the better-attested of the two.",
+    "A structure-only probe found an empty 200 body on the test tenant, for both format=(default) and format=xml (source-docs/DOCS_AUDIT.md A-76) — no matching data on that tenant; the sample above remains the documented format.",
   ],
   related: ["responsepath-list", "responsepath-getid"],
 });
@@ -288,10 +288,10 @@ export const sms = proxyOperation({
   fixedQuery: { reqtype: "SMS" },
   source: "sms.md",
   queryParameters: [
-    q("tenant", "Tenant where to send the SMS from. The Doc reuses DIAL's wording (\"tenant where to place the call\"), likely copy-pasted."),
-    q("source", "Sender number, or ACCOUNT to use the number associated with the chosen account. Also named ?exten by the Doc, the same unexplained alternate name and leading question mark seen on DIAL."),
+    q("tenant", "Tenant where to send the SMS from. The documentation reuses DIAL's wording (\"tenant where to place the call\"), likely copy-pasted."),
+    q("source", "Sender number, or ACCOUNT to use the number associated with the chosen account. Also named ?exten by the documentation, the same unexplained alternate name and leading question mark seen on DIAL."),
     q("dest", "Number to send the SMS to."),
-    q("account", "Account to simulate the SMS from. SOURCE uses the account associated with the source number.", { required: false }),
+    q("account", "Account to simulate the SMS from. SOURCE uses the account associated with the sending number.", { required: false }),
     q("destclid", "CLID for the dest number.", { required: false }),
     q("server", "Specific server to send from.", { required: false }),
     q("message", "Message text."),

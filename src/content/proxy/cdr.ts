@@ -56,8 +56,8 @@ const cdrGet: Endpoint = {
   responses: [cdrGetResponse],
   errors: "undocumented",
   notes: [
-    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical vendor evidence: source-docs/proxy-api/cdr-standalone.md.",
-    "field is fixed to userfield in this portal: it is the only value the source shows, and other CDR columns (such as caller and callee numbers) are personal data.",
+    "One operation of the legacy CDR reqtype (action=GET). This reqtype has no coverage in the rebuilt 1com source (source-docs/unresolved.md U-15); its only documentation is the historical documentation: source-docs/proxy-api/cdr-standalone.md.",
+    "field is fixed to userfield in this portal: it is the only value shown in the examples, and other CDR columns (such as caller and callee numbers) are personal data.",
     "The userfield is free-form data written by your own integration. The portal cannot tell what it contains, so Live mode shows it as returned.",
     "Errors are not signalled by HTTP status: an unknown uniqueid returns HTTP 200 with an empty body (A-42).",
     "CDR action=UPDATE exists in the same reqtype and is not offered here.",

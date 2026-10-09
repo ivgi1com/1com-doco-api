@@ -26,7 +26,7 @@ export const openapiAuthentication: Guide = {
         },
         {
           kind: "paragraph",
-          text: "The source documents three transports for the key: the `X-API-Key` header, a `key` query parameter, or `Authorization: Bearer <key>`. This portal always sends the header — a project preference, not an API requirement — because a key in the query string ends up in URLs and logs.",
+          text: "The API accepts the key in three ways: the `X-API-Key` header, a `key` query parameter, or `Authorization: Bearer <key>`. This portal always sends the header — a project preference, not an API requirement — because a key in the query string ends up in URLs and logs.",
         },
         { kind: "sample", endpoint: "extensions-state-get", language: "curl", title: "shell" },
         {
