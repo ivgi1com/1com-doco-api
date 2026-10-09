@@ -3,25 +3,26 @@
 Current work:
 **Snapshot (2026-10-10): no phase active; the next phase has not started and
 is waiting for the user.**
-- Hotfix `fix/no-internal-text` APPROVED (gate A), merged to local `main`,
-  tag `v1.4.3-no-internal-text`: the Playground Scenario line showed internal
-  evidence notes (md files, audit ids, phases, paths). It now shows the label
-  only; guides go through `customerText`; "probe" reads "check"; a guard test
-  covers every rendered string. **Not pushed, not deployed: production still
-  runs `v1.4-menu-groups` with the leak until the user approves a deploy.**
-- `fix/outside-review` (first-party voice, observed statuses and errors,
-  Quickstart, Glossary, Sample API removed, search honours `menuHidden`)
-  merged to local `main` on user approval (2026-10-10), tag
-  `v1.5-outside-review-fixes`. Open items: webhook spec from the user, public
-  spec file not linked (OA-21), glossary wording reviewed by the user.
-- Local `main` = `v1.5-outside-review-fixes`. **Not pushed, not deployed:**
-  GitHub `main` is still at `v1.4.2-proxy-real-check` and production runs
-  `v1.4-menu-groups` (with the Scenario-line leak). Next: pre-deploy checks,
-  then push and deploy only on the user's approval.
-- Production: `v1.4-menu-groups` (`99303b1`) at
-  `https://pbx6webserver.1com.co.il/1com-api-doco/`; Live on for all 85 reads
-  (52 Open API, 33 Proxy) with the Phase 11 redaction; menu groups visible.
-  Rollback copy on the server: `.next.prev` = `v1.2-side-menus` build.
+- **Deployed 2026-10-10: production = `v1.5-outside-review-fixes` (`bef1457`)**
+  at `https://pbx6webserver.1com.co.il/1com-api-doco/`. It contains the
+  no-internal-text hotfix (`v1.4.3-no-internal-text`: the Playground Scenario
+  line shows the label only; guides go through `customerText`; "probe" reads
+  "check"; a guard test covers every rendered string) and the outside-review
+  fixes (first-party voice, observed statuses and errors, Quickstart,
+  Glossary, Sample API removed, search honours `menuHidden`). GitHub `main`
+  and both tags are pushed.
+- Verified from outside after deploy: 200 with CSP / no-referrer / DENY;
+  Quickstart, Glossary and auth guide 200; `reference/sample/...` 404; API
+  selector lists only Open API and Proxy API (legacy); Playground Demo
+  `openapi/queues-list` shows "Scenario: Queues found" only; Ctrl+K "settings"
+  finds nothing; `openapi/aianalysis-get` -> 403 `endpoint_not_allowed`;
+  `openapi/queues-list` with a fake key -> upstream 401; no console errors.
+- Server: `/home/portal/app` detached at `v1.5-outside-review-fixes`;
+  rollback copy `.next.prev` = the `v1.4-menu-groups` build; the older
+  `v1.2-side-menus` build was kept as `.next.prev-v1.2` (safe to delete).
+  Live on for all 85 reads (52 Open API, 33 Proxy) with the Phase 11 redaction.
+- Open items: webhook spec from the user (future phase); public spec file not
+  linked (OA-21); glossary wording is the user's to keep reviewing.
 - Real-PBX checks done: Open API (Phase 11, OA-19 fixed) and every Proxy Live
   read (Phase 12, 0 leaks).
 - Open items: rotate the TEST key (pasted in chat); Proxy `info-call` and
