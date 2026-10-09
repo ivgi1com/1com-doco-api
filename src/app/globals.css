@@ -27,6 +27,15 @@
   --code-border: oklch(0.32 0.02 275);
   --code-ink: oklch(0.93 0.008 275);
   --code-muted: oklch(0.72 0.02 275);
+  /* Response search/hover on the code surface (same in both themes). */
+  --code-match-row: oklch(0.68 0.16 277 / 0.2);
+  --code-match-row-hover: oklch(0.68 0.16 277 / 0.34);
+  --code-match-bar: oklch(0.68 0.16 277);
+  --code-match-mark: oklch(0.51 0.24 277);
+  --code-match-mark-ink: oklch(1 0 0);
+  --code-match-mark-ring: oklch(0.82 0.1 277);
+  --code-hover-row: oklch(1 0 0 / 0.13);
+  --code-hover-ring: oklch(1 0 0 / 0.22);
 
   --info-tint: oklch(0.96 0.025 275);
   --info-ink: oklch(0.45 0.16 275);
@@ -120,6 +129,14 @@
   --color-code-border: var(--code-border);
   --color-code-ink: var(--code-ink);
   --color-code-muted: var(--code-muted);
+  --color-code-match-row: var(--code-match-row);
+  --color-code-match-row-hover: var(--code-match-row-hover);
+  --color-code-match-bar: var(--code-match-bar);
+  --color-code-match-mark: var(--code-match-mark);
+  --color-code-match-mark-ink: var(--code-match-mark-ink);
+  --color-code-match-mark-ring: var(--code-match-mark-ring);
+  --color-code-hover-row: var(--code-hover-row);
+  --color-code-hover-ring: var(--code-hover-ring);
   --color-info-tint: var(--info-tint);
   --color-info-ink: var(--info-ink);
   --color-success-tint: var(--success-tint);
